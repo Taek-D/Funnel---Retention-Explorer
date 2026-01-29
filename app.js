@@ -1699,280 +1699,391 @@ function downloadPdfWithFilename(doc, filename) {
     }
 }
 
-function canvasToPngDataUrlWithBg(canvasEl, bgColor = '#0b1020') {
-    if (!canvasEl) return null;
+// ===== PNG export workaround for sandbox/webview =====
 
-    // If canvas has no explicit pixel size, fallback to a reasonable default
-    const w = canvasEl.width && canvasEl.width > 0 ? canvasEl.width : 1200;
-    const h = canvasEl.height && canvasEl.height > 0 ? canvasEl.height : 600;
+// (A) Environment detection - detects hostile download environments
+function isDownloadHostileEnv() {
+    // iframe sandbox / webview / iOS safari etc.
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    const isWebView = /(FBAN|FBAV|Instagram|KAKAOTALK|Line|wv)/i.test(ua);
+    const inIframe = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
 
-    const exportCanvas = document.createElement('canvas');
-    exportCanvas.width = w;
-    exportCanvas.height = h;
+    return isIOS || isSafari || isWebView || inIframe;
+}
 
-    const ctx = exportCanvas.getContext('2d');
-    // Dark background so light chart labels remain readable in white PDF page
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, w, h);
+// (B) Generate filename for PNG export
+function makeReportPngFilename(pageIndex /*1-based*/) {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+    return `analysis_report_${stamp}_page_${pageIndex}.png`;
+}
 
+// (C) Download or open blob with strong fallback for hostile environments
+function downloadOrOpenBlobStrong(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const hostile = isDownloadHostileEnv();
+
+    // 1) Try download first (works in normal environments)
     try {
-        // Draw original chart canvas on top
-        ctx.drawImage(canvasEl, 0, 0, w, h);
-        return exportCanvas.toDataURL('image/png', 1.0);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.rel = 'noopener';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     } catch (e) {
-        console.warn('Chart image export failed:', e);
-        return null;
+        // ignore and fallback below
+    }
+
+    // 2) For hostile environments, also open in new tab for save/share
+    if (hostile) {
+        try {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        } catch (e) {
+            // Last resort: navigate to the blob URL
+            window.location.href = url;
+        }
+    }
+
+    // Revoke with delay to ensure save completes
+    setTimeout(() => URL.revokeObjectURL(url), 8000);
+}
+
+// (D) Text wrapping for canvas with Korean support
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = String(text || '').split(' ');
+    let line = '';
+    let yy = y;
+
+    const pushLine = (s) => { ctx.fillText(s, x, yy); yy += lineHeight; };
+
+    if (words.length === 1) {
+        // Character-level wrapping for Korean text without spaces
+        let buf = '';
+        for (const ch of String(text || '')) {
+            const test = buf + ch;
+            if (ctx.measureText(test).width > maxWidth && buf) {
+                pushLine(buf);
+                buf = ch;
+            } else {
+                buf = test;
+            }
+        }
+        if (buf) pushLine(buf);
+        return yy;
+    }
+
+    for (const w of words) {
+        const test = line ? `${line} ${w}` : w;
+        if (ctx.measureText(test).width > maxWidth && line) {
+            pushLine(line);
+            line = w;
+        } else {
+            line = test;
+        }
+    }
+    if (line) pushLine(line);
+    return yy;
+}
+
+// (E) Draw canvas with background color
+function drawCanvasWithBg(destCtx, srcCanvas, x, y, w, h, bgColor) {
+    if (!srcCanvas) return false;
+    try {
+        destCtx.save();
+        destCtx.fillStyle = bgColor || '#0b1020';
+        destCtx.fillRect(x, y, w, h);
+        destCtx.drawImage(srcCanvas, x, y, w, h);
+        destCtx.restore();
+        return true;
+    } catch (e) {
+        return false;
     }
 }
 
-// Export Report as Markdown
+// (F) Build report snapshot from current AppState
+function buildReportSnapshot() {
+    const snap = {};
+    snap.generatedAt = new Date().toLocaleString('ko-KR');
+
+    // Data Quality
+    const rows = (AppState.processedData && AppState.processedData.length) ? AppState.processedData : (AppState.rawData || []);
+    const users = new Set(rows.map(r => r.user_id || r.userId).filter(Boolean));
+    const ts = rows.map(r => new Date(r.timestamp)).filter(d => !isNaN(d));
+    ts.sort((a, b) => a - b);
+
+    snap.data = {
+        totalRows: (AppState.rawData || []).length || rows.length,
+        validRows: rows.length,
+        uniqueUsers: users.size,
+        dateMin: ts.length ? ts[0].toISOString().slice(0, 10) : 'N/A',
+        dateMax: ts.length ? ts[ts.length - 1].toISOString().slice(0, 10) : 'N/A'
+    };
+
+    snap.funnel = Array.isArray(AppState.funnelResults) ? AppState.funnelResults : [];
+    snap.retention = AppState.retentionResults || null;
+    snap.segment = AppState.segmentResults || null;
+    snap.insights = Array.isArray(AppState.insights) ? AppState.insights : [];
+
+    return snap;
+}
+
+// (G) Create A4-sized canvas for page rendering
+function createA4CanvasPx() {
+    // 1240x1754 ~= A4 @ ~150dpi for good readability
+    const canvas = document.createElement('canvas');
+    canvas.width = 1240;
+    canvas.height = 1754;
+    return canvas;
+}
+
+function makePageContext(canvas) {
+    const ctx = canvas.getContext('2d');
+    // White background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Korean font stack for text rendering
+    ctx.fillStyle = '#111827';
+    ctx.font = '28px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.textBaseline = 'top';
+    return ctx;
+}
+
+// (H) Render multi-page report with automatic page breaks
+function renderReportPages(snapshot) {
+    const pages = [];
+    const charts = {
+        funnel: document.getElementById('funnelChart'),
+        retention: document.getElementById('retentionChart'),
+        segment: document.getElementById('segmentChart')
+    };
+
+    const margin = 70;
+    const contentW = 1240 - margin * 2;
+    const lineH = 34;
+
+    let page = createA4CanvasPx();
+    let ctx = makePageContext(page);
+    let y = margin;
+
+    const newPage = () => {
+        pages.push(page);
+        page = createA4CanvasPx();
+        ctx = makePageContext(page);
+        y = margin;
+    };
+
+    const ensure = (needH) => {
+        if (y + needH > 1754 - margin) newPage();
+    };
+
+    // Header
+    ctx.font = 'bold 44px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('데이터 분석 리포트', margin, y);
+    y += 64;
+
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillStyle = '#4b5563';
+    ctx.fillText(`생성일: ${snapshot.generatedAt}`, margin, y);
+    y += 46;
+
+    // Data summary card
+    ensure(220);
+    ctx.fillStyle = '#f3f4f6';
+    ctx.fillRect(margin, y, contentW, 180);
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 26px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('데이터 요약', margin + 24, y + 18);
+
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    const d = snapshot.data || {};
+    ctx.fillText(`Rows: ${d.validRows} (raw: ${d.totalRows})`, margin + 24, y + 62);
+    ctx.fillText(`Users: ${d.uniqueUsers}`, margin + 24, y + 96);
+    ctx.fillText(`기간: ${d.dateMin} ~ ${d.dateMax}`, margin + 24, y + 130);
+    y += 210;
+
+    // Funnel section text
+    ensure(120);
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 30px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('퍼널 요약', margin, y);
+    y += 44;
+
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    if (snapshot.funnel && snapshot.funnel.length) {
+        snapshot.funnel.slice(0, 6).forEach(step => {
+            ensure(40);
+            const s = `${step.step || step.name || 'step'}: ${step.users ?? 'N/A'}명 (${step.conversionRate ?? 'N/A'}%)`;
+            y = wrapText(ctx, `• ${s}`, margin, y, contentW, lineH);
+        });
+    } else {
+        y = wrapText(ctx, '• (퍼널 결과가 없습니다. 퍼널 계산 후 다시 시도하세요)', margin, y, contentW, lineH);
+    }
+    y += 12;
+
+    // Funnel chart
+    ensure(420);
+    ctx.font = 'bold 26px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('퍼널 차트', margin, y);
+    y += 40;
+
+    const chartH = 340;
+    const okF = drawCanvasWithBg(ctx, charts.funnel, margin, y, contentW, chartH, '#0b1020');
+    if (!okF) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+        ctx.fillText('(차트가 아직 생성되지 않았습니다)', margin, y + 10);
+        ctx.fillStyle = '#111827';
+    }
+    y += chartH + 30;
+
+    // Retention section
+    ensure(120);
+    ctx.font = 'bold 30px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('리텐션 요약', margin, y);
+    y += 44;
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+
+    if (snapshot.retention && snapshot.retention.matrix) {
+        // Calculate average retention for D1/D7/D14
+        const matrix = snapshot.retention.matrix;
+        const avg = (day) => {
+            let sum = 0, cnt = 0;
+            matrix.forEach(row => {
+                if (row && row[day] != null && row[day] !== '' && !isNaN(row[day])) {
+                    sum += Number(row[day]);
+                    cnt++;
+                }
+            });
+            return cnt ? (sum / cnt).toFixed(1) : 'N/A';
+        };
+        y = wrapText(ctx, `• D1 평균: ${avg(1)}%`, margin, y, contentW, lineH);
+        y = wrapText(ctx, `• D7 평균: ${avg(7)}%`, margin, y, contentW, lineH);
+        y = wrapText(ctx, `• D14 평균: ${avg(14)}%`, margin, y, contentW, lineH);
+    } else {
+        y = wrapText(ctx, '• (리텐션 결과가 없습니다. 리텐션 계산 후 다시 시도하세요)', margin, y, contentW, lineH);
+    }
+    y += 12;
+
+    // Retention chart
+    ensure(420);
+    ctx.font = 'bold 26px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('리텐션 차트', margin, y);
+    y += 40;
+
+    const okR = drawCanvasWithBg(ctx, charts.retention, margin, y, contentW, chartH, '#0b1020');
+    if (!okR) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+        ctx.fillText('(차트가 아직 생성되지 않았습니다)', margin, y + 10);
+        ctx.fillStyle = '#111827';
+    }
+    y += chartH + 30;
+
+    // Segment chart may overflow -> proactive new page
+    ensure(520);
+    ctx.font = 'bold 30px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('세그먼트 요약', margin, y);
+    y += 44;
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+
+    if (snapshot.segment && Array.isArray(snapshot.segment)) {
+        const sorted = snapshot.segment.slice().sort((a, b) => (b.conversion || 0) - (a.conversion || 0));
+        const top = sorted.slice(0, 3);
+        const bottom = sorted.slice(-3).reverse();
+
+        const topStr = top.map(s => `${s.segment || s.name}(${(s.conversion ?? 0).toFixed?.(1) ?? s.conversion}%)`).join(', ');
+        const bottomStr = bottom.map(s => `${s.segment || s.name}(${(s.conversion ?? 0).toFixed?.(1) ?? s.conversion}%)`).join(', ');
+
+        y = wrapText(ctx, `• Top3: ${topStr}`, margin, y, contentW, lineH);
+        y = wrapText(ctx, `• Bottom3: ${bottomStr}`, margin, y, contentW, lineH);
+    } else {
+        y = wrapText(ctx, '• (세그먼트 결과가 없습니다. 세그먼트 비교 후 다시 시도하세요)', margin, y, contentW, lineH);
+    }
+    y += 12;
+
+    ensure(420);
+    ctx.font = 'bold 26px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('세그먼트 차트', margin, y);
+    y += 40;
+
+    const okS = drawCanvasWithBg(ctx, charts.segment, margin, y, contentW, chartH, '#0b1020');
+    if (!okS) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+        ctx.fillText('(차트가 아직 생성되지 않았습니다)', margin, y + 10);
+        ctx.fillStyle = '#111827';
+    }
+    y += chartH + 30;
+
+    // Insights (top 5)
+    ensure(200);
+    ctx.font = 'bold 30px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+    ctx.fillText('핵심 인사이트', margin, y);
+    y += 44;
+    ctx.font = '24px "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+
+    if (snapshot.insights && snapshot.insights.length) {
+        snapshot.insights.slice(0, 5).forEach(ins => {
+            ensure(100);
+            const title = ins.title || ins.name || 'Insight';
+            const metric = ins.metric ? ` (${ins.metric})` : '';
+            y = wrapText(ctx, `• ${title}${metric}`, margin, y, contentW, lineH);
+            if (ins.detail || ins.body) {
+                y = wrapText(ctx, `  - ${ins.detail || ins.body}`, margin, y, contentW, lineH);
+            }
+            if (ins.action) {
+                y = wrapText(ctx, `  - 권장: ${ins.action}`, margin, y, contentW, lineH);
+            }
+            y += 8;
+        });
+    } else {
+        y = wrapText(ctx, '• (인사이트가 없습니다)', margin, y, contentW, lineH);
+    }
+
+    // Push last page
+    pages.push(page);
+    return pages;
+}
+
+// Export Report as PNG (PNG export workaround for sandbox/webview)
 function exportReport() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
-    applyKoreanFontToJsPdf(doc);
-    doc.setFont('NotoSansKR', 'normal');
+    try {
+        // Build snapshot and render pages
+        const snap = buildReportSnapshot();
+        const pages = renderReportPages(snap);
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 15;
-    const contentWidth = pageWidth - (margin * 2);
-    let yPos = 20;
-
-    // Helper function to check page break
-    function checkPageBreak(requiredSpace) {
-        if (yPos + requiredSpace > 280) {
-            doc.addPage();
-            yPos = 20;
-        }
-    }
-
-    // Helper function to add section title
-    function addSectionTitle(title, icon) {
-        checkPageBreak(15);
-        doc.setFontSize(14);
-        doc.setTextColor(99, 102, 241); // Accent color
-        doc.text(`${icon} ${title}`, margin, yPos);
-        yPos += 8;
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(10);
-    }
-
-    // Helper function to add text line
-    function addText(text, indent = 0) {
-        checkPageBreak(6);
-        doc.text(text, margin + indent, yPos);
-        yPos += 5;
-    }
-
-    function addChartToPdf(canvasId, title) {
-        // Prefer the actual canvas in DOM
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-
-        // Section title for chart
-        checkPageBreak(12);
-        doc.setFontSize(11);
-        doc.setTextColor(50, 50, 50);
-        doc.text(title, margin, yPos);
-        yPos += 6;
-
-        const imgData = canvasToPngDataUrlWithBg(canvas, '#0b1020');
-        if (!imgData) {
-            doc.setFontSize(9);
-            doc.setTextColor(120, 120, 120);
-            doc.text('(차트 이미지를 생성하지 못했습니다)', margin, yPos);
-            yPos += 6;
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(10);
+        if (!pages || !pages.length) {
+            alert('리포트 생성에 실패했습니다.');
             return;
         }
 
-        // Scale to fit A4 content area
-        const ratio = (canvas.height && canvas.width) ? (canvas.height / canvas.width) : 0.5;
-        const maxW = contentWidth;
-        const maxH = 90; // mm cap to avoid overflow
+        // Export each page as PNG
+        pages.forEach((c, idx) => {
+            const pageNo = idx + 1;
+            const filename = makeReportPngFilename(pageNo);
 
-        let imgW = maxW;
-        let imgH = imgW * ratio;
+            c.toBlob((blob) => {
+                if (!blob) {
+                    console.warn('PNG blob 생성 실패', pageNo);
+                    return;
+                }
+                downloadOrOpenBlobStrong(blob, filename);
+            }, 'image/png', 1.0);
+        });
 
-        if (imgH > maxH) {
-            const scale = maxH / imgH;
-            imgW = imgW * scale;
-            imgH = imgH * scale;
+        // User guidance for hostile environments
+        if (isDownloadHostileEnv()) {
+            alert('다운로드가 제한된 환경일 수 있어요. 새 탭에 열린 이미지에서 "이미지 저장/공유"를 이용해주세요.');
         }
-
-        checkPageBreak(imgH + 10);
-
-        const x = margin + (contentWidth - imgW) / 2;
-        doc.addImage(imgData, 'PNG', x, yPos, imgW, imgH);
-        yPos += imgH + 8;
-
-        // Restore default text style
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(10);
+    } catch (e) {
+        console.error(e);
+        alert('리포트 내보내기 중 오류가 발생했습니다. 콘솔 로그를 확인해주세요.');
     }
-
-    // Title
-    doc.setFontSize(20);
-    doc.setTextColor(99, 102, 241);
-    doc.text('데이터 분석 리포트', pageWidth / 2, yPos, { align: 'center' });
-    yPos += 10;
-
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`생성일: ${new Date().toLocaleString('ko-KR')}`, pageWidth / 2, yPos, { align: 'center' });
-    yPos += 15;
-
-    doc.setTextColor(0, 0, 0);
-
-    // 1. 데이터 품질 요약
-    if (AppState.processedData && AppState.processedData.length > 0) {
-        const report = generateDataQualityReport();
-        addSectionTitle('데이터 품질 요약', '📊');
-
-        addText(`• 총 행수: ${report.totalRows.toLocaleString()}`);
-        addText(`• 유효 행수: ${report.validRows.toLocaleString()}`);
-        addText(`• 파싱 실패: ${report.failedRows.toLocaleString()}`);
-        addText(`• 고유 사용자: ${report.uniqueUsers.toLocaleString()}`);
-        if (report.minDate && report.maxDate) {
-            addText(`• 날짜 범위: ${report.minDate.toLocaleDateString()} ~ ${report.maxDate.toLocaleDateString()}`);
-        }
-        addText(`• Platform 결측률: ${report.platformMissingRate}%`);
-        addText(`• Channel 결측률: ${report.channelMissingRate}%`);
-        yPos += 5;
-
-        // Top 10 Events Table
-        if (report.topEvents.length > 0) {
-            checkPageBreak(50);
-            doc.setFontSize(11);
-            doc.text('Top 10 이벤트:', margin, yPos);
-            yPos += 6;
-
-            doc.setFontSize(9);
-            doc.setFillColor(240, 240, 250);
-            doc.rect(margin, yPos - 4, contentWidth, 6, 'F');
-            doc.text('이벤트명', margin + 2, yPos);
-            doc.text('건수', margin + 80, yPos);
-            doc.text('비중(%)', margin + 110, yPos);
-            yPos += 6;
-
-            report.topEvents.slice(0, 5).forEach(evt => {
-                doc.text(evt.name.substring(0, 35), margin + 2, yPos);
-                doc.text(evt.count.toLocaleString(), margin + 80, yPos);
-                doc.text(`${evt.percentage}%`, margin + 110, yPos);
-                yPos += 5;
-            });
-            yPos += 5;
-        }
-    }
-
-    // 2. 퍼널 분석 결과
-    if (AppState.funnelResults && AppState.funnelResults.length > 0) {
-        addSectionTitle('퍼널 분석 결과', '🔽');
-
-        doc.setFontSize(9);
-        doc.setFillColor(240, 240, 250);
-        doc.rect(margin, yPos - 4, contentWidth, 6, 'F');
-        doc.text('단계', margin + 2, yPos);
-        doc.text('사용자', margin + 60, yPos);
-        doc.text('전환율', margin + 95, yPos);
-        doc.text('이탈', margin + 125, yPos);
-        yPos += 6;
-
-        AppState.funnelResults.forEach(step => {
-            checkPageBreak(6);
-            doc.text(step.step.substring(0, 25), margin + 2, yPos);
-            doc.text(step.users.toLocaleString(), margin + 60, yPos);
-            doc.text(`${step.conversionRate.toFixed(1)}%`, margin + 95, yPos);
-            doc.text(step.dropOff.toLocaleString(), margin + 125, yPos);
-            yPos += 5;
-        });
-        yPos += 5;
-        addChartToPdf('funnelChart', '퍼널 차트');
-    }
-
-    // 3. 리텐션 요약
-    if (AppState.retentionResults && AppState.retentionResults.length > 0) {
-        addSectionTitle('리텐션 요약', '📈');
-
-        const avgRetention = {};
-        ['D1', 'D7', 'D14'].forEach(day => {
-            const dayIndex = parseInt(day.substring(1));
-            const validValues = AppState.retentionResults
-                .map(r => r.retention ? r.retention[dayIndex] : (r.days ? r.days[day] : null))
-                .filter(v => v !== null && v !== undefined);
-            if (validValues.length > 0) {
-                avgRetention[day] = (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1);
-            }
-        });
-
-        addText(`• D1 리텐션: ${avgRetention.D1 || 'N/A'}%`);
-        addText(`• D7 리텐션: ${avgRetention.D7 || 'N/A'}%`);
-        addText(`• D14 리텐션: ${avgRetention.D14 || 'N/A'}%`);
-        yPos += 5;
-        addChartToPdf('retentionChart', '리텐션 곡선');
-    }
-
-    // 4. 세그먼트 비교
-    if (AppState.segmentResults && AppState.segmentResults.length > 0) {
-        addSectionTitle('세그먼트 비교', '🔍');
-
-        const sorted = [...AppState.segmentResults].sort((a, b) => b.conversion - a.conversion);
-        addText(`• 최고 성과: ${sorted[0].name} (${sorted[0].conversion.toFixed(1)}%)`);
-        addText(`• 최저 성과: ${sorted[sorted.length - 1].name} (${sorted[sorted.length - 1].conversion.toFixed(1)}%)`);
-        yPos += 3;
-
-        doc.setFontSize(9);
-        sorted.slice(0, 5).forEach(seg => {
-            checkPageBreak(5);
-            doc.text(`  - ${seg.name}: ${seg.conversion.toFixed(1)}%`, margin, yPos);
-            yPos += 4;
-        });
-        yPos += 5;
-        addChartToPdf('segmentChart', '세그먼트 전환율 비교');
-    }
-
-    // 5. 인사이트
-    if (AppState.insights && AppState.insights.length > 0) {
-        addSectionTitle('주요 인사이트', '💡');
-
-        AppState.insights.slice(0, 5).forEach((insight, index) => {
-            checkPageBreak(25);
-
-            doc.setFontSize(11);
-            doc.setTextColor(50, 50, 50);
-            doc.text(`${index + 1}. ${insight.title}`, margin, yPos);
-            yPos += 6;
-
-            doc.setFontSize(9);
-            doc.setTextColor(80, 80, 80);
-
-            // Split long text into multiple lines
-            const lines = doc.splitTextToSize(insight.body, contentWidth - 5);
-            lines.forEach(line => {
-                checkPageBreak(5);
-                doc.text(line, margin + 3, yPos);
-                yPos += 4;
-            });
-
-            if (insight.metric) {
-                yPos += 2;
-                doc.setTextColor(99, 102, 241);
-                doc.text(`핵심 지표: ${insight.metric}`, margin + 3, yPos);
-                yPos += 5;
-            }
-
-            doc.setTextColor(0, 0, 0);
-            yPos += 3;
-        });
-    }
-
-    // Footer
-    checkPageBreak(20);
-    yPos += 10;
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text('이 리포트는 Funnel & Retention Explorer에서 자동 생성되었습니다.', pageWidth / 2, yPos, { align: 'center' });
-
-    // Save PDF (force proper filename + mime)
-    downloadPdfWithFilename(doc, `analysis_report_${Date.now()}.pdf`);
 }

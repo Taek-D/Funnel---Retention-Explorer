@@ -42,6 +42,21 @@
 - **리텐션 급락 지점**: 가장 큰 리텐션 하락 발생 시기 식별
 - **모범 사례 세그먼트**: 최고 성과 세그먼트 분석 (10% 이상 전환율)
 
+### 📷 리포트 내보내기 (PNG)
+- **🆕 PNG 이미지 형식**: PDF 대신 PNG로 내보내기 (환경 제약 최소화)
+- **🆕 제한 환경 대응**: iframe, webview, iOS Safari 등에서도 동작
+  - 다운로드 가능 환경: 자동 PNG 다운로드
+  - 다운로드 차단 환경: 새 탭으로 이미지 열기 → 사용자가 저장/공유
+- **멀티페이지 지원**: 리포트가 길면 A4 단위로 자동 분할 (page_1, page_2...)
+- **한글 완벽 지원**: Canvas 텍스트 렌더링 + 자동 줄바꿈
+- **차트 포함**: 퍼널, 리텐션, 세그먼트 차트를 배경과 함께 이미지화
+- **포함 내용**:
+  - 데이터 품질 요약 (행수, 사용자수, 날짜 범위)
+  - 퍼널 분석 결과 및 차트
+  - 리텐션 코호트 요약 및 차트
+  - 세그먼트 비교 결과 및 차트
+  - 핵심 인사이트 (최대 5개)
+
 ## 🚀 시작하기
 
 ### 실행 방법
@@ -103,11 +118,13 @@ timestamp,user_id,event_name,session_id,platform,channel
 
 ```
 Funnel & Retention Explorer/
-├── index.html           # 메인 HTML 파일
-├── app.js              # 핵심 로직 및 데이터 처리
-├── charts.js           # Chart.js 차트 렌더링
-├── styles.css          # 스타일시트
-└── README.md           # 이 파일
+├── index.html                      # 메인 HTML 파일
+├── app.js                         # 핵심 로직 및 데이터 처리
+├── charts.js                      # Chart.js 차트 렌더링
+├── styles.css                     # 스타일시트
+├── pdf_font_noto_sans_kr.js      # 한글 폰트 (레거시)
+├── README.md                      # 이 파일
+└── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
 ```
 
 ## 🛠️ 기술 스택
@@ -121,6 +138,7 @@ Funnel & Retention Explorer/
   - 이벤트 처리
   - 데이터 분석 알고리즘
   - localStorage를 통한 최근 파일 관리
+  - Canvas API를 통한 PNG 이미지 생성
 - **Chart.js**: 데이터 시각화
 - **PapaParse**: CSV 파일 파싱
 
@@ -176,6 +194,21 @@ Funnel & Retention Explorer/
    - 상세 분석
    - 권장 조치 사항
 4. 추가 퍼널 또는 리텐션 분석 후 새로운 인사이트도 자동 추가됨
+
+### 6️⃣ 리포트 내보내기 (PNG)
+
+1. "인사이트 카드" 탭으로 이동
+2. **"📷 리포트 다운로드 (PNG)"** 버튼 클릭
+3. 자동으로 리포트가 PNG 이미지로 생성됨:
+   - **일반 브라우저**: PNG 파일 자동 다운로드 (`analysis_report_YYYYMMDD_HHMM_page_1.png`)
+   - **제한 환경** (iframe/webview/iOS): 새 탭에 이미지 열림 → 이미지 길게 눌러 저장/공유
+4. 리포트가 길 경우 여러 페이지로 자동 분할됨 (page_1, page_2, page_3...)
+5. 각 페이지에는 다음 내용이 포함됨:
+   - 데이터 요약 (행수, 사용자수, 날짜 범위)
+   - 퍼널 분석 결과 + 차트
+   - 리텐션 코호트 요약 + 차트
+   - 세그먼트 비교 결과 + 차트
+   - 핵심 인사이트
 
 ## 💾 데이터 저장
 
