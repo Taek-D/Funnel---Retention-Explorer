@@ -143,6 +143,11 @@ return $json.insights && $json.insights.length >= 5;
 ### 첨부파일이 없음
 **문제**: 이메일은 오는데 PNG가 없음  
 **해결**: 
+- **워크플로우 업데이트됨**: 최신 `n8n-workflow-template.json` 파일 재import 필요
+  1. n8n에서 기존 워크플로우 삭제 (또는 비활성화)
+  2. 최신 `n8n-workflow-template.json` 재import
+  3. SMTP 설정 재입력
+  4. 워크플로우 활성화
 - **Convert to Binary** 노드가 올바르게 연결되었는지 확인
 - n8n 실행 로그에서 에러 확인
 - base64 데이터가 올바른지 확인

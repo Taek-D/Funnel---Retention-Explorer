@@ -136,10 +136,13 @@ Funnel & Retention Explorer/
 ├── styles.css                     # 스타일시트
 ├── pdf_font_noto_sans_kr.js      # 한글 폰트 (레거시)
 ├── README.md                      # 이 파일
-├── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
 ├── n8n-workflow-template.json    # n8n 워크플로우 템플릿 (원클릭 import)
 ├── N8N_QUICKSTART.md             # n8n 빠른 시작 가이드 (5분)
-└── N8N_WORKFLOW_GUIDE.md         # n8n 이메일 연동 완벽 가이드
+├── N8N_WORKFLOW_GUIDE.md         # n8n 이메일 연동 완벽 가이드
+├── TESTING_GUIDE.md              # 테스트 가이드
+├── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
+├── sample_ecommerce_events_3000.csv      # 이커머스 샘플 데이터
+└── sample_subscription_events_3000.csv   # 구독 서비스 샘플 데이터
 ```
 
 ## 🛠️ 기술 스택
