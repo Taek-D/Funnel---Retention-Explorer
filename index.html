@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funnel & Retention Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">📊 퍼널 & 리텐션 분석</h1>
+                <p class="app-subtitle">고급 분석 대시보드</p>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-screen="upload">
+                <span class="tab-icon">📤</span>
+                <span class="tab-label">데이터 업로드</span>
+            </button>
+            <button class="tab-btn" data-screen="funnel">
+                <span class="tab-icon">🔽</span>
+                <span class="tab-label">퍼널 분석</span>
+            </button>
+            <button class="tab-btn" data-screen="retention">
+                <span class="tab-icon">📈</span>
+                <span class="tab-label">리텐션 코호트</span>
+            </button>
+            <button class="tab-btn" data-screen="segment">
+                <span class="tab-icon">🔍</span>
+                <span class="tab-label">세그먼트 비교</span>
+            </button>
+            <button class="tab-btn" data-screen="insights">
+                <span class="tab-icon">💡</span>
+                <span class="tab-label">인사이트 카드</span>
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Screen 1: Upload & Mapping -->
+            <div id="screen-upload" class="screen active">
+                <div class="screen-header">
+                    <h2>데이터 업로드 및 컬럼 매핑</h2>
+                    <p>CSV 파일을 업로드하고 필요한 컬럼을 매핑하세요</p>
+                </div>
+
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <h3>CSV 파일을 여기에 드래그하거나 클릭하여 선택하세요</h3>
+                        <p>이커머스 및 구독 이벤트 데이터 지원</p>
+                        <input type="file" id="fileInput" accept=".csv" hidden>
+                    </div>
+
+                    <div class="recent-files">
+                        <h4>최근 열어본 파일:</h4>
+                        <div id="recentFilesList" class="recent-files-list">
+                            <p class="no-recent-files">아직 열어본 파일이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mapping-section" id="mappingSection" style="display: none;">
+                    <h3>컬럼 매핑</h3>
+                    <div class="mapping-grid">
+                        <div class="mapping-field">
+                            <label>타임스탬프 컬럼 *</label>
+                            <select id="mapTimestamp" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                        <div class="mapping-field">
+                            <label>사용자 ID 컬럼 *</label>
+                            <select id="mapUserId" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                        <div class="mapping-field">
+                            <label>이벤트 이름 컬럼 *</label>
+                            <select id="mapEventName" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                        <div class="mapping-field">
+                            <label>세션 ID 컬럼</label>
+                            <select id="mapSessionId" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                        <div class="mapping-field">
+                            <label>플랫폼 컬럼</label>
+                            <select id="mapPlatform" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                        <div class="mapping-field">
+                            <label>채널 컬럼</label>
+                            <select id="mapChannel" class="mapping-select">
+                                <option value="">컬럼 선택...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="preview-section">
+                        <h4>데이터 미리보기 (처음 10행)</h4>
+                        <div class="table-container">
+                            <table id="previewTable"></table>
+                        </div>
+                    </div>
+
+                    <div id="progressContainer" class="progress-container" style="display: none;">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <div id="progressText" class="progress-text">데이터 처리 중...</div>
+                    </div>
+
+                    <button class="btn btn-primary" id="confirmMapping">
+                        매핑 확인 및 데이터 처리
+                    </button>
+
+                    <!-- Data Quality Summary Panel -->
+                    <div id="dataQualitySummary" class="data-quality-summary" style="display: none;">
+                        <h3>📊 데이터 품질 요약</h3>
+                        <div class="quality-grid">
+                            <div class="quality-card">
+                                <div class="quality-label">총 행수</div>
+                                <div class="quality-value" id="qTotalRows">-</div>
+                            </div>
+                            <div class="quality-card">
+                                <div class="quality-label">유효 행수</div>
+                                <div class="quality-value" id="qValidRows">-</div>
+                            </div>
+                            <div class="quality-card">
+                                <div class="quality-label">고유 사용자</div>
+                                <div class="quality-value" id="qUniqueUsers">-</div>
+                            </div>
+                            <div class="quality-card">
+                                <div class="quality-label">날짜 범위</div>
+                                <div class="quality-value" id="qDateRange">-</div>
+                            </div>
+                            <div class="quality-card">
+                                <div class="quality-label">Platform 결측률</div>
+                                <div class="quality-value" id="qPlatformMissing">-</div>
+                            </div>
+                            <div class="quality-card">
+                                <div class="quality-label">Channel 결측률</div>
+                                <div class="quality-value" id="qChannelMissing">-</div>
+                            </div>
+                        </div>
+                        <div class="quality-table-section">
+                            <h4>Top 10 이벤트</h4>
+                            <table id="qTop10Events" class="results-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 2: Funnel Builder -->
+            <div id="screen-funnel" class="screen">
+                <div class="screen-header">
+                    <h2>퍼널 분석</h2>
+                    <p>전환 퍼널을 구축하고 분석하세요</p>
+                </div>
+
+                <div class="funnel-builder">
+                    <div class="builder-controls">
+                        <h3>퍼널 단계 선택</h3>
+                        <div class="template-buttons">
+                            <button class="btn btn-secondary" id="loadEcommerceFunnel">
+                                🛒 이커머스 퍼널
+                            </button>
+                            <button class="btn btn-secondary" id="loadSubscriptionFunnel">
+                                📱 구독 퍼널
+                            </button>
+                        </div>
+                        <div id="funnelStepsContainer" class="funnel-steps-container">
+                            <!-- 동적으로 퍼널 단계가 추가됩니다 -->
+                        </div>
+                        <button class="btn btn-primary" id="calculateFunnel">
+                            퍼널 계산
+                        </button>
+                    </div>
+
+                    <div class="funnel-results" id="funnelResults" style="display: none;">
+                        <div class="chart-container">
+                            <canvas id="funnelChart"></canvas>
+                        </div>
+                        <div class="funnel-table-container">
+                            <table id="funnelTable" class="results-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Retention Cohort -->
+            <div id="screen-retention" class="screen">
+                <div class="screen-header">
+                    <h2>리텐션 코호트 분석</h2>
+                    <p>시간 경과에 따른 사용자 리텐션을 분석하세요</p>
+                </div>
+
+                <div class="retention-controls">
+                    <div class="control-group">
+                        <label>코호트 이벤트 (첫 이벤트)</label>
+                        <select id="cohortEvent" class="control-select">
+                            <option value="">이벤트 선택...</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>활성 이벤트 (재방문 이벤트)</label>
+                        <select id="activeEvents" class="control-select" multiple size="4">
+                            <!-- 옵션이 동적으로 추가됩니다 -->
+                        </select>
+                        <small>Ctrl/Cmd를 눌러 여러 항목 선택</small>
+                    </div>
+                    <button class="btn btn-primary" id="calculateRetention">
+                        리텐션 계산
+                    </button>
+                </div>
+
+                <div class="retention-results" id="retentionResults" style="display: none;">
+                    <div class="retention-metrics">
+                        <div class="metric-card">
+                            <div class="metric-label">D1 리텐션</div>
+                            <div class="metric-value" id="d1Retention">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">D7 리텐션</div>
+                            <div class="metric-value" id="d7Retention">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">D14 리텐션</div>
+                            <div class="metric-value" id="d14Retention">-</div>
+                        </div>
+                    </div>
+
+                    <div class="retention-matrix-container">
+                        <h3>코호트 매트릭스</h3>
+                        <div class="table-container">
+                            <table id="retentionMatrix" class="retention-matrix"></table>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>리텐션 곡선</h3>
+                        <canvas id="retentionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 4: Segment Compare -->
+            <div id="screen-segment" class="screen">
+                <div class="screen-header">
+                    <h2>세그먼트 비교</h2>
+                    <p>다양한 세그먼트의 성과를 비교하세요</p>
+                </div>
+
+                <div class="segment-controls">
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="strictOrder"> 엄격 순서 (Strict Order)
+                        </label>
+                        <small>스텝이 순서대로 발생한 경우만 통과로 인정</small>
+                    </div>
+                    <div class="control-group">
+                        <label>기준 세그먼트</label>
+                        <select id="baselineSegment" class="control-select">
+                            <option value="all">전체 대비</option>
+                            <option value="best">최고 성과 대비</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>플랫폼 세그먼트</label>
+                        <div class="checkbox-group" id="platformSegments">
+                            <!-- 체크박스가 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>채널 세그먼트</label>
+                        <div class="checkbox-group" id="channelSegments">
+                            <!-- 체크박스가 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="compareSegments">
+                        세그먼트 비교
+                    </button>
+                </div>
+
+                <div class="segment-results" id="segmentResults" style="display: none;">
+                    <div class="chart-container">
+                        <canvas id="segmentChart"></canvas>
+                    </div>
+                    <div class="table-container">
+                        <table id="segmentTable" class="results-table"></table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 5: Insight Cards -->
+            <div id="screen-insights" class="screen">
+                <div class="screen-header">
+                    <h2>자동 인사이트</h2>
+                    <p>데이터 기반 인사이트 및 추천</p>
+                    <button class="btn btn-secondary" id="exportReport" style="margin-top: 10px;">
+                        📥 리포트 다운로드 (PDF)
+                    </button>
+                </div>
+
+                <div id="insightsContainer" class="insights-grid">
+                    <div class="insight-placeholder">
+                        <p>퍼널 분석 및 리텐션 코호트 화면에서 데이터를 처리하여 인사이트를 생성하세요.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="pdf_font_noto_sans_kr.js"></script>
+    <script src="app.js"></script>
+    <script src="charts.js"></script>
+</body>
+
+</html>
