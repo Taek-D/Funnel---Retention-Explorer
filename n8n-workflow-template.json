@@ -1,0 +1,107 @@
+{
+  "name": "Analytics Report Email Sender",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "analytics-report",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "analytics-report"
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = $input.item.json;\n\n// 테스트 요청 처리\nif (body.test === true) {\n  return {\n    json: {\n      success: true,\n      message: '테스트 성공',\n      timestamp: new Date().toISOString()\n    }\n  };\n}\n\n// 실제 리포트 데이터 처리\nconst reportData = body.reportData || {};\nconst dataQuality = reportData.dataQuality || {};\nconst insights = reportData.insights || [];\n\n// 이메일 본문 HTML 생성\nconst emailBody = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }\n    h2 { color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 10px; }\n    h3 { color: #6366f1; margin-top: 20px; }\n    ul { list-style-type: none; padding-left: 0; }\n    li { padding: 8px 0; border-bottom: 1px solid #e5e7eb; }\n    .metric { background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 10px 0; }\n    .metric-label { font-weight: bold; color: #6b7280; }\n    .metric-value { font-size: 1.2em; color: #111827; }\n    .insight { background: #fef3c7; padding: 12px; border-left: 4px solid #f59e0b; margin: 10px 0; border-radius: 4px; }\n    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.9em; }\n  </style>\n</head>\n<body>\n  <h2>📊 데이터 분석 리포트</h2>\n  <p><strong>생성 시간:</strong> ${reportData.generatedAt || 'N/A'}</p>\n  \n  <h3>📈 데이터 요약</h3>\n  <div class=\"metric\">\n    <div><span class=\"metric-label\">총 행수:</span> <span class=\"metric-value\">${dataQuality.totalRows?.toLocaleString() || 'N/A'}</span></div>\n    <div><span class=\"metric-label\">유효 행수:</span> <span class=\"metric-value\">${dataQuality.validRows?.toLocaleString() || 'N/A'}</span></div>\n    <div><span class=\"metric-label\">고유 사용자:</span> <span class=\"metric-value\">${dataQuality.uniqueUsers?.toLocaleString() || 'N/A'}</span></div>\n    <div><span class=\"metric-label\">분석 기간:</span> <span class=\"metric-value\">${dataQuality.dateMin || 'N/A'} ~ ${dataQuality.dateMax || 'N/A'}</span></div>\n  </div>\n  \n  <h3>💡 주요 인사이트</h3>\n  ${insights.slice(0, 5).map(insight => `\n    <div class=\"insight\">\n      <strong>${insight.title || 'Insight'}</strong>\n      ${insight.metric ? `<br><em>지표: ${insight.metric}</em>` : ''}\n      <p>${insight.body || ''}</p>\n      ${insight.action ? `<p><strong>권장 조치:</strong> ${insight.action}</p>` : ''}\n    </div>\n  `).join('')}\n  \n  <div class=\"footer\">\n    <p><strong>📎 첨부 파일:</strong> ${body.pageCount || 0}개의 상세 분석 차트 PNG 이미지</p>\n    <p><em>첨부된 이미지에서 전체 분석 결과를 확인하실 수 있습니다.</em></p>\n    <p>본 리포트는 Funnel & Retention Explorer에서 자동 생성되었습니다.</p>\n  </div>\n</body>\n</html>\n`;\n\n// 다음 노드로 전달할 데이터\nreturn {\n  json: {\n    emailTo: body.emailTo,\n    subject: body.subject,\n    htmlBody: emailBody,\n    attachments: body.attachments || [],\n    pageCount: body.pageCount || 0\n  }\n};"
+      },
+      "id": "parse-data-node",
+      "name": "Parse Report Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const attachments = $json.attachments || [];\n\n// base64를 binary로 변환\nfor (const att of attachments) {\n  const binaryData = Buffer.from(att.content, 'base64');\n  \n  $binary[att.filename] = {\n    data: binaryData.toString('base64'),\n    mimeType: att.mimeType || 'image/png',\n    fileName: att.filename,\n    fileExtension: 'png'\n  };\n}\n\nreturn {\n  json: $json,\n  binary: $binary\n};"
+      },
+      "id": "convert-binary-node",
+      "name": "Convert to Binary",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@yourcompany.com",
+        "toEmail": "={{ $json.emailTo.join(\", \") }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "attachments": "={{ $json.attachments.map(att => att.filename).join(\",\") }}"
+        }
+      },
+      "id": "email-node",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [900, 300],
+      "credentials": {
+        "smtp": {
+          "id": "1",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Report Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Report Data": {
+      "main": [
+        [
+          {
+            "node": "Convert to Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Binary": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "id": "analytics-report-email",
+  "meta": {
+    "instanceId": "your-instance-id"
+  },
+  "tags": []
+}

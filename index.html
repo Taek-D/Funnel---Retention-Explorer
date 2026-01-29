@@ -312,9 +312,52 @@
                 <div class="screen-header">
                     <h2>자동 인사이트</h2>
                     <p>데이터 기반 인사이트 및 추천</p>
-                    <button class="btn btn-secondary" id="exportReport" style="margin-top: 10px;">
-                        📷 리포트 다운로드 (PNG)
-                    </button>
+
+                    <!-- Report Export Buttons -->
+                    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" id="exportReport">
+                            📷 리포트 다운로드 (PNG)
+                        </button>
+                        <button class="btn btn-primary" id="sendEmailReport">
+                            📧 이메일로 발송
+                        </button>
+                        <button class="btn btn-secondary" id="toggleN8nSettings" style="margin-left: auto;">
+                            ⚙️ 이메일 설정
+                        </button>
+                    </div>
+
+                    <!-- n8n Settings Panel (collapsible) -->
+                    <div id="n8nSettingsPanel" class="n8n-settings-panel" style="display: none; margin-top: 15px;">
+                        <h3 style="font-size: 16px; margin-bottom: 10px;">📧 n8n 이메일 설정</h3>
+                        <div class="mapping-grid" style="grid-template-columns: 1fr;">
+                            <div class="mapping-field">
+                                <label>n8n Webhook URL *</label>
+                                <input type="text" id="n8nWebhookUrl" class="mapping-select"
+                                    placeholder="https://your-n8n-instance.com/webhook/..." style="width: 100%;">
+                                <small style="color: #9ca3af;">n8n 워크플로우의 webhook URL을 입력하세요</small>
+                            </div>
+                            <div class="mapping-field">
+                                <label>수신 이메일 주소 *</label>
+                                <input type="text" id="emailRecipients" class="mapping-select"
+                                    placeholder="user@example.com, user2@example.com" style="width: 100%;">
+                                <small style="color: #9ca3af;">여러 주소는 쉼표(,)로 구분하세요</small>
+                            </div>
+                            <div class="mapping-field">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="autoSendEmail">
+                                    분석 완료 시 자동으로 이메일 발송
+                                </label>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-primary" id="saveN8nSettings">
+                                    💾 설정 저장
+                                </button>
+                                <button class="btn btn-secondary" id="testN8nWebhook">
+                                    🔍 연결 테스트
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="insightsContainer" class="insights-grid">

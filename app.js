@@ -93,6 +93,30 @@ function initializeEventListeners() {
     if (exportBtn) {
         exportBtn.addEventListener('click', exportReport);
     }
+
+    // n8n Email Integration
+    const sendEmailBtn = document.getElementById('sendEmailReport');
+    if (sendEmailBtn) {
+        sendEmailBtn.addEventListener('click', sendReportViaEmail);
+    }
+
+    const toggleSettingsBtn = document.getElementById('toggleN8nSettings');
+    if (toggleSettingsBtn) {
+        toggleSettingsBtn.addEventListener('click', toggleN8nSettings);
+    }
+
+    const saveSettingsBtn = document.getElementById('saveN8nSettings');
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', saveN8nSettings);
+    }
+
+    const testWebhookBtn = document.getElementById('testN8nWebhook');
+    if (testWebhookBtn) {
+        testWebhookBtn.addEventListener('click', testN8nWebhook);
+    }
+
+    // Load saved n8n settings on startup
+    loadN8nSettings();
 }
 
 // Screen Navigation
@@ -2085,5 +2109,231 @@ function exportReport() {
     } catch (e) {
         console.error(e);
         alert('리포트 내보내기 중 오류가 발생했습니다. 콘솔 로그를 확인해주세요.');
+    }
+}
+
+// ===== n8n Email Integration =====
+
+// Toggle n8n settings panel visibility
+function toggleN8nSettings() {
+    const panel = document.getElementById('n8nSettingsPanel');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// Load n8n settings from localStorage
+function loadN8nSettings() {
+    try {
+        const settings = JSON.parse(localStorage.getItem('n8nSettings') || '{}');
+
+        if (settings.webhookUrl) {
+            document.getElementById('n8nWebhookUrl').value = settings.webhookUrl;
+        }
+        if (settings.emailRecipients) {
+            document.getElementById('emailRecipients').value = settings.emailRecipients;
+        }
+        if (settings.autoSend !== undefined) {
+            document.getElementById('autoSendEmail').checked = settings.autoSend;
+        }
+    } catch (e) {
+        console.warn('Failed to load n8n settings:', e);
+    }
+}
+
+// Save n8n settings to localStorage
+function saveN8nSettings() {
+    const webhookUrl = document.getElementById('n8nWebhookUrl').value.trim();
+    const emailRecipients = document.getElementById('emailRecipients').value.trim();
+    const autoSend = document.getElementById('autoSendEmail').checked;
+
+    if (!webhookUrl) {
+        alert('n8n Webhook URL을 입력해주세요.');
+        return;
+    }
+
+    if (!emailRecipients) {
+        alert('수신 이메일 주소를 입력해주세요.');
+        return;
+    }
+
+    // Validate webhook URL format
+    try {
+        new URL(webhookUrl);
+    } catch (e) {
+        alert('올바른 URL 형식이 아닙니다. https://로 시작하는 URL을 입력해주세요.');
+        return;
+    }
+
+    const settings = {
+        webhookUrl,
+        emailRecipients,
+        autoSend
+    };
+
+    localStorage.setItem('n8nSettings', JSON.stringify(settings));
+    alert('설정이 저장되었습니다! ✅');
+}
+
+// Validate n8n settings
+function validateN8nSettings() {
+    const settings = JSON.parse(localStorage.getItem('n8nSettings') || '{}');
+
+    if (!settings.webhookUrl || !settings.emailRecipients) {
+        alert('⚙️ 이메일 설정이 필요합니다.\n\n"이메일 설정" 버튼을 클릭하여 n8n webhook URL과 수신 이메일 주소를 입력해주세요.');
+        return null;
+    }
+
+    return settings;
+}
+
+// Test n8n webhook connection
+async function testN8nWebhook() {
+    const settings = validateN8nSettings();
+    if (!settings) return;
+
+    const testBtn = document.getElementById('testN8nWebhook');
+    const originalText = testBtn.textContent;
+    testBtn.textContent = '테스트 중...';
+    testBtn.disabled = true;
+
+    try {
+        const response = await fetch(settings.webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                test: true,
+                message: 'n8n webhook 연결 테스트',
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        if (response.ok) {
+            alert('✅ n8n webhook 연결 성공!\n\nwebhook이 정상적으로 작동합니다.');
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Webhook test failed:', error);
+        alert(`❌ Webhook 연결 실패\n\n${error.message}\n\n• n8n webhook URL이 올바른지 확인하세요\n• n8n 워크플로우가 활성화되어 있는지 확인하세요\n• CORS 설정이 올바른지 확인하세요`);
+    } finally {
+        testBtn.textContent = originalText;
+        testBtn.disabled = false;
+    }
+}
+
+// Convert canvas pages to base64 strings
+async function convertPagesToBase64(pages) {
+    const attachments = [];
+
+    for (let i = 0; i < pages.length; i++) {
+        const canvas = pages[i];
+        const pageNo = i + 1;
+        const filename = makeReportPngFilename(pageNo);
+
+        // Convert canvas to base64
+        const base64Data = canvas.toDataURL('image/png', 1.0).split(',')[1]; // Remove data:image/png;base64, prefix
+
+        attachments.push({
+            filename: filename,
+            content: base64Data,
+            mimeType: 'image/png'
+        });
+    }
+
+    return attachments;
+}
+
+// Send report via email through n8n webhook
+async function sendReportViaEmail() {
+    // Validate settings
+    const settings = validateN8nSettings();
+    if (!settings) return;
+
+    const sendBtn = document.getElementById('sendEmailReport');
+    const originalText = sendBtn.textContent;
+    sendBtn.textContent = '📧 발송 중...';
+    sendBtn.disabled = true;
+
+    try {
+        // Build snapshot and render pages
+        const snap = buildReportSnapshot();
+        const pages = renderReportPages(snap);
+
+        if (!pages || !pages.length) {
+            alert('리포트 생성에 실패했습니다.');
+            return;
+        }
+
+        // Convert pages to base64
+        const attachments = await convertPagesToBase64(pages);
+
+        // Parse email recipients
+        const emailTo = settings.emailRecipients
+            .split(',')
+            .map(email => email.trim())
+            .filter(email => email.length > 0);
+
+        // Prepare email data
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+        const emailData = {
+            emailTo: emailTo,
+            subject: `데이터 분석 리포트 - ${dateStr}`,
+            reportData: {
+                generatedAt: snap.generatedAt,
+                dataQuality: snap.data,
+                funnel: snap.funnel,
+                retention: snap.retention,
+                segment: snap.segment,
+                insights: snap.insights
+            },
+            attachments: attachments,
+            pageCount: pages.length
+        };
+
+        // Send to n8n webhook
+        const response = await fetch(settings.webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        if (response.ok) {
+            const result = await response.json().catch(() => ({}));
+            alert(`✅ 이메일 발송 요청 성공!\n\n수신자: ${emailTo.join(', ')}\n페이지 수: ${pages.length}장\n\nn8n에서 이메일을 발송 중입니다.`);
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+    } catch (error) {
+        console.error('Email send failed:', error);
+        alert(`❌ 이메일 발송 실패\n\n${error.message}\n\n• webhook URL이 올바른지 확인하세요\n• n8n 워크플로우가 활성화되어 있는지 확인하세요\n• 네트워크 연결을 확인하세요`);
+    } finally {
+        sendBtn.textContent = originalText;
+        sendBtn.disabled = false;
+    }
+}
+
+// Auto-send email after analysis (if enabled)
+async function autoSendEmailIfEnabled() {
+    try {
+        const settings = JSON.parse(localStorage.getItem('n8nSettings') || '{}');
+        if (settings.autoSend && settings.webhookUrl && settings.emailRecipients) {
+            // Add slight delay to ensure insights are generated
+            setTimeout(() => {
+                sendReportViaEmail();
+            }, 1000);
+        }
+    } catch (e) {
+        console.warn('Auto-send check failed:', e);
     }
 }

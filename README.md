@@ -57,6 +57,18 @@
   - 세그먼트 비교 결과 및 차트
   - 핵심 인사이트 (최대 5개)
 
+### 📧 n8n 이메일 연동
+- **🆕 자동 이메일 발송**: n8n webhook을 통한 리포트 이메일 전송
+- **간편한 설정**: 웹 UI에서 webhook URL과 수신자 설정
+- **멀티 수신자**: 쉼표로 구분하여 여러 이메일 주소 지정
+- **자동 발송 옵션**: 분석 완료 시 자동으로 이메일 발송
+- **연결 테스트**: webhook 연결 상태 실시간 확인
+- **base64 첨부**: PNG 리포트를 base64로 인코딩하여 전송
+- **🚀 원클릭 설정**: [n8n-workflow-template.json](./n8n-workflow-template.json) import로 즉시 시작
+- **빠른 시작**: [N8N_QUICKSTART.md](./N8N_QUICKSTART.md) (5분 설정)
+- **상세 가이드**: [N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md) (완벽 매뉴얼)
+
+
 ## 🚀 시작하기
 
 ### 실행 방법
@@ -124,7 +136,10 @@ Funnel & Retention Explorer/
 ├── styles.css                     # 스타일시트
 ├── pdf_font_noto_sans_kr.js      # 한글 폰트 (레거시)
 ├── README.md                      # 이 파일
-└── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
+├── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
+├── n8n-workflow-template.json    # n8n 워크플로우 템플릿 (원클릭 import)
+├── N8N_QUICKSTART.md             # n8n 빠른 시작 가이드 (5분)
+└── N8N_WORKFLOW_GUIDE.md         # n8n 이메일 연동 완벽 가이드
 ```
 
 ## 🛠️ 기술 스택
@@ -209,6 +224,28 @@ Funnel & Retention Explorer/
    - 리텐션 코호트 요약 + 차트
    - 세그먼트 비교 결과 + 차트
    - 핵심 인사이트
+
+### 7️⃣ n8n 이메일 발송 (선택사항)
+
+#### 초기 설정 (1회만)
+
+1. n8n 워크플로우 생성 (상세: [N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md))
+2. \"인사이트 카드\" 탭에서 **\"⚙️ 이메일 설정\"** 클릭
+3. 설정 입력:
+   - **n8n Webhook URL**: n8n 워크플로우의 webhook URL
+   - **수신 이메일 주소**: 리포트를 받을 이메일 (쉼표로 여러 주소 입력 가능)
+   - **자동 발송**: 원하면 "분석 완료 시 자동으로 이메일 발송" 체크
+4. **💾 설정 저장** 클릭
+5. **🔍 연결 테스트**로 webhook 연결 확인
+
+#### 이메일 발송
+
+1. 데이터 분석 완료 후 \"인사이트 카드\" 탭으로 이동
+2. **\"📧 이메일로 발송\"** 버튼 클릭
+3. n8n이 지정된 이메일 주소로 리포트 발송
+4. 이메일에는 다음이 포함됨:
+   - HTML 형식 리포트 요약
+   - PNG 이미지 첨부파일 (여러 페이지)
 
 ## 💾 데이터 저장
 
