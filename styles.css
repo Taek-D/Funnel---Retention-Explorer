@@ -1070,45 +1070,52 @@ table tr:hover {
 /* KPI Grid */
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-lg);
 }
 
 .kpi-card {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     border-radius: var(--radius-md);
     border: 1px solid rgba(99, 102, 241, 0.3);
     text-align: center;
+    min-width: 0;
+    /* Allow flex items to shrink below content size */
 }
 
 .kpi-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .kpi-value {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--text-primary);
     background: linear-gradient(135deg, #667eea, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    word-break: break-all;
 }
 
 .kpi-value.na {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     opacity: 0.5;
 }
 
 /* KPI Details Grid */
 .kpi-details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--spacing-md);
+    max-width: 100%;
 }
 
 .kpi-detail-card {
@@ -1116,16 +1123,23 @@ table tr:hover {
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
+    min-width: 0;
+    /* Prevent grid blowout */
+    overflow: hidden;
+    /* Contain all content */
 }
 
 .kpi-detail-card h4 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .kpi-detail-card h5 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin: var(--spacing-sm) 0;
     color: var(--text-secondary);
 }
@@ -1172,14 +1186,16 @@ table tr:hover {
 .churn-summary,
 .paid-retention-summary {
     display: flex;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
 }
 
 .trial-metric,
 .churn-metric,
 .retention-metric {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1191,26 +1207,38 @@ table tr:hover {
 .trial-metric .label,
 .churn-metric .label,
 .retention-metric .label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
+    text-align: center;
+    word-break: keep-all;
+    /* Prevent Korean text from breaking mid-word */
 }
 
 .trial-metric .value,
 .churn-metric .value,
 .retention-metric .value {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--accent-primary);
+    margin-top: 0.25rem;
 }
 
 /* Compact Table */
 .results-table.compact {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    width: 100%;
+    table-layout: auto;
 }
 
 .results-table.compact th,
 .results-table.compact td {
     padding: var(--spacing-xs) var(--spacing-sm);
+    white-space: nowrap;
+    /* Prevent Korean text from wrapping vertically */
+}
+
+.results-table.compact th {
+    font-size: 0.75rem;
 }
 
 /* Churn Reasons */
@@ -1281,6 +1309,15 @@ table tr:hover {
 @media (max-width: 768px) {
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xs);
+    }
+
+    .kpi-card {
+        padding: var(--spacing-xs);
+    }
+
+    .kpi-value {
+        font-size: 1.2rem;
     }
 
     .kpi-details-grid {
@@ -1294,6 +1331,23 @@ table tr:hover {
     .trial-summary,
     .churn-summary,
     .paid-retention-summary {
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .trial-metric,
+    .churn-metric,
+    .retention-metric {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .kpi-details-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
