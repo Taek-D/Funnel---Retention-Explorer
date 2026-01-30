@@ -42,7 +42,54 @@
 - **리텐션 급락 지점**: 가장 큰 리텐션 하락 발생 시기 식별
 - **모범 사례 세그먼트**: 최고 성과 세그먼트 분석 (10% 이상 전환율)
 
-### 📷 리포트 내보내기 (PNG)
+### � 구독 분석 (Subscription Analytics)
+구독 서비스 데이터가 감지되면 자동으로 활성화되는 전문 분석 기능:
+
+#### KPI 대시보드
+- **핵심 지표**: 총 사용자, 구독 전환율, 유료 사용자, 총 매출
+- **수익 분석**: ARPPU (평균 사용자당 매출)
+- **해지 분석**: 해지율, 결제 실패율, 갱신 성공률
+- **플랜 믹스**: 월간/연간 구독 비율 시각화
+
+#### Trial → Subscribe 전환 분석
+- **전환율 추적**: 무료 체험에서 유료 전환율
+- **전환 시간 분석**: 중간 전환 소요 시간
+- **체험 기간별 분석**: 7일/14일 등 체험 기간별 전환율 비교
+- **Sample Size Warning**: 샘플 수가 30 미만일 때 ⚠️ 경고 표시
+
+#### 해지 분석 (Churn Analysis)
+- **해지율 모니터링**: 전체 해지율 추적
+- **해지 사유 분석**: 상위 해지 사유 및 비율
+- **해지 시점 분석**: 평균 및 중간 해지 소요 시간
+- **플랜별 해지율**: 구독 플랜별 해지 패턴
+- **채널별 해지율**: 유입 채널별 해지 비교
+
+#### Paid Retention (유료 리텐션)
+- **Activity/Paid 토글**: 일반 활동 리텐션과 유료 리텐션 전환
+- **코호트 기반 분석**: 구독일 기준 코호트별 리텐션
+- **핵심 지표**: D7, D14, D30, D60, D90 유료 리텐션
+- **시각화**: 유료 사용자 유지율 매트릭스 및 곡선
+
+#### Lifecycle Funnel (생애주기 퍼널)
+- **전체 여정 추적**: app_open → signup → onboarding → trial → subscribe → renew
+- **단계별 전환율**: 각 단계별 전환율 및 이탈 수
+- **타이밍 분석**: 단계 간 소요 시간 측정
+
+#### 구독 세그먼트 비교
+- **체험 기간별**: 7일/14일 체험 기간별 성과 비교
+- **플랜별**: Monthly/Yearly 플랜별 전환율 분석
+- **해지 사유별**: 해지 사유별 패턴 분석
+
+#### 구독 인사이트
+- **낮은 Trial 전환**: 40% 미만 전환율 시 경고 및 개선 제안
+- **느린 전환 시간**: 72시간 이상 소요 시 온보딩 개선 제안
+- **높은 결제 실패**: 5% 이상 결제 실패 시 결제 시스템 점검 권고
+- **높은 해지율**: 10% 이상 해지율 시 원인 분석 및 대응 방안
+- **해지 사유 분석**: 상위 해지 사유별 맞춤 개선 방안 제시
+- **낮은 Paid Retention**: D7 70% 미만, D30 50% 미만 시 경고
+
+
+### �📷 리포트 내보내기 (PNG)
 - **🆕 PNG 이미지 형식**: PDF 대신 PNG로 내보내기 (환경 제약 최소화)
 - **🆕 제한 환경 대응**: iframe, webview, iOS Safari 등에서도 동작
   - 다운로드 가능 환경: 자동 PNG 다운로드
@@ -96,6 +143,8 @@
 
 CSV 파일에는 다음 컬럼이 포함되어야 합니다:
 
+#### 기본 컬럼 (모든 데이터 타입)
+
 | 컬럼 | 필수 | 설명 | 예시 |
 |------|------|------|------|
 | **timestamp** | ✅ | 이벤트 발생 시간 | 2023-01-01 10:00:00 |
@@ -104,6 +153,15 @@ CSV 파일에는 다음 컬럼이 포함되어야 합니다:
 | **session_id** | ⭕ | 세션 ID | session_abc123 |
 | **platform** | ⭕ | 플랫폼 | ios, android, web |
 | **channel** | ⭕ | 유입 채널 | google, facebook, organic |
+
+#### 구독 분석용 추가 컬럼 (선택사항)
+
+| 컬럼 | 필수 | 설명 | 예시 |
+|------|------|------|------|
+| **trial_days** | ⭕ | 무료 체험 기간 (일) | 7, 14, 30 |
+| **plan** | ⭕ | 구독 플랜 | monthly, yearly, premium |
+| **cancel_reason** | ⭕ | 해지 사유 | too_expensive, missing_features |
+| **revenue** | ⭕ | 매출 금액 | 9.99, 99.99 |
 
 **CSV 예시:**
 
@@ -118,13 +176,19 @@ timestamp,user_id,event_name,session_id,platform,channel
 
 **구독 서비스 데이터:**
 ```csv
-timestamp,user_id,event_name,session_id,platform,channel
-2023-01-01 10:00:00,user1,app_open,sess1,android,organic
-2023-01-01 10:05:00,user1,signup,sess1,android,organic
-2023-01-01 10:10:00,user1,onboarding_complete,sess1,android,organic
-2023-01-01 10:15:00,user1,start_trial,sess1,android,organic
-2023-01-01 10:20:00,user1,subscribe,sess1,android,organic
+timestamp,user_id,event_name,platform,channel,trial_days,plan,cancel_reason,revenue
+2024-01-01 09:00:00,user001,app_open,iOS,organic,,,
+2024-01-01 09:05:00,user001,signup,iOS,organic,,,
+2024-01-01 09:15:00,user001,start_trial,iOS,organic,7,,
+2024-01-08 10:00:00,user001,subscribe,iOS,organic,,monthly,19.99
+2024-02-08 10:00:00,user001,renew,iOS,organic,,monthly,19.99
+2024-03-08 10:00:00,user001,cancel,iOS,organic,,monthly,too_expensive
 ```
+
+**📁 샘플 데이터:**
+- `sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3000 이벤트)
+- `sample_subscription_data.csv` - 구독 서비스 샘플 (구독 분석 포함)
+
 
 ## 📁 파일 구조
 
@@ -141,8 +205,9 @@ Funnel & Retention Explorer/
 ├── N8N_WORKFLOW_GUIDE.md         # n8n 이메일 연동 완벽 가이드
 ├── TESTING_GUIDE.md              # 테스트 가이드
 ├── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
-├── sample_ecommerce_events_3000.csv      # 이커머스 샘플 데이터
-└── sample_subscription_events_3000.csv   # 구독 서비스 샘플 데이터
+├── sample_ecommerce_events_3000.csv      # 이커머스 샘플 데이터 (3000행)
+├── sample_subscription_events_3000.csv   # 구독 서비스 샘플 데이터 (3000행)
+└── sample_subscription_data.csv          # 구독 분석용 샘플 데이터 (상세)
 ```
 
 ## 🛠️ 기술 스택
@@ -190,28 +255,43 @@ Funnel & Retention Explorer/
 ### 3️⃣ 리텐션 분석
 
 1. "리텐션 코호트" 탭으로 이동
-2. 코호트 이벤트 (첫 이벤트) 선택
-3. 활성 이벤트 (재방문 이벤트) 선택 (Ctrl/Cmd로 다중 선택)
-4. "리텐션 계산" 버튼 클릭
-5. 코호트 매트릭스 및 리텐션 곡선 확인
+2. **🆕 구독 데이터**: Activity Retention / Paid Retention 토글 표시
+   - **Activity Retention**: 일반 활동 기반 리텐션 (기존 방식)
+   - **Paid Retention**: 구독 기준 유료 사용자 리텐션 (D0/D7/D14/D30/D60/D90)
+3. 코호트 이벤트 (첫 이벤트) 선택
+4. 활성 이벤트 (재방문 이벤트) 선택 (Ctrl/Cmd로 다중 선택)
+5. "리텐션 계산" 버튼 클릭
+6. 코호트 매트릭스 및 리텐션 곡선 확인
 
 ### 4️⃣ 세그먼트 비교
 
 1. "세그먼트 비교" 탭으로 이동
 2. 먼저 퍼널을 계산해야 함
-3. 비교할 플랫폼 또는 채널 선택
-4. "세그먼트 비교" 버튼 클릭
-5. 세그먼트별 전환율 비교
+3. **🆕 구독 데이터**: 추가 세그먼트 선택 가능
+   - 체험 기간 (trial_days): 7일/14일 등
+   - 구독 플랜 (plan): monthly/yearly 등
+   - 해지 사유 (cancel_reason)
+4. 비교할 플랫폼, 채널, 또는 구독 차원 선택
+5. "세그먼트 비교" 버튼 클릭
+6. 세그먼트별 전환율 비교 (⚠️ n<30 샘플 크기 경고 표시)
 
 ### 5️⃣ 인사이트 확인
 
 1. "인사이트 카드" 탭으로 이동
 2. **🆕 자동 생성**: 데이터 업로드 즉시 전체 데이터 기반 인사이트 자동 생성
-3. 각 인사이트 카드에서 다음 정보 확인:
+3. **🆕 구독 데이터**: 상단에 구독 KPI 요약 표시
+   - 핵심 지표 카드 (총 사용자, 구독률, ARPPU, 해지율 등)
+   - 플랜 믹스 시각화
+   - Trial → Subscribe 전환 분석
+   - 해지 분석 및 상위 사유
+   - Paid Retention 요약 (D7/D14/D30)
+4. 각 인사이트 카드에서 다음 정보 확인:
    - 주요 발견 사항 및 메트릭
    - 상세 분석
    - 권장 조치 사항
-4. 추가 퍼널 또는 리텐션 분석 후 새로운 인사이트도 자동 추가됨
+5. **🆕 구독 인사이트**: 낮은 Trial 전환, 높은 해지율, 결제 실패 등 자동 감지
+6. 추가 퍼널 또는 리텐션 분석 후 새로운 인사이트도 자동 추가됨
+
 
 ### 6️⃣ 리포트 내보내기 (PNG)
 
