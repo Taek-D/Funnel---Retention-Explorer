@@ -183,6 +183,10 @@
                             <button class="btn btn-secondary" id="loadSubscriptionFunnel">
                                 📱 구독 퍼널
                             </button>
+                            <button class="btn btn-secondary lifecycle-funnel-btn" id="loadLifecycleFunnel"
+                                style="display: none;">
+                                🔄 Lifecycle 퍼널
+                            </button>
                         </div>
                         <div id="funnelStepsContainer" class="funnel-steps-container">
                             <!-- 동적으로 퍼널 단계가 추가됩니다 -->
@@ -211,19 +215,45 @@
                 </div>
 
                 <div class="retention-controls">
-                    <div class="control-group">
-                        <label>코호트 이벤트 (첫 이벤트)</label>
-                        <select id="cohortEvent" class="control-select">
-                            <option value="">이벤트 선택...</option>
-                        </select>
+                    <!-- Retention Type Toggle -->
+                    <div class="control-group retention-type-toggle" id="retentionTypeToggle" style="display: none;">
+                        <label>리텐션 유형</label>
+                        <div class="toggle-buttons">
+                            <button type="button" class="toggle-btn active" data-type="activity"
+                                id="toggleActivityRetention">
+                                📊 Activity Retention
+                            </button>
+                            <button type="button" class="toggle-btn" data-type="paid" id="togglePaidRetention">
+                                💳 Paid Retention
+                            </button>
+                        </div>
+                        <small id="retentionTypeDesc">활성 이벤트 기반 리텐션을 계산합니다</small>
                     </div>
-                    <div class="control-group">
-                        <label>활성 이벤트 (재방문 이벤트)</label>
-                        <select id="activeEvents" class="control-select" multiple size="4">
-                            <!-- 옵션이 동적으로 추가됩니다 -->
-                        </select>
-                        <small>Ctrl/Cmd를 눌러 여러 항목 선택</small>
+
+                    <div id="activityRetentionControls">
+                        <div class="control-group">
+                            <label>코호트 이벤트 (첫 이벤트)</label>
+                            <select id="cohortEvent" class="control-select">
+                                <option value="">이벤트 선택...</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>활성 이벤트 (재방문 이벤트)</label>
+                            <select id="activeEvents" class="control-select" multiple size="4">
+                                <!-- 옵션이 동적으로 추가됩니다 -->
+                            </select>
+                            <small>Ctrl/Cmd를 눌러 여러 항목 선택</small>
+                        </div>
                     </div>
+
+                    <div id="paidRetentionControls" style="display: none;">
+                        <div class="paid-retention-info">
+                            <p>💳 <strong>Paid Retention</strong>: 구독 시작일 기준 유료 상태 유지율을 계산합니다.</p>
+                            <small>• Cohort = 첫 subscribe 이벤트 날짜</small><br>
+                            <small>• Retained = cancel 이벤트 미발생</small>
+                        </div>
+                    </div>
+
                     <button class="btn btn-primary" id="calculateRetention">
                         리텐션 계산
                     </button>
@@ -292,6 +322,18 @@
                             <!-- 체크박스가 동적으로 추가됩니다 -->
                         </div>
                     </div>
+
+                    <!-- Subscription Segment Dimensions (shown only for subscription data) -->
+                    <div class="control-group subscription-segment-controls" id="subscriptionSegmentControls"
+                        style="display: none;">
+                        <label>📦 구독 세그먼트 차원</label>
+                        <select id="subscriptionDimension" class="control-select">
+                            <option value="">구독 차원 선택 (선택사항)...</option>
+                            <!-- 동적으로 추가: trial_days, plan, cancel_reason -->
+                        </select>
+                        <small>구독 데이터 전용 세그먼트 분석</small>
+                    </div>
+
                     <button class="btn btn-primary" id="compareSegments">
                         세그먼트 비교
                     </button>
@@ -355,6 +397,112 @@
                                 <button class="btn btn-secondary" id="testN8nWebhook">
                                     🔍 연결 테스트
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription KPI Summary (shown only for subscription data) -->
+                <div id="subscriptionKPISummary" class="subscription-kpi-section" style="display: none;">
+                    <h3>📊 구독 KPI 요약 (Subscription KPI Summary)</h3>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">총 사용자</div>
+                            <div class="kpi-value" id="kpiUsersTotal">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">구독 전환</div>
+                            <div class="kpi-value" id="kpiSubscribeRate">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">유료 사용자</div>
+                            <div class="kpi-value" id="kpiPaidUsers">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">총 매출</div>
+                            <div class="kpi-value" id="kpiGrossRevenue">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">ARPPU</div>
+                            <div class="kpi-value" id="kpiArppu">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">해지율</div>
+                            <div class="kpi-value" id="kpiCancelRate">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">결제 실패</div>
+                            <div class="kpi-value" id="kpiPaymentFailed">-</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">갱신 성공률</div>
+                            <div class="kpi-value" id="kpiRenewRate">-</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-details-grid">
+                        <!-- Plan Mix -->
+                        <div class="kpi-detail-card">
+                            <h4>플랜 믹스</h4>
+                            <div id="kpiPlanMix" class="plan-mix-bar">
+                                <span class="no-data">데이터 없음</span>
+                            </div>
+                        </div>
+
+                        <!-- Trial Conversion Summary -->
+                        <div class="kpi-detail-card" id="trialConversionCard" style="display: none;">
+                            <h4>🎯 Trial → Subscribe 전환</h4>
+                            <div class="trial-summary">
+                                <div class="trial-metric">
+                                    <span class="label">전환율</span>
+                                    <span class="value" id="trialConversionRate">-</span>
+                                </div>
+                                <div class="trial-metric">
+                                    <span class="label">중간 전환 시간</span>
+                                    <span class="value" id="trialMedianTime">-</span>
+                                </div>
+                            </div>
+                            <div class="trial-by-days-table">
+                                <table id="trialByDaysTable" class="results-table compact"></table>
+                            </div>
+                        </div>
+
+                        <!-- Churn Summary -->
+                        <div class="kpi-detail-card" id="churnSummaryCard" style="display: none;">
+                            <h4>📉 Churn 분석</h4>
+                            <div class="churn-summary">
+                                <div class="churn-metric">
+                                    <span class="label">해지 사용자</span>
+                                    <span class="value" id="churnUsers">-</span>
+                                </div>
+                                <div class="churn-metric">
+                                    <span class="label">중간 해지 기간</span>
+                                    <span class="value" id="churnMedianDays">-</span>
+                                </div>
+                            </div>
+                            <h5>해지 사유 Top 3</h5>
+                            <div id="churnReasonsList" class="churn-reasons">
+                                <span class="no-data">데이터 없음</span>
+                            </div>
+                        </div>
+
+                        <!-- Paid Retention Summary -->
+                        <div class="kpi-detail-card" id="paidRetentionCard" style="display: none;">
+                            <h4>🔒 Paid Retention</h4>
+                            <div class="paid-retention-summary">
+                                <div class="retention-metric">
+                                    <span class="label">D7</span>
+                                    <span class="value" id="paidRetD7">-</span>
+                                </div>
+                                <div class="retention-metric">
+                                    <span class="label">D14</span>
+                                    <span class="value" id="paidRetD14">-</span>
+                                </div>
+                                <div class="retention-metric">
+                                    <span class="label">D30</span>
+                                    <span class="value" id="paidRetD30">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>

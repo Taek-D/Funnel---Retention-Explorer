@@ -10,8 +10,40 @@ const AppState = {
     funnelResults: null,
     retentionResults: null,
     segmentResults: null,
-    insights: []
+    insights: [],
+    // Subscription Analytics State
+    subscriptionKPIs: null,
+    trialAnalysis: null,
+    churnAnalysis: null,
+    paidRetentionResults: null,
+    retentionType: 'activity' // 'activity' or 'paid'
 };
+
+// ===== SUBSCRIPTION ANALYTICS UTILITY FUNCTIONS =====
+
+// Check if a column exists in raw data
+function hasCol(colName) {
+    if (!AppState.headers || AppState.headers.length === 0) return false;
+    return AppState.headers.some(h => h.toLowerCase() === colName.toLowerCase());
+}
+
+// Get column value from raw row (case-insensitive)
+function getColValue(row, colName) {
+    if (!row) return null;
+    const key = Object.keys(row).find(k => k.toLowerCase() === colName.toLowerCase());
+    return key ? row[key] : null;
+}
+
+// Check if data looks like subscription data
+function isSubscriptionData() {
+    return AppState.detectedType === 'subscription';
+}
+
+// Get unique values for a column from raw data
+function getUniqueColValues(colName) {
+    if (!hasCol(colName)) return [];
+    return [...new Set(AppState.rawData.map(row => getColValue(row, colName)).filter(v => v != null && v !== ''))];
+}
 
 // Event Pattern Definitions for Auto-Detection
 const EVENT_PATTERNS = {
@@ -78,6 +110,12 @@ function initializeEventListeners() {
     document.getElementById('loadSubscriptionFunnel').addEventListener('click', () => {
         loadFunnelTemplate('subscription');
     });
+    const lifecycleFunnelBtn = document.getElementById('loadLifecycleFunnel');
+    if (lifecycleFunnelBtn) {
+        lifecycleFunnelBtn.addEventListener('click', () => {
+            loadFunnelTemplate('lifecycle');
+        });
+    }
 
     // Calculate Funnel
     document.getElementById('calculateFunnel').addEventListener('click', calculateFunnel);
@@ -410,6 +448,12 @@ async function confirmMapping() {
     AppState.retentionResults = null;
     AppState.segmentResults = null;
     AppState.insights = [];
+    // Clear subscription analytics state
+    AppState.subscriptionKPIs = null;
+    AppState.trialAnalysis = null;
+    AppState.churnAnalysis = null;
+    AppState.paidRetentionResults = null;
+    AppState.retentionType = 'activity';
 
     // Clear UI displays
     document.getElementById('funnelResults').style.display = 'none';
@@ -463,10 +507,30 @@ async function confirmMapping() {
         AppState.detectedType = detectedType;
         const typeName = detectedType === 'ecommerce' ? '이커머스' : '구독 서비스';
 
+        await updateProgress(progressFill, progressText, 90, '분석 수행 중...');
+
+        // If subscription data, calculate subscription-specific analytics
+        if (detectedType === 'subscription') {
+            calculateSubscriptionKPIs();
+            analyzeTrialConversion();
+            analyzeChurn();
+            calculatePaidRetention();
+
+            // Show Lifecycle Funnel button
+            const lifecycleFunnelBtn = document.getElementById('loadLifecycleFunnel');
+            if (lifecycleFunnelBtn) lifecycleFunnelBtn.style.display = 'inline-flex';
+        }
+
         await updateProgress(progressFill, progressText, 95, '인사이트 생성 중...');
 
         // Generate automatic insights based on full dataset
         generateInsights();
+
+        // Render subscription KPIs in UI (will show/hide based on data type)
+        renderSubscriptionKPIs();
+
+        // Initialize retention type toggle
+        initRetentionTypeToggle();
 
         await updateProgress(progressFill, progressText, 100, '완료!');
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -477,6 +541,14 @@ async function confirmMapping() {
         alert(`데이터가 성공적으로 처리되었습니다!\n\n감지된 데이터 유형: ${typeName}\n퍼널 분석 탭에서 자동으로 템플릿이 적용됩니다.\n\n인사이트 카드 탭에서 자동 생성된 인사이트를 확인하세요!`);
     } else {
         AppState.detectedType = null;
+
+        // Hide subscription KPI section
+        const kpiSection = document.getElementById('subscriptionKPISummary');
+        if (kpiSection) kpiSection.style.display = 'none';
+
+        // Hide Lifecycle Funnel button
+        const lifecycleFunnelBtn = document.getElementById('loadLifecycleFunnel');
+        if (lifecycleFunnelBtn) lifecycleFunnelBtn.style.display = 'none';
 
         await updateProgress(progressFill, progressText, 100, '완료!');
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -583,13 +655,75 @@ function populateSegmentFilters() {
         `;
         channelContainer.appendChild(label);
     });
+
+    // Subscription-specific segment dimensions (only show if subscription data)
+    const subscriptionControlsEl = document.getElementById('subscriptionSegmentControls');
+    const subscriptionDimensionEl = document.getElementById('subscriptionDimension');
+
+    if (subscriptionControlsEl && subscriptionDimensionEl) {
+        if (isSubscriptionData()) {
+            subscriptionControlsEl.style.display = 'block';
+            subscriptionDimensionEl.innerHTML = '<option value="">구독 차원 선택 (선택사항)...</option>';
+
+            // Add trial_days if exists
+            if (hasCol('trial_days')) {
+                const trialDays = getUniqueColValues('trial_days');
+                if (trialDays.length > 0) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = '체험 기간 (trial_days)';
+                    trialDays.forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = `trial_days:${val}`;
+                        opt.textContent = `${val}일`;
+                        optGroup.appendChild(opt);
+                    });
+                    subscriptionDimensionEl.appendChild(optGroup);
+                }
+            }
+
+            // Add plan if exists
+            if (hasCol('plan')) {
+                const plans = getUniqueColValues('plan');
+                if (plans.length > 0) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = '플랜 (plan)';
+                    plans.forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = `plan:${val}`;
+                        opt.textContent = val;
+                        optGroup.appendChild(opt);
+                    });
+                    subscriptionDimensionEl.appendChild(optGroup);
+                }
+            }
+
+            // Add cancel_reason if exists
+            if (hasCol('cancel_reason')) {
+                const reasons = getUniqueColValues('cancel_reason');
+                if (reasons.length > 0) {
+                    const optGroup = document.createElement('optgroup');
+                    optGroup.label = '해지 사유 (cancel_reason)';
+                    reasons.forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = `cancel_reason:${val}`;
+                        opt.textContent = val;
+                        optGroup.appendChild(opt);
+                    });
+                    subscriptionDimensionEl.appendChild(optGroup);
+                }
+            }
+        } else {
+            subscriptionControlsEl.style.display = 'none';
+        }
+    }
 }
 
 // Load Funnel Template
 function loadFunnelTemplate(type) {
     const templates = {
         ecommerce: ['view_item', 'add_to_cart', 'begin_checkout', 'purchase'],
-        subscription: ['app_open', 'signup', 'onboarding_complete', 'start_trial', 'subscribe']
+        subscription: ['app_open', 'signup', 'onboarding_complete', 'start_trial', 'subscribe'],
+        lifecycle: ['app_open', 'signup', 'onboarding_complete', 'start_trial', 'subscribe', 'renew']
     };
 
     const steps = templates[type] || templates.ecommerce;
@@ -779,6 +913,36 @@ function formatTime(minutes) {
 
 // Calculate Retention
 function calculateRetention() {
+    // Check if Paid Retention mode is selected
+    if (AppState.retentionType === 'paid' && isSubscriptionData()) {
+        // Use pre-calculated Paid Retention
+        const paidRetention = AppState.paidRetentionResults || calculatePaidRetention();
+        if (!paidRetention || paidRetention.length === 0) {
+            alert('Paid Retention 데이터가 없습니다. subscribe 이벤트가 필요합니다.');
+            return;
+        }
+
+        // Transform paid retention data for display
+        AppState.retentionResults = paidRetention.map(cohort => ({
+            cohortDate: cohort.cohortDate,
+            cohortSize: cohort.cohortSize,
+            days: {
+                D0: cohort.days.D0 || 100,
+                D1: cohort.days.D7 || 0, // Map D7 to D1 position for display
+                D7: cohort.days.D7 || 0,
+                D14: cohort.days.D14 || 0,
+                D30: cohort.days.D30 || 0,
+                D60: cohort.days.D60 || 0,
+                D90: cohort.days.D90 || 0
+            }
+        }));
+
+        displayPaidRetentionResults();
+        generateInsights();
+        return;
+    }
+
+    // Activity Retention (original logic)
     const cohortEvent = document.getElementById('cohortEvent').value;
     const activeEventOptions = document.getElementById('activeEvents').selectedOptions;
     const activeEvents = Array.from(activeEventOptions).map(opt => opt.value);
@@ -835,6 +999,41 @@ function calculateRetention() {
     AppState.retentionResults = retentionMatrix;
     displayRetentionResults();
     generateInsights();
+}
+
+// Display Paid Retention Results (specialized for subscription data)
+function displayPaidRetentionResults() {
+    const resultsDiv = document.getElementById('retentionResults');
+    resultsDiv.style.display = 'block';
+
+    // Calculate averages for D7, D14, D30
+    const d7Avg = AppState.retentionResults.reduce((sum, r) => sum + (r.days.D7 || 0), 0) / AppState.retentionResults.length;
+    const d14Avg = AppState.retentionResults.reduce((sum, r) => sum + (r.days.D14 || 0), 0) / AppState.retentionResults.length;
+    const d30Avg = AppState.retentionResults.reduce((sum, r) => sum + (r.days.D30 || 0), 0) / AppState.retentionResults.length;
+
+    document.getElementById('d1Retention').textContent = d7Avg.toFixed(1) + '% (D7)';
+    document.getElementById('d7Retention').textContent = d14Avg.toFixed(1) + '% (D14)';
+    document.getElementById('d14Retention').textContent = d30Avg.toFixed(1) + '% (D30)';
+
+    // Build matrix table for paid retention
+    const table = document.getElementById('retentionMatrix');
+    let html = '<thead><tr><th>구독 시작일</th><th>규모</th><th>D0</th><th>D7</th><th>D14</th><th>D30</th><th>D60</th><th>D90</th></tr></thead><tbody>';
+
+    AppState.retentionResults.slice(0, 10).forEach(cohort => {
+        html += `<tr><td class="cohort-header">${cohort.cohortDate}</td><td>${cohort.cohortSize}</td>`;
+        ['D0', 'D7', 'D14', 'D30', 'D60', 'D90'].forEach(day => {
+            const rate = cohort.days[day] || 0;
+            const cellClass = rate >= 80 ? 'high' : rate >= 50 ? 'medium' : 'low';
+            html += `<td class="retention-cell ${cellClass}">${rate.toFixed(0)}%</td>`;
+        });
+        html += '</tr>';
+    });
+
+    html += '</tbody>';
+    table.innerHTML = html;
+
+    // Render chart (using first cohort's data for curve)
+    renderRetentionChart();
 }
 
 // Display Retention Results
@@ -1406,6 +1605,161 @@ function generateInsights() {
         }
     }
 
+    // ===== SUBSCRIPTION-SPECIFIC INSIGHTS =====
+    if (isSubscriptionData()) {
+        // Calculate subscription analytics if not already done
+        const kpis = AppState.subscriptionKPIs || calculateSubscriptionKPIs();
+        const trialAnalysis = AppState.trialAnalysis || analyzeTrialConversion();
+        const churnAnalysis = AppState.churnAnalysis || analyzeChurn();
+        const paidRetention = AppState.paidRetentionResults || calculatePaidRetention();
+
+        // Insight S1: Trial → Subscribe conversion rate warning
+        if (trialAnalysis && trialAnalysis.overall) {
+            const convRate = trialAnalysis.overall.conversion_rate;
+            if (convRate < 35 && trialAnalysis.overall.trial_users >= 30) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🎯',
+                    title: '체험 → 구독 전환율 개선 필요',
+                    body: `체험판 사용자의 ${convRate.toFixed(1)}%만 유료 구독으로 전환합니다 (n=${trialAnalysis.overall.trial_users}). 업계 평균 35-50%를 목표로 개선이 필요합니다.`,
+                    metric: convRate.toFixed(1) + '%',
+                    recommendations: [
+                        '체험 기간 중 핵심 기능 체험 유도',
+                        '체험 종료 전 리마인더 및 혜택 제공',
+                        '온보딩 플로우 개선으로 가치 빠른 전달'
+                    ]
+                });
+            }
+        }
+
+        // Insight S2: Slow conversion time warning
+        if (trialAnalysis && trialAnalysis.overall && trialAnalysis.overall.median_hours) {
+            const medianDays = trialAnalysis.overall.median_hours / 24;
+            if (medianDays > 10) {
+                insights.push({
+                    type: 'warning',
+                    icon: '⏱️',
+                    title: '구독 결정 지연',
+                    body: `체험 시작 후 구독까지 중간값 ${medianDays.toFixed(1)}일이 소요됩니다. 결정 시간이 길어 이탈 위험이 있습니다.`,
+                    metric: `${medianDays.toFixed(1)}일`,
+                    recommendations: [
+                        '체험 기간 단축 테스트 (7일 vs 14일)',
+                        '조기 전환 인센티브 제공',
+                        '체험 중 가치 입증 포인트 추가'
+                    ]
+                });
+            }
+        }
+
+        // Insight S3: Payment failure warning
+        if (kpis && kpis.payment_failed_events > 0) {
+            const totalPaymentAttempts = kpis.subscribe_events + kpis.renew_events + kpis.payment_failed_events;
+            const failureRate = totalPaymentAttempts > 0 ? (kpis.payment_failed_events / totalPaymentAttempts) * 100 : 0;
+            if (failureRate >= 10) {
+                insights.push({
+                    type: 'danger',
+                    icon: '💳',
+                    title: '결제 실패율 높음',
+                    body: `결제 시도 중 ${failureRate.toFixed(1)}%가 실패했습니다 (${kpis.payment_failed_events}건). 이는 잠재적 매출 손실을 의미합니다.`,
+                    metric: failureRate.toFixed(1) + '%',
+                    recommendations: [
+                        '결제 수단 업데이트 리마인더 발송',
+                        '다양한 결제 수단 지원',
+                        '결제 실패 시 즉시 재시도 로직 구현'
+                    ]
+                });
+            }
+        }
+
+        // Insight S4: High churn rate warning
+        if (churnAnalysis && churnAnalysis.churn_rate_paid > 20) {
+            insights.push({
+                type: 'danger',
+                icon: '📉',
+                title: '유료 구독 해지율 높음',
+                body: `유료 사용자의 ${churnAnalysis.churn_rate_paid.toFixed(1)}%가 해지했습니다 (${churnAnalysis.churn_users}명). 유지 전략 개선이 시급합니다.`,
+                metric: churnAnalysis.churn_rate_paid.toFixed(1) + '%',
+                recommendations: [
+                    '해지 직전 사용자 식별 및 개입',
+                    '해지 사유 분석 후 맞춤 대응',
+                    '로열티 프로그램 또는 장기 할인 제공'
+                ]
+            });
+        }
+
+        // Insight S5: Cancel reason analysis
+        if (churnAnalysis && churnAnalysis.cancel_reason_top && churnAnalysis.cancel_reason_top.length > 0) {
+            const topReason = churnAnalysis.cancel_reason_top[0];
+            if (topReason.reason !== 'Unknown' && topReason.share > 20) {
+                let recommendations = [];
+                const reasonLower = topReason.reason.toLowerCase();
+
+                if (reasonLower.includes('expensive') || reasonLower.includes('price') || reasonLower.includes('cost')) {
+                    recommendations = [
+                        '가격 대비 가치 커뮤니케이션 강화',
+                        '저가 플랜 또는 다운그레이드 옵션 제공',
+                        'ROI 사례 및 성공 스토리 공유'
+                    ];
+                } else if (reasonLower.includes('feature') || reasonLower.includes('function')) {
+                    recommendations = [
+                        '기능 로드맵 공개 및 피드백 수집',
+                        '요청 기능 우선순위 조정',
+                        '대안 기능 또는 워크어라운드 안내'
+                    ];
+                } else {
+                    recommendations = [
+                        '해지 사유 심층 인터뷰 진행',
+                        '해지 방어 오퍼 테스트',
+                        '서비스 개선점 도출 및 반영'
+                    ];
+                }
+
+                insights.push({
+                    type: 'warning',
+                    icon: '🔍',
+                    title: `주요 해지 사유: ${topReason.reason}`,
+                    body: `해지 사용자의 ${topReason.share.toFixed(0)}%가 "${topReason.reason}"을(를) 이유로 들었습니다.`,
+                    metric: `${topReason.share.toFixed(0)}%`,
+                    recommendations: recommendations
+                });
+            }
+        }
+
+        // Insight S6: Paid Retention warning
+        if (paidRetention && paidRetention.length > 0) {
+            const avgD7 = paidRetention.reduce((sum, r) => sum + (r.days.D7 || 0), 0) / paidRetention.length;
+            const avgD30 = paidRetention.reduce((sum, r) => sum + (r.days.D30 || 0), 0) / paidRetention.length;
+
+            if (avgD7 < 70) {
+                insights.push({
+                    type: 'danger',
+                    icon: '🔒',
+                    title: 'D7 유료 구독 유지율 낮음',
+                    body: `구독 후 7일 유지율이 ${avgD7.toFixed(1)}%로 목표 70%에 미달합니다. 초기 이탈 방지가 필요합니다.`,
+                    metric: avgD7.toFixed(1) + '%',
+                    recommendations: [
+                        '구독 직후 온보딩 강화',
+                        '첫 주 사용 목표 설정 및 안내',
+                        '초기 성공 경험 제공'
+                    ]
+                });
+            } else if (avgD30 < 50) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🔒',
+                    title: 'D30 유료 구독 유지율 주의',
+                    body: `구독 후 30일 유지율이 ${avgD30.toFixed(1)}%입니다. 장기 유지 전략 점검이 필요합니다.`,
+                    metric: avgD30.toFixed(1) + '%',
+                    recommendations: [
+                        '정기적 가치 전달 콘텐츠 발송',
+                        '사용 빈도 저하 시 개입',
+                        '커뮤니티 또는 소셜 기능 활성화'
+                    ]
+                });
+            }
+        }
+    }
+
     AppState.insights = insights;
     displayInsights();
 }
@@ -1444,6 +1798,186 @@ function displayInsights() {
     });
 
     container.innerHTML = html;
+}
+
+// ===== RENDER SUBSCRIPTION KPIs =====
+
+function renderSubscriptionKPIs() {
+    const kpiSection = document.getElementById('subscriptionKPISummary');
+    if (!kpiSection) return;
+
+    if (!isSubscriptionData()) {
+        kpiSection.style.display = 'none';
+        return;
+    }
+
+    kpiSection.style.display = 'block';
+
+    // Calculate KPIs if not already done
+    const kpis = AppState.subscriptionKPIs || calculateSubscriptionKPIs();
+    const trialAnalysis = AppState.trialAnalysis || analyzeTrialConversion();
+    const churnAnalysis = AppState.churnAnalysis || analyzeChurn();
+    const paidRetention = AppState.paidRetentionResults || calculatePaidRetention();
+
+    if (!kpis) {
+        kpiSection.innerHTML = '<p class="no-data">구독 KPI를 계산할 수 없습니다.</p>';
+        return;
+    }
+
+    // Format number helper
+    const formatNum = (n) => n != null ? n.toLocaleString() : '-';
+    const formatPct = (n) => n != null ? n.toFixed(1) + '%' : 'N/A';
+    const formatCurrency = (n) => n != null ? '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 }) : 'N/A';
+
+    // Basic KPIs
+    document.getElementById('kpiUsersTotal').textContent = formatNum(kpis.users_total);
+
+    const subscribeRate = kpis.users_total > 0 ? (kpis.users_subscribed / kpis.users_total * 100) : null;
+    document.getElementById('kpiSubscribeRate').textContent = formatPct(subscribeRate);
+    document.getElementById('kpiPaidUsers').textContent = formatNum(kpis.paid_user_count);
+    document.getElementById('kpiGrossRevenue').textContent = formatCurrency(kpis.gross_revenue);
+    document.getElementById('kpiArppu').textContent = formatCurrency(kpis.arppu);
+    document.getElementById('kpiCancelRate').textContent = formatPct(kpis.cancel_rate_paid);
+    document.getElementById('kpiPaymentFailed').textContent = formatNum(kpis.payment_failed_events);
+    document.getElementById('kpiRenewRate').textContent = formatPct(kpis.renew_success_rate);
+
+    // Plan Mix
+    const planMixEl = document.getElementById('kpiPlanMix');
+    if (hasCol('plan') && kpis.plan_mix) {
+        const { monthly, yearly, other } = kpis.plan_mix;
+        if (monthly > 0 || yearly > 0 || other > 0) {
+            planMixEl.innerHTML = '';
+            if (monthly > 0) {
+                planMixEl.innerHTML += `<div class="segment monthly" style="width:${monthly}%">월간 ${monthly.toFixed(0)}%</div>`;
+            }
+            if (yearly > 0) {
+                planMixEl.innerHTML += `<div class="segment yearly" style="width:${yearly}%">연간 ${yearly.toFixed(0)}%</div>`;
+            }
+            if (other > 0) {
+                planMixEl.innerHTML += `<div class="segment other" style="width:${other}%">기타 ${other.toFixed(0)}%</div>`;
+            }
+        } else {
+            planMixEl.innerHTML = '<span class="no-data">데이터 없음</span>';
+        }
+    } else {
+        planMixEl.innerHTML = '<span class="no-data">plan 컬럼 없음</span>';
+    }
+
+    // Trial Conversion Card
+    const trialCard = document.getElementById('trialConversionCard');
+    if (trialCard && trialAnalysis && trialAnalysis.overall.trial_users > 0) {
+        trialCard.style.display = 'block';
+        document.getElementById('trialConversionRate').textContent = formatPct(trialAnalysis.overall.conversion_rate);
+
+        const medianHours = trialAnalysis.overall.median_hours;
+        const medianDisplay = medianHours != null
+            ? (medianHours < 24 ? `${medianHours.toFixed(1)}시간` : `${(medianHours / 24).toFixed(1)}일`)
+            : 'N/A';
+        document.getElementById('trialMedianTime').textContent = medianDisplay;
+
+        // Trial by days table
+        const tableEl = document.getElementById('trialByDaysTable');
+        if (trialAnalysis.by_trial_days.length > 0) {
+            tableEl.innerHTML = `
+                <thead>
+                    <tr><th>체험기간</th><th>체험자</th><th>구독자</th><th>전환율</th></tr>
+                </thead>
+                <tbody>
+                    ${trialAnalysis.by_trial_days.map(row => `
+                        <tr>
+                            <td>${row.trial_days}일</td>
+                            <td>${row.trial_users.toLocaleString()}${row.trial_users < 30 ? ' <span class="sample-warning-badge">n<30</span>' : ''}</td>
+                            <td>${row.subscribed_users.toLocaleString()}</td>
+                            <td>${row.conversion_rate.toFixed(1)}%</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+        }
+    } else if (trialCard) {
+        trialCard.style.display = 'none';
+    }
+
+    // Churn Summary Card
+    const churnCard = document.getElementById('churnSummaryCard');
+    if (churnCard && churnAnalysis && churnAnalysis.churn_users > 0) {
+        churnCard.style.display = 'block';
+        document.getElementById('churnUsers').textContent = formatNum(churnAnalysis.churn_users);
+
+        const medianDays = churnAnalysis.time_to_cancel_median_days;
+        document.getElementById('churnMedianDays').textContent = medianDays != null ? `${medianDays.toFixed(1)}일` : 'N/A';
+
+        // Churn reasons
+        const reasonsEl = document.getElementById('churnReasonsList');
+        if (churnAnalysis.cancel_reason_top && churnAnalysis.cancel_reason_top.length > 0) {
+            reasonsEl.innerHTML = churnAnalysis.cancel_reason_top.slice(0, 3).map(r => `
+                <div class="churn-reason-item">
+                    <span class="reason">${r.reason}</span>
+                    <span class="share">${r.share.toFixed(0)}%</span>
+                </div>
+            `).join('');
+        } else {
+            reasonsEl.innerHTML = '<span class="no-data">cancel_reason 컬럼 없음</span>';
+        }
+    } else if (churnCard) {
+        churnCard.style.display = 'none';
+    }
+
+    // Paid Retention Card
+    const paidRetCard = document.getElementById('paidRetentionCard');
+    if (paidRetCard && paidRetention && paidRetention.length > 0) {
+        paidRetCard.style.display = 'block';
+
+        // Calculate average retention
+        const avgD7 = paidRetention.reduce((sum, r) => sum + (r.days.D7 || 0), 0) / paidRetention.length;
+        const avgD14 = paidRetention.reduce((sum, r) => sum + (r.days.D14 || 0), 0) / paidRetention.length;
+        const avgD30 = paidRetention.reduce((sum, r) => sum + (r.days.D30 || 0), 0) / paidRetention.length;
+
+        document.getElementById('paidRetD7').textContent = formatPct(avgD7);
+        document.getElementById('paidRetD14').textContent = formatPct(avgD14);
+        document.getElementById('paidRetD30').textContent = formatPct(avgD30);
+    } else if (paidRetCard) {
+        paidRetCard.style.display = 'none';
+    }
+}
+
+// ===== RETENTION TYPE TOGGLE HANDLER =====
+
+function initRetentionTypeToggle() {
+    const toggleEl = document.getElementById('retentionTypeToggle');
+    const activityBtn = document.getElementById('toggleActivityRetention');
+    const paidBtn = document.getElementById('togglePaidRetention');
+    const activityControls = document.getElementById('activityRetentionControls');
+    const paidControls = document.getElementById('paidRetentionControls');
+    const descEl = document.getElementById('retentionTypeDesc');
+
+    if (!toggleEl || !activityBtn || !paidBtn) return;
+
+    // Show toggle only for subscription data
+    if (isSubscriptionData()) {
+        toggleEl.style.display = 'block';
+    } else {
+        toggleEl.style.display = 'none';
+        return;
+    }
+
+    activityBtn.addEventListener('click', () => {
+        AppState.retentionType = 'activity';
+        activityBtn.classList.add('active');
+        paidBtn.classList.remove('active');
+        if (activityControls) activityControls.style.display = 'block';
+        if (paidControls) paidControls.style.display = 'none';
+        if (descEl) descEl.textContent = '활성 이벤트 기반 리텐션을 계산합니다';
+    });
+
+    paidBtn.addEventListener('click', () => {
+        AppState.retentionType = 'paid';
+        paidBtn.classList.add('active');
+        activityBtn.classList.remove('active');
+        if (activityControls) activityControls.style.display = 'none';
+        if (paidControls) paidControls.style.display = 'block';
+        if (descEl) descEl.textContent = '유료 구독 유지율을 계산합니다 (subscribe → cancel)';
+    });
 }
 
 // ===== NEW FUNCTIONS: Data Quality Report =====
@@ -1675,6 +2209,505 @@ function calculatePValue(count1, total1, count2, total2) {
     // Two-tailed p-value
     const pValue = 2 * (1 - normalCDF(Math.abs(z)));
     return Math.min(1.0, Math.max(0.0, pValue));
+}
+
+// ===== SUBSCRIPTION ANALYTICS FUNCTIONS =====
+
+// [1] Calculate Subscription KPIs
+function calculateSubscriptionKPIs() {
+    const rows = AppState.rawData;
+    if (!rows || rows.length === 0) return null;
+
+    const eventNameCol = AppState.columnMapping?.eventname;
+    if (!eventNameCol) return null;
+
+    // Helper to count events
+    const countEvents = (eventPattern) => {
+        return rows.filter(row => {
+            const eventName = (row[eventNameCol] || '').toLowerCase();
+            return eventName.includes(eventPattern.toLowerCase());
+        }).length;
+    };
+
+    // Helper to get unique users by event
+    const getUsersByEvent = (eventPattern) => {
+        const userIdCol = AppState.columnMapping?.userid;
+        if (!userIdCol) return new Set();
+        return new Set(
+            rows.filter(row => {
+                const eventName = (row[eventNameCol] || '').toLowerCase();
+                return eventName.includes(eventPattern.toLowerCase());
+            }).map(row => row[userIdCol])
+        );
+    };
+
+    // Basic counts
+    const usersTotal = new Set(rows.map(row => row[AppState.columnMapping?.userid]).filter(Boolean)).size;
+    const usersSignup = getUsersByEvent('signup').size;
+    const usersOnboarded = getUsersByEvent('onboarding').size || getUsersByEvent('onboarding_complete').size;
+    const usersTrial = getUsersByEvent('start_trial').size || getUsersByEvent('trial').size;
+    const usersSubscribed = getUsersByEvent('subscribe').size;
+
+    // Event counts
+    const subscribeEvents = countEvents('subscribe');
+    const renewEvents = countEvents('renew');
+    const cancelEvents = countEvents('cancel');
+    const paymentFailedEvents = countEvents('payment_failed');
+
+    // Paid users: users with subscribe or renew
+    const subscribeUsers = getUsersByEvent('subscribe');
+    const renewUsers = getUsersByEvent('renew');
+    const paidUsers = new Set([...subscribeUsers, ...renewUsers]);
+    const paidUserCount = paidUsers.size;
+
+    // Revenue calculation
+    let grossRevenue = 0;
+    let netRevenue = 0;
+    const hasRevenue = hasCol('revenue');
+    if (hasRevenue) {
+        rows.forEach(row => {
+            const rev = parseFloat(getColValue(row, 'revenue')) || 0;
+            if (rev > 0) grossRevenue += rev;
+            netRevenue += rev; // Net includes refunds (negative values)
+        });
+    }
+
+    // ARPPU (Average Revenue Per Paying User)
+    const arppu = paidUserCount > 0 && hasRevenue ? grossRevenue / paidUserCount : null;
+
+    // Plan mix
+    const planMix = { monthly: 0, yearly: 0, other: 0 };
+    if (hasCol('plan')) {
+        const planCounts = {};
+        rows.forEach(row => {
+            const eventName = (row[eventNameCol] || '').toLowerCase();
+            if (eventName.includes('subscribe') || eventName.includes('renew')) {
+                const plan = (getColValue(row, 'plan') || 'unknown').toLowerCase();
+                planCounts[plan] = (planCounts[plan] || 0) + 1;
+            }
+        });
+        const total = Object.values(planCounts).reduce((a, b) => a + b, 0);
+        if (total > 0) {
+            Object.entries(planCounts).forEach(([plan, count]) => {
+                if (plan.includes('month')) {
+                    planMix.monthly += (count / total) * 100;
+                } else if (plan.includes('year') || plan.includes('annual')) {
+                    planMix.yearly += (count / total) * 100;
+                } else {
+                    planMix.other += (count / total) * 100;
+                }
+            });
+        }
+    }
+
+    // Cancel rate (among paid users)
+    const cancelUsers = getUsersByEvent('cancel');
+    const cancelledPaidUsers = [...cancelUsers].filter(u => paidUsers.has(u));
+    const cancelRatePaid = paidUserCount > 0 ? (cancelledPaidUsers.length / paidUserCount) * 100 : 0;
+
+    // Renew success rate
+    const renewSuccessRate = (renewEvents + paymentFailedEvents) > 0
+        ? (renewEvents / (renewEvents + paymentFailedEvents)) * 100
+        : null;
+
+    const kpis = {
+        users_total: usersTotal,
+        users_signup: usersSignup,
+        users_onboarded: usersOnboarded,
+        users_trial: usersTrial,
+        users_subscribed: usersSubscribed,
+        subscribe_events: subscribeEvents,
+        renew_events: renewEvents,
+        cancel_events: cancelEvents,
+        payment_failed_events: paymentFailedEvents,
+        paid_user_count: paidUserCount,
+        gross_revenue: hasRevenue ? grossRevenue : null,
+        net_revenue: hasRevenue ? netRevenue : null,
+        arppu: arppu,
+        plan_mix: planMix,
+        cancel_rate_paid: cancelRatePaid,
+        renew_success_rate: renewSuccessRate
+    };
+
+    AppState.subscriptionKPIs = kpis;
+    return kpis;
+}
+
+// [2] Analyze Trial to Subscribe Conversion
+function analyzeTrialConversion() {
+    const rows = AppState.rawData;
+    if (!rows || rows.length === 0) return null;
+
+    const eventNameCol = AppState.columnMapping?.eventname;
+    const userIdCol = AppState.columnMapping?.userid;
+    const timestampCol = AppState.columnMapping?.timestamp;
+    if (!eventNameCol || !userIdCol || !timestampCol) return null;
+
+    // Group events by user
+    const userEvents = {};
+    rows.forEach(row => {
+        const userId = row[userIdCol];
+        const eventName = (row[eventNameCol] || '').toLowerCase();
+        const timestamp = new Date(row[timestampCol]);
+        if (!userId || isNaN(timestamp.getTime())) return;
+
+        if (!userEvents[userId]) userEvents[userId] = [];
+        userEvents[userId].push({
+            eventName,
+            timestamp,
+            trialDays: getColValue(row, 'trial_days')
+        });
+    });
+
+    // Find trial users and their conversion
+    const trialUsers = {};
+    const hasTrialDaysCol = hasCol('trial_days');
+
+    Object.entries(userEvents).forEach(([userId, events]) => {
+        events.sort((a, b) => a.timestamp - b.timestamp);
+
+        const trialEvent = events.find(e => e.eventName.includes('start_trial') || e.eventName === 'trial');
+        if (!trialEvent) return;
+
+        const subscribeEvent = events.find(e =>
+            e.eventName.includes('subscribe') &&
+            e.timestamp >= trialEvent.timestamp
+        );
+
+        const trialDays = hasTrialDaysCol && trialEvent.trialDays ? trialEvent.trialDays : 'Unknown';
+
+        if (!trialUsers[trialDays]) {
+            trialUsers[trialDays] = { trial_users: 0, subscribed_users: 0, conversion_times: [] };
+        }
+
+        trialUsers[trialDays].trial_users++;
+
+        if (subscribeEvent) {
+            trialUsers[trialDays].subscribed_users++;
+            const hoursToConvert = (subscribeEvent.timestamp - trialEvent.timestamp) / (1000 * 60 * 60);
+            trialUsers[trialDays].conversion_times.push(hoursToConvert);
+        }
+    });
+
+    // Calculate statistics for each trial_days group
+    const byTrialDays = Object.entries(trialUsers).map(([trialDays, data]) => {
+        const times = data.conversion_times.sort((a, b) => a - b);
+        const medianIdx = Math.floor(times.length / 2);
+        const p90Idx = Math.floor(times.length * 0.9);
+
+        return {
+            trial_days: trialDays,
+            trial_users: data.trial_users,
+            subscribed_users: data.subscribed_users,
+            conversion_rate: data.trial_users > 0 ? (data.subscribed_users / data.trial_users) * 100 : 0,
+            median_time_to_subscribe_hours: times.length > 0 ? times[medianIdx] : null,
+            p90_time_to_subscribe_hours: times.length > 0 ? times[p90Idx] || times[times.length - 1] : null
+        };
+    }).sort((a, b) => {
+        const aDays = parseInt(a.trial_days) || 999;
+        const bDays = parseInt(b.trial_days) || 999;
+        return aDays - bDays;
+    });
+
+    // Overall summary
+    const totalTrialUsers = byTrialDays.reduce((sum, g) => sum + g.trial_users, 0);
+    const totalSubscribedUsers = byTrialDays.reduce((sum, g) => sum + g.subscribed_users, 0);
+    const allTimes = byTrialDays.flatMap(g =>
+        trialUsers[g.trial_days]?.conversion_times || []
+    ).sort((a, b) => a - b);
+
+    const overall = {
+        trial_users: totalTrialUsers,
+        subscribed_users: totalSubscribedUsers,
+        conversion_rate: totalTrialUsers > 0 ? (totalSubscribedUsers / totalTrialUsers) * 100 : 0,
+        median_hours: allTimes.length > 0 ? allTimes[Math.floor(allTimes.length / 2)] : null,
+        p90_hours: allTimes.length > 0 ? allTimes[Math.floor(allTimes.length * 0.9)] : null
+    };
+
+    const analysis = { by_trial_days: byTrialDays, overall };
+    AppState.trialAnalysis = analysis;
+    return analysis;
+}
+
+// [3] Analyze Churn
+function analyzeChurn() {
+    const rows = AppState.rawData;
+    if (!rows || rows.length === 0) return null;
+
+    const eventNameCol = AppState.columnMapping?.eventname;
+    const userIdCol = AppState.columnMapping?.userid;
+    const timestampCol = AppState.columnMapping?.timestamp;
+    if (!eventNameCol || !userIdCol || !timestampCol) return null;
+
+    // Group events by user
+    const userEvents = {};
+    rows.forEach(row => {
+        const userId = row[userIdCol];
+        const eventName = (row[eventNameCol] || '').toLowerCase();
+        const timestamp = new Date(row[timestampCol]);
+        if (!userId || isNaN(timestamp.getTime())) return;
+
+        if (!userEvents[userId]) userEvents[userId] = [];
+        userEvents[userId].push({
+            eventName,
+            timestamp,
+            cancelReason: getColValue(row, 'cancel_reason'),
+            plan: getColValue(row, 'plan'),
+            channel: getColValue(row, 'channel') || row[AppState.columnMapping?.channel]
+        });
+    });
+
+    // Identify paid users (subscribe or renew) and churned users
+    const paidUsers = new Set();
+    const churnedUsers = {};
+    const cancelReasons = {};
+    const cancelTimes = [];
+    const churnByPlan = {};
+    const churnByChannel = {};
+
+    Object.entries(userEvents).forEach(([userId, events]) => {
+        events.sort((a, b) => a.timestamp - b.timestamp);
+
+        const subscribeEvent = events.find(e => e.eventName.includes('subscribe'));
+        const renewEvent = events.find(e => e.eventName.includes('renew'));
+
+        if (subscribeEvent || renewEvent) {
+            paidUsers.add(userId);
+        }
+
+        const cancelEvent = events.find(e => e.eventName.includes('cancel'));
+        if (cancelEvent && (subscribeEvent || renewEvent)) {
+            churnedUsers[userId] = cancelEvent;
+
+            // Cancel reason
+            const reason = cancelEvent.cancelReason || 'Unknown';
+            cancelReasons[reason] = (cancelReasons[reason] || 0) + 1;
+
+            // Time to cancel
+            const firstPaidEvent = subscribeEvent || renewEvent;
+            if (firstPaidEvent) {
+                const daysToCancel = (cancelEvent.timestamp - firstPaidEvent.timestamp) / (1000 * 60 * 60 * 24);
+                cancelTimes.push(daysToCancel);
+            }
+
+            // Churn by plan
+            const plan = (subscribeEvent?.plan || renewEvent?.plan || 'Unknown').toLowerCase();
+            if (!churnByPlan[plan]) churnByPlan[plan] = { churned: 0, total: 0 };
+            churnByPlan[plan].churned++;
+
+            // Churn by channel
+            const channel = subscribeEvent?.channel || renewEvent?.channel || 'Unknown';
+            if (!churnByChannel[channel]) churnByChannel[channel] = { churned: 0, total: 0 };
+            churnByChannel[channel].churned++;
+        }
+
+        // Count total paid users by plan/channel for rate calculation
+        if (subscribeEvent || renewEvent) {
+            const plan = (subscribeEvent?.plan || renewEvent?.plan || 'Unknown').toLowerCase();
+            if (!churnByPlan[plan]) churnByPlan[plan] = { churned: 0, total: 0 };
+            churnByPlan[plan].total++;
+
+            const channel = subscribeEvent?.channel || renewEvent?.channel || 'Unknown';
+            if (!churnByChannel[channel]) churnByChannel[channel] = { churned: 0, total: 0 };
+            churnByChannel[channel].total++;
+        }
+    });
+
+    const churnUserCount = Object.keys(churnedUsers).length;
+    const paidUserCount = paidUsers.size;
+    const churnRatePaid = paidUserCount > 0 ? (churnUserCount / paidUserCount) * 100 : 0;
+
+    // Cancel reason top
+    const cancelReasonTop = Object.entries(cancelReasons)
+        .map(([reason, users]) => ({
+            reason,
+            users,
+            share: churnUserCount > 0 ? (users / churnUserCount) * 100 : 0
+        }))
+        .sort((a, b) => b.users - a.users)
+        .slice(0, 5);
+
+    // Time to cancel statistics
+    cancelTimes.sort((a, b) => a - b);
+    const medianIdx = Math.floor(cancelTimes.length / 2);
+    const p90Idx = Math.floor(cancelTimes.length * 0.9);
+
+    const analysis = {
+        churn_users: churnUserCount,
+        churn_rate_paid: churnRatePaid,
+        cancel_reason_top: cancelReasonTop,
+        time_to_cancel_median_days: cancelTimes.length > 0 ? cancelTimes[medianIdx] : null,
+        time_to_cancel_p90_days: cancelTimes.length > 0 ? cancelTimes[p90Idx] || cancelTimes[cancelTimes.length - 1] : null,
+        churn_by_plan: Object.entries(churnByPlan).map(([plan, data]) => ({
+            plan,
+            churn_rate: data.total > 0 ? (data.churned / data.total) * 100 : 0,
+            n: data.total
+        })),
+        churn_by_channel: Object.entries(churnByChannel).map(([channel, data]) => ({
+            channel,
+            churn_rate: data.total > 0 ? (data.churned / data.total) * 100 : 0,
+            n: data.total
+        }))
+    };
+
+    AppState.churnAnalysis = analysis;
+    return analysis;
+}
+
+// [4] Calculate Paid Retention
+function calculatePaidRetention() {
+    const rows = AppState.rawData;
+    if (!rows || rows.length === 0) return null;
+
+    const eventNameCol = AppState.columnMapping?.eventname;
+    const userIdCol = AppState.columnMapping?.userid;
+    const timestampCol = AppState.columnMapping?.timestamp;
+    if (!eventNameCol || !userIdCol || !timestampCol) return null;
+
+    // Group events by user
+    const userEvents = {};
+    rows.forEach(row => {
+        const userId = row[userIdCol];
+        const eventName = (row[eventNameCol] || '').toLowerCase();
+        const timestamp = new Date(row[timestampCol]);
+        if (!userId || isNaN(timestamp.getTime())) return;
+
+        if (!userEvents[userId]) userEvents[userId] = [];
+        userEvents[userId].push({ eventName, timestamp });
+    });
+
+    // Build cohorts by first subscribe date
+    const cohorts = {};
+    const userFirstSubscribe = {};
+    const userCancelDate = {};
+
+    Object.entries(userEvents).forEach(([userId, events]) => {
+        events.sort((a, b) => a.timestamp - b.timestamp);
+
+        const subscribeEvent = events.find(e => e.eventName.includes('subscribe'));
+        if (!subscribeEvent) return;
+
+        const cohortDate = subscribeEvent.timestamp.toISOString().split('T')[0];
+        if (!cohorts[cohortDate]) cohorts[cohortDate] = new Set();
+        cohorts[cohortDate].add(userId);
+        userFirstSubscribe[userId] = subscribeEvent.timestamp;
+
+        // Find cancel event
+        const cancelEvent = events.find(e =>
+            e.eventName.includes('cancel') &&
+            e.timestamp >= subscribeEvent.timestamp
+        );
+        if (cancelEvent) {
+            userCancelDate[userId] = cancelEvent.timestamp;
+        }
+    });
+
+    // Calculate retention for each cohort
+    const retentionMatrix = [];
+    const retentionDays = [0, 7, 14, 30, 60, 90];
+
+    Object.entries(cohorts)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(0, 10)
+        .forEach(([cohortDate, userSet]) => {
+            const cohortStartDate = new Date(cohortDate);
+            const retention = { cohortDate, cohortSize: userSet.size, days: {} };
+
+            retentionDays.forEach(day => {
+                const targetDate = new Date(cohortStartDate);
+                targetDate.setDate(targetDate.getDate() + day);
+
+                let retainedCount = 0;
+                userSet.forEach(userId => {
+                    const cancelDate = userCancelDate[userId];
+                    // User is retained if no cancel or cancel is after target date
+                    if (!cancelDate || cancelDate > targetDate) {
+                        retainedCount++;
+                    }
+                });
+
+                retention.days[`D${day}`] = userSet.size > 0 ? (retainedCount / userSet.size) * 100 : 0;
+            });
+
+            retentionMatrix.push(retention);
+        });
+
+    AppState.paidRetentionResults = retentionMatrix;
+    return retentionMatrix;
+}
+
+// [5] Calculate Lifecycle Funnel Time-to-Convert
+function calculateLifecycleTiming() {
+    const rows = AppState.rawData;
+    if (!rows || rows.length === 0) return null;
+
+    const eventNameCol = AppState.columnMapping?.eventname;
+    const userIdCol = AppState.columnMapping?.userid;
+    const timestampCol = AppState.columnMapping?.timestamp;
+    if (!eventNameCol || !userIdCol || !timestampCol) return null;
+
+    // Group events by user
+    const userEvents = {};
+    rows.forEach(row => {
+        const userId = row[userIdCol];
+        const eventName = (row[eventNameCol] || '').toLowerCase();
+        const timestamp = new Date(row[timestampCol]);
+        if (!userId || isNaN(timestamp.getTime())) return;
+
+        if (!userEvents[userId]) userEvents[userId] = [];
+        userEvents[userId].push({ eventName, timestamp });
+    });
+
+    // Calculate time between key lifecycle events
+    const timings = {
+        app_open_to_subscribe: [],
+        trial_to_subscribe: [],
+        subscribe_to_cancel: []
+    };
+
+    Object.values(userEvents).forEach(events => {
+        events.sort((a, b) => a.timestamp - b.timestamp);
+
+        const appOpen = events.find(e => e.eventName.includes('app_open') || e.eventName === 'open');
+        const trial = events.find(e => e.eventName.includes('trial'));
+        const subscribe = events.find(e => e.eventName.includes('subscribe'));
+        const cancel = events.find(e => e.eventName.includes('cancel'));
+
+        // app_open -> subscribe
+        if (appOpen && subscribe && subscribe.timestamp >= appOpen.timestamp) {
+            const hours = (subscribe.timestamp - appOpen.timestamp) / (1000 * 60 * 60);
+            timings.app_open_to_subscribe.push(hours);
+        }
+
+        // trial -> subscribe
+        if (trial && subscribe && subscribe.timestamp >= trial.timestamp) {
+            const hours = (subscribe.timestamp - trial.timestamp) / (1000 * 60 * 60);
+            timings.trial_to_subscribe.push(hours);
+        }
+
+        // subscribe -> cancel (churn time)
+        if (subscribe && cancel && cancel.timestamp >= subscribe.timestamp) {
+            const days = (cancel.timestamp - subscribe.timestamp) / (1000 * 60 * 60 * 24);
+            timings.subscribe_to_cancel.push(days);
+        }
+    });
+
+    // Calculate statistics
+    const calcStats = (arr) => {
+        if (arr.length === 0) return { median: null, p90: null, count: 0 };
+        arr.sort((a, b) => a - b);
+        return {
+            median: arr[Math.floor(arr.length / 2)],
+            p90: arr[Math.floor(arr.length * 0.9)] || arr[arr.length - 1],
+            count: arr.length
+        };
+    };
+
+    return {
+        app_open_to_subscribe: calcStats(timings.app_open_to_subscribe),
+        trial_to_subscribe: calcStats(timings.trial_to_subscribe),
+        subscribe_to_cancel: calcStats(timings.subscribe_to_cancel)
+    };
 }
 
 // ===== NEW FUNCTIONS: Export Report =====
