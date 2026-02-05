@@ -1,13 +1,27 @@
 {
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Hook] File modified - verify in browser before committing'"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
-      "Bash(git status)",
-      "Bash(git log*)",
-      "Bash(git diff*)",
-      "Bash(git add*)",
-      "Bash(git commit*)",
-      "Bash(git branch*)"
+      "Bash(git *)",
+      "Bash(ls *)",
+      "WebSearch"
     ],
-    "deny": []
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
   }
 }

@@ -40,6 +40,8 @@
 - 다크 테마 기본 (`#0a0e27` 배경)
 - Chart.js 인스턴스는 반드시 기존 인스턴스 destroy 후 재생성
 - 반응형 디자인 (모바일/태블릿/데스크탑)
+- DOM 요소 접근 시 getElementById 반환값 null 체크 권장
+- 이벤트 리스너 중복 등록 방지 (초기화 함수에서만 등록)
 
 ## 개발 워크플로우
 
@@ -60,3 +62,5 @@
 - 빌드 도구(webpack, vite 등) 도입 금지
 - `pdf_font_noto_sans_kr.js` 파일 읽기/수정 금지
 - 기존 CSS 변수 체계를 무시하고 하드코딩된 색상값 사용 금지
+- `var`, `eval()`, `document.write()` 사용 금지
+- 인라인 스타일 사용 금지 (styles.css의 CSS 변수/클래스 활용)
