@@ -3,7 +3,17 @@
     "allow": [
       "Bash(ls -la \"funnel-&-retention-explorer frontend/pages\")",
       "Bash(git add \"funnel-&-retention-explorer frontend/\")",
-      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add enhanced React frontend with improved UI/UX\n\n- Implemented modern React/TypeScript frontend with Tailwind CSS\n- Enhanced Sidebar component with tooltips and smooth animations\n- Improved App header with gradient effects and interactive elements\n- Upgraded Tailwind config with extended design tokens and animations\n- Added enhanced Dashboard with interactive KPI cards and charts\n- Implemented comprehensive page structure (Dashboard, Retention, Funnels, etc.)\n\nDesign improvements:\n- Gradient overlays and glow effects on hover\n- Smooth transitions and scale animations\n- Professional tooltip system\n- Active state indicators with pulsing effects\n- Responsive design for mobile/tablet/desktop\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add enhanced React frontend with improved UI/UX\n\n- Implemented modern React/TypeScript frontend with Tailwind CSS\n- Enhanced Sidebar component with tooltips and smooth animations\n- Improved App header with gradient effects and interactive elements\n- Upgraded Tailwind config with extended design tokens and animations\n- Added enhanced Dashboard with interactive KPI cards and charts\n- Implemented comprehensive page structure (Dashboard, Retention, Funnels, etc.)\n\nDesign improvements:\n- Gradient overlays and glow effects on hover\n- Smooth transitions and scale animations\n- Professional tooltip system\n- Active state indicators with pulsing effects\n- Responsive design for mobile/tablet/desktop\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "WebSearch",
+      "mcp__supabase__list_organizations",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__get_project",
+      "mcp__supabase__get_project_url",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__get_publishable_keys",
+      "mcp__supabase__apply_migration",
+      "mcp__netlify__netlify-project-services-reader",
+      "mcp__netlify__netlify-deploy-services-updater"
     ],
     "deny": [],
     "ask": []
