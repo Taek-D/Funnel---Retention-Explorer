@@ -1,6 +1,6 @@
 # Funnel & Retention Explorer
 
-CSV 기반 퍼널/리텐션/세그먼트/구독 분석 대시보드입니다. 이커머스와 구독 서비스 데이터를 자동 감지하여 전환 퍼널, 코호트 리텐션, 세그먼트 비교, 인사이트를 제공합니다.
+CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니다. 이커머스와 구독 서비스 데이터를 자동 감지하여 전환 퍼널, 코호트 리텐션, 세그먼트 비교, AI 인사이트를 제공합니다.
 
 **Live Demo**: https://funnel-retention-explorer.netlify.app
 
@@ -12,10 +12,18 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 대시보드입니다. �
 |---|---|---|
 | **위치** | 루트 (`app.js`, `index.html`) | `funnel-&-retention-explorer frontend/` |
 | **스택** | HTML/CSS/JS + Chart.js (CDN) | React 19 + TypeScript + Vite 6 + Recharts |
+| **인증** | - | Supabase Auth (이메일/게스트) |
+| **AI** | - | Gemini 2.0 Flash |
 | **배포** | - | Netlify (자동 배포) |
 | **상태** | 유지보수 모드 | 활성 개발 |
 
 ## 주요 기능
+
+### SaaS 기능
+- **회원 인증**: Supabase Auth 기반 회원가입/로그인/게스트 모드
+- **클라우드 저장**: 프로젝트/데이터셋/분석 스냅샷 클라우드 저장 (Supabase)
+- **AI 인사이트**: Gemini 2.0 Flash API로 데이터 기반 맞춤 인사이트 생성
+- **Protected Routes**: 인증 상태에 따른 페이지 접근 제어
 
 ### 데이터 업로드 및 관리
 - CSV 파일 드래그 앤 드롭 업로드
@@ -78,53 +86,102 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 대시보드입니다. �
 - 평균 리텐션 커브
 - 최근 인사이트 4개 표시
 
+## 라우팅 구조
+
+```
+/                → LandingPage (소개 페이지)
+/login           → LoginPage (로그인)
+/signup          → SignupPage (회원가입)
+/app/*           → ProtectedRoute → AppShell (사이드바 + 헤더)
+  /app/dashboard   → Dashboard (메인 대시보드)
+  /app/upload      → DataImport (CSV 업로드)
+  /app/funnels     → FunnelAnalysis (퍼널 분석)
+  /app/editor      → FunnelEditor (퍼널 편집)
+  /app/retention   → RetentionAnalysis (리텐션 분석)
+  /app/segments    → SegmentComparison (세그먼트 비교)
+  /app/insights    → Insights (인사이트)
+  /app/mobile      → MobilePreview (모바일 미리보기)
+  /app/projects    → ProjectsPage (프로젝트 관리)
+```
+
 ## 기술 스택
 
 ### React Frontend (Active)
 
 ```
 funnel-&-retention-explorer frontend/
-├── index.html              # Tailwind CDN + Vite 엔트리
-├── index.tsx               # React DOM 마운트
-├── App.tsx                 # AppProvider + 뷰 라우팅
+├── index.html                 # Tailwind CDN + Vite 엔트리
+├── index.tsx                  # AuthProvider > AppProvider > RouterProvider
+├── router.tsx                 # createBrowserRouter (라우팅 정의)
+├── App.tsx                    # 레거시 엔트리 (미사용)
 ├── types/
-│   └── index.ts            # TypeScript 인터페이스 (20+ 타입)
+│   └── index.ts               # TypeScript 인터페이스 (20+ 타입)
 ├── context/
-│   ├── AppContext.tsx       # React Context + useReducer
-│   ├── actions.ts          # 18개 Action 타입 정의
-│   └── reducer.ts          # Reducer + initialState
-├── lib/                    # 순수 TypeScript 모듈 (React 의존성 없음)
-│   ├── csvParser.ts        # PapaParse 래퍼
-│   ├── dataProcessor.ts    # processData, detectDatasetType, autoDetectColumns
-│   ├── funnelEngine.ts     # calculateFunnel, 템플릿, 전환율
-│   ├── retentionEngine.ts  # 활동/유료 리텐션 코호트 계산
-│   ├── segmentEngine.ts    # 세그먼트 비교, p-value 통계
-│   ├── insightsEngine.ts   # 13가지 인사이트 자동 생성
-│   ├── subscriptionEngine.ts # KPI, 트라이얼, 이탈 분석
-│   ├── formatters.ts       # formatTime, formatNum, formatPct, formatCurrency
-│   ├── constants.ts        # EVENT_PATTERNS, FUNNEL_TEMPLATES
-│   └── recentFiles.ts      # localStorage 최근 파일 관리
-├── hooks/                  # lib ↔ React 상태 브릿지
-│   ├── useCSVUpload.ts     # 파일 업로드 + 전체 파이프라인 오케스트레이션
-│   ├── useColumnMapping.ts # 컬럼 매핑 상태
+│   ├── AppContext.tsx          # React Context + useReducer
+│   ├── AuthContext.tsx         # Supabase Auth 상태 관리
+│   ├── actions.ts             # Action 타입 정의
+│   └── reducer.ts             # Reducer + initialState
+├── lib/                       # 순수 TypeScript 모듈 (React 의존성 없음)
+│   ├── csvParser.ts           # PapaParse 래퍼
+│   ├── dataProcessor.ts       # processData, detectDatasetType, autoDetectColumns
+│   ├── funnelEngine.ts        # calculateFunnel, 템플릿, 전환율
+│   ├── retentionEngine.ts     # 활동/유료 리텐션 코호트 계산
+│   ├── segmentEngine.ts       # 세그먼트 비교, p-value 통계
+│   ├── insightsEngine.ts      # 13가지 인사이트 자동 생성
+│   ├── subscriptionEngine.ts  # KPI, 트라이얼, 이탈 분석
+│   ├── formatters.ts          # formatTime, formatNum, formatPct, formatCurrency
+│   ├── constants.ts           # EVENT_PATTERNS, FUNNEL_TEMPLATES
+│   ├── recentFiles.ts         # localStorage 최근 파일 관리
+│   ├── supabase.ts            # Supabase 클라이언트 초기화
+│   ├── supabaseData.ts        # 프로젝트/데이터셋/스냅샷 CRUD
+│   └── geminiClient.ts        # Gemini AI API 클라이언트
+├── hooks/                     # lib ↔ React 상태 브릿지
+│   ├── useCSVUpload.ts        # 파일 업로드 + 전체 파이프라인 오케스트레이션
+│   ├── useColumnMapping.ts    # 컬럼 매핑 상태
 │   ├── useFunnelAnalysis.ts
 │   ├── useRetentionAnalysis.ts
 │   ├── useSegmentComparison.ts
-│   └── useInsights.ts
+│   ├── useInsights.ts
+│   └── useAIInsights.ts       # Gemini AI 인사이트 훅
 ├── pages/
-│   ├── Dashboard.tsx       # 메인 대시보드 (KPI + 차트 + 인사이트)
-│   ├── DataImport.tsx      # CSV 업로드 + 컬럼 매핑 + 품질 리포트
-│   ├── FunnelAnalysis.tsx  # 퍼널 시각화 + 메트릭
-│   ├── FunnelEditor.tsx    # 퍼널 스텝 편집기 + 템플릿
-│   ├── RetentionAnalysis.tsx # 코호트 테이블 + 리텐션 커브
-│   ├── SegmentComparison.tsx # 세그먼트 비교 + 통계
-│   ├── Insights.tsx        # 인사이트 카드 + 구독 KPI
-│   └── MobilePreview.tsx   # 모바일 미리보기
+│   ├── Dashboard.tsx          # 메인 대시보드 (KPI + 차트 + 인사이트)
+│   ├── DataImport.tsx         # CSV 업로드 + 컬럼 매핑 + 품질 리포트
+│   ├── FunnelAnalysis.tsx     # 퍼널 시각화 + 메트릭
+│   ├── FunnelEditor.tsx       # 퍼널 스텝 편집기 + 템플릿
+│   ├── RetentionAnalysis.tsx  # 코호트 테이블 + 리텐션 커브
+│   ├── SegmentComparison.tsx  # 세그먼트 비교 + 통계
+│   ├── Insights.tsx           # 인사이트 카드 + 구독 KPI
+│   ├── MobilePreview.tsx      # 모바일 미리보기
+│   ├── LandingPage.tsx        # 랜딩/소개 페이지
+│   ├── LoginPage.tsx          # 로그인 페이지
+│   ├── SignupPage.tsx         # 회원가입 페이지
+│   └── ProjectsPage.tsx       # 프로젝트 관리 페이지
 ├── components/
-│   ├── Sidebar.tsx         # 사이드 네비게이션
-│   ├── Modal.tsx           # 범용 모달
-│   └── Icons.tsx           # Lucide React 아이콘 re-export
+│   ├── AppShell.tsx           # 앱 레이아웃 (사이드바 + 헤더 + 콘텐츠)
+│   ├── Sidebar.tsx            # 사이드 네비게이션
+│   ├── LandingHeader.tsx      # 랜딩 페이지 헤더
+│   ├── ProtectedRoute.tsx     # 인증 가드 (게스트 모드 지원)
+│   ├── UserMenu.tsx           # 사용자 메뉴 (로그인/로그아웃)
+│   ├── SaveAnalysisButton.tsx # 분석 결과 클라우드 저장
+│   ├── AskAIPanel.tsx         # Gemini AI 질의 패널
+│   ├── Modal.tsx              # 범용 모달
+│   └── Icons.tsx              # Lucide React 아이콘 re-export
+├── __tests__/
+│   ├── unit/                  # 단위 테스트
+│   │   ├── dataProcessor.test.ts
+│   │   └── formatters.test.ts
+│   ├── integration/           # 통합 테스트
+│   │   ├── csv-to-processed.test.ts
+│   │   ├── full-pipeline.test.ts
+│   │   ├── funnel-pipeline.test.ts
+│   │   ├── retention-pipeline.test.ts
+│   │   ├── segment-pipeline.test.ts
+│   │   ├── subscription-pipeline.test.ts
+│   │   └── insights-pipeline.test.ts
+│   ├── fixtures/              # 테스트 데이터
+│   └── helpers/               # 테스트 유틸리티
 ├── vite.config.ts
+├── vitest.config.ts
 ├── tsconfig.json
 └── package.json
 ```
@@ -139,7 +196,10 @@ funnel-&-retention-explorer frontend/
 | Recharts | 3.7 | 차트 시각화 (BarChart, AreaChart) |
 | PapaParse | 5.5 | CSV 파싱 |
 | Lucide React | 0.563 | 아이콘 |
+| @supabase/supabase-js | 2.95 | 인증 + 데이터베이스 |
+| react-router-dom | 7.13 | SPA 라우팅 |
 | Tailwind CSS | CDN | 유틸리티 CSS (다크 테마) |
+| Vitest | 4.0 | 테스트 프레임워크 |
 
 **아키텍처:**
 
@@ -151,10 +211,14 @@ CSV File → csvParser → dataProcessor → AppContext (useReducer)
                     pages (Dashboard, FunnelAnalysis, RetentionAnalysis, ...)
                                               ↓
                     lib engines (funnelEngine, retentionEngine, ...)
+
+Supabase Auth → AuthContext → ProtectedRoute → AppShell → pages
+Gemini API → geminiClient → useAIInsights → AskAIPanel
+Supabase DB → supabaseData → SaveAnalysisButton / ProjectsPage
 ```
 
 - `lib/`: 순수 TypeScript 모듈 (React 의존성 없음) - 테스트 및 재사용 용이
-- `context/`: React Context + useReducer로 전역 상태 관리 (18개 액션)
+- `context/`: React Context + useReducer로 전역 상태 관리, Supabase Auth 상태
 - `hooks/`: lib 함수와 React 상태를 연결하는 브릿지
 - `pages/`: hooks를 소비하는 UI 컴포넌트
 
@@ -188,6 +252,35 @@ npm run dev
 # 프로덕션 빌드
 npm run build
 ```
+
+### 환경 변수
+
+`funnel-&-retention-explorer frontend/.env` 파일에 다음 변수를 설정합니다:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_GEMINI_API_KEY=your-gemini-api-key
+```
+
+> 환경 변수 없이도 게스트 모드로 CSV 업로드 및 분석 기능을 사용할 수 있습니다. Supabase/Gemini 키가 없으면 인증과 AI 기능만 비활성화됩니다.
+
+### 테스트
+
+```bash
+cd "funnel-&-retention-explorer frontend"
+
+# 전체 테스트 실행 (단위 + 통합, ~70개)
+npm test
+
+# Watch 모드
+npm run test:watch
+```
+
+테스트 구조:
+- **단위 테스트**: `dataProcessor`, `formatters` 모듈 검증
+- **통합 테스트**: CSV 파싱 → 데이터 처리 → 분석 엔진 파이프라인 전체 검증
+- **테스트 픽스처**: 이커머스/구독 샘플 데이터 (소규모 + 풀사이즈)
 
 ### Vanilla JS (Legacy)
 
@@ -245,8 +338,10 @@ timestamp,user_id,event_name,platform,channel,trial_days,plan,cancel_reason,reve
 
 ### 샘플 데이터
 
-- `sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3,000 이벤트)
-- `sample_subscription_data.csv` - 구독 서비스 샘플
+`샘플 데이터/` 폴더에 테스트용 CSV 파일이 포함되어 있습니다:
+
+- `샘플 데이터/sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3,000 이벤트)
+- `샘플 데이터/sample_subscription_events_3000.csv` - 구독 서비스 샘플 (3,000 이벤트)
 
 ## 배포
 
@@ -258,6 +353,8 @@ Netlify에 자동 배포됩니다. `main` 브랜치에 푸시하면 `netlify.tom
   command = "npm install && npm run build"
   publish = "dist"
 ```
+
+환경 변수(`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_GEMINI_API_KEY`)는 Netlify 대시보드에서 설정합니다.
 
 ## 디자인
 
@@ -273,7 +370,3 @@ Chrome (권장), Firefox, Safari, Edge
 ## 라이선스
 
 이 프로젝트는 개인 및 상업적 용도로 자유롭게 사용할 수 있습니다.
-
----
-
-**Made with ❤️ for data-driven decision making**
