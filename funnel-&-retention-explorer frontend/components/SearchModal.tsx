@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, X, LayoutDashboard, Filter, Users, UploadCloud, Settings, PieChart, BarChart2, Smartphone, Zap, FileText } from './Icons';
+import { Search, X, LayoutDashboard, Filter, Users, UploadCloud, PieChart, BarChart2, Zap } from './Icons';
 import { useAppContext } from '../context/AppContext';
 
 interface SearchResult {
   id: string;
-  category: 'page' | 'insight' | 'event' | 'project';
+  category: 'page' | 'insight' | 'event';
   title: string;
   subtitle?: string;
   path?: string;
@@ -14,21 +14,17 @@ interface SearchResult {
 
 const pageItems: SearchResult[] = [
   { id: 'p-dashboard', category: 'page', title: '대시보드', subtitle: '대시보드 & KPI', path: '/app/dashboard', icon: LayoutDashboard },
-  { id: 'p-funnels', category: 'page', title: '퍼널', subtitle: '퍼널 분석', path: '/app/funnels', icon: Filter },
-  { id: 'p-retention', category: 'page', title: '리텐션', subtitle: '코호트 리텐션 분석', path: '/app/retention', icon: Users },
   { id: 'p-upload', category: 'page', title: '데이터 가져오기', subtitle: 'CSV 데이터 업로드', path: '/app/upload', icon: UploadCloud },
-  { id: 'p-editor', category: 'page', title: '퍼널 에디터', subtitle: '퍼널 단계 설정', path: '/app/editor', icon: Settings },
+  { id: 'p-funnels', category: 'page', title: '퍼널 분석', subtitle: '퍼널 설정 및 분석', path: '/app/funnels', icon: Filter },
+  { id: 'p-retention', category: 'page', title: '리텐션', subtitle: '코호트 리텐션 분석', path: '/app/retention', icon: Users },
   { id: 'p-segments', category: 'page', title: '세그먼트', subtitle: '세그먼트 비교', path: '/app/segments', icon: PieChart },
   { id: 'p-insights', category: 'page', title: 'AI 인사이트', subtitle: 'AI 기반 분석', path: '/app/insights', icon: BarChart2 },
-  { id: 'p-mobile', category: 'page', title: '모바일 미리보기', subtitle: '모바일 뷰', path: '/app/mobile', icon: Smartphone },
-  { id: 'p-projects', category: 'page', title: '프로젝트', subtitle: '프로젝트 관리', path: '/app/projects', icon: FileText },
 ];
 
 const categoryLabels: Record<string, string> = {
   page: '페이지',
   insight: '인사이트',
   event: '이벤트',
-  project: '프로젝트',
 };
 
 interface SearchModalProps {
@@ -66,7 +62,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
         category: 'event',
         title: event,
         subtitle: '이벤트 유형',
-        path: '/app/editor',
+        path: '/app/funnels',
       });
     });
 

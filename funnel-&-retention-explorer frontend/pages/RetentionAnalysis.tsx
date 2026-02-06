@@ -81,7 +81,7 @@ export const RetentionAnalysis: React.FC = () => {
             onClick={() => setRetentionType('paid')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${isPaid ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}
           >
-            유료 리텐션
+            유료 전환 유지
           </button>
         </div>
       )}
@@ -133,7 +133,7 @@ export const RetentionAnalysis: React.FC = () => {
           onClick={() => runRetentionAnalysis('', [])}
           className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
         >
-          유료 리텐션 계산
+          유료 전환 유지 계산
         </button>
       )}
 

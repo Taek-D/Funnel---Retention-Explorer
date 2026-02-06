@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Filter, Users, UploadCloud, Settings, LogOut, BarChart2, PieChart, Smartphone } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart } from './Icons';
 import { useAuth } from '../context/AuthContext';
 
 interface MenuItem {
@@ -11,13 +11,11 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
   { path: '/app/dashboard', icon: LayoutDashboard, label: '대시보드' },
-  { path: '/app/funnels', icon: Filter, label: '퍼널' },
-  { path: '/app/retention', icon: Users, label: '리텐션' },
   { path: '/app/upload', icon: UploadCloud, label: '데이터 가져오기' },
-  { path: '/app/editor', icon: Settings, label: '퍼널 에디터' },
+  { path: '/app/funnels', icon: Filter, label: '퍼널 분석' },
+  { path: '/app/retention', icon: Users, label: '리텐션' },
   { path: '/app/segments', icon: PieChart, label: '세그먼트' },
   { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트' },
-  { path: '/app/mobile', icon: Smartphone, label: '모바일 미리보기' },
 ];
 
 interface SidebarProps {
