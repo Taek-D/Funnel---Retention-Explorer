@@ -88,8 +88,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
     return groups;
   }, [filtered]);
 
-  const flatList = useMemo(() => filtered, [filtered]);
-
   useEffect(() => {
     setSelectedIndex(0);
   }, [query]);
@@ -112,19 +110,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => Math.min(prev + 1, flatList.length - 1));
+      setSelectedIndex(prev => Math.min(prev + 1, filtered.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex(prev => Math.max(prev - 1, 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (flatList[selectedIndex]) {
-        handleSelect(flatList[selectedIndex]);
+      if (filtered[selectedIndex]) {
+        handleSelect(filtered[selectedIndex]);
       }
     } else if (e.key === 'Escape') {
       onClose();
     }
-  }, [flatList, selectedIndex, handleSelect, onClose]);
+  }, [filtered, selectedIndex, handleSelect, onClose]);
 
   // Scroll selected item into view
   useEffect(() => {
@@ -161,7 +159,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
 
         {/* Results */}
         <div ref={listRef} className="max-h-[360px] overflow-y-auto py-2">
-          {flatList.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <Search size={32} className="text-slate-700 mb-3" />
               <p className="text-slate-500 text-sm">검색 결과 없음: &quot;{query}&quot;</p>

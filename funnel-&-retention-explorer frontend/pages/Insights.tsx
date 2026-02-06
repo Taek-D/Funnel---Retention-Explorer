@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
-import { useInsights } from '../hooks/useInsights';
+import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
 import { AskAIPanel } from '../components/AskAIPanel';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
@@ -13,7 +13,9 @@ const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: s
 };
 
 export const Insights: React.FC = () => {
-  const { insights, subscriptionKPIs, trialAnalysis, churnAnalysis, detectedType, hasData } = useInsights();
+  const { state } = useAppContext();
+  const { insights, subscriptionKPIs, trialAnalysis, churnAnalysis, detectedType, processedData } = state;
+  const hasData = processedData.length > 0;
   const { aiSummary, aiLoading, aiError, generateSummary } = useAIInsights();
   const [askAIOpen, setAskAIOpen] = useState(false);
 

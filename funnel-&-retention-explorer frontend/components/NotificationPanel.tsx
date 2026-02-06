@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Bell, Settings, X } from './Icons';
 import { useNotifications, type NotificationType } from '../context/NotificationContext';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 const typeLabels: Record<NotificationType, { label: string; color: string }> = {
   analysis: { label: '분석', color: 'text-accent bg-accent/10' },
@@ -37,17 +38,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const { notifications, markAllAsRead, clearAll } = useNotifications();
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open, onClose]);
+  useClickOutside(ref, onClose, open);
 
   useEffect(() => {
     if (open && unreadCount > 0) {

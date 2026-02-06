@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut } from './Icons';
 import { useAuth } from '../context/AuthContext';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -9,15 +10,7 @@ export const UserMenu: React.FC = () => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside(ref, useCallback(() => setOpen(false), []));
 
   if (!user) {
     return (

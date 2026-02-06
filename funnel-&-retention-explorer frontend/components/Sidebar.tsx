@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity } from './Icons';
 import { useAuth } from '../context/AuthContext';
 
 interface MenuItem {
@@ -118,19 +118,3 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
     </>
   );
 };
-
-const Activity: React.FC<{ size: number }> = ({ size }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-  </svg>
-);
