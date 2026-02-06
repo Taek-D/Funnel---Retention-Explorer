@@ -1,6 +1,8 @@
 # Netlify 설정 파일
 [build]
-  publish = "."
+  base = "funnel-&-retention-explorer frontend"
+  command = "npm install && npm run build"
+  publish = "dist"
 
 [[redirects]]
   from = "/*"
