@@ -1,4 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"funnel-&-retention-explorer frontend/pages\")",
+      "Bash(git add \"funnel-&-retention-explorer frontend/\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add enhanced React frontend with improved UI/UX\n\n- Implemented modern React/TypeScript frontend with Tailwind CSS\n- Enhanced Sidebar component with tooltips and smooth animations\n- Improved App header with gradient effects and interactive elements\n- Upgraded Tailwind config with extended design tokens and animations\n- Added enhanced Dashboard with interactive KPI cards and charts\n- Implemented comprehensive page structure (Dashboard, Retention, Funnels, etc.)\n\nDesign improvements:\n- Gradient overlays and glow effects on hover\n- Smooth transitions and scale animations\n- Professional tooltip system\n- Active state indicators with pulsing effects\n- Responsive design for mobile/tablet/desktop\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  },
   "hooks": {
     "PostToolUse": [
       {
@@ -10,18 +19,6 @@
           }
         ]
       }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "Bash(git *)",
-      "Bash(ls *)",
-      "WebSearch"
-    ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(git push --force*)",
-      "Bash(git reset --hard*)"
     ]
   }
 }

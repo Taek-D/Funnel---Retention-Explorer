@@ -51,62 +51,37 @@ const App: React.FC = () => {
 
       <main className="flex-1 flex flex-col md:pl-20 relative">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-30 transition-all duration-300 hover:bg-background/70">
-           {/* Mobile Menu */}
+        <header className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-30">
            <div className="flex items-center gap-4 md:hidden">
-              <button className="p-2 rounded-lg hover:bg-white/5 transition-colors">
-                <Menu size={24} />
-              </button>
-              <span className="font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Analytics</span>
+              <Menu size={24} />
+              <span className="font-bold">Analytics</span>
+           </div>
+           
+           <div className="hidden md:flex flex-col">
+              <h1 className="text-xl font-bold text-white tracking-tight capitalize">{currentView.replace('-', ' ')}</h1>
+              <p className="text-xs text-slate-400">Tablet View • 834px Optimization</p>
            </div>
 
-           {/* Page Title */}
-           <div className="hidden md:flex flex-col animate-fade-in">
-              <h1 className="text-xl font-bold text-white tracking-tight capitalize flex items-center gap-2">
-                {currentView.replace('-', ' ')}
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              </h1>
-              <p className="text-xs text-slate-400 font-medium">Real-time Analytics Dashboard</p>
-           </div>
-
-           {/* Action Buttons */}
-           <div className="flex items-center gap-2">
-              {/* Search Button */}
-              <button className="group relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 text-slate-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-glow-sm">
+           <div className="flex items-center gap-3">
+              <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">
                  <Search size={20} />
-
-                 {/* Tooltip */}
-                 <div className="absolute top-full mt-2 px-3 py-1.5 bg-surface-elevated border border-white/10 rounded-lg text-xs font-medium text-white whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
-                   Search
-                 </div>
               </button>
-
-              {/* Notifications Button */}
-              <button
+              <button 
                 onClick={() => setIsModalOpen(true)}
-                className="group relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 text-slate-300 hover:bg-primary/10 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-glow-sm"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 transition-colors relative"
               >
                  <Bell size={20} />
-
-                 {/* Notification Badge */}
-                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background animate-bounce-subtle shadow-glow-danger"></span>
-
-                 {/* Tooltip */}
-                 <div className="absolute top-full mt-2 px-3 py-1.5 bg-surface-elevated border border-white/10 rounded-lg text-xs font-medium text-white whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none shadow-xl">
-                   Notifications
-                 </div>
+                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-background"></span>
               </button>
-
-              {/* Mobile Avatar */}
-              <div
-                className="md:hidden w-9 h-9 rounded-full bg-cover bg-center border-2 border-white/10 hover:border-primary transition-all duration-300 cursor-pointer hover:scale-110"
+              <div 
+                className="md:hidden w-9 h-9 rounded-full bg-cover bg-center border border-white/10" 
                 style={{ backgroundImage: "url('https://picsum.photos/100')" }}
               />
            </div>
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 animate-fade-in">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
            <div className="max-w-[1600px] mx-auto w-full">
              {renderContent()}
            </div>
