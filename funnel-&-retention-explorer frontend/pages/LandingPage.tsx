@@ -6,26 +6,26 @@ import { Filter, Users, BarChart2, Zap, CheckCircle, ArrowRight, ChevronDown } f
 const features = [
   {
     icon: Filter,
-    title: 'Funnel Analysis',
-    desc: 'Build multi-step conversion funnels from any CSV data. Identify drop-off points and optimize user journeys.',
+    title: '퍼널 분석',
+    desc: 'CSV 데이터로 다단계 전환 퍼널을 구축하세요. 이탈 지점을 파악하고 사용자 여정을 최적화할 수 있습니다.',
     gradient: 'from-accent to-teal-500',
   },
   {
     icon: Users,
-    title: 'Retention Cohorts',
-    desc: 'Visualize user retention with cohort tables. Understand when and why users leave.',
+    title: '리텐션 코호트',
+    desc: '코호트 테이블로 사용자 리텐션을 시각화하세요. 사용자가 언제, 왜 이탈하는지 파악할 수 있습니다.',
     gradient: 'from-sky-400 to-blue-500',
   },
   {
     icon: BarChart2,
-    title: 'Segment Comparison',
-    desc: 'Compare segments by platform, channel, or custom dimensions with statistical significance.',
+    title: '세그먼트 비교',
+    desc: '플랫폼, 채널 등 다양한 차원에서 세그먼트를 비교하고 통계적 유의성을 검증합니다.',
     gradient: 'from-amber to-orange-500',
   },
   {
     icon: Zap,
-    title: 'AI-Powered Insights',
-    desc: 'Get instant, actionable insights powered by Gemini AI. No need to dig through data manually.',
+    title: 'AI 인사이트',
+    desc: 'Gemini AI 기반의 즉각적이고 실행 가능한 인사이트를 받아보세요. 수동으로 데이터를 분석할 필요가 없습니다.',
     gradient: 'from-coral to-pink-500',
   },
 ];
@@ -33,41 +33,41 @@ const features = [
 const pricingPlans = [
   {
     name: 'Free',
-    price: '$0',
-    period: 'forever',
-    features: ['1 project', 'CSV upload up to 50K rows', 'Funnel & Retention analysis', 'Basic insights'],
-    cta: 'Get Started',
+    price: '₩0',
+    period: '영구 무료',
+    features: ['프로젝트 1개', 'CSV 업로드 5만 행까지', '퍼널 & 리텐션 분석', '기본 인사이트'],
+    cta: '시작하기',
     highlight: false,
   },
   {
     name: 'Pro',
-    price: '$29',
-    period: '/month',
-    features: ['Unlimited projects', 'CSV upload up to 1M rows', 'AI-powered insights', 'Segment comparison', 'Export to PDF', 'Priority support'],
-    cta: 'Coming Soon',
+    price: '₩39,000',
+    period: '/월',
+    features: ['프로젝트 무제한', 'CSV 업로드 100만 행까지', 'AI 기반 인사이트', '세그먼트 비교', 'PDF 내보내기', '우선 지원'],
+    cta: '출시 예정',
     highlight: true,
   },
   {
     name: 'Team',
-    price: '$99',
-    period: '/month',
-    features: ['Everything in Pro', 'Team collaboration', 'Shared dashboards', 'API access', 'Custom integrations', 'Dedicated support'],
-    cta: 'Coming Soon',
+    price: '₩99,000',
+    period: '/월',
+    features: ['Pro의 모든 기능', '팀 협업', '공유 대시보드', 'API 접근', '커스텀 연동', '전담 지원'],
+    cta: '출시 예정',
     highlight: false,
   },
 ];
 
 const faqs = [
-  { q: 'Do I need to set up a database?', a: 'No. FRE works with CSV files. Just upload your data and start analyzing. For persistent storage, create an account and your data is securely saved.' },
-  { q: 'What data formats are supported?', a: 'Currently CSV files with timestamp, user ID, and event name columns. We auto-detect column mappings for both e-commerce and subscription data.' },
-  { q: 'Is my data secure?', a: 'Yes. Your data is processed in-browser. When you save to the cloud, it is stored encrypted with row-level security — only you can access your data.' },
-  { q: 'Can I try it without signing up?', a: 'Absolutely. Go to the app and upload a CSV. No account needed for basic analysis.' },
+  { q: '데이터베이스 설정이 필요한가요?', a: '아닙니다. FRE는 CSV 파일로 작동합니다. 데이터를 업로드하고 바로 분석을 시작하세요. 계정을 만들면 데이터가 안전하게 클라우드에 저장됩니다.' },
+  { q: '어떤 데이터 형식을 지원하나요?', a: '현재 타임스탬프, 사용자 ID, 이벤트명 컬럼이 있는 CSV 파일을 지원합니다. 이커머스 및 구독 데이터의 컬럼 매핑을 자동으로 감지합니다.' },
+  { q: '데이터는 안전한가요?', a: '네. 데이터는 브라우저에서 처리됩니다. 클라우드에 저장할 경우 암호화되며 행 수준 보안(RLS)으로 본인만 접근할 수 있습니다.' },
+  { q: '회원가입 없이 사용할 수 있나요?', a: '물론입니다. 앱에 접속해서 CSV를 업로드하면 됩니다. 기본 분석에는 계정이 필요하지 않습니다.' },
 ];
 
 const stats = [
-  { label: 'Data Points Analyzed', value: '10M+' },
-  { label: 'Active Users', value: '500+' },
-  { label: 'Avg. Setup Time', value: '<2min' },
+  { label: '분석된 데이터 포인트', value: '1,000만+' },
+  { label: '활성 사용자', value: '500+' },
+  { label: '평균 설정 시간', value: '<2분' },
 ];
 
 function useInView(threshold = 0.15) {
@@ -104,31 +104,31 @@ export const LandingPage: React.FC = () => {
 
         <div className="relative max-w-4xl mx-auto">
           <div className="inline-block px-4 py-1.5 mb-6 text-[11px] font-mono font-semibold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 rounded-full animate-fade-up">
-            Open Analytics Platform
+            오픈 분석 플랫폼
           </div>
           <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tightest mb-6 animate-fade-up delay-100">
-            Funnel & Retention
+            퍼널 & 리텐션
             <br />
             <span className="text-accent">
-              Explorer
+              탐색기
             </span>
           </h1>
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 animate-fade-up delay-200">
-            Upload any CSV. Build funnels, analyze retention cohorts, compare segments, and get AI-powered insights — all in one powerful dashboard.
+            CSV를 업로드하세요. 퍼널 구축, 리텐션 코호트 분석, 세그먼트 비교, AI 인사이트까지 — 하나의 강력한 대시보드에서 모두 가능합니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up delay-300">
             <Link
               to="/app/dashboard"
               className="group px-8 py-3.5 text-base font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
             >
-              Try without signup
+              가입 없이 체험하기
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/signup"
               className="px-8 py-3.5 text-base font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/[0.08] hover:border-white/20 rounded-lg transition-all hover:-translate-y-0.5"
             >
-              Create Free Account
+              무료 계정 만들기
             </Link>
           </div>
 
@@ -148,8 +148,8 @@ export const LandingPage: React.FC = () => {
       <section id="features" className="py-24 px-6" ref={featuresView.ref}>
         <div className="max-w-6xl mx-auto">
           <div className={`text-center mb-16 ${featuresView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">Everything you need to analyze user behavior</h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-sm">From raw CSV to actionable insights in minutes. No SQL, no ETL, no engineering team required.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">사용자 행동 분석에 필요한 모든 것</h2>
+            <p className="text-slate-400 max-w-xl mx-auto text-sm">CSV에서 실행 가능한 인사이트까지 몇 분이면 충분합니다. SQL도, ETL도, 엔지니어링 팀도 필요 없습니다.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((f, i) => (
@@ -174,8 +174,8 @@ export const LandingPage: React.FC = () => {
       <section id="pricing" className="py-24 px-6" ref={pricingView.ref}>
         <div className="max-w-5xl mx-auto">
           <div className={`text-center mb-16 ${pricingView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">Simple, transparent pricing</h2>
-            <p className="text-slate-400 text-sm">Start free. Upgrade when you need more power.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">간단하고 투명한 요금제</h2>
+            <p className="text-slate-400 text-sm">무료로 시작하세요. 더 강력한 기능이 필요할 때 업그레이드하세요.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {pricingPlans.map((plan, i) => (
@@ -189,7 +189,7 @@ export const LandingPage: React.FC = () => {
               >
                 {plan.highlight && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider bg-accent text-background rounded-full">
-                    Most Popular
+                    가장 인기
                   </span>
                 )}
                 <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
@@ -205,7 +205,7 @@ export const LandingPage: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                {plan.cta === 'Coming Soon' ? (
+                {plan.cta === '출시 예정' ? (
                   <button
                     disabled
                     className="w-full py-3 text-sm font-medium text-slate-600 bg-white/[0.03] border border-white/[0.06] rounded-lg cursor-not-allowed"
@@ -234,7 +234,7 @@ export const LandingPage: React.FC = () => {
       <section id="faq" className="py-24 px-6" ref={faqView.ref}>
         <div className="max-w-3xl mx-auto">
           <h2 className={`text-3xl md:text-4xl font-extrabold text-white text-center tracking-tightest mb-12 ${faqView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
-            Frequently Asked Questions
+            자주 묻는 질문
           </h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
@@ -272,13 +272,13 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center bg-surface border border-white/[0.06] rounded-lg p-12 md:p-16 relative overflow-hidden">
           <div className="absolute inset-0 dot-grid opacity-50 pointer-events-none" />
           <div className="relative">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">Ready to explore your data?</h2>
-            <p className="text-slate-400 mb-8 max-w-lg mx-auto">Join hundreds of product teams using FRE Analytics to understand their users better.</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">데이터를 탐색할 준비가 되셨나요?</h2>
+            <p className="text-slate-400 mb-8 max-w-lg mx-auto">FRE Analytics로 사용자를 더 잘 이해하는 수백 개의 프로덕트 팀에 합류하세요.</p>
             <Link
               to="/app/dashboard"
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-all hover:-translate-y-0.5"
             >
-              Get Started Free
+              무료로 시작하기
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -292,8 +292,8 @@ export const LandingPage: React.FC = () => {
             &copy; {new Date().getFullYear()} FRE Analytics. All rights reserved.
           </span>
           <div className="flex gap-6 text-sm text-slate-500">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">개인정보처리방침</a>
+            <a href="#" className="hover:text-white transition-colors">이용약관</a>
             <a href="https://github.com" className="hover:text-white transition-colors">GitHub</a>
           </div>
         </div>

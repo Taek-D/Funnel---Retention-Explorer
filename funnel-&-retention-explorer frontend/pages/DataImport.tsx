@@ -8,12 +8,12 @@ import { formatDateTime } from '../lib/formatters';
 import type { ColumnMapping } from '../types';
 
 const MAPPING_FIELDS: { key: keyof ColumnMapping; label: string; required: boolean }[] = [
-  { key: 'timestamp', label: 'Timestamp', required: true },
-  { key: 'userid', label: 'User ID', required: true },
-  { key: 'eventname', label: 'Event Name', required: true },
-  { key: 'sessionid', label: 'Session ID', required: false },
-  { key: 'platform', label: 'Platform', required: false },
-  { key: 'channel', label: 'Channel', required: false },
+  { key: 'timestamp', label: '타임스탬프', required: true },
+  { key: 'userid', label: '사용자 ID', required: true },
+  { key: 'eventname', label: '이벤트명', required: true },
+  { key: 'sessionid', label: '세션 ID', required: false },
+  { key: 'platform', label: '플랫폼', required: false },
+  { key: 'channel', label: '채널', required: false },
 ];
 
 export const DataImport: React.FC = () => {
@@ -53,8 +53,8 @@ export const DataImport: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-end justify-between pb-2 border-b border-white/5 pb-6">
         <div>
-          <h1 className="text-white text-3xl font-bold tracking-tight mb-2">Data Upload</h1>
-          <p className="text-slate-400 text-sm">Upload and map your data for retention analysis.</p>
+          <h1 className="text-white text-3xl font-bold tracking-tight mb-2">데이터 업로드</h1>
+          <p className="text-slate-400 text-sm">리텐션 분석을 위해 데이터를 업로드하고 매핑하세요.</p>
         </div>
       </div>
 
@@ -63,7 +63,7 @@ export const DataImport: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col gap-6">
           <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-8 relative overflow-hidden group">
             <div className="flex items-center justify-between">
-              <h2 className="text-white text-xl font-bold">File Upload</h2>
+              <h2 className="text-white text-xl font-bold">파일 업로드</h2>
               <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20 tracking-wide uppercase">
                 Step {hasData ? '2/3' : '1/3'}
               </span>
@@ -79,7 +79,7 @@ export const DataImport: React.FC = () => {
 
               {hasData && (
                 <div className="absolute top-4 left-4 text-accent flex items-center gap-1.5 bg-accent/10 px-2 py-1 rounded border border-accent/20">
-                  <CheckCircle size={14} /> <span className="text-xs font-bold">Loaded</span>
+                  <CheckCircle size={14} /> <span className="text-xs font-bold">로드 완료</span>
                 </div>
               )}
 
@@ -94,8 +94,8 @@ export const DataImport: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <p className="text-white font-semibold text-lg">Drop CSV file here or click to upload</p>
-                    <p className="text-slate-400 text-sm mt-1">Supports .csv files with header row</p>
+                    <p className="text-white font-semibold text-lg">CSV 파일을 여기에 드롭하거나 클릭하여 업로드</p>
+                    <p className="text-slate-400 text-sm mt-1">.csv 파일 (헤더 행 포함) 지원</p>
                   </>
                 )}
               </div>
@@ -122,7 +122,7 @@ export const DataImport: React.FC = () => {
           {hasData && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-6">
               <div className="flex items-center gap-2 text-white mb-2">
-                <h3 className="font-bold text-lg">Column Mapping</h3>
+                <h3 className="font-bold text-lg">컬럼 매핑</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -137,7 +137,7 @@ export const DataImport: React.FC = () => {
                         value={mapping[key] || ''}
                         onChange={(e) => updateMapping(key, e.target.value)}
                       >
-                        <option value="">Select Column...</option>
+                        <option value="">컬럼 선택...</option>
                         {headers.map(h => <option key={h} value={h}>{h}</option>)}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
@@ -151,7 +151,7 @@ export const DataImport: React.FC = () => {
               <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 flex items-start gap-3">
                 <Zap size={16} className="text-accent mt-0.5" />
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  AI has automatically mapped <span className="text-white font-bold font-mono">{autoMappedPct}%</span> of columns based on common naming patterns.
+                  AI가 일반적인 명명 패턴을 기반으로 컬럼의 <span className="text-white font-bold font-mono">{autoMappedPct}%</span>를 자동 매핑했습니다.
                 </p>
               </div>
 
@@ -181,10 +181,10 @@ export const DataImport: React.FC = () => {
               {state.dataQualityReport && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: 'Total Rows', value: state.dataQualityReport.totalRows.toLocaleString() },
-                    { label: 'Valid Rows', value: `${state.dataQualityReport.validRows.toLocaleString()} (${state.dataQualityReport.failedRows} failed)` },
-                    { label: 'Unique Users', value: state.dataQualityReport.uniqueUsers.toLocaleString() },
-                    { label: 'Date Range', value: state.dataQualityReport.minDate && state.dataQualityReport.maxDate
+                    { label: '전체 행', value: state.dataQualityReport.totalRows.toLocaleString() },
+                    { label: '유효 행', value: `${state.dataQualityReport.validRows.toLocaleString()} (${state.dataQualityReport.failedRows} 실패)` },
+                    { label: '고유 사용자', value: state.dataQualityReport.uniqueUsers.toLocaleString() },
+                    { label: '날짜 범위', value: state.dataQualityReport.minDate && state.dataQualityReport.maxDate
                       ? `${state.dataQualityReport.minDate.toLocaleDateString()} ~ ${state.dataQualityReport.maxDate.toLocaleDateString()}`
                       : 'N/A' },
                   ].map((item, i) => (
@@ -202,7 +202,7 @@ export const DataImport: React.FC = () => {
                   disabled={isProcessing}
                   className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50"
                 >
-                  Confirm Mapping <ArrowRight size={16} />
+                  매핑 확인 <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -213,7 +213,7 @@ export const DataImport: React.FC = () => {
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-bold text-lg">Recent Files</h3>
+              <h3 className="text-white font-bold text-lg">최근 파일</h3>
             </div>
             <div className="flex flex-col gap-3">
               {recentFiles.length === 0 ? (
@@ -247,7 +247,7 @@ export const DataImport: React.FC = () => {
           {/* Top Events (after data quality report) */}
           {state.dataQualityReport && state.dataQualityReport.topEvents.length > 0 && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
-              <h3 className="text-white font-bold text-lg">Top Events</h3>
+              <h3 className="text-white font-bold text-lg">상위 이벤트</h3>
               <div className="space-y-2">
                 {state.dataQualityReport.topEvents.slice(0, 8).map((evt, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
@@ -263,7 +263,7 @@ export const DataImport: React.FC = () => {
           {/* Detected Type Badge */}
           {state.detectedType && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center gap-3">
-              <p className="text-slate-400 text-xs uppercase font-bold">Detected Data Type</p>
+              <p className="text-slate-400 text-xs uppercase font-bold">감지된 데이터 유형</p>
               <span className="px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-bold border border-accent/20">
                 {state.detectedType === 'ecommerce' ? '이커머스 (E-commerce)' : '구독 서비스 (Subscription)'}
               </span>

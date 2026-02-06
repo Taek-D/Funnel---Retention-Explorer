@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { generateContent, buildAnalysisPrompt, type GeminiMessage } from '../lib/geminiClient';
+import { useNotifications } from '../context/NotificationContext';
 
 const SYSTEM_INSTRUCTION = `You are an expert data analyst for FRE Analytics, a SaaS analytics platform.
 Your job is to provide actionable insights based on funnel, retention, and segment analysis data.
@@ -10,6 +11,7 @@ Respond in the same language as the user's question (Korean or English).`;
 
 export function useAIInsights() {
   const { state } = useAppContext();
+  const { addNotification } = useNotifications();
   const [aiSummary, setAiSummary] = useState<string>('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string>('');
@@ -61,10 +63,11 @@ export function useAIInsights() {
       setAiError(result.error);
     } else {
       setAiSummary(result.text);
+      addNotification('ai', 'AI 분석 완료', '대시보드에서 AI 요약을 확인하세요.');
     }
 
     setAiLoading(false);
-  }, [state.processedData.length, getDataContext]);
+  }, [state.processedData.length, getDataContext, addNotification]);
 
   const askQuestion = useCallback(async (question: string) => {
     if (!question.trim()) return;

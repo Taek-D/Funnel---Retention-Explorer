@@ -12,8 +12,8 @@ export const FunnelEditor: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Zap size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">No Data Available</h2>
-        <p className="text-slate-400">Upload a CSV file in the Data Import tab first.</p>
+        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
+        <p className="text-slate-400">먼저 데이터 가져오기 탭에서 CSV 파일을 업로드하세요.</p>
       </div>
     );
   }
@@ -33,8 +33,8 @@ export const FunnelEditor: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="p-2 bg-accent/10 rounded-lg text-accent"><Zap size={20} /></div>
           <div>
-            <p className="text-white font-bold">Quick Templates</p>
-            <p className="text-slate-400 text-sm">Apply a pre-built funnel template based on your data type.</p>
+            <p className="text-white font-bold">빠른 템플릿</p>
+            <p className="text-slate-400 text-sm">데이터 유형에 맞는 사전 구축된 퍼널 템플릿을 적용하세요.</p>
           </div>
         </div>
         <div className="flex gap-3">
@@ -42,13 +42,13 @@ export const FunnelEditor: React.FC = () => {
             onClick={() => applyTemplate('ecommerce')}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${detectedType === 'ecommerce' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white border border-white/10'}`}
           >
-            E-commerce
+            이커머스
           </button>
           <button
             onClick={() => applyTemplate('subscription')}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${detectedType === 'subscription' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white border border-white/10'}`}
           >
-            Subscription
+            구독
           </button>
           {detectedType === 'subscription' && (
             <button
@@ -66,7 +66,7 @@ export const FunnelEditor: React.FC = () => {
         <div className="lg:col-span-4 flex flex-col gap-4">
           <div className="rounded-lg border border-white/[0.06] bg-surface p-5 flex flex-col">
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-              <h3 className="text-white text-sm font-bold uppercase tracking-wider">Funnel Steps</h3>
+              <h3 className="text-white text-sm font-bold uppercase tracking-wider">퍼널 단계</h3>
               <span className="text-[10px] text-slate-600 font-mono">{funnelSteps.length} steps</span>
             </div>
 
@@ -96,7 +96,7 @@ export const FunnelEditor: React.FC = () => {
                 onClick={addStep}
                 className="mt-2 w-full py-2.5 rounded-lg border border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-accent hover:bg-accent/5 transition-all text-sm font-medium flex items-center justify-center gap-2"
               >
-                <Plus size={16} /> Add Step
+                <Plus size={16} /> 단계 추가
               </button>
             </div>
 
@@ -104,7 +104,7 @@ export const FunnelEditor: React.FC = () => {
               onClick={runFunnelAnalysis}
               className="mt-4 w-full py-3 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
             >
-              Calculate Funnel
+              퍼널 계산
             </button>
           </div>
         </div>
@@ -113,9 +113,9 @@ export const FunnelEditor: React.FC = () => {
         <div className="lg:col-span-8 rounded-lg border border-white/[0.06] bg-surface p-6 flex flex-col">
           <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-8">
             <div>
-              <h3 className="text-lg font-bold text-white">Conversion Funnel Preview</h3>
+              <h3 className="text-lg font-bold text-white">전환 퍼널 미리보기</h3>
               <p className="text-sm text-slate-400">
-                {funnelResults ? <><span className="font-mono">{funnelResults[0]?.users.toLocaleString()}</span> users analyzed</> : 'Configure steps and click Calculate'}
+                {funnelResults ? <><span className="font-mono">{funnelResults[0]?.users.toLocaleString()}</span>명 분석됨</> : '단계를 설정하고 계산을 클릭하세요'}
               </p>
             </div>
           </div>

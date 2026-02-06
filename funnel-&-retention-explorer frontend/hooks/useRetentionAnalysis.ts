@@ -2,10 +2,12 @@ import { useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
+import { useToast } from '../components/Toast';
 import type { RetentionType } from '../types';
 
 export function useRetentionAnalysis() {
   const { state, dispatch } = useAppContext();
+  const { toast } = useToast();
 
   const setRetentionType = useCallback((type: RetentionType) => {
     dispatch({ type: 'SET_RETENTION_TYPE', payload: type });
@@ -15,7 +17,7 @@ export function useRetentionAnalysis() {
     if (state.retentionType === 'paid' && state.detectedType === 'subscription') {
       const paidRetention = state.paidRetentionResults || calculatePaidRetention(state.rawData, state.columnMapping);
       if (!paidRetention || paidRetention.length === 0) {
-        alert('Paid Retention 데이터가 없습니다. subscribe 이벤트가 필요합니다.');
+        toast('warning', 'Paid Retention 데이터 없음', 'subscribe 이벤트가 필요합니다.');
         return;
       }
 
@@ -36,11 +38,11 @@ export function useRetentionAnalysis() {
       dispatch({ type: 'SET_RETENTION_RESULTS', payload: transformed });
     } else {
       if (!cohortEvent) {
-        alert('코호트 이벤트를 선택해주세요');
+        toast('warning', '코호트 이벤트를 선택해주세요');
         return;
       }
       if (activeEvents.length === 0) {
-        alert('최소 1개 이상의 활성 이벤트를 선택해주세요');
+        toast('warning', '최소 1개 이상의 활성 이벤트를 선택해주세요');
         return;
       }
 
@@ -58,7 +60,7 @@ export function useRetentionAnalysis() {
       state.paidRetentionResults
     );
     dispatch({ type: 'SET_INSIGHTS', payload: insights });
-  }, [state, dispatch]);
+  }, [state, dispatch, toast]);
 
   return {
     retentionResults: state.retentionResults,

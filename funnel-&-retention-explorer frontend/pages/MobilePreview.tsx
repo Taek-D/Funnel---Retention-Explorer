@@ -30,7 +30,7 @@ export const MobilePreview: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
              <div className="bg-[#14181f] p-4 rounded-lg">
                <div className="flex justify-between items-start mb-1">
-                 <span className="text-gray-400 text-xs">Total Users</span>
+                 <span className="text-gray-400 text-xs">전체 사용자</span>
                  <Users size={16} className="text-accent" />
                </div>
                <p className="text-white text-2xl font-bold font-mono">12.5k</p>
@@ -38,7 +38,7 @@ export const MobilePreview: React.FC = () => {
              </div>
              <div className="bg-[#14181f] p-4 rounded-lg">
                <div className="flex justify-between items-start mb-1">
-                 <span className="text-gray-400 text-xs">Conversion</span>
+                 <span className="text-gray-400 text-xs">전환율</span>
                  <PieChart size={16} className="text-accent" />
                </div>
                <p className="text-white text-2xl font-bold font-mono">3.2%</p>
@@ -52,8 +52,8 @@ export const MobilePreview: React.FC = () => {
                <AlertTriangle size={20} />
             </div>
             <div className="flex-1 min-w-0">
-               <h3 className="text-white text-sm font-medium truncate">Spike in churn detected</h3>
-               <p className="text-gray-400 text-xs truncate">Cohort A showing unusual drop-off</p>
+               <h3 className="text-white text-sm font-medium truncate">이탈 급증 감지</h3>
+               <p className="text-gray-400 text-xs truncate">코호트 A에서 이상 이탈 발생</p>
             </div>
             <span className="text-gray-500 text-xs whitespace-nowrap">2m ago</span>
           </div>
@@ -62,10 +62,10 @@ export const MobilePreview: React.FC = () => {
           <div className="bg-[#14181f] rounded-lg p-5">
              <div className="flex justify-between items-end mb-4">
                 <div>
-                   <h3 className="text-white text-sm font-medium">Acquisition Funnel</h3>
-                   <p className="text-2xl font-bold text-white font-mono">3.2% <span className="text-gray-400 text-sm font-normal">Conv.</span></p>
+                   <h3 className="text-white text-sm font-medium">유입 퍼널</h3>
+                   <p className="text-2xl font-bold text-white font-mono">3.2% <span className="text-gray-400 text-sm font-normal">전환율</span></p>
                 </div>
-                <div className="bg-white/5 px-2 py-1 rounded text-xs text-gray-300">Last 30 days</div>
+                <div className="bg-white/5 px-2 py-1 rounded text-xs text-gray-300">최근 30일</div>
              </div>
              <div className="h-40 w-full relative pt-4">
                {/* Simple SVG Chart simulation */}
@@ -80,7 +80,7 @@ export const MobilePreview: React.FC = () => {
         {/* Bottom Nav */}
         <nav className="bg-[#14181f] border-t border-white/5 px-6 pb-8 pt-3 absolute bottom-0 w-full z-30">
            <ul className="flex justify-between items-center w-full">
-             {[{icon: Home, l: 'Home', a: true}, {icon: Filter, l: 'Funnels'}, {icon: Users, l: 'Segments'}, {icon: FileText, l: 'Reports'}, {icon: Settings, l: 'Settings'}].map((item, i) => (
+             {[{icon: Home, l: '홈', a: true}, {icon: Filter, l: '퍼널'}, {icon: Users, l: '세그먼트'}, {icon: FileText, l: '리포트'}, {icon: Settings, l: '설정'}].map((item, i) => (
                 <li key={i} className="flex flex-col items-center gap-1 cursor-pointer">
                    <div className={`p-1 ${item.a ? 'text-accent bg-accent/10 rounded-full' : 'text-gray-400'}`}>
                       <item.icon size={24} />

@@ -11,8 +11,8 @@ export const FunnelAnalysis: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Users size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">No Data Available</h2>
-        <p className="text-slate-400">Upload a CSV file in the Data Import tab to begin funnel analysis.</p>
+        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
+        <p className="text-slate-400">퍼널 분석을 시작하려면 데이터 가져오기 탭에서 CSV 파일을 업로드하세요.</p>
       </div>
     );
   }
@@ -21,8 +21,8 @@ export const FunnelAnalysis: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Zap size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Configure Funnel Steps</h2>
-        <p className="text-slate-400">Go to the Funnel Editor tab to set up and calculate your funnel.</p>
+        <h2 className="text-xl font-bold text-white mb-2">퍼널 단계 설정</h2>
+        <p className="text-slate-400">퍼널 에디터 탭에서 퍼널을 설정하고 계산하세요.</p>
       </div>
     );
   }
@@ -43,9 +43,9 @@ export const FunnelAnalysis: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-white/10 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Funnel Analysis</h1>
+          <h1 className="text-2xl font-bold text-white">퍼널 분석</h1>
           <p className="text-slate-400 text-sm mt-1">
-            {detectedType === 'ecommerce' ? 'E-commerce' : detectedType === 'subscription' ? 'Subscription' : 'Custom'} funnel visualization and drop-off analysis.
+            {detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독' : '커스텀'} 퍼널 시각화 및 이탈 분석
           </p>
         </div>
       </div>
@@ -53,10 +53,10 @@ export const FunnelAnalysis: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Entry', value: totalUsers.toLocaleString(), icon: Users },
-          { label: 'Overall Conversion', value: overallConversion.toFixed(1) + '%', icon: TrendingUp },
-          { label: 'Final Step Users', value: funnelResults[funnelResults.length - 1].users.toLocaleString(), icon: Users },
-          { label: 'Steps', value: String(funnelResults.length), icon: Zap },
+          { label: '총 유입', value: totalUsers.toLocaleString(), icon: Users },
+          { label: '전체 전환율', value: overallConversion.toFixed(1) + '%', icon: TrendingUp },
+          { label: '최종 단계 사용자', value: funnelResults[funnelResults.length - 1].users.toLocaleString(), icon: Users },
+          { label: '단계 수', value: String(funnelResults.length), icon: Zap },
         ].map((stat, i) => (
           <div key={i} className="bg-surface border border-white/[0.06] rounded-lg p-5 flex flex-col gap-1 hover:border-accent/20 transition-colors group">
             <div className="flex items-center justify-between mb-2">
@@ -75,12 +75,12 @@ export const FunnelAnalysis: React.FC = () => {
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 lg:col-span-2 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white">Conversion Funnel</h3>
-              <p className="text-sm text-slate-400">User journey step by step</p>
+              <h3 className="text-lg font-semibold text-white">전환 퍼널</h3>
+              <p className="text-sm text-slate-400">단계별 사용자 여정</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold font-mono text-white">{overallConversion.toFixed(1)}%</div>
-              <div className="text-accent text-sm font-medium">Overall Conversion</div>
+              <div className="text-accent text-sm font-medium">전체 전환율</div>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export const FunnelAnalysis: React.FC = () => {
                 <Tooltip
                   cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                   contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff', borderRadius: '6px' }}
-                  formatter={(value: number) => [value.toLocaleString(), 'Users']}
+                  formatter={(value: number) => [value.toLocaleString(), '사용자']}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {chartData.map((_, index) => (
@@ -108,15 +108,15 @@ export const FunnelAnalysis: React.FC = () => {
         <div className="flex flex-col gap-4">
           <div className="bg-surface border border-white/[0.06] rounded-lg flex-1 flex flex-col overflow-hidden">
             <div className="p-5 border-b border-white/5">
-              <h3 className="text-base font-semibold text-white">Step Details</h3>
+              <h3 className="text-base font-semibold text-white">단계 상세</h3>
             </div>
             <div className="flex-1 overflow-auto">
               <table className="w-full text-left text-sm text-slate-400">
                 <thead className="bg-white/5 text-xs uppercase font-semibold text-slate-300">
                   <tr>
-                    <th className="px-4 py-3">Step</th>
-                    <th className="px-4 py-3 text-right">Users</th>
-                    <th className="px-4 py-3 text-right">Conv.</th>
+                    <th className="px-4 py-3">단계</th>
+                    <th className="px-4 py-3 text-right">사용자</th>
+                    <th className="px-4 py-3 text-right">전환율</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -144,7 +144,7 @@ export const FunnelAnalysis: React.FC = () => {
           {/* Median Time */}
           {funnelResults.some(s => s.medianTime) && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-              <h3 className="text-sm font-semibold text-white mb-3">Median Time Between Steps</h3>
+              <h3 className="text-sm font-semibold text-white mb-3">단계 간 중간 시간</h3>
               <div className="space-y-2">
                 {funnelResults.slice(1).map((step, i) => (
                   step.medianTime ? (

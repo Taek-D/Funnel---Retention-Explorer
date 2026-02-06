@@ -41,8 +41,8 @@ export const LandingHeader: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-[13px] text-slate-500">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <a href="#features" className="hover:text-white transition-colors">기능</a>
+          <a href="#pricing" className="hover:text-white transition-colors">요금제</a>
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </nav>
 
@@ -51,13 +51,13 @@ export const LandingHeader: React.FC = () => {
             to="/login"
             className="px-3 py-1.5 text-[13px] font-medium text-slate-400 hover:text-white transition-colors"
           >
-            Log in
+            로그인
           </Link>
           <Link
             to="/signup"
             className="px-4 py-1.5 text-[13px] font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
           >
-            Get Started
+            시작하기
           </Link>
         </div>
 
@@ -78,12 +78,12 @@ export const LandingHeader: React.FC = () => {
         }}
       >
         <div className="bg-surface border-t border-white/[0.06] px-6 py-4 space-y-2">
-          <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Features</a>
-          <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Pricing</a>
+          <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>기능</a>
+          <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>요금제</a>
           <a href="#faq" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>FAQ</a>
           <div className="flex gap-3 pt-3 border-t border-white/[0.06]">
-            <Link to="/login" className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Log in</Link>
-            <Link to="/signup" className="px-4 py-1.5 text-sm font-semibold text-background bg-accent rounded-md">Get Started</Link>
+            <Link to="/login" className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">로그인</Link>
+            <Link to="/signup" className="px-4 py-1.5 text-sm font-semibold text-background bg-accent rounded-md">시작하기</Link>
           </div>
         </div>
       </div>

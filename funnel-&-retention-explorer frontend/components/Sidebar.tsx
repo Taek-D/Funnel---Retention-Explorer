@@ -10,14 +10,14 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  { path: '/app/dashboard', icon: LayoutDashboard, label: 'Overview' },
-  { path: '/app/funnels', icon: Filter, label: 'Funnels' },
-  { path: '/app/retention', icon: Users, label: 'Retention' },
-  { path: '/app/upload', icon: UploadCloud, label: 'Data Import' },
-  { path: '/app/editor', icon: Settings, label: 'Funnel Editor' },
-  { path: '/app/segments', icon: PieChart, label: 'Segments' },
-  { path: '/app/insights', icon: BarChart2, label: 'AI Insights' },
-  { path: '/app/mobile', icon: Smartphone, label: 'Mobile Preview' },
+  { path: '/app/dashboard', icon: LayoutDashboard, label: '대시보드' },
+  { path: '/app/funnels', icon: Filter, label: '퍼널' },
+  { path: '/app/retention', icon: Users, label: '리텐션' },
+  { path: '/app/upload', icon: UploadCloud, label: '데이터 가져오기' },
+  { path: '/app/editor', icon: Settings, label: '퍼널 에디터' },
+  { path: '/app/segments', icon: PieChart, label: '세그먼트' },
+  { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트' },
+  { path: '/app/mobile', icon: Smartphone, label: '모바일 미리보기' },
 ];
 
 interface SidebarProps {
@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
       <div
         className="w-8 h-8 flex items-center justify-center rounded-md bg-accent/10 text-accent cursor-pointer hover:bg-accent/20 transition-colors"
         onClick={() => handleNav('/')}
-        title="Home"
+        title="홈"
       >
         <Activity size={18} />
       </div>
@@ -87,13 +87,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"
           onClick={handleSignOut}
-          title="Sign out"
+          title="로그아웃"
         >
           <LogOut size={16} />
         </button>
         <div
           className="w-7 h-7 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold"
-          title={user?.email || 'Guest'}
+          title={user?.email || '게스트'}
         >
           {initial}
         </div>

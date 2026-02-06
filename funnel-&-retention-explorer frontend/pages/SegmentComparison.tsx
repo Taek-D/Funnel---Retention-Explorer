@@ -11,8 +11,8 @@ export const SegmentComparison: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Users size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">No Data Available</h2>
-        <p className="text-slate-400">Upload a CSV file in the Data Import tab first.</p>
+        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
+        <p className="text-slate-400">먼저 데이터 가져오기 탭에서 CSV 파일을 업로드하세요.</p>
       </div>
     );
   }
@@ -31,8 +31,8 @@ export const SegmentComparison: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold text-white">Segment Comparison</h1>
-        <p className="text-slate-400 text-lg">Deep dive into performance differences across user segments.</p>
+        <h1 className="text-3xl font-bold text-white">세그먼트 비교</h1>
+        <p className="text-slate-400 text-lg">사용자 세그먼트 간 성과 차이를 심층 분석합니다.</p>
       </div>
 
       {/* Controls */}
@@ -45,7 +45,7 @@ export const SegmentComparison: React.FC = () => {
 
         {availablePlatforms.length > 0 && (
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Platforms</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 block">플랫폼</label>
             <div className="flex flex-wrap gap-2">
               {availablePlatforms.map(p => (
                 <button
@@ -64,7 +64,7 @@ export const SegmentComparison: React.FC = () => {
 
         {availableChannels.length > 0 && (
           <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Channels</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 block">채널</label>
             <div className="flex flex-wrap gap-2">
               {availableChannels.map(c => (
                 <button
@@ -86,7 +86,7 @@ export const SegmentComparison: React.FC = () => {
           disabled={!hasFunnel}
           className="h-[42px] px-6 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
         >
-          Compare Segments
+          세그먼트 비교
         </button>
       </div>
 
@@ -95,7 +95,7 @@ export const SegmentComparison: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Bars */}
           <div className="lg:col-span-2 bg-surface border border-white/[0.06] rounded-lg p-6">
-            <h3 className="text-white font-bold text-lg mb-6">Conversion Rate by Segment</h3>
+            <h3 className="text-white font-bold text-lg mb-6">세그먼트별 전환율</h3>
             <div className="space-y-6">
               {segmentResults.map((seg, i) => {
                 const maxConversion = Math.max(...segmentResults.map(s => s.conversion));
@@ -135,14 +135,14 @@ export const SegmentComparison: React.FC = () => {
           {bestSegment && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-1 flex flex-col relative overflow-hidden">
               <div className="flex-1 bg-surface/50 rounded-lg p-6 flex flex-col items-center justify-center text-center">
-                <h3 className="text-white font-bold text-lg mb-6">Top Performer</h3>
+                <h3 className="text-white font-bold text-lg mb-6">최고 성과</h3>
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 border border-accent/20 flex items-center justify-center mb-6">
                   <span className="text-4xl">&#127942;</span>
                 </div>
-                <p className="text-slate-400 text-sm font-medium mb-2 uppercase">Highest Conversion</p>
+                <p className="text-slate-400 text-sm font-medium mb-2 uppercase">최고 전환율</p>
                 <h2 className="text-3xl font-bold text-white mb-2">{bestSegment.name.replace(/^(플랫폼|채널): /, '')}</h2>
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold border border-accent/20">
-                  <span className="font-mono">{bestSegment.conversion.toFixed(1)}%</span> conversion
+                  <span className="font-mono">{bestSegment.conversion.toFixed(1)}%</span> 전환율
                 </span>
                 <span className="mt-2 text-xs text-slate-500">
                   <span className="font-mono">+{(bestSegment.conversion - avgConversion).toFixed(1)}%p</span> vs avg
@@ -159,12 +159,12 @@ export const SegmentComparison: React.FC = () => {
           <table className="w-full text-sm text-left">
             <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
               <tr>
-                <th className="px-6 py-4">Segment</th>
-                <th className="px-4 py-4 text-right">Population</th>
-                <th className="px-4 py-4 text-right">Conversion</th>
-                <th className="px-4 py-4 text-right">Uplift</th>
+                <th className="px-6 py-4">세그먼트</th>
+                <th className="px-4 py-4 text-right">모수</th>
+                <th className="px-4 py-4 text-right">전환율</th>
+                <th className="px-4 py-4 text-right">상승폭</th>
                 <th className="px-4 py-4 text-right">p-value</th>
-                <th className="px-4 py-4 text-right">Significance</th>
+                <th className="px-4 py-4 text-right">유의성</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -178,7 +178,7 @@ export const SegmentComparison: React.FC = () => {
                   </td>
                   <td className="px-4 py-3 text-right text-slate-400 font-mono">{seg.pValue.toFixed(4)}</td>
                   <td className={`px-4 py-3 text-right ${seg.pValue < 0.05 ? 'text-accent' : 'text-slate-500'}`}>
-                    {seg.pValue < 0.05 ? 'Significant' : 'Not significant'}
+                    {seg.pValue < 0.05 ? '유의미' : '유의미하지 않음'}
                   </td>
                 </tr>
               ))}

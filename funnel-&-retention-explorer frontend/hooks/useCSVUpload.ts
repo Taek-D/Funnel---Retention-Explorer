@@ -6,14 +6,18 @@ import { saveRecentFile, loadRecentFiles } from '../lib/recentFiles';
 import { calculateSubscriptionKPIs, analyzeTrialConversion, analyzeChurn } from '../lib/subscriptionEngine';
 import { calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
+import { useToast } from '../components/Toast';
+import { useNotifications } from '../context/NotificationContext';
 import type { ColumnMapping } from '../types';
 
 export function useCSVUpload() {
   const { state, dispatch } = useAppContext();
+  const { toast } = useToast();
+  const { addNotification } = useNotifications();
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file.name.endsWith('.csv')) {
-      alert('CSV 파일을 업로드해주세요');
+      toast('warning', 'CSV 파일을 업로드해주세요');
       return;
     }
 
@@ -45,15 +49,15 @@ export function useCSVUpload() {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
-      alert(error instanceof Error ? error.message : 'CSV 파싱 오류');
+      toast('error', 'CSV 파싱 오류', error instanceof Error ? error.message : '알 수 없는 오류');
     }
-  }, [dispatch]);
+  }, [dispatch, toast]);
 
   const loadRecentFileByIndex = useCallback(async (index: number) => {
     const recentFiles = loadRecentFiles();
     const file = recentFiles[index];
     if (!file) {
-      alert('파일을 찾을 수 없습니다.');
+      toast('warning', '파일을 찾을 수 없습니다.');
       return;
     }
 
@@ -76,13 +80,13 @@ export function useCSVUpload() {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
-      alert(error instanceof Error ? error.message : '파일 로딩 오류');
+      toast('error', '파일 로딩 오류', error instanceof Error ? error.message : '알 수 없는 오류');
     }
-  }, [dispatch]);
+  }, [dispatch, toast]);
 
   const confirmMapping = useCallback(async (mapping: ColumnMapping) => {
     if (!mapping.timestamp || !mapping.userid || !mapping.eventname) {
-      alert('Timestamp, User ID, Event Name 컬럼은 필수입니다.');
+      toast('warning', '필수 컬럼 미지정', 'Timestamp, User ID, Event Name 컬럼은 필수입니다.');
       return;
     }
 
@@ -136,11 +140,12 @@ export function useCSVUpload() {
 
     const typeName = detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독 서비스' : null;
     if (typeName) {
-      alert(`데이터가 성공적으로 처리되었습니다!\n\n감지된 데이터 유형: ${typeName}\n인사이트 탭에서 자동 생성된 인사이트를 확인하세요!`);
+      toast('success', '데이터 처리 완료', `감지된 데이터 유형: ${typeName}`);
     } else {
-      alert('데이터가 성공적으로 처리되었습니다! 다른 화면으로 이동하여 분석하세요.');
+      toast('success', '데이터 처리 완료', '다른 화면으로 이동하여 분석하세요.');
     }
-  }, [state.rawData, state.headers, dispatch]);
+    addNotification('import', '데이터 가져오기 완료', `${processed.length}개 이벤트, ${qualityReport.uniqueUsers}명 사용자`);
+  }, [state.rawData, state.headers, dispatch, toast, addNotification]);
 
   return {
     handleFileUpload,

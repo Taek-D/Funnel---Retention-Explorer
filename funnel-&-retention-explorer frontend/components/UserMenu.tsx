@@ -25,7 +25,7 @@ export const UserMenu: React.FC = () => {
         onClick={() => navigate('/login')}
         className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
       >
-        Sign in
+        로그인
       </button>
     );
   }
@@ -54,7 +54,7 @@ export const UserMenu: React.FC = () => {
       >
         <div className="px-4 py-3 border-b border-white/5">
           <p className="text-sm font-medium text-white truncate">{user.email}</p>
-          <p className="text-xs text-slate-500">Free Plan</p>
+          <p className="text-xs text-slate-500">무료 플랜</p>
         </div>
         <div className="py-1">
           <button
@@ -62,14 +62,14 @@ export const UserMenu: React.FC = () => {
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:bg-white/5 transition-colors"
           >
             <Users size={16} />
-            My Projects
+            내 프로젝트
           </button>
           <button
             onClick={handleSignOut}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/5 transition-colors"
           >
             <LogOut size={16} />
-            Sign Out
+            로그아웃
           </button>
         </div>
       </div>

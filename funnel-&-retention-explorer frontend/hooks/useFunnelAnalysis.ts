@@ -2,9 +2,13 @@ import { useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { calculateFunnel, loadFunnelTemplate } from '../lib/funnelEngine';
 import { generateInsights } from '../lib/insightsEngine';
+import { useToast } from '../components/Toast';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useFunnelAnalysis() {
   const { state, dispatch } = useAppContext();
+  const { toast } = useToast();
+  const { addNotification } = useNotifications();
 
   const setFunnelSteps = useCallback((steps: string[]) => {
     dispatch({ type: 'SET_FUNNEL_STEPS', payload: steps });
@@ -22,7 +26,7 @@ export function useFunnelAnalysis() {
 
   const runFunnelAnalysis = useCallback(() => {
     if (state.funnelSteps.length < 2) {
-      alert('최소 2개 이상의 퍼널 단계를 선택해주세요');
+      toast('warning', '최소 2개 이상의 퍼널 단계를 선택해주세요');
       return;
     }
 
@@ -39,7 +43,12 @@ export function useFunnelAnalysis() {
       state.paidRetentionResults
     );
     dispatch({ type: 'SET_INSIGHTS', payload: insights });
-  }, [state, dispatch]);
+
+    const conversion = results.length > 1
+      ? ((results[results.length - 1].users / results[0].users) * 100).toFixed(1)
+      : null;
+    addNotification('analysis', '퍼널 분석 완료', `${results.length}단계, 전환율 ${conversion || 'N/A'}%`);
+  }, [state, dispatch, toast, addNotification]);
 
   return {
     funnelSteps: state.funnelSteps,

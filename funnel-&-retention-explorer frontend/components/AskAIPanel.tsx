@@ -45,7 +45,7 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
               <Zap size={18} />
             </div>
             <div>
-              <h3 className="text-white font-bold text-sm">Ask AI</h3>
+              <h3 className="text-white font-bold text-sm">AI에게 질문</h3>
               <p className="text-slate-500 text-xs">Powered by Gemini 2.0 Flash</p>
             </div>
           </div>
@@ -53,7 +53,7 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
             <button
               onClick={clearChat}
               className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              title="Clear chat"
+              title="대화 초기화"
             >
               <RefreshCw size={16} />
             </button>
@@ -70,19 +70,19 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {!hasData && (
             <div className="text-center py-8">
-              <p className="text-slate-400 text-sm">Upload and process data to start asking questions.</p>
+              <p className="text-slate-400 text-sm">질문을 시작하려면 데이터를 업로드하고 처리하세요.</p>
             </div>
           )}
 
           {hasData && chatMessages.length === 0 && (
             <div className="text-center py-8 space-y-4">
-              <p className="text-slate-400 text-sm">Ask anything about your data analysis.</p>
+              <p className="text-slate-400 text-sm">데이터 분석에 대해 무엇이든 질문하세요.</p>
               <div className="flex flex-wrap justify-center gap-2">
                 {[
-                  'What are the key trends in my data?',
-                  'Why is the conversion rate low?',
-                  'How can I improve retention?',
-                  'What segments perform best?',
+                  '내 데이터의 주요 트렌드는?',
+                  '전환율이 낮은 이유는?',
+                  '리텐션을 개선하려면?',
+                  '성과가 가장 좋은 세그먼트는?',
                 ].map((suggestion, i) => (
                   <button
                     key={i}
@@ -136,7 +136,7 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={hasData ? 'Ask about your data...' : 'Upload data first...'}
+              placeholder={hasData ? '데이터에 대해 질문하세요...' : '먼저 데이터를 업로드하세요...'}
               disabled={!hasData || sending}
               className="flex-1 bg-background border border-white/[0.06] rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all disabled:opacity-50"
             />

@@ -1,15 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, AlertTriangle, TrendingUp, Users, Zap, CreditCard } from '../components/Icons';
+import { Info, AlertTriangle, TrendingUp, Users, Zap, CreditCard, Download } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
+import { useExportReport } from '../hooks/useExportReport';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
   const { aiSummary, aiLoading, generateSummary } = useAIInsights();
+  const { exportReport, exporting } = useExportReport();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
 
   const hasData = processedData.length > 0;
@@ -45,20 +47,34 @@ export const Dashboard: React.FC = () => {
   // KPI cards
   const kpiCards = subscriptionKPIs
     ? [
-        { label: 'Total Users', value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? 'Subscription' : 'E-commerce', positive: true },
-        { label: 'Paid Users', value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true },
-        { label: 'Churn Rate', value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10 },
-        { label: 'Revenue', value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true },
+        { label: '전체 사용자', value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? '구독' : '이커머스', positive: true },
+        { label: '유료 사용자', value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true },
+        { label: '이탈률', value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10 },
+        { label: '매출', value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true },
       ]
     : [
-        { label: 'Unique Users', value: formatNum(uniqueUsers), change: hasData ? 'Active' : 'No data', positive: hasData },
-        { label: 'Total Events', value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} types` : 'No data', positive: hasData },
-        { label: 'Conversion', value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} steps` : 'Not calculated', positive: overallConversion != null && overallConversion > 20 },
-        { label: 'Data Type', value: detectedType === 'ecommerce' ? 'E-commerce' : detectedType === 'subscription' ? 'Subscription' : 'N/A', change: hasData ? 'Detected' : 'Upload data', positive: detectedType !== null },
+        { label: '고유 사용자', value: formatNum(uniqueUsers), change: hasData ? '활성' : '데이터 없음', positive: hasData },
+        { label: '전체 이벤트', value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} 유형` : '데이터 없음', positive: hasData },
+        { label: '전환율', value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} 단계` : '미계산', positive: overallConversion != null && overallConversion > 20 },
+        { label: '데이터 유형', value: detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독' : 'N/A', change: hasData ? '감지됨' : '데이터 업로드', positive: detectedType !== null },
       ];
 
   return (
     <div className="space-y-6">
+      {/* Export button */}
+      {hasData && (
+        <div className="flex justify-end">
+          <button
+            onClick={exportReport}
+            disabled={exporting}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
+          >
+            <Download size={16} />
+            {exporting ? '내보내는 중...' : '리포트 내보내기'}
+          </button>
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, i) => (
@@ -80,14 +96,14 @@ export const Dashboard: React.FC = () => {
           <div className="flex justify-between items-center mb-8 relative z-10">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                Funnel Drop-off Analysis
+                퍼널 이탈 분석
                 <Info size={16} className="text-slate-500 cursor-help" />
               </h3>
-              <p className="text-slate-400 text-sm">{funnelResults?.length || 0}-step funnel analysis</p>
+              <p className="text-slate-400 text-sm">{funnelResults?.length || 0}단계 퍼널 분석</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
-              <div className="text-accent text-sm font-medium">Overall Conversion</div>
+              <div className="text-accent text-sm font-medium">전체 전환율</div>
             </div>
           </div>
 
@@ -98,7 +114,7 @@ export const Dashboard: React.FC = () => {
                 <Tooltip
                   cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                   contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
-                  formatter={(value: number) => [value.toLocaleString(), 'Users']}
+                  formatter={(value: number) => [value.toLocaleString(), '사용자']}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {funnelChartData.map((_, index) => (
@@ -113,7 +129,7 @@ export const Dashboard: React.FC = () => {
       ) : (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
-          <p className="text-slate-400 text-sm">{hasData ? 'Calculate a funnel in the Editor tab to see results here.' : 'Upload data to get started.'}</p>
+          <p className="text-slate-400 text-sm">{hasData ? '에디터 탭에서 퍼널을 계산하면 여기에 결과가 표시됩니다.' : '데이터를 업로드하여 시작하세요.'}</p>
         </div>
       )}
 
@@ -125,7 +141,7 @@ export const Dashboard: React.FC = () => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 text-accent flex items-center justify-center">
                 <Zap size={16} />
               </div>
-              <h3 className="font-bold text-white">AI Quick Summary</h3>
+              <h3 className="font-bold text-white">AI 빠른 요약</h3>
             </div>
             <div className="flex items-center gap-2">
               {!aiSummary && (
@@ -134,28 +150,28 @@ export const Dashboard: React.FC = () => {
                   disabled={aiLoading}
                   className="px-3 py-1.5 text-xs font-medium text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
                 >
-                  {aiLoading ? 'Analyzing...' : 'Generate'}
+                  {aiLoading ? '분석 중...' : '생성'}
                 </button>
               )}
               <button
                 onClick={() => navigate('/app/insights')}
                 className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors"
               >
-                View All Insights
+                모든 인사이트 보기
               </button>
             </div>
           </div>
           {aiLoading && (
             <div className="flex items-center gap-3 py-2">
               <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              <span className="text-slate-400 text-sm">Analyzing...</span>
+              <span className="text-slate-400 text-sm">분석 중...</span>
             </div>
           )}
           {aiSummary && !aiLoading && (
             <p className="text-slate-300 text-sm leading-relaxed line-clamp-4">{aiSummary}</p>
           )}
           {!aiSummary && !aiLoading && (
-            <p className="text-slate-500 text-sm">Generate an AI-powered summary of your analytics data.</p>
+            <p className="text-slate-500 text-sm">분석 데이터의 AI 기반 요약을 생성하세요.</p>
           )}
         </div>
       )}
@@ -165,12 +181,12 @@ export const Dashboard: React.FC = () => {
         {/* Recent Insights */}
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-white">Recent Insights</h3>
-            <span className="text-xs text-slate-500">{insights.length} total</span>
+            <h3 className="font-bold text-white">최근 인사이트</h3>
+            <span className="text-xs text-slate-500">{insights.length} 전체</span>
           </div>
           <div className="space-y-4">
             {insights.length === 0 ? (
-              <p className="text-slate-500 text-sm">No insights yet. Process data to generate insights.</p>
+              <p className="text-slate-500 text-sm">아직 인사이트가 없습니다. 데이터를 처리하면 인사이트가 생성됩니다.</p>
             ) : (
               insights.slice(0, 4).map((insight, i) => {
                 const colors: Record<string, { text: string; bg: string }> = {
@@ -202,7 +218,7 @@ export const Dashboard: React.FC = () => {
         {/* User Retention Chart */}
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-white">Retention Curve</h3>
+            <h3 className="font-bold text-white">리텐션 곡선</h3>
           </div>
           {retentionCurveData.length > 0 ? (
             <div className="h-48 w-full">
@@ -219,7 +235,7 @@ export const Dashboard: React.FC = () => {
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10 }} domain={[0, 100]} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
-                    formatter={(value: number) => [`${value}%`, 'Retention']}
+                    formatter={(value: number) => [`${value}%`, '리텐션']}
                   />
                   <Area type="monotone" dataKey="value" stroke="#00d4aa" strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
                 </AreaChart>
@@ -227,7 +243,7 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div className="h-48 flex items-center justify-center">
-              <p className="text-slate-500 text-sm">{hasData ? 'Calculate retention to see the curve.' : 'Upload data to get started.'}</p>
+              <p className="text-slate-500 text-sm">{hasData ? '리텐션을 계산하면 곡선이 표시됩니다.' : '데이터를 업로드하여 시작하세요.'}</p>
             </div>
           )}
         </div>
