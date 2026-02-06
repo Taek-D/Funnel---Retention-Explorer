@@ -2,7 +2,7 @@
 
 CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니다. 이커머스와 구독 서비스 데이터를 자동 감지하여 전환 퍼널, 코호트 리텐션, 세그먼트 비교, AI 인사이트를 제공합니다.
 
-**Live Demo**: https://funnel-retention-explorer.netlify.app
+**Live**: https://fre-analytics-castletaek9643-9522s-projects.vercel.app
 
 ## 프로젝트 구조
 
@@ -14,7 +14,7 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
 | **스택** | HTML/CSS/JS + Chart.js (CDN) | React 19 + TypeScript + Vite 6 + Recharts |
 | **인증** | - | Supabase Auth (이메일/게스트) |
 | **AI** | - | Gemini 2.0 Flash |
-| **배포** | - | Netlify (자동 배포) |
+| **배포** | - | Vercel (자동 배포) |
 | **상태** | 유지보수 모드 | 활성 개발 |
 
 ## 주요 기능
@@ -22,16 +22,20 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
 ### SaaS 기능
 - **회원 인증**: Supabase Auth 기반 회원가입/로그인/게스트 모드
 - **클라우드 저장**: 프로젝트/데이터셋/분석 스냅샷 클라우드 저장 (Supabase)
-- **AI 인사이트**: Gemini 2.0 Flash API로 데이터 기반 맞춤 인사이트 생성
-- **Protected Routes**: 인증 상태에 따른 페이지 접근 제어
+- **AI 인사이트**: Gemini 2.0 Flash API로 한국어 데이터 분석 요약 및 질의응답
+- **Protected Routes**: 인증 상태에 따른 페이지 접근 제어 (게스트 허용)
+- **리포트 내보내기**: 분석 결과를 PNG 리포트로 내보내기 (AI 요약 포함, 자동 페이지 분할)
+- **알림 시스템**: 분석 완료, AI 처리, 내보내기 등 활동 알림
+- **글로벌 검색**: Cmd+K 단축키로 페이지/인사이트/이벤트 통합 검색
 
-### 데이터 업로드 및 관리
-- CSV 파일 드래그 앤 드롭 업로드
-- AI 기반 자동 컬럼 매핑 (일반적인 컬럼명 패턴 자동 인식)
+### 데이터 업로드 (3단계)
+1. **Step 1** — CSV 파일 드래그 앤 드롭 업로드
+2. **Step 2** — AI 기반 자동 컬럼 매핑 + 데이터 미리보기 + 품질 리포트
+3. **Step 3** — 매핑 확인 및 데이터 처리 완료
+
 - 이커머스/구독 서비스 데이터 유형 자동 감지
-- 데이터 품질 리포트 (총 행수, 유효 행수, 고유 사용자, 날짜 범위)
 - 최근 파일 기록 (최대 5개, localStorage)
-- 데이터 미리보기 (상위 5행)
+- 상위 이벤트 분포 표시
 
 ### 퍼널 분석
 - 데이터 유형별 자동 템플릿 (이커머스/구독/생애주기)
@@ -74,6 +78,11 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
 - 해지 사유별 맞춤 개선안
 - 낮은 Paid Retention (D7 70% 미만, D30 50% 미만)
 
+### AI 분석 (Gemini 2.0 Flash)
+- **AI 분석 요약**: 데이터 기반 종합 분석 요약 (한국어)
+- **AI 질의응답**: 데이터에 대해 자유롭게 질문
+- **상태 유지**: 탭 전환 시에도 AI 요약 결과가 유지됨
+
 ### 구독 분석 (Subscription Analytics)
 구독 서비스 데이터 감지 시 자동 활성화:
 - **KPI 대시보드**: 총 사용자, 유료 사용자, 매출, ARPPU, 해지율
@@ -85,6 +94,7 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
 - 퍼널 드롭오프 바 차트
 - 평균 리텐션 커브
 - 최근 인사이트 4개 표시
+- PNG 리포트 내보내기
 
 ## 라우팅 구조
 
@@ -96,12 +106,9 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
   /app/dashboard   → Dashboard (메인 대시보드)
   /app/upload      → DataImport (CSV 업로드)
   /app/funnels     → FunnelAnalysis (퍼널 분석)
-  /app/editor      → FunnelEditor (퍼널 편집)
   /app/retention   → RetentionAnalysis (리텐션 분석)
   /app/segments    → SegmentComparison (세그먼트 비교)
-  /app/insights    → Insights (인사이트)
-  /app/mobile      → MobilePreview (모바일 미리보기)
-  /app/projects    → ProjectsPage (프로젝트 관리)
+  /app/insights    → Insights (AI 인사이트)
 ```
 
 ## 기술 스택
@@ -111,14 +118,14 @@ CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니�
 ```
 funnel-&-retention-explorer frontend/
 ├── index.html                 # Tailwind CDN + Vite 엔트리
-├── index.tsx                  # AuthProvider > AppProvider > RouterProvider
+├── index.tsx                  # AuthProvider > AppProvider > ToastProvider > NotificationProvider > Router
 ├── router.tsx                 # createBrowserRouter (라우팅 정의)
-├── App.tsx                    # 레거시 엔트리 (미사용)
 ├── types/
 │   └── index.ts               # TypeScript 인터페이스 (20+ 타입)
 ├── context/
-│   ├── AppContext.tsx          # React Context + useReducer
+│   ├── AppContext.tsx          # React Context + useReducer (전역 상태)
 │   ├── AuthContext.tsx         # Supabase Auth 상태 관리
+│   ├── NotificationContext.tsx # 앱 내 알림 상태
 │   ├── actions.ts             # Action 타입 정의
 │   └── reducer.ts             # Reducer + initialState
 ├── lib/                       # 순수 TypeScript 모듈 (React 의존성 없음)
@@ -129,6 +136,7 @@ funnel-&-retention-explorer frontend/
 │   ├── segmentEngine.ts       # 세그먼트 비교, p-value 통계
 │   ├── insightsEngine.ts      # 13가지 인사이트 자동 생성
 │   ├── subscriptionEngine.ts  # KPI, 트라이얼, 이탈 분석
+│   ├── reportEngine.ts        # Canvas 기반 PNG 리포트 생성 (AI 요약 포함)
 │   ├── formatters.ts          # formatTime, formatNum, formatPct, formatCurrency
 │   ├── constants.ts           # EVENT_PATTERNS, FUNNEL_TEMPLATES
 │   ├── recentFiles.ts         # localStorage 최근 파일 관리
@@ -138,32 +146,35 @@ funnel-&-retention-explorer frontend/
 ├── hooks/                     # lib ↔ React 상태 브릿지
 │   ├── useCSVUpload.ts        # 파일 업로드 + 전체 파이프라인 오케스트레이션
 │   ├── useColumnMapping.ts    # 컬럼 매핑 상태
-│   ├── useFunnelAnalysis.ts
-│   ├── useRetentionAnalysis.ts
-│   ├── useSegmentComparison.ts
-│   ├── useInsights.ts
-│   └── useAIInsights.ts       # Gemini AI 인사이트 훅
+│   ├── useFunnelAnalysis.ts   # 퍼널 분석 계산
+│   ├── useRetentionAnalysis.ts # 리텐션 분석 계산
+│   ├── useSegmentComparison.ts # 세그먼트 비교 로직
+│   ├── useAIInsights.ts       # Gemini AI 요약/질의 (전역 상태 연동)
+│   ├── useExportReport.ts     # PNG 리포트 내보내기
+│   ├── useClickOutside.ts     # 외부 클릭 감지 공통 훅
+│   └── useEmailSettings.ts    # 이메일 알림 설정
 ├── pages/
 │   ├── Dashboard.tsx          # 메인 대시보드 (KPI + 차트 + 인사이트)
 │   ├── DataImport.tsx         # CSV 업로드 + 컬럼 매핑 + 품질 리포트
 │   ├── FunnelAnalysis.tsx     # 퍼널 시각화 + 메트릭
-│   ├── FunnelEditor.tsx       # 퍼널 스텝 편집기 + 템플릿
 │   ├── RetentionAnalysis.tsx  # 코호트 테이블 + 리텐션 커브
 │   ├── SegmentComparison.tsx  # 세그먼트 비교 + 통계
-│   ├── Insights.tsx           # 인사이트 카드 + 구독 KPI
-│   ├── MobilePreview.tsx      # 모바일 미리보기
+│   ├── Insights.tsx           # AI 분석 요약 + 인사이트 카드 + 구독 KPI
 │   ├── LandingPage.tsx        # 랜딩/소개 페이지
 │   ├── LoginPage.tsx          # 로그인 페이지
 │   ├── SignupPage.tsx         # 회원가입 페이지
 │   └── ProjectsPage.tsx       # 프로젝트 관리 페이지
 ├── components/
 │   ├── AppShell.tsx           # 앱 레이아웃 (사이드바 + 헤더 + 콘텐츠)
-│   ├── Sidebar.tsx            # 사이드 네비게이션
+│   ├── Sidebar.tsx            # 아이콘 사이드 네비게이션 (6탭)
 │   ├── LandingHeader.tsx      # 랜딩 페이지 헤더
 │   ├── ProtectedRoute.tsx     # 인증 가드 (게스트 모드 지원)
-│   ├── UserMenu.tsx           # 사용자 메뉴 (로그인/로그아웃)
+│   ├── UserMenu.tsx           # 사용자 드롭다운 메뉴
+│   ├── NotificationPanel.tsx  # 알림 패널
+│   ├── SearchModal.tsx        # Cmd+K 글로벌 검색 모달
 │   ├── SaveAnalysisButton.tsx # 분석 결과 클라우드 저장
 │   ├── AskAIPanel.tsx         # Gemini AI 질의 패널
+│   ├── Toast.tsx              # 토스트 알림 (Provider + hook)
 │   ├── Modal.tsx              # 범용 모달
 │   └── Icons.tsx              # Lucide React 아이콘 re-export
 ├── __tests__/
@@ -178,7 +189,7 @@ funnel-&-retention-explorer frontend/
 │   │   ├── segment-pipeline.test.ts
 │   │   ├── subscription-pipeline.test.ts
 │   │   └── insights-pipeline.test.ts
-│   ├── fixtures/              # 테스트 데이터
+│   ├── fixtures/              # 테스트 데이터 (이커머스/구독)
 │   └── helpers/               # 테스트 유틸리티
 ├── vite.config.ts
 ├── vitest.config.ts
@@ -213,12 +224,13 @@ CSV File → csvParser → dataProcessor → AppContext (useReducer)
                     lib engines (funnelEngine, retentionEngine, ...)
 
 Supabase Auth → AuthContext → ProtectedRoute → AppShell → pages
-Gemini API → geminiClient → useAIInsights → AskAIPanel
+Gemini API → geminiClient → useAIInsights → AppState (aiSummary) → Insights / Report
 Supabase DB → supabaseData → SaveAnalysisButton / ProjectsPage
+NotificationContext → NotificationPanel → Toast
 ```
 
 - `lib/`: 순수 TypeScript 모듈 (React 의존성 없음) - 테스트 및 재사용 용이
-- `context/`: React Context + useReducer로 전역 상태 관리, Supabase Auth 상태
+- `context/`: React Context + useReducer로 전역 상태 관리, Supabase Auth, 알림
 - `hooks/`: lib 함수와 React 상태를 연결하는 브릿지
 - `pages/`: hooks를 소비하는 UI 컴포넌트
 
@@ -270,7 +282,7 @@ VITE_GEMINI_API_KEY=your-gemini-api-key
 ```bash
 cd "funnel-&-retention-explorer frontend"
 
-# 전체 테스트 실행 (단위 + 통합, ~70개)
+# 전체 테스트 실행 (단위 + 통합)
 npm test
 
 # Watch 모드
@@ -340,28 +352,24 @@ timestamp,user_id,event_name,platform,channel,trial_days,plan,cancel_reason,reve
 
 `샘플 데이터/` 폴더에 테스트용 CSV 파일이 포함되어 있습니다:
 
-- `샘플 데이터/sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3,000 이벤트)
-- `샘플 데이터/sample_subscription_events_3000.csv` - 구독 서비스 샘플 (3,000 이벤트)
+- `샘플 데이터/sample_ecommerce_events_3000.csv` — 이커머스 샘플 (3,000 이벤트)
+- `샘플 데이터/sample_subscription_events_3000.csv` — 구독 서비스 샘플 (3,000 이벤트)
 
 ## 배포
 
-Netlify에 자동 배포됩니다. `main` 브랜치에 푸시하면 `netlify.toml` 설정에 따라 빌드 및 배포가 진행됩니다.
+Vercel에 자동 배포됩니다. `main` 브랜치에 푸시하면 자동으로 빌드 및 배포가 진행됩니다.
 
-```toml
-[build]
-  base = "funnel-&-retention-explorer frontend"
-  command = "npm install && npm run build"
-  publish = "dist"
-```
-
-환경 변수(`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_GEMINI_API_KEY`)는 Netlify 대시보드에서 설정합니다.
+- **플랫폼**: Vercel
+- **Root Directory**: `funnel-&-retention-explorer frontend` (Vercel 대시보드에서 설정)
+- **Framework**: Vite (자동 감지)
+- **환경 변수**: Vercel 대시보드에서 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_GEMINI_API_KEY` 설정
 
 ## 디자인
 
-- 다크 테마 (`#0b1221` 배경, `#6366f1` 프라이머리)
+- 다크 테마 (`#0a0e27` 배경, `#00d4aa` 프라이머리)
 - Glassmorphism 효과 (반투명 블러)
 - 반응형 레이아웃 (모바일/태블릿/데스크톱)
-- Inter 폰트
+- 아이콘 기반 사이드바 (6탭) + 툴팁
 
 ## 브라우저 호환성
 
