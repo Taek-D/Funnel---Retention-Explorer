@@ -33,7 +33,16 @@ import {
   GripVertical,
   Clock,
   Home,
-  Menu
+  Menu,
+  User,
+  Shield,
+  HelpCircle,
+  AlertCircle,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  ArrowLeft
 } from 'lucide-react';
 
 export {
@@ -71,5 +80,14 @@ export {
   GripVertical,
   Clock,
   Home,
-  Menu
+  Menu,
+  User,
+  Shield,
+  HelpCircle,
+  AlertCircle,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  ArrowLeft
 };
