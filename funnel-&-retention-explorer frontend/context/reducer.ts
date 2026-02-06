@@ -23,7 +23,8 @@ export const initialState: AppState = {
   processingMessage: '',
   dataQualityReport: null,
   recentFiles: [],
-  uniqueEvents: []
+  uniqueEvents: [],
+  aiSummary: ''
 };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -92,6 +93,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_RECENT_FILES':
       return { ...state, recentFiles: action.payload };
 
+    case 'SET_AI_SUMMARY':
+      return { ...state, aiSummary: action.payload };
+
     case 'RESET_ANALYSIS':
       return {
         ...state,
@@ -104,7 +108,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         trialAnalysis: null,
         churnAnalysis: null,
         paidRetentionResults: null,
-        retentionType: 'activity'
+        retentionType: 'activity',
+        aiSummary: ''
       };
 
     default:

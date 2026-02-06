@@ -1,16 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, AlertTriangle, TrendingUp, Users, Zap, CreditCard, Download } from '../components/Icons';
+import { Info, TrendingUp, Users, Zap, CreditCard, Download } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
-import { useAIInsights } from '../hooks/useAIInsights';
 import { useExportReport } from '../hooks/useExportReport';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 
 export const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
   const { state } = useAppContext();
-  const { aiSummary, aiLoading, generateSummary } = useAIInsights();
   const { exportReport, exporting } = useExportReport();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
 
@@ -130,49 +126,6 @@ export const Dashboard: React.FC = () => {
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
           <p className="text-slate-400 text-sm">{hasData ? '에디터 탭에서 퍼널을 계산하면 여기에 결과가 표시됩니다.' : '데이터를 업로드하여 시작하세요.'}</p>
-        </div>
-      )}
-
-      {/* AI Summary Card */}
-      {hasData && (
-        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 text-accent flex items-center justify-center">
-                <Zap size={16} />
-              </div>
-              <h3 className="font-bold text-white">AI 빠른 요약</h3>
-            </div>
-            <div className="flex items-center gap-2">
-              {!aiSummary && (
-                <button
-                  onClick={generateSummary}
-                  disabled={aiLoading}
-                  className="px-3 py-1.5 text-xs font-medium text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
-                >
-                  {aiLoading ? '분석 중...' : '생성'}
-                </button>
-              )}
-              <button
-                onClick={() => navigate('/app/insights')}
-                className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors"
-              >
-                모든 인사이트 보기
-              </button>
-            </div>
-          </div>
-          {aiLoading && (
-            <div className="flex items-center gap-3 py-2">
-              <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              <span className="text-slate-400 text-sm">분석 중...</span>
-            </div>
-          )}
-          {aiSummary && !aiLoading && (
-            <p className="text-slate-300 text-sm leading-relaxed line-clamp-4">{aiSummary}</p>
-          )}
-          {!aiSummary && !aiLoading && (
-            <p className="text-slate-500 text-sm">분석 데이터의 AI 기반 요약을 생성하세요.</p>
-          )}
         </div>
       )}
 

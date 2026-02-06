@@ -24,4 +24,5 @@ export type AppAction =
   | { type: 'SET_PROCESSING'; payload: { isProcessing: boolean; progress: number; message: string } }
   | { type: 'SET_DATA_QUALITY'; payload: DataQualityReport | null }
   | { type: 'SET_RECENT_FILES'; payload: RecentFile[] }
+  | { type: 'SET_AI_SUMMARY'; payload: string }
   | { type: 'RESET_ANALYSIS' };

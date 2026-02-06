@@ -7,12 +7,12 @@ const SYSTEM_INSTRUCTION = `You are an expert data analyst for FRE Analytics, a 
 Your job is to provide actionable insights based on funnel, retention, and segment analysis data.
 Always be concise and data-driven. Format your response with clear headings and bullet points.
 If the data seems insufficient, explain what additional data would help.
-Respond in the same language as the user's question (Korean or English).`;
+Always respond in Korean (한국어).`;
 
 export function useAIInsights() {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const { addNotification } = useNotifications();
-  const [aiSummary, setAiSummary] = useState<string>('');
+  const aiSummary = state.aiSummary;
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string>('');
   const [chatHistory, setChatHistory] = useState<GeminiMessage[]>([]);
@@ -62,12 +62,12 @@ export function useAIInsights() {
     if (result.error) {
       setAiError(result.error);
     } else {
-      setAiSummary(result.text);
+      dispatch({ type: 'SET_AI_SUMMARY', payload: result.text });
       addNotification('ai', 'AI 분석 완료', '대시보드에서 AI 요약을 확인하세요.');
     }
 
     setAiLoading(false);
-  }, [state.processedData.length, getDataContext, addNotification]);
+  }, [state.processedData.length, getDataContext, addNotification, dispatch]);
 
   const askQuestion = useCallback(async (question: string) => {
     if (!question.trim()) return;

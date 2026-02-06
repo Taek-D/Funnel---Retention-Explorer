@@ -194,4 +194,5 @@ export interface AppState {
   dataQualityReport: DataQualityReport | null;
   recentFiles: RecentFile[];
   uniqueEvents: string[];
+  aiSummary: string;
 }
