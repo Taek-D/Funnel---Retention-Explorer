@@ -1,365 +1,278 @@
-# 📊 퍼널 & 리텐션 분석
+# Funnel & Retention Explorer
 
-사용자 행동 데이터를 분석하여 전환 퍼널과 리텐션 코호트를 시각화하는 고급 분석 대시보드입니다.
+CSV 기반 퍼널/리텐션/세그먼트/구독 분석 대시보드입니다. 이커머스와 구독 서비스 데이터를 자동 감지하여 전환 퍼널, 코호트 리텐션, 세그먼트 비교, 인사이트를 제공합니다.
 
-![메인 화면](https://via.placeholder.com/800x400?text=Funnel+%26+Retention+Explorer)
+**Live Demo**: https://funnel-retention-explorer.netlify.app
 
-## ✨ 주요 기능
+## 프로젝트 구조
 
-### 📤 데이터 업로드 및 관리
-- **CSV 파일 업로드**: 드래그 앤 드롭 또는 클릭하여 파일 선택
-- **🆕 진행률 표시**: 데이터 처리 중 실시간 진행 상황 및 단계별 상태 표시
-- **🆕 자동 유형 감지**: 이벤트 패턴을 분석하여 이커머스/구독 서비스 자동 인식
-- **최근 파일 기록**: 최근 5개 파일 자동 저장 및 빠른 재로드
-- **자동 컬럼 매핑**: 일반적인 컬럼명 자동 인식
-- **데이터 미리보기**: 처음 10행 테이블 미리보기
-- **🆕 자동 탭 초기화**: 새 파일 업로드 시 이전 분석 결과 자동 초기화
+이 프로젝트는 두 가지 버전으로 구성되어 있습니다:
 
-### 🔽 퍼널 분석
-- **🆕 자동 템플릿 적용**: 감지된 데이터 유형에 따라 퍼널 템플릿 자동 로드
-- **다단계 퍼널 구성**: 원하는 이벤트로 퍼널 단계 설정
-- **전환율 계산**: 각 단계별 사용자 수, 전환율, 이탈 수 분석
-- **소요 시간 분석**: 단계 간 중간 소요 시간 측정
-- **시각화**: 인터랙티브 차트로 퍼널 시각화
+| | Vanilla JS (Legacy) | React Frontend (Active) |
+|---|---|---|
+| **위치** | 루트 (`app.js`, `index.html`) | `funnel-&-retention-explorer frontend/` |
+| **스택** | HTML/CSS/JS + Chart.js (CDN) | React 19 + TypeScript + Vite 6 + Recharts |
+| **배포** | - | Netlify (자동 배포) |
+| **상태** | 유지보수 모드 | 활성 개발 |
 
-### 📈 리텐션 코호트 분석
-- **코호트 구성**: 첫 이벤트 기준으로 코호트 생성
-- **일별 리텐션**: D0~D14 리텐션율 계산 및 매트릭스 표시
-- **주요 지표**: D1, D7, D14 리텐션 평균값
-- **리텐션 곡선**: 시간 경과 추이 차트
+## 주요 기능
 
-### 🔍 세그먼트 비교
-- **플랫폼별 분석**: iOS, Android 등 플랫폼별 성과 비교
-- **채널별 분석**: 유입 채널별 전환율 비교
-- **시각적 비교**: 막대 차트로 세그먼트 성과 표시
+### 데이터 업로드 및 관리
+- CSV 파일 드래그 앤 드롭 업로드
+- AI 기반 자동 컬럼 매핑 (일반적인 컬럼명 패턴 자동 인식)
+- 이커머스/구독 서비스 데이터 유형 자동 감지
+- 데이터 품질 리포트 (총 행수, 유효 행수, 고유 사용자, 날짜 범위)
+- 최근 파일 기록 (최대 5개, localStorage)
+- 데이터 미리보기 (상위 5행)
 
-### 💡 자동 인사이트
-- **🆕 전체 데이터 기반 분석**: 업로드 즉시 전체 데이터로 자동 인사이트 생성
-- **최대 이탈 지점 감지**: 퍼널에서 가장 큰 이탈 발생 단계 식별
-- **플랫폼 성과 격차**: 플랫폼 간 전환율 차이 분석 (10%p 이상 차이 경고)
-- **채널 성과 편차**: 채널별 성과 차이 및 예산 재분배 제안 (15%p 이상 차이 경고)
-- **D1 리텐션 경고**: 낮은 초기 리텐션 감지 및 개선 제안 (25% 미만 경고)
-- **리텐션 급락 지점**: 가장 큰 리텐션 하락 발생 시기 식별
-- **모범 사례 세그먼트**: 최고 성과 세그먼트 분석 (10% 이상 전환율)
+### 퍼널 분석
+- 데이터 유형별 자동 템플릿 (이커머스/구독/생애주기)
+- 다단계 퍼널 구성 (이벤트 드롭다운으로 스텝 추가/제거)
+- 각 단계별 사용자 수, 전환율, 이탈 수 계산
+- 단계 간 중간 소요 시간 측정
+- Recharts 기반 인터랙티브 바 차트 시각화
 
-### � 구독 분석 (Subscription Analytics)
-구독 서비스 데이터가 감지되면 자동으로 활성화되는 전문 분석 기능:
+### 리텐션 코호트 분석
+- **Activity Retention**: 코호트 이벤트 + 활성 이벤트 기반 D0~D14 리텐션
+- **Paid Retention** (구독 데이터): 구독일 기준 D0/D7/D14/D30/D60/D90 유료 리텐션
+- 코호트 히트맵 테이블 (색상 강도로 리텐션율 표현)
+- D1/D7/D14 핵심 지표 카드
+- 평균 리텐션 커브 차트
 
-#### KPI 대시보드
-- **핵심 지표**: 총 사용자, 구독 전환율, 유료 사용자, 총 매출
-- **수익 분석**: ARPPU (평균 사용자당 매출)
-- **해지 분석**: 해지율, 결제 실패율, 갱신 성공률
-- **플랜 믹스**: 월간/연간 구독 비율 시각화
+### 세그먼트 비교
+- 플랫폼별 (iOS, Android, Web 등) 전환율 비교
+- 채널별 (Google, Facebook, Organic 등) 전환율 비교
+- 통계적 유의성 검정 (p-value 계산)
+- 평균 대비 Uplift 표시
+- Top Performer 하이라이트
 
-#### Trial → Subscribe 전환 분석
-- **전환율 추적**: 무료 체험에서 유료 전환율
-- **전환 시간 분석**: 중간 전환 소요 시간
-- **체험 기간별 분석**: 7일/14일 등 체험 기간별 전환율 비교
-- **Sample Size Warning**: 샘플 수가 30 미만일 때 ⚠️ 경고 표시
+### 자동 인사이트 엔진
+데이터 업로드 시 자동으로 최대 13가지 인사이트 생성:
 
-#### 해지 분석 (Churn Analysis)
-- **해지율 모니터링**: 전체 해지율 추적
-- **해지 사유 분석**: 상위 해지 사유 및 비율
-- **해지 시점 분석**: 평균 및 중간 해지 소요 시간
-- **플랜별 해지율**: 구독 플랜별 해지 패턴
-- **채널별 해지율**: 유입 채널별 해지 비교
+**일반 인사이트 (7가지)**
+- 최대 이탈 지점 감지
+- 플랫폼 성과 격차 (10%p 이상 차이 경고)
+- 채널 성과 편차 (15%p 이상 차이 경고)
+- D1 리텐션 경고 (25% 미만)
+- 리텐션 급락 지점
+- 모범 사례 세그먼트
+- 전체 전환율 요약
 
-#### Paid Retention (유료 리텐션)
-- **Activity/Paid 토글**: 일반 활동 리텐션과 유료 리텐션 전환
-- **코호트 기반 분석**: 구독일 기준 코호트별 리텐션
-- **핵심 지표**: D7, D14, D30, D60, D90 유료 리텐션
-- **시각화**: 유료 사용자 유지율 매트릭스 및 곡선
+**구독 인사이트 (6가지)**
+- 낮은 Trial 전환율 (40% 미만)
+- 느린 전환 시간 (72시간 이상)
+- 높은 결제 실패율 (5% 이상)
+- 높은 해지율 (10% 이상)
+- 해지 사유별 맞춤 개선안
+- 낮은 Paid Retention (D7 70% 미만, D30 50% 미만)
 
-#### Lifecycle Funnel (생애주기 퍼널)
-- **전체 여정 추적**: app_open → signup → onboarding → trial → subscribe → renew
-- **단계별 전환율**: 각 단계별 전환율 및 이탈 수
-- **타이밍 분석**: 단계 간 소요 시간 측정
+### 구독 분석 (Subscription Analytics)
+구독 서비스 데이터 감지 시 자동 활성화:
+- **KPI 대시보드**: 총 사용자, 유료 사용자, 매출, ARPPU, 해지율
+- **Trial 전환 분석**: 무료체험 → 유료 전환율, 체험 기간별 비교
+- **이탈 분석**: 해지율, 상위 해지 사유, 해지 시점 분석
 
-#### 구독 세그먼트 비교
-- **체험 기간별**: 7일/14일 체험 기간별 성과 비교
-- **플랜별**: Monthly/Yearly 플랜별 전환율 분석
-- **해지 사유별**: 해지 사유별 패턴 분석
+### 대시보드
+- 데이터 유형에 따른 동적 KPI 카드 (구독 vs 일반)
+- 퍼널 드롭오프 바 차트
+- 평균 리텐션 커브
+- 최근 인사이트 4개 표시
 
-#### 구독 인사이트
-- **낮은 Trial 전환**: 40% 미만 전환율 시 경고 및 개선 제안
-- **느린 전환 시간**: 72시간 이상 소요 시 온보딩 개선 제안
-- **높은 결제 실패**: 5% 이상 결제 실패 시 결제 시스템 점검 권고
-- **높은 해지율**: 10% 이상 해지율 시 원인 분석 및 대응 방안
-- **해지 사유 분석**: 상위 해지 사유별 맞춤 개선 방안 제시
-- **낮은 Paid Retention**: D7 70% 미만, D30 50% 미만 시 경고
+## 기술 스택
 
+### React Frontend (Active)
 
-### �📷 리포트 내보내기 (PNG)
-- **🆕 PNG 이미지 형식**: PDF 대신 PNG로 내보내기 (환경 제약 최소화)
-- **🆕 제한 환경 대응**: iframe, webview, iOS Safari 등에서도 동작
-  - 다운로드 가능 환경: 자동 PNG 다운로드
-  - 다운로드 차단 환경: 새 탭으로 이미지 열기 → 사용자가 저장/공유
-- **멀티페이지 지원**: 리포트가 길면 A4 단위로 자동 분할 (page_1, page_2...)
-- **한글 완벽 지원**: Canvas 텍스트 렌더링 + 자동 줄바꿈
-- **차트 포함**: 퍼널, 리텐션, 세그먼트 차트를 배경과 함께 이미지화
-- **포함 내용**:
-  - 데이터 품질 요약 (행수, 사용자수, 날짜 범위)
-  - 퍼널 분석 결과 및 차트
-  - 리텐션 코호트 요약 및 차트
-  - 세그먼트 비교 결과 및 차트
-  - 핵심 인사이트 (최대 5개)
-
-### 📧 n8n 이메일 연동
-- **🆕 자동 이메일 발송**: n8n webhook을 통한 리포트 이메일 전송
-- **간편한 설정**: 웹 UI에서 webhook URL과 수신자 설정
-- **멀티 수신자**: 쉼표로 구분하여 여러 이메일 주소 지정
-- **자동 발송 옵션**: 분석 완료 시 자동으로 이메일 발송
-- **연결 테스트**: webhook 연결 상태 실시간 확인
-- **base64 첨부**: PNG 리포트를 base64로 인코딩하여 전송
-- **🚀 원클릭 설정**: [n8n-workflow-template.json](./n8n-workflow-template.json) import로 즉시 시작
-- **빠른 시작**: [N8N_QUICKSTART.md](./N8N_QUICKSTART.md) (5분 설정)
-- **상세 가이드**: [N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md) (완벽 매뉴얼)
-
-
-## 🚀 시작하기
-
-### 실행 방법
-
-이 프로그램은 순수 HTML/CSS/JavaScript로 구성되어 별도의 설치가 필요 없습니다.
-
-1. **로컬 실행**
-   ```bash
-   # 프로젝트 디렉토리로 이동
-   cd "Funnel & Retention Explorer"
-   
-   # 브라우저에서 index.html 열기
-   open index.html
-   ```
-
-2. **웹 서버 사용** (권장)
-   ```bash
-   # Python 내장 웹 서버 사용
-   python -m http.server 8000
-   
-   # 브라우저에서 http://localhost:8000 접속
-   ```
-
-### 필요한 데이터 형식
-
-CSV 파일에는 다음 컬럼이 포함되어야 합니다:
-
-#### 기본 컬럼 (모든 데이터 타입)
-
-| 컬럼 | 필수 | 설명 | 예시 |
-|------|------|------|------|
-| **timestamp** | ✅ | 이벤트 발생 시간 | 2023-01-01 10:00:00 |
-| **user_id** | ✅ | 사용자 고유 ID | user_12345 |
-| **event_name** | ✅ | 이벤트 이름 | view_item, purchase |
-| **session_id** | ⭕ | 세션 ID | session_abc123 |
-| **platform** | ⭕ | 플랫폼 | ios, android, web |
-| **channel** | ⭕ | 유입 채널 | google, facebook, organic |
-
-#### 구독 분석용 추가 컬럼 (선택사항)
-
-| 컬럼 | 필수 | 설명 | 예시 |
-|------|------|------|------|
-| **trial_days** | ⭕ | 무료 체험 기간 (일) | 7, 14, 30 |
-| **plan** | ⭕ | 구독 플랜 | monthly, yearly, premium |
-| **cancel_reason** | ⭕ | 해지 사유 | too_expensive, missing_features |
-| **revenue** | ⭕ | 매출 금액 | 9.99, 99.99 |
-
-**CSV 예시:**
-
-**이커머스 데이터:**
-```csv
-timestamp,user_id,event_name,session_id,platform,channel
-2023-01-01 10:00:00,user1,view_item,sess1,ios,google
-2023-01-01 10:05:00,user1,add_to_cart,sess1,ios,google
-2023-01-01 10:10:00,user1,begin_checkout,sess1,ios,google
-2023-01-01 10:15:00,user1,purchase,sess1,ios,google
+```
+funnel-&-retention-explorer frontend/
+├── index.html              # Tailwind CDN + Vite 엔트리
+├── index.tsx               # React DOM 마운트
+├── App.tsx                 # AppProvider + 뷰 라우팅
+├── types/
+│   └── index.ts            # TypeScript 인터페이스 (20+ 타입)
+├── context/
+│   ├── AppContext.tsx       # React Context + useReducer
+│   ├── actions.ts          # 18개 Action 타입 정의
+│   └── reducer.ts          # Reducer + initialState
+├── lib/                    # 순수 TypeScript 모듈 (React 의존성 없음)
+│   ├── csvParser.ts        # PapaParse 래퍼
+│   ├── dataProcessor.ts    # processData, detectDatasetType, autoDetectColumns
+│   ├── funnelEngine.ts     # calculateFunnel, 템플릿, 전환율
+│   ├── retentionEngine.ts  # 활동/유료 리텐션 코호트 계산
+│   ├── segmentEngine.ts    # 세그먼트 비교, p-value 통계
+│   ├── insightsEngine.ts   # 13가지 인사이트 자동 생성
+│   ├── subscriptionEngine.ts # KPI, 트라이얼, 이탈 분석
+│   ├── formatters.ts       # formatTime, formatNum, formatPct, formatCurrency
+│   ├── constants.ts        # EVENT_PATTERNS, FUNNEL_TEMPLATES
+│   └── recentFiles.ts      # localStorage 최근 파일 관리
+├── hooks/                  # lib ↔ React 상태 브릿지
+│   ├── useCSVUpload.ts     # 파일 업로드 + 전체 파이프라인 오케스트레이션
+│   ├── useColumnMapping.ts # 컬럼 매핑 상태
+│   ├── useFunnelAnalysis.ts
+│   ├── useRetentionAnalysis.ts
+│   ├── useSegmentComparison.ts
+│   └── useInsights.ts
+├── pages/
+│   ├── Dashboard.tsx       # 메인 대시보드 (KPI + 차트 + 인사이트)
+│   ├── DataImport.tsx      # CSV 업로드 + 컬럼 매핑 + 품질 리포트
+│   ├── FunnelAnalysis.tsx  # 퍼널 시각화 + 메트릭
+│   ├── FunnelEditor.tsx    # 퍼널 스텝 편집기 + 템플릿
+│   ├── RetentionAnalysis.tsx # 코호트 테이블 + 리텐션 커브
+│   ├── SegmentComparison.tsx # 세그먼트 비교 + 통계
+│   ├── Insights.tsx        # 인사이트 카드 + 구독 KPI
+│   └── MobilePreview.tsx   # 모바일 미리보기
+├── components/
+│   ├── Sidebar.tsx         # 사이드 네비게이션
+│   ├── Modal.tsx           # 범용 모달
+│   └── Icons.tsx           # Lucide React 아이콘 re-export
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
 ```
 
-**구독 서비스 데이터:**
+**핵심 의존성:**
+
+| 패키지 | 버전 | 용도 |
+|--------|------|------|
+| React | 19.2 | UI 프레임워크 |
+| TypeScript | 5.8 | 타입 안전성 |
+| Vite | 6.2 | 빌드 도구 + 개발 서버 |
+| Recharts | 3.7 | 차트 시각화 (BarChart, AreaChart) |
+| PapaParse | 5.5 | CSV 파싱 |
+| Lucide React | 0.563 | 아이콘 |
+| Tailwind CSS | CDN | 유틸리티 CSS (다크 테마) |
+
+**아키텍처:**
+
+```
+CSV File → csvParser → dataProcessor → AppContext (useReducer)
+                                              ↓
+                    hooks (useFunnelAnalysis, useRetentionAnalysis, ...)
+                                              ↓
+                    pages (Dashboard, FunnelAnalysis, RetentionAnalysis, ...)
+                                              ↓
+                    lib engines (funnelEngine, retentionEngine, ...)
+```
+
+- `lib/`: 순수 TypeScript 모듈 (React 의존성 없음) - 테스트 및 재사용 용이
+- `context/`: React Context + useReducer로 전역 상태 관리 (18개 액션)
+- `hooks/`: lib 함수와 React 상태를 연결하는 브릿지
+- `pages/`: hooks를 소비하는 UI 컴포넌트
+
+### Vanilla JS (Legacy)
+
+```
+├── index.html              # 메인 HTML (한국어 UI, SPA)
+├── app.js                  # 핵심 로직 3,373줄 (상태관리, 분석 엔진)
+├── charts.js               # Chart.js 차트 렌더링
+├── styles.css              # 다크 테마 CSS
+└── pdf_font_noto_sans_kr.js # PDF 한글 폰트 (7.9MB)
+```
+
+- Chart.js, PapaParse, jsPDF 모두 CDN 로드
+- 빌드 도구/패키지 매니저 없음
+
+## 시작하기
+
+### React Frontend (권장)
+
+```bash
+# 프론트엔드 디렉토리로 이동
+cd "funnel-&-retention-explorer frontend"
+
+# 의존성 설치
+npm install
+
+# 개발 서버 시작 (http://localhost:3000)
+npm run dev
+
+# 프로덕션 빌드
+npm run build
+```
+
+### Vanilla JS (Legacy)
+
+```bash
+# 브라우저에서 index.html 직접 열기
+open index.html
+
+# 또는 Python 내장 서버
+python -m http.server 8000
+```
+
+## 필요한 데이터 형식
+
+CSV 파일에 다음 컬럼이 필요합니다:
+
+### 필수 컬럼
+
+| 컬럼 | 설명 | 예시 |
+|------|------|------|
+| **timestamp** | 이벤트 발생 시간 | 2024-01-01 10:00:00 |
+| **user_id** | 사용자 고유 ID | user_12345 |
+| **event_name** | 이벤트 이름 | view_item, purchase |
+
+### 선택 컬럼
+
+| 컬럼 | 설명 | 예시 |
+|------|------|------|
+| session_id | 세션 ID | session_abc123 |
+| platform | 플랫폼 | ios, android, web |
+| channel | 유입 채널 | google, facebook, organic |
+| trial_days | 무료 체험 기간 (일) | 7, 14, 30 |
+| plan | 구독 플랜 | monthly, yearly |
+| cancel_reason | 해지 사유 | too_expensive |
+| revenue | 매출 금액 | 9.99 |
+
+### CSV 예시
+
+**이커머스:**
+```csv
+timestamp,user_id,event_name,session_id,platform,channel
+2024-01-01 10:00:00,user1,view_item,sess1,ios,google
+2024-01-01 10:05:00,user1,add_to_cart,sess1,ios,google
+2024-01-01 10:10:00,user1,begin_checkout,sess1,ios,google
+2024-01-01 10:15:00,user1,purchase,sess1,ios,google
+```
+
+**구독 서비스:**
 ```csv
 timestamp,user_id,event_name,platform,channel,trial_days,plan,cancel_reason,revenue
 2024-01-01 09:00:00,user001,app_open,iOS,organic,,,
 2024-01-01 09:05:00,user001,signup,iOS,organic,,,
 2024-01-01 09:15:00,user001,start_trial,iOS,organic,7,,
 2024-01-08 10:00:00,user001,subscribe,iOS,organic,,monthly,19.99
-2024-02-08 10:00:00,user001,renew,iOS,organic,,monthly,19.99
-2024-03-08 10:00:00,user001,cancel,iOS,organic,,monthly,too_expensive
 ```
 
-**📁 샘플 데이터:**
-- `sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3000 이벤트)
-- `sample_subscription_data.csv` - 구독 서비스 샘플 (구독 분석 포함)
+### 샘플 데이터
 
+- `sample_ecommerce_events_3000.csv` - 이커머스 샘플 (3,000 이벤트)
+- `sample_subscription_data.csv` - 구독 서비스 샘플
 
-## 📁 파일 구조
+## 배포
 
-```
-Funnel & Retention Explorer/
-├── index.html                      # 메인 HTML 파일
-├── app.js                         # 핵심 로직 및 데이터 처리
-├── charts.js                      # Chart.js 차트 렌더링
-├── styles.css                     # 스타일시트
-├── pdf_font_noto_sans_kr.js      # 한글 폰트 (레거시)
-├── README.md                      # 이 파일
-├── n8n-workflow-template.json    # n8n 워크플로우 템플릿 (원클릭 import)
-├── N8N_QUICKSTART.md             # n8n 빠른 시작 가이드 (5분)
-├── N8N_WORKFLOW_GUIDE.md         # n8n 이메일 연동 완벽 가이드
-├── TESTING_GUIDE.md              # 테스트 가이드
-├── PNG_EXPORT_IMPLEMENTATION.md  # PNG export 구현 상세 문서
-├── sample_ecommerce_events_3000.csv      # 이커머스 샘플 데이터 (3000행)
-├── sample_subscription_events_3000.csv   # 구독 서비스 샘플 데이터 (3000행)
-└── sample_subscription_data.csv          # 구독 분석용 샘플 데이터 (상세)
+Netlify에 자동 배포됩니다. `main` 브랜치에 푸시하면 `netlify.toml` 설정에 따라 빌드 및 배포가 진행됩니다.
+
+```toml
+[build]
+  base = "funnel-&-retention-explorer frontend"
+  command = "npm install && npm run build"
+  publish = "dist"
 ```
 
-## 🛠️ 기술 스택
+## 디자인
 
-- **HTML5**: 구조 및 마크업
-- **CSS3**: 스타일링 및 애니메이션
-  - Glassmorphism 디자인
-  - 다크 모드 테마
-  - 반응형 레이아웃
-- **JavaScript (ES6+)**: 핵심 로직
-  - 이벤트 처리
-  - 데이터 분석 알고리즘
-  - localStorage를 통한 최근 파일 관리
-  - Canvas API를 통한 PNG 이미지 생성
-- **Chart.js**: 데이터 시각화
-- **PapaParse**: CSV 파일 파싱
+- 다크 테마 (`#0b1221` 배경, `#6366f1` 프라이머리)
+- Glassmorphism 효과 (반투명 블러)
+- 반응형 레이아웃 (모바일/태블릿/데스크톱)
+- Inter 폰트
 
-## 📖 사용 가이드
+## 브라우저 호환성
 
-### 1️⃣ 데이터 업로드
+Chrome (권장), Firefox, Safari, Edge
 
-1. "데이터 업로드" 탭에서 CSV 파일을 드래그 앤 드롭하거나 클릭하여 선택
-2. 자동으로 컬럼이 매핑되며, 필요시 수동으로 조정
-3. 필수 컬럼 (타임스탬프, 사용자 ID, 이벤트 이름) 매핑 확인
-4. "매핑 확인 및 데이터 처리" 버튼 클릭
-5. **🆕 진행률 바**를 통해 처리 상황 실시간 확인:
-   - 이전 결과 초기화 중... (10%)
-   - 컬럼 매핑 중... (30%)
-   - 데이터 처리 중... (50%)
-   - 이벤트 선택기 설정 중... (70%)
-   - 데이터 유형 감지 중... (85%)
-   - 인사이트 생성 중... (95%)
-   - 완료! (100%)
-6. **🆕 자동 감지**: 이커머스 또는 구독 서비스 유형 자동 인식 및 알림
-7. **🆕 자동 인사이트 생성**: 업로드 즉시 전체 데이터 기반 인사이트 자동 생성
-
-### 2️⃣ 퍼널 분석
-
-1. "퍼널 분석" 탭으로 이동
-2. **🆕 자동 템플릿 적용**: 감지된 데이터 유형에 따라 퍼널 템플릿 자동 로드
-3. 템플릿 선택 또는 직접 이벤트 선택하여 퍼널 구성
-4. "퍼널 계산" 버튼 클릭
-5. 결과를 차트와 테이블로 확인
-
-### 3️⃣ 리텐션 분석
-
-1. "리텐션 코호트" 탭으로 이동
-2. **🆕 구독 데이터**: Activity Retention / Paid Retention 토글 표시
-   - **Activity Retention**: 일반 활동 기반 리텐션 (기존 방식)
-   - **Paid Retention**: 구독 기준 유료 사용자 리텐션 (D0/D7/D14/D30/D60/D90)
-3. 코호트 이벤트 (첫 이벤트) 선택
-4. 활성 이벤트 (재방문 이벤트) 선택 (Ctrl/Cmd로 다중 선택)
-5. "리텐션 계산" 버튼 클릭
-6. 코호트 매트릭스 및 리텐션 곡선 확인
-
-### 4️⃣ 세그먼트 비교
-
-1. "세그먼트 비교" 탭으로 이동
-2. 먼저 퍼널을 계산해야 함
-3. **🆕 구독 데이터**: 추가 세그먼트 선택 가능
-   - 체험 기간 (trial_days): 7일/14일 등
-   - 구독 플랜 (plan): monthly/yearly 등
-   - 해지 사유 (cancel_reason)
-4. 비교할 플랫폼, 채널, 또는 구독 차원 선택
-5. "세그먼트 비교" 버튼 클릭
-6. 세그먼트별 전환율 비교 (⚠️ n<30 샘플 크기 경고 표시)
-
-### 5️⃣ 인사이트 확인
-
-1. "인사이트 카드" 탭으로 이동
-2. **🆕 자동 생성**: 데이터 업로드 즉시 전체 데이터 기반 인사이트 자동 생성
-3. **🆕 구독 데이터**: 상단에 구독 KPI 요약 표시
-   - 핵심 지표 카드 (총 사용자, 구독률, ARPPU, 해지율 등)
-   - 플랜 믹스 시각화
-   - Trial → Subscribe 전환 분석
-   - 해지 분석 및 상위 사유
-   - Paid Retention 요약 (D7/D14/D30)
-4. 각 인사이트 카드에서 다음 정보 확인:
-   - 주요 발견 사항 및 메트릭
-   - 상세 분석
-   - 권장 조치 사항
-5. **🆕 구독 인사이트**: 낮은 Trial 전환, 높은 해지율, 결제 실패 등 자동 감지
-6. 추가 퍼널 또는 리텐션 분석 후 새로운 인사이트도 자동 추가됨
-
-
-### 6️⃣ 리포트 내보내기 (PNG)
-
-1. "인사이트 카드" 탭으로 이동
-2. **"📷 리포트 다운로드 (PNG)"** 버튼 클릭
-3. 자동으로 리포트가 PNG 이미지로 생성됨:
-   - **일반 브라우저**: PNG 파일 자동 다운로드 (`analysis_report_YYYYMMDD_HHMM_page_1.png`)
-   - **제한 환경** (iframe/webview/iOS): 새 탭에 이미지 열림 → 이미지 길게 눌러 저장/공유
-4. 리포트가 길 경우 여러 페이지로 자동 분할됨 (page_1, page_2, page_3...)
-5. 각 페이지에는 다음 내용이 포함됨:
-   - 데이터 요약 (행수, 사용자수, 날짜 범위)
-   - 퍼널 분석 결과 + 차트
-   - 리텐션 코호트 요약 + 차트
-   - 세그먼트 비교 결과 + 차트
-   - 핵심 인사이트
-
-### 7️⃣ n8n 이메일 발송 (선택사항)
-
-#### 초기 설정 (1회만)
-
-1. n8n 워크플로우 생성 (상세: [N8N_WORKFLOW_GUIDE.md](./N8N_WORKFLOW_GUIDE.md))
-2. \"인사이트 카드\" 탭에서 **\"⚙️ 이메일 설정\"** 클릭
-3. 설정 입력:
-   - **n8n Webhook URL**: n8n 워크플로우의 webhook URL
-   - **수신 이메일 주소**: 리포트를 받을 이메일 (쉼표로 여러 주소 입력 가능)
-   - **자동 발송**: 원하면 "분석 완료 시 자동으로 이메일 발송" 체크
-4. **💾 설정 저장** 클릭
-5. **🔍 연결 테스트**로 webhook 연결 확인
-
-#### 이메일 발송
-
-1. 데이터 분석 완료 후 \"인사이트 카드\" 탭으로 이동
-2. **\"📧 이메일로 발송\"** 버튼 클릭
-3. n8n이 지정된 이메일 주소로 리포트 발송
-4. 이메일에는 다음이 포함됨:
-   - HTML 형식 리포트 요약
-   - PNG 이미지 첨부파일 (여러 페이지)
-
-## 💾 데이터 저장
-
-- **최근 파일**: 브라우저의 localStorage에 최대 5개 파일 저장
-- **페이지 새로고침**: 최근 파일 목록 유지
-- **파일 삭제**: 각 파일의 ✕ 버튼으로 목록에서 제거 가능
-
-## 🎨 디자인 특징
-
-- **다크 모드**: 눈의 피로를 줄이는 어두운 테마
-- **그라디언트 액센트**: 시각적 계층 구조 강조
-- **Glassmorphism**: 반투명 블러 효과로 현대적인 느낌
-- **마이크로 애니메이션**: 호버, 클릭 시 부드러운 전환 효과
-- **반응형**: 모바일, 태블릿, 데스크톱 모두 지원
-
-## 🔧 브라우저 호환성
-
-- Chrome (권장)
-- Firefox
-- Safari
-- Edge
-
-**최신 버전의 모던 브라우저 사용을 권장합니다.**
-
-## 📝 라이선스
+## 라이선스
 
 이 프로젝트는 개인 및 상업적 용도로 자유롭게 사용할 수 있습니다.
-
-## 🤝 기여
-
-버그 리포트, 기능 제안, 개선 사항은 언제든 환영합니다!
 
 ---
 
