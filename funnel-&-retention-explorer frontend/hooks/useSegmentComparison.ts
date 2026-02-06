@@ -1,0 +1,51 @@
+import { useCallback, useMemo } from 'react';
+import { useAppContext } from '../context/AppContext';
+import { compareSegments } from '../lib/segmentEngine';
+import { generateInsights } from '../lib/insightsEngine';
+
+export function useSegmentComparison() {
+  const { state, dispatch } = useAppContext();
+
+  const availablePlatforms = useMemo(() => {
+    return [...new Set(state.processedData.map(e => e.platform).filter(Boolean))] as string[];
+  }, [state.processedData]);
+
+  const availableChannels = useMemo(() => {
+    return [...new Set(state.processedData.map(e => e.channel).filter(Boolean))] as string[];
+  }, [state.processedData]);
+
+  const runComparison = useCallback((platforms: string[], channels: string[]) => {
+    if (platforms.length === 0 && channels.length === 0) {
+      alert('비교할 세그먼트를 최소 1개 선택해주세요');
+      return;
+    }
+
+    if (!state.funnelSteps || state.funnelSteps.length === 0) {
+      alert('먼저 퍼널을 계산해주세요');
+      return;
+    }
+
+    const results = compareSegments(state.processedData, state.funnelSteps, platforms, channels);
+    dispatch({ type: 'SET_SEGMENT_RESULTS', payload: results });
+
+    // Regenerate insights
+    const insights = generateInsights(
+      state.processedData,
+      state.detectedType,
+      state.subscriptionKPIs,
+      state.trialAnalysis,
+      state.churnAnalysis,
+      state.paidRetentionResults
+    );
+    dispatch({ type: 'SET_INSIGHTS', payload: insights });
+  }, [state, dispatch]);
+
+  return {
+    segmentResults: state.segmentResults,
+    availablePlatforms,
+    availableChannels,
+    hasData: state.processedData.length > 0,
+    hasFunnel: state.funnelSteps.length > 0,
+    runComparison
+  };
+}

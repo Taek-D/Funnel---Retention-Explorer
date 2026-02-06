@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View } from './types';
+import { AppProvider } from './context/AppContext';
 import { Sidebar } from './components/Sidebar';
 import { Modal } from './components/Modal';
 import { Search, Bell, Menu, Mail, CheckCircle } from './components/Icons';
@@ -14,7 +15,7 @@ import { SegmentComparison } from './pages/SegmentComparison';
 import { Insights } from './pages/Insights';
 import { MobilePreview } from './pages/MobilePreview';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [currentView, setView] = useState<View>('dashboard');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -154,5 +155,11 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <AppProvider>
+    <AppContent />
+  </AppProvider>
+);
 
 export default App;
