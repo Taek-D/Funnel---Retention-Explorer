@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
 import { useInsights } from '../hooks/useInsights';
+import { useAIInsights } from '../hooks/useAIInsights';
+import { AskAIPanel } from '../components/AskAIPanel';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 
 const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: string; badge: string; badgeBg: string }> = {
@@ -12,6 +14,8 @@ const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: s
 
 export const Insights: React.FC = () => {
   const { insights, subscriptionKPIs, trialAnalysis, churnAnalysis, detectedType, hasData } = useInsights();
+  const { aiSummary, aiLoading, aiError, generateSummary } = useAIInsights();
+  const [askAIOpen, setAskAIOpen] = useState(false);
 
   if (!hasData) {
     return (
@@ -25,11 +29,65 @@ export const Insights: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <h1 className="text-3xl font-black text-white">AI Insights</h1>
-        <span className="bg-primary/10 text-primary border border-primary/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">
-          {detectedType === 'subscription' ? 'Subscription' : detectedType === 'ecommerce' ? 'E-commerce' : 'General'}
-        </span>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-black text-white">AI Insights</h1>
+          <span className="bg-primary/10 text-primary border border-primary/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">
+            {detectedType === 'subscription' ? 'Subscription' : detectedType === 'ecommerce' ? 'E-commerce' : 'General'}
+          </span>
+        </div>
+        <button
+          onClick={() => setAskAIOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-primary to-secondary rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+        >
+          <Zap size={16} />
+          Ask AI
+        </button>
+      </div>
+
+      {/* AI Summary Section */}
+      <div className="glass rounded-2xl p-6 border-l-[6px] border-l-primary">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary flex items-center justify-center">
+              <Zap size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">AI Analysis Summary</h3>
+              <p className="text-xs text-slate-500">Powered by Gemini 2.0 Flash</p>
+            </div>
+          </div>
+          <button
+            onClick={generateSummary}
+            disabled={aiLoading}
+            className="px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg transition-all disabled:opacity-50"
+          >
+            {aiLoading ? 'Analyzing...' : aiSummary ? 'Regenerate' : 'Generate Summary'}
+          </button>
+        </div>
+
+        {aiError && (
+          <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm mb-4">
+            {aiError}
+          </div>
+        )}
+
+        {aiLoading && (
+          <div className="flex items-center gap-3 py-4">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-slate-400 text-sm">Analyzing your data with AI...</span>
+          </div>
+        )}
+
+        {aiSummary && !aiLoading && (
+          <div className="prose prose-invert prose-sm max-w-none">
+            <div className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{aiSummary}</div>
+          </div>
+        )}
+
+        {!aiSummary && !aiLoading && !aiError && (
+          <p className="text-slate-500 text-sm">Click "Generate Summary" to get an AI-powered analysis of your data.</p>
+        )}
       </div>
 
       {/* KPI Summary Cards */}
@@ -152,6 +210,9 @@ export const Insights: React.FC = () => {
           );
         })
       )}
+
+      {/* Ask AI Panel */}
+      <AskAIPanel isOpen={askAIOpen} onClose={() => setAskAIOpen(false)} />
     </div>
   );
 };

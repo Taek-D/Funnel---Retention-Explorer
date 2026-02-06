@@ -1,11 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Info, AlertTriangle, TrendingUp, Users, Zap, CreditCard } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
+import { useAIInsights } from '../hooks/useAIInsights';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { state } = useAppContext();
+  const { aiSummary, aiLoading, generateSummary } = useAIInsights();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
 
   const hasData = processedData.length > 0;
@@ -110,6 +114,49 @@ export const Dashboard: React.FC = () => {
         <div className="bg-surface border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
           <p className="text-slate-400 text-sm">{hasData ? 'Calculate a funnel in the Editor tab to see results here.' : 'Upload data to get started.'}</p>
+        </div>
+      )}
+
+      {/* AI Summary Card */}
+      {hasData && (
+        <div className="bg-surface border border-white/5 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 text-primary flex items-center justify-center">
+                <Zap size={16} />
+              </div>
+              <h3 className="font-bold text-white">AI Quick Summary</h3>
+            </div>
+            <div className="flex items-center gap-2">
+              {!aiSummary && (
+                <button
+                  onClick={generateSummary}
+                  disabled={aiLoading}
+                  className="px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg transition-all disabled:opacity-50"
+                >
+                  {aiLoading ? 'Analyzing...' : 'Generate'}
+                </button>
+              )}
+              <button
+                onClick={() => navigate('/app/insights')}
+                className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors"
+              >
+                View All Insights
+              </button>
+            </div>
+          </div>
+          {aiLoading && (
+            <div className="flex items-center gap-3 py-2">
+              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <span className="text-slate-400 text-sm">Analyzing...</span>
+            </div>
+          )}
+          {aiSummary && !aiLoading && (
+            <p className="text-slate-300 text-sm leading-relaxed line-clamp-4">{aiSummary}</p>
+          )}
+          {!aiSummary && !aiLoading && (
+            <p className="text-slate-500 text-sm">Generate an AI-powered summary of your analytics data.</p>
+          )}
         </div>
       )}
 
