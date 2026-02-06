@@ -31,14 +31,14 @@ export const SignupPage: React.FC = () => {
 
   const passwordStrength = (() => {
     if (password.length === 0) return { level: 0, label: '', color: '' };
-    if (password.length < 6) return { level: 1, label: 'Too short', color: 'bg-red-500' };
+    if (password.length < 6) return { level: 1, label: 'Too short', color: 'bg-coral' };
     const hasUpper = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     const hasSpecial = /[^A-Za-z0-9]/.test(password);
     const score = [password.length >= 8, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
-    if (score <= 1) return { level: 2, label: 'Weak', color: 'bg-orange-500' };
-    if (score <= 2) return { level: 3, label: 'Fair', color: 'bg-yellow-500' };
-    return { level: 4, label: 'Strong', color: 'bg-emerald-500' };
+    if (score <= 1) return { level: 2, label: 'Weak', color: 'bg-coral' };
+    if (score <= 2) return { level: 3, label: 'Fair', color: 'bg-amber' };
+    return { level: 4, label: 'Strong', color: 'bg-accent' };
   })();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,27 +75,47 @@ export const SignupPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-white font-sans">
       <LandingHeader />
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-secondary/15 rounded-full blur-[180px] opacity-40 pointer-events-none" />
 
-      <div className="flex items-center justify-center min-h-screen px-6 pt-16 relative">
-        <div className="w-full max-w-md animate-fade-up">
-          <div className="glass rounded-2xl p-8">
-            <h1 className="text-2xl font-black text-white mb-2">Create your account</h1>
-            <p className="text-slate-400 text-sm mb-8">Start analyzing your data for free</p>
+      <div className="flex min-h-screen">
+        {/* Left: Branding panel — desktop only */}
+        <div className="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 dot-grid pointer-events-none" />
+          <div className="relative text-center px-12">
+            <div className="text-accent font-mono text-sm mb-4 tracking-wider">FRE ANALYTICS</div>
+            <h2 className="text-4xl font-extrabold tracking-tightest leading-tight mb-4">
+              Start analyzing<br />in minutes.
+            </h2>
+            <p className="text-slate-500 text-sm max-w-xs mx-auto">Free forever for basic analysis. No credit card required.</p>
+            <div className="mt-12 space-y-3 text-left max-w-xs mx-auto">
+              {['Upload CSV and auto-detect columns', 'Build funnels with drag & drop', 'AI-powered insights with Gemini'].map((text, i) => (
+                <div key={i} className="flex items-center gap-2.5 text-[13px] text-slate-500">
+                  <CheckCircle size={14} className="text-accent shrink-0" />
+                  {text}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Form */}
+        <div className="flex-1 flex items-center justify-center px-6 pt-16 lg:border-l lg:border-white/[0.06]">
+          <div className="w-full max-w-sm animate-fade-up">
+            <h1 className="text-2xl font-extrabold text-white tracking-tightest mb-1">Create account</h1>
+            <p className="text-slate-500 text-sm mb-8">Start analyzing your data for free</p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm animate-fade-in">
+              <div className="mb-4 p-3 bg-coral/5 border border-coral/20 rounded-md text-coral text-sm animate-fade-in">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg animate-fade-in">
-                <div className="flex items-start gap-3">
-                  <CheckCircle size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+              <div className="mb-4 p-3 bg-accent/5 border border-accent/20 rounded-md animate-fade-in">
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle size={16} className="text-accent shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-emerald-400 text-sm font-medium">{success}</p>
-                    <Link to="/login" className="text-primary hover:text-primary/80 text-sm font-medium mt-2 inline-block">
+                    <p className="text-accent text-sm font-medium">{success}</p>
+                    <Link to="/login" className="text-accent/70 hover:text-accent text-sm mt-1 inline-block">
                       Go to Sign in
                     </Link>
                   </div>
@@ -103,95 +123,94 @@ export const SignupPage: React.FC = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Email</label>
                 <input
                   ref={emailRef}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                  className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                   placeholder="you@example.com"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 pr-10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                     placeholder="At least 6 characters"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+                    {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                   </button>
                 </div>
-                {/* Password strength indicator */}
                 {password.length > 0 && (
                   <div className="mt-2 flex items-center gap-2">
                     <div className="flex gap-1 flex-1">
                       {[1, 2, 3, 4].map(n => (
                         <div
                           key={n}
-                          className={`h-1 flex-1 rounded-full transition-all ${
-                            n <= passwordStrength.level ? passwordStrength.color : 'bg-white/10'
+                          className={`h-0.5 flex-1 rounded-full transition-all ${
+                            n <= passwordStrength.level ? passwordStrength.color : 'bg-white/[0.06]'
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-slate-500">{passwordStrength.label}</span>
+                    <span className="text-[11px] text-slate-600 font-mono">{passwordStrength.label}</span>
                   </div>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Confirm Password</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Confirm Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className={`w-full bg-white/5 border rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 transition-all ${
+                    className={`w-full bg-transparent border-b px-0 py-2.5 pr-10 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors ${
                       confirmPassword && confirmPassword !== password
-                        ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500'
+                        ? 'border-coral/50 focus:border-coral'
                         : confirmPassword && confirmPassword === password
-                        ? 'border-emerald-500/50 focus:border-emerald-500 focus:ring-emerald-500'
-                        : 'border-white/10 focus:border-primary focus:ring-primary'
+                        ? 'border-accent/50 focus:border-accent'
+                        : 'border-white/10 focus:border-accent'
                     }`}
                     placeholder="Confirm your password"
                   />
                   {confirmPassword && confirmPassword === password && (
-                    <CheckCircle size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    <CheckCircle size={16} className="absolute right-0 top-1/2 -translate-y-1/2 text-accent" />
                   )}
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5"
+                className="w-full py-2.5 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                     Creating account...
                   </span>
                 ) : 'Create Account'}
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-8 text-center text-[13px] text-slate-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:text-primary/80 font-medium">
+              <Link to="/login" className="text-accent hover:text-accent/80 font-medium">
                 Sign in
               </Link>
             </p>

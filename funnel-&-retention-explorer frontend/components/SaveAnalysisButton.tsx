@@ -46,7 +46,7 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
       disabled={saving}
       className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
         saved
-          ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+          ? 'bg-accent/10 text-accent border border-accent/20'
           : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
       } disabled:opacity-50`}
     >

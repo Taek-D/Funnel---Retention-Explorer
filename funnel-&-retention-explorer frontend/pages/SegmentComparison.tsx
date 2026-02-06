@@ -36,9 +36,9 @@ export const SegmentComparison: React.FC = () => {
       </div>
 
       {/* Controls */}
-      <div className="glass rounded-xl p-6 space-y-4">
+      <div className="bg-surface border border-white/[0.06] rounded-lg p-6 space-y-4">
         {!hasFunnel && (
-          <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3 text-orange-400 text-sm">
+          <div className="bg-amber/10 border border-amber/20 rounded-lg p-3 text-amber text-sm">
             먼저 Funnel Editor에서 퍼널을 계산해주세요.
           </div>
         )}
@@ -52,7 +52,7 @@ export const SegmentComparison: React.FC = () => {
                   key={p}
                   onClick={() => togglePlatform(p)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    selectedPlatforms.includes(p) ? 'bg-primary text-white' : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
+                    selectedPlatforms.includes(p) ? 'bg-accent text-white' : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
                   }`}
                 >
                   {p}
@@ -71,7 +71,7 @@ export const SegmentComparison: React.FC = () => {
                   key={c}
                   onClick={() => toggleChannel(c)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                    selectedChannels.includes(c) ? 'bg-primary text-white' : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
+                    selectedChannels.includes(c) ? 'bg-accent text-white' : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
                   }`}
                 >
                   {c}
@@ -84,7 +84,7 @@ export const SegmentComparison: React.FC = () => {
         <button
           onClick={() => runComparison(selectedPlatforms, selectedChannels)}
           disabled={!hasFunnel}
-          className="h-[42px] px-6 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg shadow-lg shadow-primary/20 disabled:opacity-50"
+          className="h-[42px] px-6 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
         >
           Compare Segments
         </button>
@@ -94,7 +94,7 @@ export const SegmentComparison: React.FC = () => {
       {segmentResults && segmentResults.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Bars */}
-          <div className="lg:col-span-2 glass rounded-2xl p-6 shadow-lg">
+          <div className="lg:col-span-2 bg-surface border border-white/[0.06] rounded-lg p-6">
             <h3 className="text-white font-bold text-lg mb-6">Conversion Rate by Segment</h3>
             <div className="space-y-6">
               {segmentResults.map((seg, i) => {
@@ -107,22 +107,22 @@ export const SegmentComparison: React.FC = () => {
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-slate-300 font-medium">{seg.name}</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-slate-500 text-xs">n={seg.population.toLocaleString()}</span>
-                        <span className="text-white font-bold">{seg.conversion.toFixed(1)}%</span>
+                        <span className="text-slate-500 text-xs font-mono">n={seg.population.toLocaleString()}</span>
+                        <span className="text-white font-bold font-mono">{seg.conversion.toFixed(1)}%</span>
                       </div>
                     </div>
                     <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${isTop ? 'bg-gradient-to-r from-primary to-purple-500' : 'bg-slate-600'}`}
+                        className={`h-full rounded-full ${isTop ? 'bg-accent' : 'bg-slate-600'}`}
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
                     <div className="flex justify-between text-xs mt-1">
-                      <span className={seg.uplift >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                        {seg.uplift >= 0 ? '+' : ''}{seg.uplift.toFixed(1)}%p vs avg
+                      <span className={seg.uplift >= 0 ? 'text-accent' : 'text-coral'}>
+                        <span className="font-mono">{seg.uplift >= 0 ? '+' : ''}{seg.uplift.toFixed(1)}%p</span> vs avg
                       </span>
-                      <span className={seg.pValue < 0.05 ? 'text-emerald-400' : 'text-slate-500'}>
-                        p={seg.pValue.toFixed(4)} {seg.pValue < 0.05 ? '(유의미)' : ''}
+                      <span className={seg.pValue < 0.05 ? 'text-accent' : 'text-slate-500'}>
+                        <span className="font-mono">p={seg.pValue.toFixed(4)}</span> {seg.pValue < 0.05 ? '(유의미)' : ''}
                       </span>
                     </div>
                   </div>
@@ -133,19 +133,19 @@ export const SegmentComparison: React.FC = () => {
 
           {/* Top Performer */}
           {bestSegment && (
-            <div className="glass rounded-2xl p-1 shadow-lg flex flex-col relative overflow-hidden">
-              <div className="flex-1 bg-surface/50 rounded-xl p-6 flex flex-col items-center justify-center text-center">
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-1 flex flex-col relative overflow-hidden">
+              <div className="flex-1 bg-surface/50 rounded-lg p-6 flex flex-col items-center justify-center text-center">
                 <h3 className="text-white font-bold text-lg mb-6">Top Performer</h3>
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400/20 to-teal-400/20 border border-emerald-500/20 flex items-center justify-center mb-6">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 border border-accent/20 flex items-center justify-center mb-6">
                   <span className="text-4xl">&#127942;</span>
                 </div>
                 <p className="text-slate-400 text-sm font-medium mb-2 uppercase">Highest Conversion</p>
                 <h2 className="text-3xl font-bold text-white mb-2">{bestSegment.name.replace(/^(플랫폼|채널): /, '')}</h2>
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-bold border border-emerald-500/20">
-                  {bestSegment.conversion.toFixed(1)}% conversion
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-bold border border-accent/20">
+                  <span className="font-mono">{bestSegment.conversion.toFixed(1)}%</span> conversion
                 </span>
                 <span className="mt-2 text-xs text-slate-500">
-                  +{(bestSegment.conversion - avgConversion).toFixed(1)}%p vs avg
+                  <span className="font-mono">+{(bestSegment.conversion - avgConversion).toFixed(1)}%p</span> vs avg
                 </span>
               </div>
             </div>
@@ -155,7 +155,7 @@ export const SegmentComparison: React.FC = () => {
 
       {/* Detailed Table */}
       {segmentResults && segmentResults.length > 0 && (
-        <div className="glass rounded-2xl overflow-hidden overflow-x-auto">
+        <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
               <tr>
@@ -171,13 +171,13 @@ export const SegmentComparison: React.FC = () => {
               {segmentResults.map((seg, i) => (
                 <tr key={i} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-3 font-medium text-white">{seg.name}</td>
-                  <td className="px-4 py-3 text-right text-slate-400">{seg.population.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right text-white">{seg.conversion.toFixed(1)}%</td>
-                  <td className={`px-4 py-3 text-right ${seg.uplift >= 5 ? 'text-emerald-400' : seg.uplift <= -5 ? 'text-red-400' : 'text-slate-400'}`}>
+                  <td className="px-4 py-3 text-right text-slate-400 font-mono">{seg.population.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right text-white font-mono">{seg.conversion.toFixed(1)}%</td>
+                  <td className={`px-4 py-3 text-right font-mono ${seg.uplift >= 5 ? 'text-accent' : seg.uplift <= -5 ? 'text-coral' : 'text-slate-400'}`}>
                     {seg.uplift >= 0 ? '+' : ''}{seg.uplift.toFixed(1)}%p
                   </td>
-                  <td className="px-4 py-3 text-right text-slate-400">{seg.pValue.toFixed(4)}</td>
-                  <td className={`px-4 py-3 text-right ${seg.pValue < 0.05 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                  <td className="px-4 py-3 text-right text-slate-400 font-mono">{seg.pValue.toFixed(4)}</td>
+                  <td className={`px-4 py-3 text-right ${seg.pValue < 0.05 ? 'text-accent' : 'text-slate-500'}`}>
                     {seg.pValue < 0.05 ? 'Significant' : 'Not significant'}
                   </td>
                 </tr>

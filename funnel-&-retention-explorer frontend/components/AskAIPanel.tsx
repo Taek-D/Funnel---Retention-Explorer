@@ -37,11 +37,11 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl h-[600px] max-h-[80vh] bg-surface border border-white/10 rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+      <div className="w-full max-w-2xl h-[600px] max-h-[80vh] bg-surface border border-white/[0.06] rounded-lg flex flex-col overflow-hidden shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
               <Zap size={18} />
             </div>
             <div>
@@ -102,9 +102,9 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm ${
+                className={`max-w-[85%] px-4 py-3 rounded-lg text-sm ${
                   msg.role === 'user'
-                    ? 'bg-primary text-white rounded-br-md'
+                    ? 'bg-accent text-white rounded-br-md'
                     : 'bg-white/5 text-slate-200 rounded-bl-md border border-white/5'
                 }`}
               >
@@ -115,11 +115,11 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
 
           {sending && (
             <div className="flex justify-start">
-              <div className="bg-white/5 border border-white/5 px-4 py-3 rounded-2xl rounded-bl-md">
+              <div className="bg-white/5 border border-white/5 px-4 py-3 rounded-lg rounded-bl-md">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -138,12 +138,12 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
               onKeyDown={handleKeyDown}
               placeholder={hasData ? 'Ask about your data...' : 'Upload data first...'}
               disabled={!hasData || sending}
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
+              className="flex-1 bg-background border border-white/[0.06] rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all disabled:opacity-50"
             />
             <button
               onClick={handleSend}
               disabled={!hasData || sending || !input.trim()}
-              className="px-4 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-3 bg-accent hover:bg-accent/90 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowRight size={18} />
             </button>

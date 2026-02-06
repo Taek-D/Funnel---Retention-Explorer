@@ -64,7 +64,7 @@ export const ProjectsPage: React.FC = () => {
         <p className="text-slate-400">Sign in to manage your projects and save analysis results.</p>
         <button
           onClick={() => navigate('/login')}
-          className="mt-4 px-6 py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-all"
+          className="mt-4 px-6 py-2 text-sm font-bold text-white bg-accent rounded-lg hover:bg-accent/90 transition-all"
         >
           Sign in
         </button>
@@ -75,10 +75,10 @@ export const ProjectsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black text-white">Projects</h1>
+        <h1 className="text-3xl font-bold text-white">Projects</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg transition-all shadow-lg shadow-primary/30"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-accent hover:bg-accent/90 rounded-lg transition-all"
         >
           <Plus size={16} />
           New Project
@@ -86,7 +86,7 @@ export const ProjectsPage: React.FC = () => {
       </div>
 
       {showCreate && (
-        <div className="glass rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6 space-y-4">
           <h3 className="text-lg font-bold text-white">Create New Project</h3>
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">Project Name</label>
@@ -94,7 +94,7 @@ export const ProjectsPage: React.FC = () => {
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full bg-background border border-white/[0.06] rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
               placeholder="My Analytics Project"
             />
           </div>
@@ -104,7 +104,7 @@ export const ProjectsPage: React.FC = () => {
               type="text"
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full bg-background border border-white/[0.06] rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
               placeholder="E-commerce funnel analysis for Q1"
             />
           </div>
@@ -112,7 +112,7 @@ export const ProjectsPage: React.FC = () => {
             <button
               onClick={handleCreate}
               disabled={creating || !newName.trim()}
-              className="px-5 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg transition-all disabled:opacity-50"
+              className="px-5 py-2 text-sm font-bold text-white bg-accent hover:bg-accent/90 rounded-lg transition-all disabled:opacity-50"
             >
               {creating ? 'Creating...' : 'Create'}
             </button>
@@ -128,10 +128,10 @@ export const ProjectsPage: React.FC = () => {
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[200px]">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
         </div>
       ) : projects.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-12 text-center">
           <FileText size={48} className="text-slate-600 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-white mb-2">No projects yet</h3>
           <p className="text-slate-400 text-sm">Create your first project to start saving analysis results.</p>
@@ -141,11 +141,11 @@ export const ProjectsPage: React.FC = () => {
           {projects.map((project) => (
             <div
               key={project.id}
-              className="glass rounded-2xl p-6 hover:bg-white/5 transition-colors cursor-pointer group"
+              className="bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 transition-colors cursor-pointer group"
               onClick={() => navigate(`/app/dashboard`)}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
                   <FileText size={20} />
                 </div>
                 <button

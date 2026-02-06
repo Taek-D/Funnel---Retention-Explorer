@@ -57,8 +57,8 @@ export const RetentionAnalysis: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-wider mb-2">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider mb-2">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse-subtle"></span>
             Cohort Analysis
           </div>
           <h1 className="text-3xl font-bold text-white">Retention Analysis</h1>
@@ -70,16 +70,16 @@ export const RetentionAnalysis: React.FC = () => {
 
       {/* Retention Type Toggle (for subscription data) */}
       {detectedType === 'subscription' && (
-        <div className="flex items-center gap-2 bg-surface/50 border border-white/5 p-1 rounded-xl w-fit">
+        <div className="flex items-center gap-2 bg-surface/50 border border-white/5 p-1 rounded-md w-fit">
           <button
             onClick={() => setRetentionType('activity')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!isPaid ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!isPaid ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}
           >
             Activity Retention
           </button>
           <button
             onClick={() => setRetentionType('paid')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${isPaid ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${isPaid ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}
           >
             Paid Retention
           </button>
@@ -88,7 +88,7 @@ export const RetentionAnalysis: React.FC = () => {
 
       {/* Controls for Activity Retention */}
       {!isPaid && (
-        <div className="glass rounded-xl p-6 space-y-4">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">Cohort Event</label>
@@ -109,7 +109,7 @@ export const RetentionAnalysis: React.FC = () => {
                     key={e}
                     onClick={() => toggleActiveEvent(e)}
                     className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-                      selectedActiveEvents.includes(e) ? 'bg-primary text-white' : 'bg-white/5 text-slate-400 hover:text-white'
+                      selectedActiveEvents.includes(e) ? 'bg-accent text-white' : 'bg-white/5 text-slate-400 hover:text-white'
                     }`}
                   >
                     {e}
@@ -120,7 +120,7 @@ export const RetentionAnalysis: React.FC = () => {
           </div>
           <button
             onClick={handleCalculate}
-            className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/25 transition-all"
+            className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
           >
             Calculate Retention
           </button>
@@ -131,7 +131,7 @@ export const RetentionAnalysis: React.FC = () => {
       {isPaid && !retentionResults && (
         <button
           onClick={() => runRetentionAnalysis('', [])}
-          className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/25 transition-all"
+          className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
         >
           Calculate Paid Retention
         </button>
@@ -143,32 +143,32 @@ export const RetentionAnalysis: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(isPaid
               ? [
-                  { title: 'D7 Retention', value: avgRetention.D7, color: 'text-primary' },
-                  { title: 'D14 Retention', value: avgRetention.D14, color: 'text-blue-400' },
-                  { title: 'D30 Retention', value: avgRetention.D30, color: 'text-orange-400' },
+                  { title: 'D7 Retention', value: avgRetention.D7, color: 'text-accent' },
+                  { title: 'D14 Retention', value: avgRetention.D14, color: 'text-sky-400' },
+                  { title: 'D30 Retention', value: avgRetention.D30, color: 'text-amber-400' },
                 ]
               : [
-                  { title: 'D1 Retention', value: avgRetention.D1, color: 'text-primary' },
-                  { title: 'D7 Retention', value: avgRetention.D7, color: 'text-blue-400' },
-                  { title: 'D14 Retention', value: avgRetention.D14, color: 'text-orange-400' },
+                  { title: 'D1 Retention', value: avgRetention.D1, color: 'text-accent' },
+                  { title: 'D7 Retention', value: avgRetention.D7, color: 'text-sky-400' },
+                  { title: 'D14 Retention', value: avgRetention.D14, color: 'text-amber-400' },
                 ]
             ).map((stat, i) => (
-              <div key={i} className="glass rounded-2xl p-6 relative group overflow-hidden">
-                <div className={`absolute -right-6 -top-6 w-32 h-32 ${i === 0 ? 'bg-primary/20' : i === 1 ? 'bg-blue-500/20' : 'bg-orange-500/20'} blur-[50px] rounded-full`}></div>
+              <div key={i} className="bg-surface border border-white/[0.06] rounded-lg p-6 relative group overflow-hidden">
+                <div className={`absolute -right-6 -top-6 w-32 h-32 ${i === 0 ? 'bg-accent/10' : i === 1 ? 'bg-sky-400/10' : 'bg-amber-400/10'} blur-[50px] rounded-full`}></div>
                 <div className="relative z-10">
                   <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">{stat.title}</p>
-                  <h3 className="text-4xl font-bold text-white">{stat.value?.toFixed(1) || '0'}%</h3>
+                  <h3 className="text-4xl font-bold font-mono text-white">{stat.value?.toFixed(1) || '0'}%</h3>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Cohort Table */}
-          <div className="glass rounded-2xl overflow-hidden overflow-x-auto">
+          <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
                 <tr>
-                  <th className="px-6 py-4 min-w-[140px] sticky left-0 bg-[#151a2d]">
+                  <th className="px-6 py-4 min-w-[140px] sticky left-0 bg-[#14181f]">
                     {isPaid ? 'Subscribe Date' : 'Cohort Date'}
                   </th>
                   <th className="px-4 py-4 text-center">Size</th>
@@ -180,17 +180,17 @@ export const RetentionAnalysis: React.FC = () => {
               <tbody className="divide-y divide-white/5">
                 {retentionResults.slice(0, 10).map((row, idx) => (
                   <tr key={idx} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-3 font-medium text-white sticky left-0 bg-[#151a2d] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">{row.cohortDate}</td>
-                    <td className="px-4 py-3 text-center text-slate-400">{row.cohortSize.toLocaleString()}</td>
+                    <td className="px-6 py-3 font-medium text-white sticky left-0 bg-[#14181f] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">{row.cohortDate}</td>
+                    <td className="px-4 py-3 text-center text-slate-400 font-mono">{row.cohortSize.toLocaleString()}</td>
                     {dayColumns.map((day) => {
                       const rate = row.days[day] || 0;
                       const opacity = rate / 100;
                       return (
                         <td key={day} className="px-2 py-2 text-center">
                           <div
-                            className="rounded py-1.5 text-xs font-medium w-full border border-white/5"
+                            className="rounded py-1.5 text-xs font-medium font-mono w-full border border-white/5"
                             style={{
-                              backgroundColor: `rgba(99, 102, 241, ${opacity})`,
+                              backgroundColor: `rgba(0, 212, 170, ${opacity})`,
                               color: rate > 50 ? 'white' : 'rgba(255,255,255,0.7)'
                             }}
                           >
@@ -206,10 +206,10 @@ export const RetentionAnalysis: React.FC = () => {
           </div>
 
           {/* Curve Chart */}
-          <div className="glass rounded-2xl p-6">
+          <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary"><TrendingUp size={20} /></div>
+                <div className="p-2 bg-accent/10 rounded-lg text-accent"><TrendingUp size={20} /></div>
                 <div>
                   <h3 className="text-lg font-bold text-white">Average Retention Curve</h3>
                   <p className="text-xs text-slate-400">Aggregated retention rate across all cohorts</p>
@@ -221,18 +221,18 @@ export const RetentionAnalysis: React.FC = () => {
                 <AreaChart data={curveData}>
                   <defs>
                     <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.5} />
-                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255,255,255,0.1)', color: '#fff', borderRadius: '8px' }}
+                    contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff', borderRadius: '6px' }}
                     formatter={(value: number) => [`${value}%`, 'Retention']}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} fill="url(#curveGradient)" />
+                  <Area type="monotone" dataKey="value" stroke="#00d4aa" strokeWidth={3} fill="url(#curveGradient)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

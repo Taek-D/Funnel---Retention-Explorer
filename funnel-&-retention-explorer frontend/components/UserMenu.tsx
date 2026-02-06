@@ -23,7 +23,7 @@ export const UserMenu: React.FC = () => {
     return (
       <button
         onClick={() => navigate('/login')}
-        className="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg transition-all shadow-lg shadow-primary/30"
+        className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
       >
         Sign in
       </button>
@@ -41,14 +41,14 @@ export const UserMenu: React.FC = () => {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm font-bold border border-primary/30 hover:bg-primary/30 transition-all hover:scale-105"
+        className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold border border-accent/20 hover:bg-accent/20 transition-colors"
         title={user.email || ''}
       >
         {initial}
       </button>
 
       <div
-        className={`absolute right-0 top-12 w-56 md:w-64 bg-surface border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden transition-all duration-200 origin-top-right ${
+        className={`absolute right-0 top-11 w-56 md:w-64 bg-surface border border-white/[0.06] rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-200 origin-top-right ${
           open ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >

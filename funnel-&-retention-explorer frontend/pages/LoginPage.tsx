@@ -48,63 +48,82 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-white font-sans">
       <LandingHeader />
-      {/* Background effect */}
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/15 rounded-full blur-[180px] opacity-40 pointer-events-none" />
 
-      <div className="flex items-center justify-center min-h-screen px-6 pt-16 relative">
-        <div className="w-full max-w-md animate-fade-up">
-          <div className="glass rounded-2xl p-8">
-            <h1 className="text-2xl font-black text-white mb-2">Welcome back</h1>
-            <p className="text-slate-400 text-sm mb-8">Sign in to your FRE Analytics account</p>
+      <div className="flex min-h-screen">
+        {/* Left: Branding panel — desktop only */}
+        <div className="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 dot-grid pointer-events-none" />
+          <div className="relative text-center px-12">
+            <div className="text-accent font-mono text-sm mb-4 tracking-wider">FRE ANALYTICS</div>
+            <h2 className="text-4xl font-extrabold tracking-tightest leading-tight mb-4">
+              Understand<br />your users.
+            </h2>
+            <p className="text-slate-500 text-sm max-w-xs mx-auto">CSV to insights in minutes. No setup, no SQL, no engineering team.</p>
+            <div className="flex items-center justify-center gap-6 mt-12">
+              {['Funnels', 'Retention', 'Segments', 'AI'].map((t, i) => (
+                <React.Fragment key={t}>
+                  {i > 0 && <span className="w-px h-4 bg-white/[0.06]" />}
+                  <span className="text-[11px] font-mono text-slate-600 uppercase tracking-wider">{t}</span>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Form */}
+        <div className="flex-1 flex items-center justify-center px-6 pt-16 lg:border-l lg:border-white/[0.06]">
+          <div className="w-full max-w-sm animate-fade-up">
+            <h1 className="text-2xl font-extrabold text-white tracking-tightest mb-1">Welcome back</h1>
+            <p className="text-slate-500 text-sm mb-8">Sign in to your account</p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm animate-fade-in">
+              <div className="mb-4 p-3 bg-coral/5 border border-coral/20 rounded-md text-coral text-sm animate-fade-in">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Email</label>
                 <input
                   ref={emailRef}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                  className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                   placeholder="you@example.com"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-2">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 pr-10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+                    {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                   </button>
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5"
+                className="w-full py-2.5 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                     Signing in...
                   </span>
                 ) : 'Sign in'}
@@ -112,21 +131,21 @@ export const LoginPage: React.FC = () => {
             </form>
 
             <div className="mt-6 flex items-center gap-3">
-              <div className="flex-1 h-px bg-white/10" />
-              <span className="text-xs text-slate-500">or</span>
-              <div className="flex-1 h-px bg-white/10" />
+              <div className="flex-1 h-px bg-white/[0.06]" />
+              <span className="text-[11px] text-slate-600 font-mono">or</span>
+              <div className="flex-1 h-px bg-white/[0.06]" />
             </div>
 
             <Link
               to="/app/dashboard"
-              className="mt-4 block w-full py-3 text-sm font-medium text-slate-300 text-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all"
+              className="mt-4 block w-full py-2.5 text-sm font-medium text-slate-400 text-center bg-white/[0.03] border border-white/[0.06] hover:border-white/10 hover:text-white rounded-md transition-all"
             >
               Continue as Guest
             </Link>
 
-            <p className="mt-6 text-center text-sm text-slate-400">
+            <p className="mt-8 text-center text-[13px] text-slate-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="text-primary hover:text-primary/80 font-medium">
+              <Link to="/signup" className="text-accent hover:text-accent/80 font-medium">
                 Sign up
               </Link>
             </p>

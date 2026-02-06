@@ -30,60 +30,60 @@ export const LandingHeader: React.FC = () => {
 
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-      scrolled ? 'bg-background/90 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/10' : 'bg-transparent'
+      scrolled ? 'bg-background/90 backdrop-blur-sm border-b border-white/[0.06]' : 'bg-transparent'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 text-white font-bold text-lg group">
-          <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary/20 text-primary group-hover:bg-primary/30 transition-colors">
-            <Activity size={20} />
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2 text-white font-semibold text-sm group">
+          <div className="w-7 h-7 flex items-center justify-center rounded-md bg-accent/10 text-accent group-hover:bg-accent/20 transition-colors">
+            <Activity size={16} />
           </div>
-          FRE Analytics
+          <span className="tracking-tight">FRE Analytics</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-slate-400">
+        <nav className="hidden md:flex items-center gap-6 text-[13px] text-slate-500">
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2">
           <Link
             to="/login"
-            className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            className="px-3 py-1.5 text-[13px] font-medium text-slate-400 hover:text-white transition-colors"
           >
             Log in
           </Link>
           <Link
             to="/signup"
-            className="px-5 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg transition-all shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40"
+            className="px-4 py-1.5 text-[13px] font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
           >
             Get Started
           </Link>
         </div>
 
         <button
-          className="md:hidden p-2 text-slate-300 hover:text-white transition-colors"
+          className="md:hidden p-1.5 text-slate-400 hover:text-white transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
       {/* Mobile menu */}
       <div
-        className="md:hidden overflow-hidden transition-all duration-300"
+        className="md:hidden overflow-hidden transition-all duration-250"
         style={{
-          maxHeight: mobileOpen ? '300px' : '0px',
+          maxHeight: mobileOpen ? '280px' : '0px',
           opacity: mobileOpen ? 1 : 0,
         }}
       >
-        <div className="bg-surface border-t border-white/5 px-6 py-4 space-y-3">
-          <a href="#features" className="block py-2 text-slate-300 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Features</a>
-          <a href="#pricing" className="block py-2 text-slate-300 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Pricing</a>
-          <a href="#faq" className="block py-2 text-slate-300 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>FAQ</a>
-          <div className="flex gap-3 pt-3 border-t border-white/5">
-            <Link to="/login" className="px-4 py-2 text-sm text-slate-300 hover:text-white transition-colors">Log in</Link>
-            <Link to="/signup" className="px-5 py-2 text-sm font-bold text-white bg-primary rounded-lg shadow-lg shadow-primary/30">Get Started</Link>
+        <div className="bg-surface border-t border-white/[0.06] px-6 py-4 space-y-2">
+          <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Features</a>
+          <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>Pricing</a>
+          <a href="#faq" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>FAQ</a>
+          <div className="flex gap-3 pt-3 border-t border-white/[0.06]">
+            <Link to="/login" className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">Log in</Link>
+            <Link to="/signup" className="px-4 py-1.5 text-sm font-semibold text-background bg-accent rounded-md">Get Started</Link>
           </div>
         </div>
       </div>

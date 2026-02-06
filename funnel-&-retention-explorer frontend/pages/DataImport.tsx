@@ -61,16 +61,16 @@ export const DataImport: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Upload Area */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-          <div className="glass rounded-2xl p-8 flex flex-col gap-8 relative overflow-hidden group">
+          <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-8 relative overflow-hidden group">
             <div className="flex items-center justify-between">
               <h2 className="text-white text-xl font-bold">File Upload</h2>
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20 tracking-wide uppercase">
+              <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20 tracking-wide uppercase">
                 Step {hasData ? '2/3' : '1/3'}
               </span>
             </div>
 
             <div
-              className="relative w-full rounded-xl border-2 border-dashed border-primary/50 bg-primary/5 p-10 flex flex-col items-center justify-center gap-4 transition-all hover:bg-primary/10 cursor-pointer"
+              className="relative w-full rounded-md border-2 border-dashed border-accent/30 bg-accent/5 p-10 flex flex-col items-center justify-center gap-4 transition-all hover:bg-accent/10 cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); }}
               onDrop={onDrop}
@@ -78,19 +78,19 @@ export const DataImport: React.FC = () => {
               <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={onFileSelect} />
 
               {hasData && (
-                <div className="absolute top-4 left-4 text-green-400 flex items-center gap-1.5 bg-green-500/10 px-2 py-1 rounded border border-green-500/20">
+                <div className="absolute top-4 left-4 text-accent flex items-center gap-1.5 bg-accent/10 px-2 py-1 rounded border border-accent/20">
                   <CheckCircle size={14} /> <span className="text-xs font-bold">Loaded</span>
                 </div>
               )}
 
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center text-white shadow-lg shadow-primary/30 mb-2">
+              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center text-accent mb-2">
                 <UploadCloud size={36} />
               </div>
               <div className="text-center">
                 {hasData ? (
                   <>
                     <p className="text-white font-semibold text-lg">{state.currentDataset}</p>
-                    <p className="text-slate-400 text-sm mt-1">{state.rawData.length.toLocaleString()} rows • {headers.length} columns</p>
+                    <p className="text-slate-400 text-sm mt-1"><span className="font-mono">{state.rawData.length.toLocaleString()}</span> rows • <span className="font-mono">{headers.length}</span> columns</p>
                   </>
                 ) : (
                   <>
@@ -106,11 +106,11 @@ export const DataImport: React.FC = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-end">
                   <span className="text-white font-medium text-sm">{processingMessage}</span>
-                  <span className="text-primary font-bold font-mono">{processingProgress}%</span>
+                  <span className="text-accent font-bold font-mono">{processingProgress}%</span>
                 </div>
                 <div className="h-2 w-full bg-surface rounded-full overflow-hidden shadow-inner">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-blue-400 rounded-full transition-all duration-300"
+                    className="h-full bg-accent rounded-full transition-all duration-300"
                     style={{ width: `${processingProgress}%` }}
                   />
                 </div>
@@ -120,7 +120,7 @@ export const DataImport: React.FC = () => {
 
           {/* Column Mapping */}
           {hasData && (
-            <div className="glass rounded-2xl p-8 flex flex-col gap-6">
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-6">
               <div className="flex items-center gap-2 text-white mb-2">
                 <h3 className="font-bold text-lg">Column Mapping</h3>
               </div>
@@ -133,7 +133,7 @@ export const DataImport: React.FC = () => {
                     </label>
                     <div className="relative">
                       <select
-                        className="w-full appearance-none bg-background border border-white/10 text-white text-sm rounded-lg block p-3 pr-10 hover:border-white/20 focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                        className="w-full appearance-none bg-background border border-white/[0.06] text-white text-sm rounded-lg block p-3 pr-10 hover:border-white/20 focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
                         value={mapping[key] || ''}
                         onChange={(e) => updateMapping(key, e.target.value)}
                       >
@@ -148,16 +148,16 @@ export const DataImport: React.FC = () => {
                 ))}
               </div>
 
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex items-start gap-3">
-                <Zap size={16} className="text-primary mt-0.5" />
+              <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 flex items-start gap-3">
+                <Zap size={16} className="text-accent mt-0.5" />
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  AI has automatically mapped <span className="text-white font-bold">{autoMappedPct}%</span> of columns based on common naming patterns.
+                  AI has automatically mapped <span className="text-white font-bold font-mono">{autoMappedPct}%</span> of columns based on common naming patterns.
                 </p>
               </div>
 
               {/* Data Preview */}
               {state.rawData.length > 0 && (
-                <div className="overflow-x-auto max-h-[200px] rounded-lg border border-white/10">
+                <div className="overflow-x-auto max-h-[200px] rounded-lg border border-white/[0.06]">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-white/5 text-slate-400 font-semibold sticky top-0">
                       <tr>
@@ -188,9 +188,9 @@ export const DataImport: React.FC = () => {
                       ? `${state.dataQualityReport.minDate.toLocaleDateString()} ~ ${state.dataQualityReport.maxDate.toLocaleDateString()}`
                       : 'N/A' },
                   ].map((item, i) => (
-                    <div key={i} className="bg-background/80 border border-white/5 rounded-lg p-3">
+                    <div key={i} className="bg-background border border-white/5 rounded-lg p-3">
                       <p className="text-[10px] text-slate-500 uppercase font-bold">{item.label}</p>
-                      <p className="text-sm text-white font-medium mt-1">{item.value}</p>
+                      <p className="text-sm text-white font-medium font-mono mt-1">{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -200,7 +200,7 @@ export const DataImport: React.FC = () => {
                 <button
                   onClick={() => confirmMapping(mapping)}
                   disabled={isProcessing}
-                  className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-medium shadow-lg shadow-primary/25 transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   Confirm Mapping <ArrowRight size={16} />
                 </button>
@@ -211,7 +211,7 @@ export const DataImport: React.FC = () => {
 
         {/* Recent Files Sidebar */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="glass rounded-2xl p-6 flex flex-col gap-4">
+          <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <h3 className="text-white font-bold text-lg">Recent Files</h3>
             </div>
@@ -222,7 +222,7 @@ export const DataImport: React.FC = () => {
                 recentFiles.map((file, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-background/80 border border-white/5 hover:border-primary/50 transition-all cursor-pointer"
+                    className="flex items-center gap-3 p-3 rounded-lg bg-background border border-white/5 hover:border-accent/30 transition-all cursor-pointer"
                     onClick={() => loadRecentFileByIndex(i)}
                   >
                     <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center text-slate-400">
@@ -246,14 +246,14 @@ export const DataImport: React.FC = () => {
 
           {/* Top Events (after data quality report) */}
           {state.dataQualityReport && state.dataQualityReport.topEvents.length > 0 && (
-            <div className="glass rounded-2xl p-6 flex flex-col gap-4">
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
               <h3 className="text-white font-bold text-lg">Top Events</h3>
               <div className="space-y-2">
                 {state.dataQualityReport.topEvents.slice(0, 8).map((evt, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <span className="text-slate-300 truncate flex-1">{evt.name}</span>
-                    <span className="text-slate-400 ml-2">{evt.count.toLocaleString()}</span>
-                    <span className="text-primary font-medium ml-2 w-14 text-right">{evt.percentage}%</span>
+                    <span className="text-slate-400 font-mono ml-2">{evt.count.toLocaleString()}</span>
+                    <span className="text-accent font-medium font-mono ml-2 w-14 text-right">{evt.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -262,9 +262,9 @@ export const DataImport: React.FC = () => {
 
           {/* Detected Type Badge */}
           {state.detectedType && (
-            <div className="glass rounded-2xl p-6 flex flex-col items-center gap-3">
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center gap-3">
               <p className="text-slate-400 text-xs uppercase font-bold">Detected Data Type</p>
-              <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold border border-primary/20">
+              <span className="px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-bold border border-accent/20">
                 {state.detectedType === 'ecommerce' ? '이커머스 (E-commerce)' : '구독 서비스 (Subscription)'}
               </span>
             </div>

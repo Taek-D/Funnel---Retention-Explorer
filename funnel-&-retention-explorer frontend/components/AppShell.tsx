@@ -21,44 +21,42 @@ export const AppShell: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-white">
-      {/* Background Ambient Effects */}
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] opacity-50"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] opacity-40"></div>
-      </div>
+    <div className="flex min-h-screen bg-background text-white font-sans selection:bg-accent/30 selection:text-white">
+      {/* Dot grid background */}
+      <div className="fixed inset-0 dot-grid pointer-events-none -z-10" />
 
       <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
-      <main className="flex-1 flex flex-col md:pl-20 relative">
-        {/* Top Header */}
-        <header className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-30">
+      <main className="flex-1 flex flex-col md:pl-16 relative">
+        {/* Top Header — minimal */}
+        <header className="flex items-center justify-between px-4 md:px-6 py-3 border-b border-white/[0.06] bg-background/80 backdrop-blur-sm sticky top-0 z-30">
           <div className="flex items-center gap-3 md:hidden">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2 -ml-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
-            <span className="font-bold text-white capitalize">{pageTitle}</span>
+            <span className="font-semibold text-sm text-white capitalize tracking-tight">{pageTitle}</span>
           </div>
 
-          <div className="hidden md:flex flex-col">
-            <h1 className="text-xl font-bold text-white tracking-tight capitalize">{pageTitle}</h1>
-            <p className="text-xs text-slate-400">FRE Analytics Dashboard</p>
+          <div className="hidden md:flex items-center gap-3">
+            <h1 className="text-sm font-semibold text-white tracking-tight capitalize">{pageTitle}</h1>
+            <span className="text-[10px] text-slate-500 font-mono uppercase">FRE</span>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-3">
-            <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors">
-              <Search size={18} />
+          <div className="flex items-center gap-1.5">
+            <button className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors">
+              <Search size={16} />
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors relative"
+              className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors relative"
             >
-              <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-background"></span>
+              <Bell size={16} />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-coral rounded-full"></span>
             </button>
+            <div className="w-px h-5 bg-white/[0.06] mx-1" />
             <UserMenu />
           </div>
         </header>
@@ -75,51 +73,51 @@ export const AppShell: React.FC = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Email Settings">
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-300">n8n Webhook URL</label>
+            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">n8n Webhook URL</label>
             <input
               type="text"
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full bg-white/[0.03] border-b border-white/10 px-0 py-3 text-sm text-white focus:outline-none focus:border-accent transition-colors"
               placeholder="https://primary.n8n.cloud/webhook/..."
             />
-            <p className="text-xs text-gray-500">Enter the n8n webhook address to call when an event occurs.</p>
+            <p className="text-[11px] text-slate-600">Enter the n8n webhook address to call when an event occurs.</p>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-300">
-              Recipient Emails <span className="text-gray-500 font-normal">(comma separated)</span>
+            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              Recipient Emails <span className="text-slate-600 font-normal normal-case">(comma separated)</span>
             </label>
             <textarea
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all min-h-[100px] resize-none"
+              className="w-full bg-white/[0.03] border border-white/[0.06] rounded-md px-3 py-3 text-sm text-white focus:outline-none focus:border-accent/50 transition-colors min-h-[100px] resize-none"
               placeholder="user@example.com, admin@company.com"
             />
           </div>
 
-          <div className="flex items-center justify-between bg-white/5 p-4 rounded-lg border border-white/5">
+          <div className="flex items-center justify-between bg-surface p-4 rounded-lg border border-white/[0.06]">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center rounded-lg bg-primary/20 text-primary p-2 shrink-0">
-                <Mail size={20} />
+              <div className="flex items-center justify-center rounded-md bg-accent/10 text-accent p-2 shrink-0">
+                <Mail size={18} />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-white">Auto Send on Analysis</span>
-                <span className="text-xs text-gray-500">Send report immediately after data aggregation.</span>
+                <span className="text-[11px] text-slate-500">Send report immediately after data aggregation.</span>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              <div className="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
             </label>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.06]">
             <button
-              className="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               onClick={() => setIsModalOpen(false)}
             >
               Close
             </button>
             <button
               onClick={handleSaveEmailSettings}
-              className="px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg transition-all shadow-lg shadow-primary/30"
+              className="px-5 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
             >
               Save
             </button>
@@ -129,14 +127,12 @@ export const AppShell: React.FC = () => {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 animate-fade-up">
-          <div className="bg-surface flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-l-green-500 shadow-xl pr-6 border border-white/5">
-            <div className="bg-green-500/20 text-green-500 rounded-full p-1">
-              <CheckCircle size={20} />
-            </div>
+        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 animate-fade-up">
+          <div className="bg-surface flex items-center gap-3 px-4 py-3 rounded-md border-l-2 border-l-accent border border-white/[0.06]">
+            <CheckCircle size={18} className="text-accent" />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white">Success</span>
-              <span className="text-xs text-gray-400">Configuration saved successfully</span>
+              <span className="text-sm font-medium text-white">Saved</span>
+              <span className="text-[11px] text-slate-500">Configuration saved successfully</span>
             </div>
           </div>
         </div>

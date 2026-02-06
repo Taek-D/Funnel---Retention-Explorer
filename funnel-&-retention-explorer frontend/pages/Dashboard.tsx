@@ -62,21 +62,21 @@ export const Dashboard: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, i) => (
-          <div key={i} className={`bg-surface border border-white/5 rounded-2xl p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 animate-fade-up delay-${(i + 1) * 100}`}>
+          <div key={i} className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 animate-fade-up delay-${(i + 1) * 100}`}>
             <div className="flex justify-between items-start mb-3">
               <span className="text-slate-400 text-sm font-medium">{kpi.label}</span>
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-accent/10 text-accent' : 'bg-coral/10 text-coral'}`}>
                 {kpi.change}
               </span>
             </div>
-            <div className="text-2xl font-bold text-white">{kpi.value}</div>
+            <div className="text-2xl font-bold font-mono text-white">{kpi.value}</div>
           </div>
         ))}
       </div>
 
       {/* Funnel Section */}
       {funnelChartData.length > 0 ? (
-        <div className="bg-surface border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6 relative overflow-hidden">
           <div className="flex justify-between items-center mb-8 relative z-10">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -86,8 +86,8 @@ export const Dashboard: React.FC = () => {
               <p className="text-slate-400 text-sm">{funnelResults?.length || 0}-step funnel analysis</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-white">{overallConversion?.toFixed(1)}%</div>
-              <div className="text-emerald-500 text-sm font-medium">Overall Conversion</div>
+              <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
+              <div className="text-accent text-sm font-medium">Overall Conversion</div>
             </div>
           </div>
 
@@ -97,21 +97,21 @@ export const Dashboard: React.FC = () => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
                 <Tooltip
                   cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                  contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255,255,255,0.1)', color: '#fff' }}
+                  contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
                   formatter={(value: number) => [value.toLocaleString(), 'Users']}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {funnelChartData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={`rgba(99, 102, 241, ${1 - (index * 0.15)})`} />
+                    <Cell key={`cell-${index}`} fill={`rgba(0, 212, 170, ${1 - (index * 0.15)})`} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 blur-[100px] rounded-full pointer-events-none" />
         </div>
       ) : (
-        <div className="bg-surface border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[200px]">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
           <p className="text-slate-400 text-sm">{hasData ? 'Calculate a funnel in the Editor tab to see results here.' : 'Upload data to get started.'}</p>
         </div>
@@ -119,10 +119,10 @@ export const Dashboard: React.FC = () => {
 
       {/* AI Summary Card */}
       {hasData && (
-        <div className="bg-surface border border-white/5 rounded-2xl p-6">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 text-primary flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/20 to-accent/5 text-accent flex items-center justify-center">
                 <Zap size={16} />
               </div>
               <h3 className="font-bold text-white">AI Quick Summary</h3>
@@ -132,7 +132,7 @@ export const Dashboard: React.FC = () => {
                 <button
                   onClick={generateSummary}
                   disabled={aiLoading}
-                  className="px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg transition-all disabled:opacity-50"
+                  className="px-3 py-1.5 text-xs font-medium text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
                 >
                   {aiLoading ? 'Analyzing...' : 'Generate'}
                 </button>
@@ -147,7 +147,7 @@ export const Dashboard: React.FC = () => {
           </div>
           {aiLoading && (
             <div className="flex items-center gap-3 py-2">
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
               <span className="text-slate-400 text-sm">Analyzing...</span>
             </div>
           )}
@@ -163,7 +163,7 @@ export const Dashboard: React.FC = () => {
       {/* Bottom Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Insights */}
-        <div className="bg-surface border border-white/5 rounded-2xl p-6">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-white">Recent Insights</h3>
             <span className="text-xs text-slate-500">{insights.length} total</span>
@@ -174,14 +174,14 @@ export const Dashboard: React.FC = () => {
             ) : (
               insights.slice(0, 4).map((insight, i) => {
                 const colors: Record<string, { text: string; bg: string }> = {
-                  danger: { text: 'text-red-500', bg: 'bg-red-500/10' },
-                  warning: { text: 'text-orange-500', bg: 'bg-orange-500/10' },
-                  success: { text: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-                  info: { text: 'text-blue-500', bg: 'bg-blue-500/10' },
+                  danger: { text: 'text-coral', bg: 'bg-coral/10' },
+                  warning: { text: 'text-amber', bg: 'bg-amber/10' },
+                  success: { text: 'text-accent', bg: 'bg-accent/10' },
+                  info: { text: 'text-sky-400', bg: 'bg-sky-400/10' },
                 };
                 const c = colors[insight.type] || colors.info;
                 return (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors">
                     <div className={`p-2 rounded-lg ${c.bg} ${c.text}`}>
                       <span className="text-sm">{insight.icon}</span>
                     </div>
@@ -190,7 +190,7 @@ export const Dashboard: React.FC = () => {
                       <p className="text-xs text-slate-400 truncate">{insight.body}</p>
                     </div>
                     {insight.metric && (
-                      <span className="text-xs text-primary font-bold shrink-0">{insight.metric}</span>
+                      <span className="text-xs text-accent font-bold font-mono shrink-0">{insight.metric}</span>
                     )}
                   </div>
                 );
@@ -200,7 +200,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* User Retention Chart */}
-        <div className="bg-surface border border-white/5 rounded-2xl p-6">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-white">Retention Curve</h3>
           </div>
@@ -210,18 +210,18 @@ export const Dashboard: React.FC = () => {
                 <AreaChart data={retentionCurveData}>
                   <defs>
                     <linearGradient id="colorValueDash" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10 }} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255,255,255,0.1)', color: '#fff' }}
+                    contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
                     formatter={(value: number) => [`${value}%`, 'Retention']}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
+                  <Area type="monotone" dataKey="value" stroke="#00d4aa" strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

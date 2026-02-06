@@ -48,30 +48,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
   const sidebarContent = (
     <>
       <div
-        className="w-10 h-10 flex items-center justify-center rounded-xl bg-primary/20 text-primary cursor-pointer hover:bg-primary/30 transition-colors"
+        className="w-8 h-8 flex items-center justify-center rounded-md bg-accent/10 text-accent cursor-pointer hover:bg-accent/20 transition-colors"
         onClick={() => handleNav('/')}
         title="Home"
       >
-        <Activity size={24} />
+        <Activity size={18} />
       </div>
 
-      <nav className="flex flex-col gap-2 w-full items-center">
+      <nav className="flex flex-col gap-0.5 w-full items-center">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <button
               key={item.path}
               onClick={() => handleNav(item.path)}
-              className={`group relative p-3 rounded-xl transition-all duration-200 ${
+              className={`group relative w-10 h-10 flex items-center justify-center rounded-md transition-colors duration-150 ${
                 isActive
-                  ? 'bg-primary text-white shadow-[0_0_15px_rgba(99,102,241,0.4)]'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'text-accent bg-accent/10'
+                  : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
               }`}
               title={item.label}
             >
-              <item.icon size={20} />
+              {/* Active indicator bar */}
+              {isActive && (
+                <span className="absolute left-0 top-2 bottom-2 w-[2px] bg-accent rounded-r-full" />
+              )}
+              <item.icon size={18} />
               {/* Tooltip */}
-              <span className="absolute left-full ml-3 px-2.5 py-1 text-xs font-medium text-white bg-slate-800 border border-white/10 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 hidden md:block">
+              <span className="absolute left-full ml-3 px-2 py-1 text-[11px] font-medium text-white bg-elevated border border-white/[0.06] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 hidden md:block">
                 {item.label}
               </span>
             </button>
@@ -79,16 +83,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
         })}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-4 items-center">
+      <div className="mt-auto flex flex-col gap-3 items-center">
         <button
-          className="p-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+          className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"
           onClick={handleSignOut}
           title="Sign out"
         >
-          <LogOut size={20} />
+          <LogOut size={16} />
         </button>
         <div
-          className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm font-bold border border-primary/30"
+          className="w-7 h-7 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold"
           title={user?.email || 'Guest'}
         >
           {initial}
@@ -100,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-20 flex-col items-center border-r border-white/5 bg-surface/50 backdrop-blur-xl py-6 gap-8 shrink-0 z-20 fixed h-full left-0 top-0">
+      <aside className="hidden md:flex w-16 flex-col items-center border-r border-white/[0.06] bg-background py-4 gap-6 shrink-0 z-20 fixed h-full left-0 top-0">
         {sidebarContent}
       </aside>
 
@@ -108,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50">
           <div className="sidebar-overlay absolute inset-0" onClick={onCloseMobile} />
-          <aside className="absolute left-0 top-0 h-full w-20 flex flex-col items-center bg-surface border-r border-white/5 py-6 gap-8 animate-slide-in-left">
+          <aside className="absolute left-0 top-0 h-full w-16 flex flex-col items-center bg-background border-r border-white/[0.06] py-4 gap-6 animate-slide-in-left">
             {sidebarContent}
           </aside>
         </div>
