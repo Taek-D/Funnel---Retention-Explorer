@@ -45,6 +45,8 @@ export const DataImport: React.FC = () => {
   };
 
   const hasData = headers.length > 0;
+  const isProcessed = state.processedData.length > 0;
+  const currentStep = isProcessed ? 3 : hasData ? 2 : 1;
   const autoMappedCount = Object.values(mapping).filter(Boolean).length;
   const totalFields = MAPPING_FIELDS.length;
   const autoMappedPct = totalFields > 0 ? Math.round((autoMappedCount / totalFields) * 100) : 0;
@@ -64,8 +66,10 @@ export const DataImport: React.FC = () => {
           <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-8 relative overflow-hidden group">
             <div className="flex items-center justify-between">
               <h2 className="text-white text-xl font-bold">파일 업로드</h2>
-              <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold border border-accent/20 tracking-wide uppercase">
-                Step {hasData ? '2/3' : '1/3'}
+              <span className={`px-3 py-1 rounded-full text-xs font-bold border tracking-wide uppercase ${
+                currentStep === 3 ? 'bg-accent/20 text-accent border-accent/30' : 'bg-accent/10 text-accent border-accent/20'
+              }`}>
+                Step {currentStep}/3
               </span>
             </div>
 
@@ -205,6 +209,29 @@ export const DataImport: React.FC = () => {
                   매핑 확인 <ArrowRight size={16} />
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* Step 3: Processing Complete */}
+          {isProcessed && (
+            <div className="bg-surface border border-accent/20 rounded-lg p-8 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                    <CheckCircle size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg">데이터 처리 완료</h3>
+                    <p className="text-slate-400 text-sm">
+                      <span className="font-mono text-accent">{state.processedData.length.toLocaleString()}</span>개 이벤트가 처리되었습니다
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-bold border border-accent/30 tracking-wide uppercase">
+                  Step 3/3
+                </span>
+              </div>
+              <p className="text-slate-400 text-sm">퍼널 분석, 리텐션, 세그먼트 탭에서 분석을 시작할 수 있습니다.</p>
             </div>
           )}
         </div>
