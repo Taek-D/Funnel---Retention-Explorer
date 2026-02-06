@@ -8,6 +8,7 @@ import { Search, Bell, Menu, Mail, CheckCircle } from './Icons';
 export const AppShell: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const currentSegment = location.pathname.split('/').pop() || 'dashboard';
@@ -27,14 +28,19 @@ export const AppShell: React.FC = () => {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] opacity-40"></div>
       </div>
 
-      <Sidebar />
+      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
       <main className="flex-1 flex flex-col md:pl-20 relative">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-30">
-          <div className="flex items-center gap-4 md:hidden">
-            <Menu size={24} />
-            <span className="font-bold">Analytics</span>
+        <header className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-white/5 bg-background/50 backdrop-blur-md sticky top-0 z-30">
+          <div className="flex items-center gap-3 md:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 -ml-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+            >
+              <Menu size={22} />
+            </button>
+            <span className="font-bold text-white capitalize">{pageTitle}</span>
           </div>
 
           <div className="hidden md:flex flex-col">
@@ -42,16 +48,16 @@ export const AppShell: React.FC = () => {
             <p className="text-xs text-slate-400">FRE Analytics Dashboard</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 transition-colors">
-              <Search size={20} />
+          <div className="flex items-center gap-2 md:gap-3">
+            <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors">
+              <Search size={18} />
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 transition-colors relative"
+              className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors relative"
             >
-              <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-background"></span>
+              <Bell size={18} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-background"></span>
             </button>
             <UserMenu />
           </div>
@@ -59,7 +65,7 @@ export const AppShell: React.FC = () => {
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="max-w-[1600px] mx-auto w-full">
+          <div className="max-w-[1600px] mx-auto w-full animate-fade-in">
             <Outlet />
           </div>
         </div>
@@ -123,7 +129,7 @@ export const AppShell: React.FC = () => {
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 right-8 z-50 animate-in slide-in-from-right duration-300">
+        <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 animate-fade-up">
           <div className="bg-surface flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-l-green-500 shadow-xl pr-6 border border-white/5">
             <div className="bg-green-500/20 text-green-500 rounded-full p-1">
               <CheckCircle size={20} />

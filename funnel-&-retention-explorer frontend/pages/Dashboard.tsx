@@ -62,8 +62,8 @@ export const Dashboard: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, i) => (
-          <div key={i} className="bg-surface border border-white/5 rounded-2xl p-5 hover:bg-white/5 transition-colors">
-            <div className="flex justify-between items-start mb-2">
+          <div key={i} className={`bg-surface border border-white/5 rounded-2xl p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 animate-fade-up delay-${(i + 1) * 100}`}>
+            <div className="flex justify-between items-start mb-3">
               <span className="text-slate-400 text-sm font-medium">{kpi.label}</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                 {kpi.change}
