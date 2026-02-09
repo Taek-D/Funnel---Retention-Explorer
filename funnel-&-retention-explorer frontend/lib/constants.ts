@@ -37,10 +37,10 @@ export const KNOWN_CHANNELS: string[] = [
 ];
 
 export const AUTO_COLUMN_MAPPING: Record<string, string[]> = {
-  timestamp: ['timestamp', 'time', 'date', 'datetime'],
-  userid: ['user_id', 'userid', 'user', 'customer_id'],
-  eventname: ['event_name', 'event', 'action', 'event_type'],
-  sessionid: ['session_id', 'sessionid', 'session'],
-  platform: ['platform', 'device', 'os'],
-  channel: ['channel', 'source', 'utm_source']
+  timestamp: ['timestamp', 'time', 'date', 'datetime', 'created_at', 'updated_at', '날짜', '일자', '일시', '시간'],
+  userid: ['user_id', 'userid', 'user', 'customer_id', 'customer', '사용자', '유저', '고객', '회원'],
+  eventname: ['event_name', 'event', 'action', 'event_type', 'activity', '이벤트', '이벤트명', '행동', '액션'],
+  sessionid: ['session_id', 'sessionid', 'session', 'visit_id', '세션', '방문'],
+  platform: ['platform', 'device', 'os', 'device_type', '플랫폼', '기기', '디바이스'],
+  channel: ['channel', 'source', 'utm_source', 'traffic_source', '채널', '유입경로', '소스']
 };

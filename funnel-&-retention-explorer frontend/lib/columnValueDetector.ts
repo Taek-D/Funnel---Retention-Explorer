@@ -55,8 +55,12 @@ function scoreTimestamp(profile: ColumnProfile): number {
   for (const v of values) {
     if (DATE_REGEX.test(v)) dateRegexHits++;
 
-    const d = new Date(v);
-    if (!isNaN(d.getTime())) parseHits++;
+    // Only count Date parse for non-numeric strings to avoid false positives
+    // (JS treats numeric strings like '0', '54' as valid year numbers)
+    if (!profile.allNumeric) {
+      const d = new Date(v);
+      if (!isNaN(d.getTime())) parseHits++;
+    }
 
     if (profile.allNumeric) {
       const n = Number(v);
@@ -68,7 +72,7 @@ function scoreTimestamp(profile: ColumnProfile): number {
 
   const total = values.length;
   const regexRate = dateRegexHits / total;
-  const parseRate = parseHits / total;
+  const parseRate = profile.allNumeric ? 0 : parseHits / total;
   const epochRate = epochHits / total;
 
   let score = Math.max(regexRate * 0.9, parseRate * 0.7, epochRate * 0.85);
