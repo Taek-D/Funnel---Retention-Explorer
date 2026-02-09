@@ -1,4 +1,10 @@
 import type { ProcessedEvent, RetentionCohort, RawRow, ColumnMapping } from '../types';
+import {
+  ACTIVITY_RETENTION_MAX_DAYS,
+  PAID_RETENTION_DAYS,
+  PAID_RETENTION_MAX_COHORTS,
+  FULL_DATA_RETENTION_MAX_COHORTS
+} from './constants';
 
 export function calculateActivityRetention(
   processedData: ProcessedEvent[],
@@ -37,7 +43,7 @@ export function calculateActivityRetention(
     const cohortStartDate = new Date(cohortDate);
     const retention: RetentionCohort = { cohortDate, cohortSize: userSet.size, days: {} };
 
-    for (let day = 0; day <= 14; day++) {
+    for (let day = 0; day <= ACTIVITY_RETENTION_MAX_DAYS; day++) {
       const targetDate = new Date(cohortStartDate);
       targetDate.setDate(targetDate.getDate() + day);
       const targetDateStr = targetDate.toISOString().split('T')[0];
@@ -98,16 +104,15 @@ export function calculatePaidRetention(
   });
 
   const retentionMatrix: RetentionCohort[] = [];
-  const retentionDays = [0, 7, 14, 30, 60, 90];
 
   Object.entries(cohorts)
     .sort(([a], [b]) => a.localeCompare(b))
-    .slice(0, 10)
+    .slice(0, PAID_RETENTION_MAX_COHORTS)
     .forEach(([cohortDate, userSet]) => {
       const cohortStartDate = new Date(cohortDate);
       const retention: RetentionCohort = { cohortDate, cohortSize: userSet.size, days: {} };
 
-      retentionDays.forEach(day => {
+      PAID_RETENTION_DAYS.forEach(day => {
         const targetDate = new Date(cohortStartDate);
         targetDate.setDate(targetDate.getDate() + day);
 
@@ -171,12 +176,12 @@ export function calculateFullDataRetention(processedData: ProcessedEvent[]): Ret
 
   const retentionData: RetentionCohort[] = [];
 
-  cohortDates.slice(0, 7).forEach(cohortDate => {
+  cohortDates.slice(0, FULL_DATA_RETENTION_MAX_COHORTS).forEach(cohortDate => {
     const cohortSet = cohortUsers[cohortDate];
     const cohortTimestamp = new Date(cohortDate);
     const retention: RetentionCohort = { cohortDate, cohortSize: cohortSet.size, days: {} };
 
-    for (let day = 0; day <= 14; day++) {
+    for (let day = 0; day <= ACTIVITY_RETENTION_MAX_DAYS; day++) {
       const targetDate = new Date(cohortTimestamp);
       targetDate.setDate(targetDate.getDate() + day);
       const targetDateKey = targetDate.toISOString().split('T')[0];

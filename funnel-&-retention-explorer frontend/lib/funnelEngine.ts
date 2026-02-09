@@ -1,5 +1,6 @@
 import type { ProcessedEvent, FunnelStep } from '../types';
 import { FUNNEL_TEMPLATES } from './constants';
+import { getUsersByEvent } from './eventUtils';
 
 export function loadFunnelTemplate(type: 'ecommerce' | 'subscription' | 'lifecycle'): string[] {
   return FUNNEL_TEMPLATES[type] || FUNNEL_TEMPLATES.ecommerce;
@@ -13,9 +14,7 @@ export function calculateFunnel(processedData: ProcessedEvent[], steps: string[]
 
   steps.forEach((step, index) => {
     if (index === 0) {
-      const users = new Set(
-        processedData.filter(e => e.eventName === step).map(e => e.userId)
-      );
+      const users = getUsersByEvent(processedData, step);
       usersByStep[step] = users;
       funnelData.push({
         step,

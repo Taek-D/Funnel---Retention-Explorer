@@ -1,7 +1,7 @@
 import type { RecentFile } from '../types';
+import { RECENT_FILES_MAX_COUNT } from './constants';
 
 const STORAGE_KEY = 'recentFiles';
-const MAX_FILES = 5;
 
 export function loadRecentFiles(): RecentFile[] {
   try {
@@ -15,7 +15,7 @@ export function saveRecentFile(fileInfo: RecentFile): void {
   let recentFiles = loadRecentFiles();
   recentFiles = recentFiles.filter(f => f.fileName !== fileInfo.fileName);
   recentFiles.unshift(fileInfo);
-  recentFiles = recentFiles.slice(0, MAX_FILES);
+  recentFiles = recentFiles.slice(0, RECENT_FILES_MAX_COUNT);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(recentFiles));
 }
 

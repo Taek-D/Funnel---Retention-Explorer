@@ -30,7 +30,7 @@ export async function listProjects(): Promise<FREProject[]> {
 export async function createProject(name: string, description?: string): Promise<FREProject> {
   const client = getSupabase();
   const { data: { user } } = await client.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
+  if (!user) throw new Error('인증되지 않았습니다');
 
   const { data, error } = await client
     .from('fre_projects')

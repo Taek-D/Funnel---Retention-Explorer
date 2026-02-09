@@ -1,4 +1,5 @@
 import type { ProcessedEvent, SegmentResult, SegmentFunnelStep } from '../types';
+import { getUsersByEvent, getUsersByEventFuzzy } from './eventUtils';
 
 export function compareSegments(
   processedData: ProcessedEvent[],
@@ -98,9 +99,7 @@ export function calculateSegmentFunnel(
         if (currentEvent) stepUsers.add(userId);
       });
     } else {
-      stepUsers = new Set(
-        segmentData.filter(e => e.eventName === stepName).map(e => e.userId)
-      );
+      stepUsers = getUsersByEvent(segmentData, stepName);
     }
 
     const userCount = stepUsers.size;
@@ -159,15 +158,8 @@ export function calculateFullDataSegments(
 function calculateConversionRate(data: ProcessedEvent[], steps: string[]): number | null {
   if (!data || data.length === 0 || !steps || steps.length < 2) return null;
 
-  const firstStepUsers = new Set(
-    data.filter(e => e.eventName && e.eventName.toLowerCase().includes(steps[0].toLowerCase()))
-      .map(e => e.userId)
-  );
-
-  const lastStepUsers = new Set(
-    data.filter(e => e.eventName && e.eventName.toLowerCase().includes(steps[steps.length - 1].toLowerCase()))
-      .map(e => e.userId)
-  );
+  const firstStepUsers = getUsersByEventFuzzy(data, steps[0]);
+  const lastStepUsers = getUsersByEventFuzzy(data, steps[steps.length - 1]);
 
   const completedUsers = [...lastStepUsers].filter(userId => firstStepUsers.has(userId));
 

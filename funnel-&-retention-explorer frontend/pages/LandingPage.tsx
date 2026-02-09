@@ -253,11 +253,9 @@ export const LandingPage: React.FC = () => {
                   />
                 </button>
                 <div
-                  className="overflow-hidden transition-all duration-300"
-                  style={{
-                    maxHeight: openFaq === i ? '200px' : '0px',
-                    opacity: openFaq === i ? 1 : 0,
-                  }}
+                  className={`overflow-hidden transition-all duration-300 ${
+                    openFaq === i ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
                 >
                   <div className="px-6 pb-5 text-sm text-slate-400 leading-relaxed">{faq.a}</div>
                 </div>

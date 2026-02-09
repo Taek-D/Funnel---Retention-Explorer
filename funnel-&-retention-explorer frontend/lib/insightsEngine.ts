@@ -5,6 +5,7 @@ import type {
 import { calculateFullDataFunnel } from './funnelEngine';
 import { calculateFullDataRetention } from './retentionEngine';
 import { calculateFullDataSegments } from './segmentEngine';
+import { INSIGHTS_RETENTION_MAX_DAYS } from './constants';
 
 export function generateInsights(
   processedData: ProcessedEvent[],
@@ -110,13 +111,13 @@ export function generateInsights(
   // Insight 5: Steepest retention drop
   if (fullRetentionResults && fullRetentionResults.length > 0) {
     const avgByDay: Record<number, number> = {};
-    for (let day = 0; day <= 14; day++) {
+    for (let day = 0; day <= INSIGHTS_RETENTION_MAX_DAYS; day++) {
       avgByDay[day] = fullRetentionResults.reduce((sum, r) => sum + (r.days[`D${day}`] || 0), 0) / fullRetentionResults.length;
     }
 
     let maxDrop = 0;
     let maxDropDay = 0;
-    for (let day = 1; day <= 14; day++) {
+    for (let day = 1; day <= INSIGHTS_RETENTION_MAX_DAYS; day++) {
       const drop = avgByDay[day - 1] - avgByDay[day];
       if (drop > maxDrop) {
         maxDrop = drop;

@@ -117,9 +117,9 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
             <div className="flex justify-start">
               <div className="bg-white/5 border border-white/5 px-4 py-3 rounded-lg rounded-bl-md">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce delay-150" />
+                  <div className="w-2 h-2 bg-accent rounded-full animate-bounce delay-300" />
                 </div>
               </div>
             </div>

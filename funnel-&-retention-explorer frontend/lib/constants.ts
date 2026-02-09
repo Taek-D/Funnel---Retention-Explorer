@@ -36,6 +36,15 @@ export const KNOWN_CHANNELS: string[] = [
   'affiliate', 'push', 'sms', 'search', 'banner',
 ];
 
+// === Analysis Constants ===
+
+export const ACTIVITY_RETENTION_MAX_DAYS = 14;
+export const PAID_RETENTION_DAYS = [0, 7, 14, 30, 60, 90] as const;
+export const PAID_RETENTION_MAX_COHORTS = 10;
+export const FULL_DATA_RETENTION_MAX_COHORTS = 7;
+export const INSIGHTS_RETENTION_MAX_DAYS = 14;
+export const RECENT_FILES_MAX_COUNT = 5;
+
 export const AUTO_COLUMN_MAPPING: Record<string, string[]> = {
   timestamp: ['timestamp', 'time', 'date', 'datetime', 'created_at', 'updated_at', '날짜', '일자', '일시', '시간'],
   userid: ['user_id', 'userid', 'user', 'customer_id', 'customer', '사용자', '유저', '고객', '회원'],

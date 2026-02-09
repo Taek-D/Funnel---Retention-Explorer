@@ -55,11 +55,9 @@ export const LandingHeader: React.FC = () => {
 
       {/* Mobile menu */}
       <div
-        className="md:hidden overflow-hidden transition-all duration-250"
-        style={{
-          maxHeight: mobileOpen ? '280px' : '0px',
-          opacity: mobileOpen ? 1 : 0,
-        }}
+        className={`md:hidden overflow-hidden transition-all duration-250 ${
+          mobileOpen ? 'max-h-[280px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
       >
         <div className="bg-surface border-t border-white/[0.06] px-6 py-4 space-y-2">
           <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>기능</a>
