@@ -14,11 +14,21 @@ const FunnelAnalysis = lazy(() => import('./pages/FunnelAnalysis').then(m => ({ 
 const RetentionAnalysis = lazy(() => import('./pages/RetentionAnalysis').then(m => ({ default: m.RetentionAnalysis })));
 const SegmentComparison = lazy(() => import('./pages/SegmentComparison').then(m => ({ default: m.SegmentComparison })));
 const Insights = lazy(() => import('./pages/Insights').then(m => ({ default: m.Insights })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <LandingPage />,
+  },
+  {
+    path: '/privacy',
+    element: <Suspense fallback={<PageLoader />}><PrivacyPage /></Suspense>,
+  },
+  {
+    path: '/terms',
+    element: <Suspense fallback={<PageLoader />}><TermsPage /></Suspense>,
   },
   {
     path: '/login',

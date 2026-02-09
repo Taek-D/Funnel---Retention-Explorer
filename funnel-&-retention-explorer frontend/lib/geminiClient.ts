@@ -1,6 +1,7 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || '';
-const GEMINI_MODEL = 'gemini-2.0-flash';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+import { supabase } from './supabase';
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
+const AI_PROXY_URL = `${SUPABASE_URL}/functions/v1/ai-proxy`;
 
 export interface GeminiMessage {
   role: 'user' | 'model';
@@ -17,8 +18,13 @@ export async function generateContent(
   systemInstruction?: string,
   history?: GeminiMessage[]
 ): Promise<GeminiResponse> {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'PLACEHOLDER_API_KEY') {
-    return { text: '', error: 'Gemini API key not configured. Set VITE_GEMINI_API_KEY in .env.local.' };
+  if (!supabase) {
+    return { text: '', error: 'AI 서비스를 사용하려면 Supabase 설정이 필요합니다.' };
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    return { text: '', error: 'AI 인사이트를 사용하려면 로그인이 필요합니다.' };
   }
 
   const contents: GeminiMessage[] = [
@@ -38,15 +44,18 @@ export async function generateContent(
   };
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch(AI_PROXY_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      return { text: '', error: errorData?.error?.message || `API error: ${response.status}` };
+      return { text: '', error: errorData?.error?.message || errorData?.error || `API error: ${response.status}` };
     }
 
     const data = await response.json();

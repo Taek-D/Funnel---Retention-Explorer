@@ -64,12 +64,6 @@ const faqs = [
   { q: '회원가입 없이 사용할 수 있나요?', a: '물론입니다. 앱에 접속해서 CSV를 업로드하면 됩니다. 기본 분석에는 계정이 필요하지 않습니다.' },
 ];
 
-const stats = [
-  { label: '분석된 데이터 포인트', value: '1,000만+' },
-  { label: '활성 사용자', value: '500+' },
-  { label: '평균 설정 시간', value: '<2분' },
-];
-
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -132,15 +126,9 @@ export const LandingPage: React.FC = () => {
             </Link>
           </div>
 
-          {/* Stats bar */}
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 mt-16 animate-fade-up delay-400">
-            {stats.map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="text-2xl md:text-3xl font-mono font-bold text-white">{s.value}</div>
-                <div className="text-[11px] text-slate-500 mt-1 uppercase tracking-wider">{s.label}</div>
-              </div>
-            ))}
-          </div>
+          <p className="text-slate-500 text-sm mt-8 animate-fade-up delay-400">
+            얼리 액세스 — CSV 분석을 더 쉽게 만드는 중입니다
+          </p>
         </div>
       </section>
 
@@ -271,7 +259,7 @@ export const LandingPage: React.FC = () => {
           <div className="absolute inset-0 dot-grid opacity-50 pointer-events-none" />
           <div className="relative">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">데이터를 탐색할 준비가 되셨나요?</h2>
-            <p className="text-slate-400 mb-8 max-w-lg mx-auto">FRE Analytics로 사용자를 더 잘 이해하는 수백 개의 프로덕트 팀에 합류하세요.</p>
+            <p className="text-slate-400 mb-8 max-w-lg mx-auto">FRE Analytics로 CSV 데이터에서 퍼널과 리텐션을 분석하세요.</p>
             <Link
               to="/app/dashboard"
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-all hover:-translate-y-0.5"
@@ -290,9 +278,9 @@ export const LandingPage: React.FC = () => {
             &copy; {new Date().getFullYear()} FRE Analytics. All rights reserved.
           </span>
           <div className="flex gap-6 text-sm text-slate-500">
-            <a href="#" className="hover:text-white transition-colors">개인정보처리방침</a>
-            <a href="#" className="hover:text-white transition-colors">이용약관</a>
-            <a href="https://github.com" className="hover:text-white transition-colors">GitHub</a>
+            <Link to="/privacy" className="hover:text-white transition-colors">개인정보처리방침</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">이용약관</Link>
+            <a href="https://github.com/castletaek/Funnel---Retention-Explorer" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
           </div>
         </div>
       </footer>

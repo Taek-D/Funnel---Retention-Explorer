@@ -20,6 +20,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    import('../lib/sentry').then(({ Sentry }) => {
+      Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+    });
+  }
+
   handleReset = () => {
     this.setState({ hasError: false, error: null });
   };

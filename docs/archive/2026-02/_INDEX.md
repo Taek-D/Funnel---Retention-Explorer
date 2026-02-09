@@ -71,3 +71,27 @@
 ### Summary
 
 6 tasks completed: Vite manualChunks 설정 (4 vendor chunks), React.lazy + Suspense 적용 (8 pages), PageLoader 컴포넌트 생성, reportEngine dynamic import, geminiClient dynamic import, 빌드 검증. 단일 번들 1,013KB → 20 chunks (최대 367KB), 초기 로드 -66%, Vite 500KB 경고 해소. 테스트 98/98 유지.
+
+---
+
+## security-trust
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Monetization Phase 1: Security & Trust |
+| **Match Rate** | 100% (54/54) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-09 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `security-trust/security-trust.plan.md` |
+| Design | `security-trust/security-trust.design.md` |
+| Analysis | `security-trust/security-trust.analysis.md` |
+| Report | `security-trust/security-trust.report.md` |
+
+### Summary
+
+6 tasks completed: Gemini API 키 서버사이드 프록시 (Supabase Edge Function), 개인정보처리방침 페이지 (PIPA 준수), 이용약관 페이지, 푸터 더미 링크 수정, Sentry 에러 모니터링 연동, 랜딩 페이지 가짜 수치 제거. 11개 파일 변경 (4 신규, 7 수정). 수익화 준비도 35 → 50/100.

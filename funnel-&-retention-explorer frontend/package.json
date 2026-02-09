@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@sentry/react": "^10.38.0",
     "@supabase/supabase-js": "^2.95.2",
     "@types/papaparse": "^5.5.2",
     "lucide-react": "^0.563.0",
