@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
-import { exportReportAsPNG } from '../lib/reportEngine';
 
 export function useExportReport() {
   const { state } = useAppContext();
@@ -20,6 +19,7 @@ export function useExportReport() {
     toast('info', '리포트 생성 중...', 'PNG 파일을 다운로드합니다.');
 
     try {
+      const { exportReportAsPNG } = await import('../lib/reportEngine');
       await exportReportAsPNG(state);
       toast('success', '리포트 내보내기 완료');
       addNotification('export', '리포트 내보내기 완료', 'PNG 파일이 다운로드되었습니다.');
