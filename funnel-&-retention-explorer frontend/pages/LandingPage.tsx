@@ -35,16 +35,18 @@ const pricingPlans = [
     name: 'Free',
     price: '₩0',
     period: '영구 무료',
-    features: ['프로젝트 1개', 'CSV 업로드 5만 행까지', '퍼널 & 리텐션 분석', '기본 인사이트'],
+    features: ['프로젝트 1개', 'CSV 업로드 10,000행', 'AI 인사이트 일 3회', '퍼널 & 리텐션 분석'],
     cta: '시작하기',
+    ctaLink: '/signup',
     highlight: false,
   },
   {
     name: 'Pro',
-    price: '₩39,000',
+    price: '₩29,000',
     period: '/월',
-    features: ['프로젝트 무제한', 'CSV 업로드 100만 행까지', 'AI 기반 인사이트', '세그먼트 비교', 'PDF 내보내기', '우선 지원'],
-    cta: '출시 예정',
+    features: ['프로젝트 무제한', 'CSV 업로드 500,000행', 'AI 인사이트 일 50회', '세그먼트 비교', 'PDF 내보내기', '우선 지원'],
+    cta: 'Pro 시작하기',
+    ctaLink: '/pricing',
     highlight: true,
   },
   {
@@ -53,6 +55,7 @@ const pricingPlans = [
     period: '/월',
     features: ['Pro의 모든 기능', '팀 협업', '공유 대시보드', 'API 접근', '커스텀 연동', '전담 지원'],
     cta: '출시 예정',
+    ctaLink: '',
     highlight: false,
   },
 ];
@@ -193,7 +196,7 @@ export const LandingPage: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                {plan.cta === '출시 예정' ? (
+                {!plan.ctaLink ? (
                   <button
                     disabled
                     className="w-full py-3 text-sm font-medium text-slate-600 bg-white/[0.03] border border-white/[0.06] rounded-lg cursor-not-allowed"
@@ -202,8 +205,8 @@ export const LandingPage: React.FC = () => {
                   </button>
                 ) : (
                   <Link
-                    to="/signup"
-                    className={`w-full py-3 text-sm font-semibold text-center rounded-lg transition-colors ${
+                    to={plan.ctaLink}
+                    className={`w-full py-3 text-sm font-semibold text-center rounded-lg transition-colors block ${
                       plan.highlight
                         ? 'bg-accent text-background hover:bg-accent/90'
                         : 'bg-white/[0.05] text-white hover:bg-white/10'

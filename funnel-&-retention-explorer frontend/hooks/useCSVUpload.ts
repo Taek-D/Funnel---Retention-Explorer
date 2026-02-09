@@ -8,12 +8,14 @@ import { calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
+import { usePlanGate } from './usePlanGate';
 import type { ColumnMapping } from '../types';
 
 export function useCSVUpload() {
   const { state, dispatch } = useAppContext();
   const { toast } = useToast();
   const { addNotification } = useNotifications();
+  const planGate = usePlanGate();
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file.name.endsWith('.csv')) {
@@ -27,6 +29,14 @@ export function useCSVUpload() {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: 'CSV 파싱 중...' } });
 
       const result = await parseCSV(file);
+
+      // PI-9: CSV row limit enforcement
+      if (result.data.length > planGate.csvRowLimit) {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+        planGate.openUpgradeModal('csv_limit');
+        return;
+      }
+
       dispatch({
         type: 'SET_RAW_DATA',
         payload: { rawData: result.data, headers: result.headers, fileName: file.name }
@@ -121,6 +131,7 @@ export function useCSVUpload() {
     confirmMapping,
     isProcessing: state.isProcessing,
     processingProgress: state.processingProgress,
-    processingMessage: state.processingMessage
+    processingMessage: state.processingMessage,
+    planGate,
   };
 }

@@ -16,6 +16,8 @@ const SegmentComparison = lazy(() => import('./pages/SegmentComparison').then(m 
 const Insights = lazy(() => import('./pages/Insights').then(m => ({ default: m.Insights })));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
 const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
+const BillingSuccessPage = lazy(() => import('./pages/BillingSuccessPage').then(m => ({ default: m.BillingSuccessPage })));
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,10 @@ export const router = createBrowserRouter([
   {
     path: '/terms',
     element: <Suspense fallback={<PageLoader />}><TermsPage /></Suspense>,
+  },
+  {
+    path: '/pricing',
+    element: <Suspense fallback={<PageLoader />}><PricingPage /></Suspense>,
   },
   {
     path: '/login',
@@ -52,6 +58,7 @@ export const router = createBrowserRouter([
           { path: 'retention', element: <Suspense fallback={<PageLoader />}><RetentionAnalysis /></Suspense> },
           { path: 'segments', element: <Suspense fallback={<PageLoader />}><SegmentComparison /></Suspense> },
           { path: 'insights', element: <Suspense fallback={<PageLoader />}><Insights /></Suspense> },
+          { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
         ],
       },
     ],

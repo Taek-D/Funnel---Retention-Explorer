@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useNotifications } from '../context/NotificationContext';
+import { usePlanGate } from './usePlanGate';
 import type { GeminiMessage } from '../lib/geminiClient';
 
 const SYSTEM_INSTRUCTION = `You are an expert data analyst for FRE Analytics, a SaaS analytics platform.
@@ -12,6 +13,7 @@ Always respond in Korean (한국어).`;
 export function useAIInsights() {
   const { state, dispatch } = useAppContext();
   const { addNotification } = useNotifications();
+  const planGate = usePlanGate();
   const aiSummary = state.aiSummary;
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string>('');
@@ -21,6 +23,11 @@ export function useAIInsights() {
   const generateSummary = useCallback(async () => {
     if (state.processedData.length === 0) {
       setAiError('No data available. Upload and process data first.');
+      return;
+    }
+
+    if (!planGate.canUseAI) {
+      planGate.openUpgradeModal('ai_limit');
       return;
     }
 
@@ -56,10 +63,15 @@ export function useAIInsights() {
     }
 
     setAiLoading(false);
-  }, [state, addNotification, dispatch]);
+  }, [state, addNotification, dispatch, planGate]);
 
   const askQuestion = useCallback(async (question: string) => {
     if (!question.trim()) return;
+
+    if (!planGate.canUseAI) {
+      planGate.openUpgradeModal('ai_limit');
+      return;
+    }
 
     setChatMessages(prev => [...prev, { role: 'user', text: question }]);
 
@@ -94,7 +106,7 @@ export function useAIInsights() {
         { role: 'model', parts: [{ text: result.text }] },
       ]);
     }
-  }, [state, chatHistory]);
+  }, [state, chatHistory, planGate]);
 
   const clearChat = useCallback(() => {
     setChatMessages([]);
@@ -110,5 +122,6 @@ export function useAIInsights() {
     askQuestion,
     clearChat,
     hasData: state.processedData.length > 0,
+    planGate,
   };
 }

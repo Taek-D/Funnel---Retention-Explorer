@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity } from './Icons';
 import { useAuth } from '../context/AuthContext';
+import { PlanBadge } from './PlanBadge';
 
 interface MenuItem {
   path: string;
@@ -82,6 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
       </nav>
 
       <div className="mt-auto flex flex-col gap-3 items-center">
+        <PlanBadge />
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"
           onClick={handleSignOut}

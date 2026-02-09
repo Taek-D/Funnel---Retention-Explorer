@@ -1,3 +1,23 @@
+// ===== Plan & Subscription =====
+
+export type PlanType = 'free' | 'pro';
+export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
+
+export interface UserProfile {
+  id: string;
+  plan: PlanType;
+  plan_started_at: string | null;
+  toss_customer_key: string | null;
+  toss_billing_key: string | null;
+  subscription_status: SubscriptionStatus;
+  next_billing_date: string | null;
+  ai_calls_today: number;
+  ai_calls_reset_at: string;
+  csv_row_limit: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // ===== Core Data Types =====
 
 export type View =

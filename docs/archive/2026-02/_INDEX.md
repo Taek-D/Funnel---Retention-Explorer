@@ -95,3 +95,27 @@
 ### Summary
 
 6 tasks completed: Gemini API 키 서버사이드 프록시 (Supabase Edge Function), 개인정보처리방침 페이지 (PIPA 준수), 이용약관 페이지, 푸터 더미 링크 수정, Sentry 에러 모니터링 연동, 랜딩 페이지 가짜 수치 제거. 11개 파일 변경 (4 신규, 7 수정). 수익화 준비도 35 → 50/100.
+
+---
+
+## payment-integration
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Monetization Phase 2: TossPayments Payment Integration |
+| **Match Rate** | 100% (84/84) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `payment-integration/payment-integration.plan.md` |
+| Design | `payment-integration/payment-integration.design.md` |
+| Analysis | `payment-integration/payment-integration.analysis.md` |
+| Report | `payment-integration/payment-integration.report.md` |
+
+### Summary
+
+12 tasks completed (PI-1 ~ PI-12): fre_user_profiles DB 테이블 + RLS + trigger, planManager.ts 플랜 유틸리티, AuthContext userProfile 확장, usePlanGate 기능 게이팅 훅, TossPayments issue-billing Edge Function (빌링키 + 첫 결제), toss-webhook Edge Function, UpgradeModal (TossPayments SDK v2), PlanBadge, CSV 행 수 제한 (10K/500K), AI 호출 일일 제한 (3/50, 이중 검증), PricingPage + LandingPage 업데이트, Sidebar PlanBadge 통합. 18개 파일 변경 (9 신규, 9 수정). 수익화 준비도 50 → 70/100.

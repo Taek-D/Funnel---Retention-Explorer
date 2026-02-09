@@ -91,8 +91,10 @@ CREATE TABLE fre_user_profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   plan TEXT NOT NULL DEFAULT 'free',       -- 'free' | 'pro'
   plan_started_at TIMESTAMPTZ,
-  stripe_customer_id TEXT,
-  stripe_subscription_id TEXT,
+  toss_customer_key TEXT,
+  toss_billing_key TEXT,
+  subscription_status TEXT DEFAULT 'none',
+  next_billing_date DATE,
   ai_calls_today INT DEFAULT 0,
   ai_calls_reset_at DATE DEFAULT CURRENT_DATE,
   created_at TIMESTAMPTZ DEFAULT now()
@@ -121,19 +123,21 @@ CREATE POLICY "own_profile" ON fre_user_profiles
 
 참고: 가격은 ₩39,000 → ₩29,000으로 낮춤 (초기 진입 장벽 낮추기)
 
-### 2-3. Stripe 결제 연동
+### 2-3. TossPayments 결제 연동
 
 **구조**:
 ```
-[Pro 버튼 클릭] → [Stripe Checkout Session 생성 (Edge Function)]
-    → [Stripe 결제 페이지] → [성공 시 webhook]
-    → [Supabase Edge Function이 fre_user_profiles.plan = 'pro' 업데이트]
+[Pro 버튼 클릭] → [TossPayments SDK v2 빌링 인증 창]
+    → [카드 등록 + 본인인증] → [successUrl 리다이렉트]
+    → [Edge Function: 빌링키 발급 + 첫 결제 승인]
+    → [fre_user_profiles.plan = 'pro' 업데이트]
 ```
 
 **파일**:
-- `supabase/functions/create-checkout/index.ts` (신규)
-- `supabase/functions/stripe-webhook/index.ts` (신규)
+- `supabase/functions/issue-billing/index.ts` (신규 — 빌링키 발급 + 첫 결제)
+- `supabase/functions/toss-webhook/index.ts` (신규 — Webhook 처리)
 - `pages/PricingPage.tsx` (신규 — 독립 결제 페이지)
+- `pages/BillingSuccessPage.tsx` (신규 — 빌링 성공 콜백)
 - `components/UpgradeModal.tsx` (신규 — 제한 도달 시 팝업)
 - `components/PlanBadge.tsx` (신규 — 사이드바에 현재 플랜 표시)
 
@@ -149,9 +153,9 @@ return <Outlet />;
 
 ### 완료 기준
 - [ ] Free 유저가 10,001행 업로드 시 업그레이드 모달 표시
-- [ ] Stripe 테스트 결제 → DB에 plan='pro' 반영
+- [ ] TossPayments 테스트 결제 → DB에 plan='pro' 반영
 - [ ] Pro 유저가 AI 인사이트 50회 사용 가능
-- [ ] 결제 취소 시 plan='free'로 다운그레이드
+- [ ] 구독 취소 시 plan='free'로 다운그레이드
 
 ---
 
@@ -266,7 +270,7 @@ https://app.fre-analytics.com/shared/[snapshot-id]
 ### 5-3. 트랜잭션 이메일
 
 - Supabase Auth 이메일 커스터마이징 (회원가입 확인, 비밀번호 재설정)
-- 결제 성공/실패 알림 (Stripe webhook → 이메일)
+- 결제 성공/실패 알림 (TossPayments webhook → 이메일)
 
 ### 5-4. GitHub Actions CI
 
@@ -347,7 +351,7 @@ Phase 0의 결과에 따라 1~6 조정 가능
 
 | 항목 | 현재 | 추가 필요 |
 |------|------|----------|
-| 결제 | 없음 | Stripe (Checkout + Customer Portal) |
+| 결제 | 없음 | TossPayments (SDK v2 + 빌링키 자동결제) |
 | API 프록시 | 없음 | Supabase Edge Functions |
 | PDF | 없음 | jsPDF 또는 @react-pdf/renderer |
 | 모니터링 | 없음 | Sentry (무료), Vercel Analytics |
@@ -361,7 +365,7 @@ Phase 0의 결과에 따라 1~6 조정 가능
 |------|------|
 | Vercel (Hobby) | $0 |
 | Supabase (Free) | $0 (500MB DB, 50K auth users) |
-| Stripe | 3.4% + ₩400/건 |
+| TossPayments | 건당 수수료 (계약에 따라 상이) |
 | Sentry (Free) | $0 |
 | 커스텀 도메인 | ~₩15,000/년 |
 | Gemini API | 무료 티어 (분당 15 요청) |
