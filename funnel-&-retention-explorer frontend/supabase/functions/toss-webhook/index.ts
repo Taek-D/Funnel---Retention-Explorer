@@ -6,9 +6,46 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// SS-7: Webhook Secret 검증 (HMAC-SHA256)
+async function verifyWebhookSignature(
+  req: Request,
+  bodyText: string
+): Promise<boolean> {
+  const secret = Deno.env.get('TOSS_WEBHOOK_SECRET');
+  if (!secret) return true; // 시크릿 미설정 시 검증 건너뜀 (개발 환경)
+
+  const signature = req.headers.get('TossPayments-Signature');
+  if (!signature) return false;
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(bodyText));
+  const computed = btoa(String.fromCharCode(...new Uint8Array(mac)));
+  return computed === signature;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
+  }
+
+  // SS-7: Webhook 서명 검증
+  const bodyText = await req.text();
+  const isValid = await verifyWebhookSignature(req, bodyText);
+  if (!isValid) {
+    return new Response(
+      JSON.stringify({ error: 'Webhook 서명이 유효하지 않습니다.' }),
+      {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   const serviceClient = createClient(
@@ -18,7 +55,7 @@ serve(async (req) => {
 
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    body = JSON.parse(bodyText);
   } catch {
     return new Response(JSON.stringify({ error: '잘못된 요청 형식입니다.' }), {
       status: 400,
@@ -44,7 +81,6 @@ serve(async (req) => {
   }
 
   if (eventType === 'PAYMENT_STATUS_CHANGED') {
-    const paymentKey = body.paymentKey as string;
     const status = body.status as string;
     const customerKey = body.customerKey as string;
 

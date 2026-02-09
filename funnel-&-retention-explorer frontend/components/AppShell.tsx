@@ -6,6 +6,7 @@ import { UserMenu } from './UserMenu';
 import { NotificationPanel } from './NotificationPanel';
 import { SearchModal } from './SearchModal';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
+import { PastDueBanner } from './PastDueBanner';
 import { useToast } from './Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { useEmailSettings } from '../hooks/useEmailSettings';
@@ -109,6 +110,9 @@ export const AppShell: React.FC = () => {
             <UserMenu />
           </div>
         </header>
+
+        {/* Past Due Banner */}
+        <PastDueBanner />
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">

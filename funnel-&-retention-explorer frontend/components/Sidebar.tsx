@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 
@@ -17,6 +17,7 @@ const menuItems: MenuItem[] = [
   { path: '/app/retention', icon: Users, label: '리텐션' },
   { path: '/app/segments', icon: PieChart, label: '세그먼트' },
   { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트' },
+  { path: '/app/subscription', icon: CreditCard, label: '구독 관리' },
 ];
 
 interface SidebarProps {

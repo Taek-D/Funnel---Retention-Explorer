@@ -16,6 +16,9 @@ export interface UserProfile {
   ai_calls_today: number;
   ai_calls_reset_at: string;
   csv_row_limit: number;
+  retry_count: number;
+  grace_period_end: string | null;
+  cancelled_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -100,4 +103,52 @@ export function getCSVRowLimit(profile: UserProfile): number {
 
 export function isPro(profile: UserProfile): boolean {
   return profile.plan === 'pro';
+}
+
+// ===== Subscription Management =====
+
+export async function cancelSubscription(accessToken: string): Promise<{
+  success: boolean;
+  message: string;
+  next_billing_date?: string;
+  error?: string;
+}> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return { success: false, message: '서비스가 설정되지 않았습니다.' };
+  }
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/cancel-subscription`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch {
+    return { success: false, message: '네트워크 오류가 발생했습니다.' };
+  }
+}
+
+export type BillingRecord = {
+  id: string;
+  user_id: string;
+  order_id: string;
+  amount: number;
+  status: 'success' | 'failed' | 'refunded';
+  toss_payment_key: string | null;
+  failure_reason: string | null;
+  created_at: string;
+};
+
+export async function fetchBillingHistory(userId: string): Promise<BillingRecord[]> {
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from('fre_billing_history')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  return (data ?? []) as BillingRecord[];
 }

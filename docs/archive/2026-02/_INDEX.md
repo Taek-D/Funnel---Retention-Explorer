@@ -119,3 +119,27 @@
 ### Summary
 
 12 tasks completed (PI-1 ~ PI-12): fre_user_profiles DB 테이블 + RLS + trigger, planManager.ts 플랜 유틸리티, AuthContext userProfile 확장, usePlanGate 기능 게이팅 훅, TossPayments issue-billing Edge Function (빌링키 + 첫 결제), toss-webhook Edge Function, UpgradeModal (TossPayments SDK v2), PlanBadge, CSV 행 수 제한 (10K/500K), AI 호출 일일 제한 (3/50, 이중 검증), PricingPage + LandingPage 업데이트, Sidebar PlanBadge 통합. 18개 파일 변경 (9 신규, 9 수정). 수익화 준비도 50 → 70/100.
+
+---
+
+## subscription-scheduling
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Monetization Phase 3: Subscription Scheduling |
+| **Match Rate** | 96.4% (80/83, 3 PARTIAL intentional) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `subscription-scheduling/subscription-scheduling.plan.md` |
+| Design | `subscription-scheduling/subscription-scheduling.design.md` |
+| Analysis | `subscription-scheduling/subscription-scheduling.analysis.md` |
+| Report | `subscription-scheduling/subscription-scheduling.report.md` |
+
+### Summary
+
+11 tasks completed (SS-1 ~ SS-11): process-billing Edge Function (pg_cron 기반 매일 자동결제), pg_cron + pg_net 스케줄링, cancel-subscription Edge Function, SubscriptionPage (구독 관리 UI), SubscriptionStatus 컴포넌트, 결제 실패 재시도 (3회, 1/3/7일 간격 + 7일 grace period), toss-webhook HMAC-SHA256 보안 강화, fre_billing_history 테이블 (RLS + 인덱스), BillingHistory 컴포넌트, fre_user_profiles 스키마 확장 (retry_count, grace_period_end, cancelled_at), Sidebar + Router 업데이트. 13개 파일 변경 (7 신규, 6 수정, ~1,600 lines). 수익화 준비도 70 → 80/100.

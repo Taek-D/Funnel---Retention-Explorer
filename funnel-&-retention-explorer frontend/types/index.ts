@@ -14,8 +14,24 @@ export interface UserProfile {
   ai_calls_today: number;
   ai_calls_reset_at: string;
   csv_row_limit: number;
+  retry_count: number;
+  grace_period_end: string | null;
+  cancelled_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// ===== Billing History =====
+
+export interface BillingRecord {
+  id: string;
+  user_id: string;
+  order_id: string;
+  amount: number;
+  status: 'success' | 'failed' | 'refunded';
+  toss_payment_key: string | null;
+  failure_reason: string | null;
+  created_at: string;
 }
 
 // ===== Core Data Types =====
