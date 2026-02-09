@@ -143,3 +143,27 @@
 ### Summary
 
 11 tasks completed (SS-1 ~ SS-11): process-billing Edge Function (pg_cron 기반 매일 자동결제), pg_cron + pg_net 스케줄링, cancel-subscription Edge Function, SubscriptionPage (구독 관리 UI), SubscriptionStatus 컴포넌트, 결제 실패 재시도 (3회, 1/3/7일 간격 + 7일 grace period), toss-webhook HMAC-SHA256 보안 강화, fre_billing_history 테이블 (RLS + 인덱스), BillingHistory 컴포넌트, fre_user_profiles 스키마 확장 (retry_count, grace_period_end, cancelled_at), Sidebar + Router 업데이트. 13개 파일 변경 (7 신규, 6 수정, ~1,600 lines). 수익화 준비도 70 → 80/100.
+
+---
+
+## annual-billing
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Monetization Phase 4: Annual Billing |
+| **Match Rate** | 100% (89/89) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `annual-billing/annual-billing.plan.md` |
+| Design | `annual-billing/annual-billing.design.md` |
+| Analysis | `annual-billing/annual-billing.analysis.md` |
+| Report | `annual-billing/annual-billing.report.md` |
+
+### Summary
+
+12 tasks completed (AB-1 ~ AB-12): fre_user_profiles billing_cycle 컬럼 추가, BillingCycle 타입 + BILLING_PRICES/BILLING_INTERVALS 상수, issue-billing billingCycle 파라미터 + 금액 분기, process-billing 동적 금액/주기, change-billing-key Edge Function (결제 수단 변경), switch-plan Edge Function (월간↔연간 전환 + 일할 계산), PricingPage 월간/연간 토글, UpgradeModal 라디오 선택, SubscriptionPage 결제 수단 변경 + 플랜 전환 UI, SubscriptionStatus billing_cycle 표시, BillingSuccessPage mode=change 분기, FAQ 업데이트. 12개 파일 변경 (3 신규, 9 수정, ~2,113 lines). 수익화 준비도 80 → 88/100.

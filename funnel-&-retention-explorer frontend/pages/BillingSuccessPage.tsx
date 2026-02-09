@@ -10,9 +10,13 @@ export const BillingSuccessPage: React.FC = () => {
   const { user, refreshProfile } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const authKey = searchParams.get('authKey');
+    const mode = searchParams.get('mode');
+    const billingCycle = searchParams.get('billingCycle') ?? 'monthly';
+
     if (!authKey || !user || !supabase) {
       setStatus('error');
       setErrorMessage('필수 파라미터가 없습니다.');
@@ -27,31 +31,63 @@ export const BillingSuccessPage: React.FC = () => {
         return;
       }
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/issue-billing`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ authKey }),
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+      if (mode === 'change') {
+        // Change billing key flow
+        const res = await fetch(
+          `${supabaseUrl}/functions/v1/change-billing-key`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ authKey }),
+          }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setStatus('error');
+          setErrorMessage(data.error || '결제 수단 변경에 실패했습니다.');
+          return;
         }
-      );
 
-      const data = await res.json();
+        await refreshProfile();
+        setSuccessMessage('결제 수단이 변경되었습니다.');
+        setStatus('success');
+      } else {
+        // New subscription flow (default)
+        const res = await fetch(
+          `${supabaseUrl}/functions/v1/issue-billing`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({ authKey, billingCycle }),
+          }
+        );
 
-      if (!res.ok) {
-        setStatus('error');
-        setErrorMessage(data.error || '결제 처리에 실패했습니다.');
-        return;
+        const data = await res.json();
+
+        if (!res.ok) {
+          setStatus('error');
+          setErrorMessage(data.error || '결제 처리에 실패했습니다.');
+          return;
+        }
+
+        await refreshProfile();
+        const cycleName = billingCycle === 'annual' ? '연간' : '월간';
+        setSuccessMessage(`Pro ${cycleName} 업그레이드 완료!`);
+        setStatus('success');
       }
 
-      await refreshProfile();
-      setStatus('success');
-
       setTimeout(() => {
-        navigate('/app/dashboard', { replace: true });
+        navigate(mode === 'change' ? '/app/subscription' : '/app/dashboard', { replace: true });
       }, 3000);
     };
 
@@ -72,16 +108,17 @@ export const BillingSuccessPage: React.FC = () => {
         {status === 'success' && (
           <>
             <CheckCircle size={48} className="text-accent mx-auto mb-6" />
-            <h2 className="text-xl font-bold text-white mb-2">Pro 업그레이드 완료!</h2>
+            <h2 className="text-xl font-bold text-white mb-2">{successMessage || '완료!'}</h2>
             <p className="text-slate-400 text-sm mb-6">
-              축하합니다! Pro 플랜이 활성화되었습니다.<br />
-              잠시 후 대시보드로 이동합니다.
+              {searchParams.get('mode') === 'change'
+                ? '결제 수단이 성공적으로 변경되었습니다. 잠시 후 구독 관리 페이지로 이동합니다.'
+                : '축하합니다! Pro 플랜이 활성화되었습니다. 잠시 후 대시보드로 이동합니다.'}
             </p>
             <button
-              onClick={() => navigate('/app/dashboard', { replace: true })}
+              onClick={() => navigate(searchParams.get('mode') === 'change' ? '/app/subscription' : '/app/dashboard', { replace: true })}
               className="px-6 py-2.5 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-colors"
             >
-              대시보드로 이동
+              {searchParams.get('mode') === 'change' ? '구독 관리로 이동' : '대시보드로 이동'}
             </button>
           </>
         )}

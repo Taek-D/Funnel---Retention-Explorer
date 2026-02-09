@@ -8,7 +8,9 @@ const corsHeaders = {
 
 const RETRY_INTERVALS = [1, 3, 7];
 const GRACE_PERIOD_DAYS = 7;
-const BILLING_AMOUNT = 29000;
+
+const BILLING_PRICES: Record<string, number> = { monthly: 29000, annual: 278400 };
+const BILLING_INTERVALS: Record<string, number> = { monthly: 30, annual: 365 };
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -59,6 +61,10 @@ serve(async (req) => {
 
   for (const profile of dueProfiles ?? []) {
     const orderId = `FRE-RENEW-${profile.id.slice(0, 8)}-${dateStr}`;
+    const cycle = profile.billing_cycle ?? 'monthly';
+    const billingAmount = BILLING_PRICES[cycle] ?? BILLING_PRICES.monthly;
+    const billingInterval = BILLING_INTERVALS[cycle] ?? BILLING_INTERVALS.monthly;
+    const cycleName = cycle === 'annual' ? '연간' : '월간';
 
     try {
       const res = await fetch(
@@ -71,9 +77,9 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             customerKey: profile.toss_customer_key,
-            amount: BILLING_AMOUNT,
+            amount: billingAmount,
             orderId,
-            orderName: 'FRE Analytics Pro 월간 구독 갱신',
+            orderName: `FRE Analytics Pro ${cycleName} 구독 갱신`,
           }),
         }
       );
@@ -81,7 +87,7 @@ serve(async (req) => {
       if (res.ok) {
         const data = await res.json();
         const nextDate = new Date();
-        nextDate.setDate(nextDate.getDate() + 30);
+        nextDate.setDate(nextDate.getDate() + billingInterval);
 
         await serviceClient
           .from('fre_user_profiles')
@@ -94,7 +100,7 @@ serve(async (req) => {
         await serviceClient.from('fre_billing_history').insert({
           user_id: profile.id,
           order_id: orderId,
-          amount: BILLING_AMOUNT,
+          amount: billingAmount,
           status: 'success',
           toss_payment_key: data.paymentKey,
         });
@@ -107,7 +113,7 @@ serve(async (req) => {
         await serviceClient.from('fre_billing_history').insert({
           user_id: profile.id,
           order_id: orderId,
-          amount: BILLING_AMOUNT,
+          amount: billingAmount,
           status: 'failed',
           failure_reason: errData.message ?? 'Unknown error',
         });

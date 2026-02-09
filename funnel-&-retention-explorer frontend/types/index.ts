@@ -2,6 +2,7 @@
 
 export type PlanType = 'free' | 'pro';
 export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
+export type BillingCycle = 'monthly' | 'annual';
 
 export interface UserProfile {
   id: string;
@@ -14,6 +15,7 @@ export interface UserProfile {
   ai_calls_today: number;
   ai_calls_reset_at: string;
   csv_row_limit: number;
+  billing_cycle: BillingCycle;
   retry_count: number;
   grace_period_end: string | null;
   cancelled_at: string | null;

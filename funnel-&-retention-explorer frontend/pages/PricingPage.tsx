@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LandingHeader } from '../components/LandingHeader';
 import { CheckCircle, X, ArrowRight, ChevronDown } from '../components/Icons';
-import { PLAN_LIMITS } from '../lib/planManager';
+import { PLAN_LIMITS, BILLING_PRICES } from '../lib/planManager';
 import { useAuth } from '../context/AuthContext';
+import type { BillingCycle } from '../types';
 
 const comparisonFeatures = [
   { name: 'CSV 업로드 행 수', free: `${PLAN_LIMITS.free.csvRows.toLocaleString()}행`, pro: `${PLAN_LIMITS.pro.csvRows.toLocaleString()}행` },
@@ -18,15 +19,23 @@ const comparisonFeatures = [
 ];
 
 const faqs = [
-  { q: '구독은 어떻게 결제되나요?', a: 'TossPayments를 통한 카드 결제로 월 ₩29,000이 청구됩니다. 첫 결제 후 30일마다 자동 결제됩니다.' },
+  { q: '구독은 어떻게 결제되나요?', a: 'TossPayments를 통한 카드 결제로 월간(₩29,000/월) 또는 연간(₩278,400/년, 20% 할인) 중 선택할 수 있습니다.' },
   { q: '언제든 해지할 수 있나요?', a: '네, 언제든 해지할 수 있습니다. 해지 후에도 결제 기간이 끝날 때까지 Pro 기능을 사용할 수 있습니다.' },
+  { q: '월간↔연간 전환이 가능한가요?', a: '네. 월간→연간 전환 시 남은 기간의 일할 계산(크레딧)이 적용되어 차액만 결제됩니다. 연간→월간 전환은 다음 갱신일부터 적용됩니다.' },
   { q: '무료 플랜의 제한은 무엇인가요?', a: `무료 플랜은 CSV ${PLAN_LIMITS.free.csvRows.toLocaleString()}행, AI 일 ${PLAN_LIMITS.free.aiCallsPerDay}회, 프로젝트 ${PLAN_LIMITS.free.projects}개로 제한됩니다.` },
   { q: '기존 데이터는 어떻게 되나요?', a: '플랜을 변경해도 기존 데이터는 유지됩니다. 다운그레이드 시 제한을 초과하는 신규 업로드만 제한됩니다.' },
 ];
 
+const monthlyPerMonth = BILLING_PRICES.monthly;
+const annualPerMonth = Math.round(BILLING_PRICES.annual / 12);
+const annualSavings = monthlyPerMonth * 12 - BILLING_PRICES.annual;
+
 export const PricingPage: React.FC = () => {
   const { user } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+
+  const isAnnual = billingCycle === 'annual';
 
   return (
     <div className="min-h-screen bg-background text-white font-sans">
@@ -35,6 +44,21 @@ export const PricingPage: React.FC = () => {
       <section className="pt-32 pb-16 px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tightest mb-4">요금제</h1>
         <p className="text-slate-400 max-w-xl mx-auto">무료로 시작하고, 필요할 때 업그레이드하세요.</p>
+
+        {/* Billing Cycle Toggle */}
+        <div className="flex items-center justify-center gap-3 mt-8">
+          <span className={`text-sm font-medium ${!isAnnual ? 'text-white' : 'text-slate-400'}`}>월간</span>
+          <button
+            onClick={() => setBillingCycle(isAnnual ? 'monthly' : 'annual')}
+            className={`relative w-12 h-6 rounded-full transition-colors ${isAnnual ? 'bg-accent' : 'bg-white/10'}`}
+          >
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${isAnnual ? 'translate-x-6' : ''}`} />
+          </button>
+          <span className={`text-sm font-medium ${isAnnual ? 'text-white' : 'text-slate-400'}`}>연간</span>
+          {isAnnual && (
+            <span className="px-2 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded-full">20% OFF</span>
+          )}
+        </div>
       </section>
 
       {/* Plan Cards */}
@@ -70,9 +94,19 @@ export const PricingPage: React.FC = () => {
             </span>
             <h3 className="text-2xl font-bold text-white">Pro</h3>
             <div className="mt-4 mb-6">
-              <span className="text-4xl font-mono font-bold text-white">₩29,000</span>
+              <span className="text-4xl font-mono font-bold text-white">
+                ₩{(isAnnual ? annualPerMonth : monthlyPerMonth).toLocaleString()}
+              </span>
               <span className="text-slate-400 text-sm ml-1">/월</span>
+              {isAnnual && (
+                <div className="text-slate-500 text-xs mt-1">₩{BILLING_PRICES.annual.toLocaleString()} 연간 결제</div>
+              )}
             </div>
+            {isAnnual && (
+              <div className="mb-4 px-3 py-1.5 bg-accent/5 border border-accent/10 rounded-md text-xs text-accent font-medium text-center">
+                연 ₩{annualSavings.toLocaleString()} 절약
+              </div>
+            )}
             <ul className="space-y-3 mb-8 flex-1">
               {comparisonFeatures.map((f, i) => (
                 <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
@@ -86,7 +120,7 @@ export const PricingPage: React.FC = () => {
               ))}
             </ul>
             <Link
-              to={user ? '/app/dashboard' : '/signup'}
+              to={user ? `/app/dashboard?billingCycle=${billingCycle}` : '/signup'}
               className="w-full py-3 text-sm font-semibold text-center bg-accent text-background hover:bg-accent/90 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               Pro 시작하기

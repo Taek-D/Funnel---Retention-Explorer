@@ -1,11 +1,14 @@
 import React from 'react';
 import { Zap, AlertTriangle, X as XIcon } from './Icons';
+import { BILLING_PRICES } from '../lib/planManager';
 import type { UserProfile } from '../lib/planManager';
 
 interface SubscriptionStatusProps {
   userProfile: UserProfile;
   onCancel: () => void;
   cancelling: boolean;
+  onChangeBillingKey?: () => void;
+  onSwitchPlan?: () => void;
 }
 
 const STATUS_BADGE: Record<string, { label: string; color: string }> = {
@@ -19,6 +22,8 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({
   userProfile,
   onCancel,
   cancelling,
+  onChangeBillingKey,
+  onSwitchPlan,
 }) => {
   const plan = userProfile.plan;
   const status = userProfile.subscription_status;
@@ -55,9 +60,20 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({
 
         {plan === 'pro' && (
           <div className="flex items-center justify-between">
+            <span className="text-sm text-slate-400">결제 주기</span>
+            <span className="text-sm font-medium text-white">
+              {userProfile.billing_cycle === 'annual' ? '연간 구독' : '월간 구독'}
+            </span>
+          </div>
+        )}
+
+        {plan === 'pro' && (
+          <div className="flex items-center justify-between">
             <span className="text-sm text-slate-400">결제 금액</span>
             <span className="text-sm font-medium text-white">
-              ₩29,000/월
+              {userProfile.billing_cycle === 'annual'
+                ? `₩${BILLING_PRICES.annual.toLocaleString()}/년`
+                : `₩${BILLING_PRICES.monthly.toLocaleString()}/월`}
             </span>
           </div>
         )}
@@ -84,7 +100,23 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({
       </div>
 
       {status === 'active' && (
-        <div className="mt-6 pt-4 border-t border-white/[0.06]">
+        <div className="mt-6 pt-4 border-t border-white/[0.06] flex flex-wrap gap-2">
+          {onChangeBillingKey && (
+            <button
+              onClick={onChangeBillingKey}
+              className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/[0.05] hover:bg-white/10 border border-white/[0.06] rounded-md transition-colors"
+            >
+              결제 수단 변경
+            </button>
+          )}
+          {onSwitchPlan && (
+            <button
+              onClick={onSwitchPlan}
+              className="px-4 py-2 text-sm font-medium text-accent bg-accent/5 hover:bg-accent/10 border border-accent/10 rounded-md transition-colors"
+            >
+              {userProfile.billing_cycle === 'annual' ? '월간 전환' : '연간 전환'}
+            </button>
+          )}
           <button
             onClick={onCancel}
             disabled={cancelling}

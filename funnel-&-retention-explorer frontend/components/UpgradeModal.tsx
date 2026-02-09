@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { X, CheckCircle, Zap } from './Icons';
 import { useAuth } from '../context/AuthContext';
-import { PLAN_LIMITS } from '../lib/planManager';
+import { PLAN_LIMITS, BILLING_PRICES } from '../lib/planManager';
+import type { BillingCycle } from '../types';
 
 declare const TossPayments: (clientKey: string) => {
   requestBillingAuth: (params: {
@@ -41,11 +42,16 @@ const PRO_FEATURES = [
   '우선 지원',
 ];
 
+const annualPerMonth = Math.round(BILLING_PRICES.annual / 12);
+
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, reason }) => {
   const { user, userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
 
   if (!isOpen) return null;
+
+  const displayPrice = billingCycle === 'annual' ? annualPerMonth : BILLING_PRICES.monthly;
 
   const handleUpgrade = async () => {
     const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
@@ -56,7 +62,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
       const tossPayments = TossPayments(clientKey);
       await tossPayments.requestBillingAuth({
         method: 'CARD',
-        successUrl: `${window.location.origin}/app/billing/success`,
+        successUrl: `${window.location.origin}/app/billing/success?billingCycle=${billingCycle}`,
         failUrl: `${window.location.origin}/app/billing/fail`,
         customerKey: userProfile.toss_customer_key,
         customerEmail: user?.email ?? undefined,
@@ -120,9 +126,30 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
             </div>
           </div>
 
+          {/* Billing Cycle Selection */}
+          <div className="mb-4 space-y-2">
+            <p className="text-xs text-slate-400 font-medium mb-2">결제 주기 선택:</p>
+            <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${billingCycle === 'monthly' ? 'border-accent/30 bg-accent/5' : 'border-white/[0.06] hover:border-white/10'}`}>
+              <input type="radio" name="cycle" checked={billingCycle === 'monthly'} onChange={() => setBillingCycle('monthly')} className="accent-accent" />
+              <div className="flex-1">
+                <span className="text-sm text-white font-medium">월간</span>
+                <span className="text-xs text-slate-400 ml-2">₩{BILLING_PRICES.monthly.toLocaleString()}/월</span>
+              </div>
+            </label>
+            <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${billingCycle === 'annual' ? 'border-accent/30 bg-accent/5' : 'border-white/[0.06] hover:border-white/10'}`}>
+              <input type="radio" name="cycle" checked={billingCycle === 'annual'} onChange={() => setBillingCycle('annual')} className="accent-accent" />
+              <div className="flex-1">
+                <span className="text-sm text-white font-medium">연간</span>
+                <span className="text-xs text-slate-400 ml-2">₩{annualPerMonth.toLocaleString()}/월</span>
+                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded-full">20% 할인</span>
+              </div>
+              <span className="text-[10px] text-slate-500">₩{BILLING_PRICES.annual.toLocaleString()}/년</span>
+            </label>
+          </div>
+
           {/* Price & CTA */}
           <div className="text-center mb-4">
-            <span className="text-3xl font-mono font-bold text-white">₩29,000</span>
+            <span className="text-3xl font-mono font-bold text-white">₩{displayPrice.toLocaleString()}</span>
             <span className="text-slate-400 text-sm ml-1">/월</span>
           </div>
 

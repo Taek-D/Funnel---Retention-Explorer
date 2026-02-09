@@ -32,10 +32,7 @@ serve(async (req) => {
     });
   }
 
-  const BILLING_PRICES: Record<string, number> = { monthly: 29000, annual: 278400 };
-  const BILLING_INTERVALS: Record<string, number> = { monthly: 30, annual: 365 };
-
-  let body: { authKey: string; billingCycle?: string };
+  let body: { authKey: string };
   try {
     body = await req.json();
   } catch {
@@ -45,17 +42,9 @@ serve(async (req) => {
     });
   }
 
-  const { authKey, billingCycle: rawCycle } = body;
+  const { authKey } = body;
   if (!authKey) {
     return new Response(JSON.stringify({ error: 'authKey가 필요합니다.' }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-
-  const billingCycle = rawCycle ?? 'monthly';
-  if (!['monthly', 'annual'].includes(billingCycle)) {
-    return new Response(JSON.stringify({ error: '유효하지 않은 결제 주기입니다.' }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -69,14 +58,13 @@ serve(async (req) => {
     });
   }
 
-  // Get user profile for customerKey
   const serviceClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   );
   const { data: profile } = await serviceClient
     .from('fre_user_profiles')
-    .select('toss_customer_key')
+    .select('toss_customer_key, toss_billing_key')
     .eq('id', user.id)
     .single();
 
@@ -89,7 +77,7 @@ serve(async (req) => {
 
   const tossAuth = `Basic ${btoa(TOSS_SECRET_KEY + ':')}`;
 
-  // Step 1: Issue billingKey
+  // Step 1: Issue new billingKey
   const billingRes = await fetch('https://api.tosspayments.com/v1/billing/authorizations/issue', {
     method: 'POST',
     headers: {
@@ -105,52 +93,32 @@ serve(async (req) => {
   const billingData = await billingRes.json();
   if (!billingRes.ok) {
     return new Response(JSON.stringify({ error: billingData.message || '빌링키 발급에 실패했습니다.' }), {
-      status: billingRes.status,
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
-  const { billingKey } = billingData;
+  const { billingKey: newBillingKey } = billingData;
 
-  // Step 2: First payment
-  const orderId = `FRE-PRO-${user.id.slice(0, 8)}-${Date.now()}`;
-  const paymentRes = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
-    method: 'POST',
-    headers: {
-      Authorization: tossAuth,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      customerKey: profile.toss_customer_key,
-      amount: BILLING_PRICES[billingCycle],
-      orderId,
-      orderName: `FRE Analytics Pro ${billingCycle === 'annual' ? '연간' : '월간'} 구독`,
-    }),
-  });
-
-  const paymentData = await paymentRes.json();
-  if (!paymentRes.ok) {
-    return new Response(JSON.stringify({ error: paymentData.message || '결제 승인에 실패했습니다.' }), {
-      status: paymentRes.status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+  // Step 2: Delete previous billingKey (best-effort)
+  if (profile.toss_billing_key) {
+    try {
+      await fetch(
+        `https://api.tosspayments.com/v1/billing/${profile.toss_billing_key}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: tossAuth },
+        }
+      );
+    } catch {
+      // Ignore delete failure — new key is already issued
+    }
   }
 
-  // Step 3: Update DB
-  const nextBillingDate = new Date();
-  nextBillingDate.setDate(nextBillingDate.getDate() + BILLING_INTERVALS[billingCycle]);
-
+  // Step 3: Update DB with new billingKey only
   const { error: updateError } = await serviceClient
     .from('fre_user_profiles')
-    .update({
-      plan: 'pro',
-      toss_billing_key: billingKey,
-      subscription_status: 'active',
-      plan_started_at: new Date().toISOString(),
-      csv_row_limit: 500000,
-      billing_cycle: billingCycle,
-      next_billing_date: nextBillingDate.toISOString().slice(0, 10),
-    })
+    .update({ toss_billing_key: newBillingKey })
     .eq('id', user.id);
 
   if (updateError) {
@@ -162,10 +130,7 @@ serve(async (req) => {
 
   return new Response(JSON.stringify({
     success: true,
-    plan: 'pro',
-    orderId,
-    nextBillingDate: nextBillingDate.toISOString().slice(0, 10),
-    billingCycle,
+    message: '결제 수단이 변경되었습니다.',
   }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },

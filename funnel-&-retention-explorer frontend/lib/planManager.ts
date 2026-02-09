@@ -4,6 +4,7 @@ import { supabase } from './supabase';
 
 export type PlanType = 'free' | 'pro';
 export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
+export type BillingCycle = 'monthly' | 'annual';
 
 export interface UserProfile {
   id: string;
@@ -16,12 +17,25 @@ export interface UserProfile {
   ai_calls_today: number;
   ai_calls_reset_at: string;
   csv_row_limit: number;
+  billing_cycle: BillingCycle;
   retry_count: number;
   grace_period_end: string | null;
   cancelled_at: string | null;
   created_at: string;
   updated_at: string;
 }
+
+// ===== Billing Constants =====
+
+export const BILLING_PRICES = {
+  monthly: 29_000,
+  annual: 278_400,
+} as const;
+
+export const BILLING_INTERVALS = {
+  monthly: 30,
+  annual: 365,
+} as const;
 
 // ===== Plan Limits =====
 
@@ -124,6 +138,57 @@ export async function cancelSubscription(accessToken: string): Promise<{
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
+    });
+    return await res.json();
+  } catch {
+    return { success: false, message: '네트워크 오류가 발생했습니다.' };
+  }
+}
+
+// ===== Billing Key & Plan Switch =====
+
+export async function changeBillingKey(accessToken: string, authKey: string): Promise<{
+  success: boolean;
+  message: string;
+}> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return { success: false, message: '서비스가 설정되지 않았습니다.' };
+  }
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/change-billing-key`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ authKey }),
+    });
+    return await res.json();
+  } catch {
+    return { success: false, message: '네트워크 오류가 발생했습니다.' };
+  }
+}
+
+export async function switchPlan(accessToken: string, targetCycle: BillingCycle): Promise<{
+  success: boolean;
+  message: string;
+  billingCycle?: BillingCycle;
+  nextBillingDate?: string;
+  charged?: number;
+}> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return { success: false, message: '서비스가 설정되지 않았습니다.' };
+  }
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/switch-plan`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ targetCycle }),
     });
     return await res.json();
   } catch {
