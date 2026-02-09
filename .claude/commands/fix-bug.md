@@ -4,17 +4,29 @@ $ARGUMENTS 버그를 조사하고 수정합니다.
 
 1. 버그 현상 파악 및 관련 코드 탐색
 2. 원인 분석:
-   - app.js의 AppState 상태 흐름 추적
-   - charts.js의 Chart.js 인스턴스 라이프사이클 확인
-   - index.html의 DOM 요소 ID 및 이벤트 바인딩 확인
-   - styles.css의 레이아웃/반응형 이슈 확인
+   - `lib/` 비즈니스 로직 오류 (데이터 처리, 분석 엔진)
+   - `hooks/` 상태 관리 로직 (useCallback 의존성, 무한 렌더링)
+   - `context/reducer.ts` 상태 업데이트 누락
+   - `pages/` 또는 `components/` UI 렌더링 이슈
+   - `router.tsx` 라우팅 문제
+   - `types/index.ts` 타입 불일치
 3. 최소한의 변경으로 수정 (관련 없는 코드 건드리지 않기)
-4. 수정 내용 요약 제공
+4. 빌드 확인: `node node_modules/vite/bin/vite.js build`
+5. 수정 내용 요약 제공
 
 ## 디버깅 체크포인트
 
-- AppState 값이 올바르게 설정/업데이트되는지
-- DOM 요소가 존재하는지 (getElementById 반환값)
-- Chart.js 인스턴스가 destroy 없이 재생성되고 있지 않은지
-- CSV 파싱 후 컬럼 매핑이 올바른지
-- 이벤트 리스너 중복 등록 여부
+- AppContext 상태가 올바르게 dispatch되는지
+- useCallback/useMemo 의존성 배열이 정확한지
+- null/undefined 방어 코드 (옵셔널 체이닝)
+- CSV 파싱 후 컬럼 매핑 흐름 (`csvParser → dataProcessor → useCSVUpload`)
+- Supabase 쿼리 에러 핸들링
+- 비동기 처리 (async/await, Promise 체인)
+
+## Provider 계층 관련 이슈
+
+```
+AuthProvider > AppProvider > ToastProvider > NotificationProvider > RouterProvider
+```
+- Context를 사용하는 컴포넌트가 해당 Provider 하위에 있는지 확인
+- ProtectedRoute 밖에서 AppContext를 사용하면 에러 발생

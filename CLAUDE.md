@@ -1,66 +1,121 @@
 # Funnel & Retention Explorer
 
-정적 프론트엔드 SPA로, CSV 기반 퍼널/리텐션/세그먼트/구독 분석 대시보드입니다.
+CSV 기반 퍼널/리텐션/세그먼트/구독 분석 SaaS 대시보드입니다.
+두 개의 코드베이스(Vanilla JS 레거시 + React 프론트엔드)로 구성되어 있습니다.
 
-## 기술 스택
+---
 
-- **언어**: Vanilla JavaScript (ES6+), HTML5, CSS3
-- **차트**: Chart.js (CDN)
-- **PDF**: jsPDF + html2canvas (CDN)
-- **한글 폰트**: NotoSansKR (pdf_font_noto_sans_kr.js)
-- **배포**: Netlify (정적 호스팅, netlify.toml)
-- **패키지 매니저**: 없음 (CDN 기반, npm/yarn 불필요)
-- **빌드 도구**: 없음 (빌드 스텝 불필요)
+## React 프론트엔드 (주력)
 
-## 프로젝트 구조
+**경로**: `funnel-&-retention-explorer frontend/`
+
+### 기술 스택
+
+- **언어**: TypeScript 5.8 + React 19
+- **빌드**: Vite 6
+- **스타일**: Tailwind CSS (CDN, index.html의 tailwind.config 참조)
+- **차트**: Recharts 3
+- **라우팅**: react-router-dom 7
+- **CSV 파싱**: papaparse
+- **인증/DB**: Supabase (Auth + PostgreSQL)
+- **AI**: Gemini 2.0 Flash API
+- **아이콘**: Lucide React (components/Icons.tsx에서 re-export)
+- **테스트**: Vitest
+- **배포**: Vercel (main 브랜치 push 시 자동 배포)
+- **패키지 매니저**: npm
+
+### 프로젝트 구조
 
 ```
-├── index.html              # 메인 HTML (한국어 UI, SPA)
-├── app.js                  # 핵심 로직 (상태관리, 데이터 파싱, 분석 엔진)
-├── charts.js               # Chart.js 차트 렌더링 (퍼널/리텐션/세그먼트)
-├── styles.css              # 다크 테마 스타일시트 (CSS 변수 기반)
-├── pdf_font_noto_sans_kr.js # PDF 한글 폰트 데이터 (7.9MB, 수정 금지)
-├── netlify.toml            # Netlify 배포 설정
-├── 샘플 데이터/             # 테스트용 CSV 샘플 데이터
-└── *.md                    # 각종 가이드 문서
+funnel-&-retention-explorer frontend/
+├── index.html          # Tailwind 설정 + 커스텀 CSS
+├── index.tsx           # React 엔트리포인트 (Provider 계층)
+├── router.tsx          # createBrowserRouter 라우트 정의
+├── types/index.ts      # 전체 TypeScript 인터페이스 (20+)
+├── types.ts            # re-export (하위 호환)
+├── lib/                # 순수 TypeScript 모듈 (비즈니스 로직)
+│   ├── csvParser.ts        # CSV 파싱 (papaparse)
+│   ├── dataProcessor.ts    # 데이터 처리 + 자동 컬럼 매핑
+│   ├── columnValueDetector.ts # 값 기반 컬럼 타입 추론
+│   ├── funnelEngine.ts     # 퍼널 분석 엔진
+│   ├── retentionEngine.ts  # 리텐션 분석 엔진
+│   ├── segmentEngine.ts    # 세그먼트 비교 엔진
+│   ├── insightsEngine.ts   # 인사이트 생성
+│   ├── subscriptionEngine.ts # 구독 분석
+│   ├── reportEngine.ts     # PDF/리포트 생성
+│   ├── geminiClient.ts     # Gemini AI 클라이언트
+│   ├── supabase.ts         # Supabase 클라이언트
+│   ├── supabaseData.ts     # DB CRUD 함수
+│   ├── constants.ts        # 상수 (이벤트 패턴, 매핑 등)
+│   ├── formatters.ts       # 숫자/날짜 포맷터
+│   └── recentFiles.ts      # localStorage 최근 파일
+├── hooks/              # 커스텀 React Hooks
+├── pages/              # 페이지 컴포넌트
+├── components/         # 공유 UI 컴포넌트
+├── context/            # React Context (AppContext, AuthContext)
+├── public/             # 정적 파일 (favicon.svg)
+└── __tests__/          # Vitest 테스트
 ```
 
-## 핵심 아키텍처
+### Provider 계층
 
-- **AppState** (app.js): 전역 상태 객체. rawData, processedData, columnMapping, funnelResults, retentionResults 등 모든 분석 상태를 관리
-- **이벤트 패턴 자동 감지**: EVENT_PATTERNS 객체로 이커머스/구독 데이터 유형 자동 판별
-- **탭 기반 SPA**: upload → funnel → retention → segment → insights 화면 전환
-- **CSV 파싱**: PapaParse (CDN)로 CSV 파싱 후 컬럼 매핑
+```
+AuthProvider > AppProvider > ToastProvider > NotificationProvider > RouterProvider
+```
 
-## 코딩 컨벤션
+### 라우팅
 
-- 한국어 UI 텍스트 사용 (사용자 대면 문자열)
+- `/` → LandingPage, `/login` → LoginPage, `/signup` → SignupPage
+- `/app/*` → ProtectedRoute → AppShell(Sidebar+Header) → 하위 페이지
+- `/app/dashboard`, `/app/upload`, `/app/funnels`, `/app/retention`, `/app/segments`, `/app/insights`
+
+### 개발 워크플로우
+
+1. `cd "funnel-&-retention-explorer frontend"` (bash에서 `&` 이슈 주의)
+2. 개발 서버: `node node_modules/vite/bin/vite.js` (port 3000)
+3. 빌드: `node node_modules/vite/bin/vite.js build`
+4. 테스트: `npx vitest run`
+5. Vercel 자동 배포 (main 브랜치 push)
+
+### 코딩 컨벤션
+
+- 한국어 UI 텍스트 (사용자 대면 문자열)
 - 함수명/변수명은 영어 camelCase
-- CSS 변수는 `--` 접두사 (예: `--accent-primary`, `--bg-card`)
-- 다크 테마 기본 (`#0a0e27` 배경)
-- Chart.js 인스턴스는 반드시 기존 인스턴스 destroy 후 재생성
-- 반응형 디자인 (모바일/태블릿/데스크탑)
-- DOM 요소 접근 시 getElementById 반환값 null 체크 권장
-- 이벤트 리스너 중복 등록 방지 (초기화 함수에서만 등록)
+- `type` 선호 (`interface`는 types/index.ts에서만 사용)
+- Tailwind CSS 클래스 사용 (인라인 스타일 금지)
+- 테마 색상: `bg-background`, `bg-surface`, `text-accent` 등 (index.html의 tailwind.config 참조)
+- 새 아이콘 추가 시 components/Icons.tsx에서 re-export
+- 새 상태 추가 시 types/index.ts → context/reducer.ts → context/actions.ts 순서로 수정
+- 커밋 메시지는 영어 (conventional commits: feat, fix, refactor, docs)
 
-## 개발 워크플로우
+### 환경 변수
 
-1. `index.html`을 브라우저에서 직접 열거나 Live Server로 실행
-2. 코드 수정 후 브라우저 새로고침으로 확인
-3. Netlify에 자동 배포 (main 브랜치 푸시 시)
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — Supabase 연결
+- `VITE_GEMINI_API_KEY` — Gemini AI API
 
-## 주의사항
+### 금지 사항
 
-- `pdf_font_noto_sans_kr.js`는 7.9MB 바이너리 폰트 데이터이므로 읽거나 수정하지 말 것
-- 외부 라이브러리는 모두 CDN으로 로드 (index.html의 script 태그 참조)
-- 빌드 프로세스가 없으므로 파일 직접 수정이 곧 배포 코드
-- 커밋 메시지는 영어로 작성 (conventional commits: feat, fix, refactor, docs 등)
-
-## 금지 사항
-
-- npm/yarn/pnpm 등 패키지 매니저 도입 금지 (CDN 기반 유지)
-- 빌드 도구(webpack, vite 등) 도입 금지
-- `pdf_font_noto_sans_kr.js` 파일 읽기/수정 금지
-- 기존 CSS 변수 체계를 무시하고 하드코딩된 색상값 사용 금지
+- `any` 타입 사용 금지
 - `var`, `eval()`, `document.write()` 사용 금지
-- 인라인 스타일 사용 금지 (styles.css의 CSS 변수/클래스 활용)
+- 인라인 스타일 금지 (Tailwind 클래스 사용)
+- `console.log` 커밋 금지 (디버깅 후 제거)
+- `.env.local` 파일 커밋 금지
+
+### 주의사항
+
+- 디렉토리명에 `&`가 포함되어 bash에서 `cd`/`npx` 사용 시 작은따옴표 필요
+- 빌드 시 ~1MB 번들 크기 경고는 정상 (recharts + papaparse + supabase)
+- `pdf_font_noto_sans_kr.js`는 7.9MB 바이너리 → 읽기/수정 금지
+
+---
+
+## Vanilla JS 레거시 (루트)
+
+루트의 `app.js`, `charts.js`, `index.html`, `styles.css`는 레거시 코드입니다.
+신규 개발은 React 프론트엔드에서 진행합니다.
+
+### 레거시 수정 시 주의
+
+- 외부 라이브러리는 CDN으로만 로드
+- CSS 변수 체계 유지 (`--accent-primary` 등)
+- Chart.js 인스턴스는 destroy 후 재생성
