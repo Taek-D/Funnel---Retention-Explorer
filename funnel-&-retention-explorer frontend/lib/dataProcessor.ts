@@ -1,5 +1,6 @@
 import type { RawRow, ProcessedEvent, ColumnMapping, DatasetType, DataQualityReport } from '../types';
 import { EVENT_PATTERNS, AUTO_COLUMN_MAPPING } from './constants';
+import { detectColumnsByValues } from './columnValueDetector';
 
 export function processData(rawData: RawRow[], mapping: ColumnMapping): ProcessedEvent[] {
   const processed = rawData
@@ -56,9 +57,10 @@ export function detectDatasetType(processedData: ProcessedEvent[]): DatasetType 
   return null;
 }
 
-export function autoDetectColumns(headers: string[]): ColumnMapping {
+export function autoDetectColumns(headers: string[], rawData?: RawRow[]): ColumnMapping {
   const mapping: ColumnMapping = {};
 
+  // Phase 1: Name-based matching
   (Object.entries(AUTO_COLUMN_MAPPING) as [keyof ColumnMapping, string[]][]).forEach(([key, possibleNames]) => {
     for (const name of possibleNames) {
       const match = headers.find(h => h.toLowerCase() === name.toLowerCase());
@@ -68,6 +70,14 @@ export function autoDetectColumns(headers: string[]): ColumnMapping {
       }
     }
   });
+
+  // Phase 2: Value-based detection for unmapped columns
+  const allKeys: (keyof ColumnMapping)[] = ['timestamp', 'userid', 'eventname', 'sessionid', 'platform', 'channel'];
+  const hasUnmapped = allKeys.some(k => !mapping[k]);
+
+  if (hasUnmapped && rawData && rawData.length > 0) {
+    return detectColumnsByValues(headers, rawData, mapping);
+  }
 
   return mapping;
 }

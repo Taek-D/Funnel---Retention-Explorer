@@ -33,8 +33,8 @@ export function useCSVUpload() {
         payload: { rawData: result.data, headers: result.headers, fileName: file.name }
       });
 
-      // Auto-detect column mapping
-      const autoMapping = autoDetectColumns(result.headers);
+      // Auto-detect column mapping (Phase 1: name-based, Phase 2: value-based fallback)
+      const autoMapping = autoDetectColumns(result.headers, result.data);
       dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
 
       // Save to recent files
@@ -70,7 +70,7 @@ export function useCSVUpload() {
         payload: { rawData: result.data, headers: result.headers, fileName: file.fileName }
       });
 
-      const autoMapping = autoDetectColumns(result.headers);
+      const autoMapping = autoDetectColumns(result.headers, result.data);
       dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
 
       // Update last opened time

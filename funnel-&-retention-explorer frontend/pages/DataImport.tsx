@@ -155,7 +155,7 @@ export const DataImport: React.FC = () => {
               <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 flex items-start gap-3">
                 <Zap size={16} className="text-accent mt-0.5" />
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  AI가 일반적인 명명 패턴을 기반으로 컬럼의 <span className="text-white font-bold font-mono">{autoMappedPct}%</span>를 자동 매핑했습니다.
+                  컬럼명 + 값 분석을 통해 컬럼의 <span className="text-white font-bold font-mono">{autoMappedPct}%</span>를 자동 매핑했습니다.
                 </p>
               </div>
 

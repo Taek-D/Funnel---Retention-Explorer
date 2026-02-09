@@ -22,6 +22,20 @@ export const FUNNEL_TEMPLATES: FunnelTemplates = {
   lifecycle: ['app_open', 'signup', 'onboarding_complete', 'start_trial', 'subscribe', 'renew']
 };
 
+export const KNOWN_PLATFORMS: string[] = [
+  'ios', 'android', 'web', 'desktop', 'mobile',
+  'windows', 'mac', 'macos', 'linux',
+  'tablet', 'ipad', 'iphone',
+  'chrome', 'safari', 'firefox',
+];
+
+export const KNOWN_CHANNELS: string[] = [
+  'organic', 'paid', 'social', 'direct', 'email',
+  'referral', 'google', 'facebook', 'instagram', 'twitter',
+  'youtube', 'tiktok', 'cpc', 'cpm', 'display',
+  'affiliate', 'push', 'sms', 'search', 'banner',
+];
+
 export const AUTO_COLUMN_MAPPING: Record<string, string[]> = {
   timestamp: ['timestamp', 'time', 'date', 'datetime'],
   userid: ['user_id', 'userid', 'user', 'customer_id'],
