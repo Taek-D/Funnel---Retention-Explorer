@@ -41,3 +41,7 @@ export function formatDateTime(dateStr: string): string {
     minute: '2-digit'
   });
 }
+
+export function sanitizeEventName(name: string): string {
+  return name.replace(/[<>"'&]/g, '');
+}

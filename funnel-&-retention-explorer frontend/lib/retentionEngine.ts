@@ -17,6 +17,20 @@ export function calculateActivityRetention(
     }
   });
 
+  const activeEventSet = new Set(activeEvents);
+  const eventsByDate = new Map<string, ProcessedEvent[]>();
+  processedData.forEach(e => {
+    if (activeEventSet.has(e.eventName)) {
+      const dateKey = e.timestamp.toISOString().split('T')[0];
+      const bucket = eventsByDate.get(dateKey);
+      if (bucket) {
+        bucket.push(e);
+      } else {
+        eventsByDate.set(dateKey, [e]);
+      }
+    }
+  });
+
   const retentionMatrix: RetentionCohort[] = [];
 
   Object.entries(cohorts).forEach(([cohortDate, userSet]) => {
@@ -28,14 +42,10 @@ export function calculateActivityRetention(
       targetDate.setDate(targetDate.getDate() + day);
       const targetDateStr = targetDate.toISOString().split('T')[0];
 
-      const activeUsers = processedData.filter(e => {
-        const eventDate = e.timestamp.toISOString().split('T')[0];
-        return eventDate === targetDateStr &&
-          activeEvents.includes(e.eventName) &&
-          userSet.has(e.userId);
-      });
-
-      const uniqueActive = new Set(activeUsers.map(e => e.userId));
+      const eventsOnDay = eventsByDate.get(targetDateStr) || [];
+      const uniqueActive = new Set(
+        eventsOnDay.filter(e => userSet.has(e.userId)).map(e => e.userId)
+      );
       const retentionRate = userSet.size > 0 ? (uniqueActive.size / userSet.size) * 100 : 0;
       retention.days[`D${day}`] = retentionRate;
     }
@@ -148,6 +158,17 @@ export function calculateFullDataRetention(processedData: ProcessedEvent[]): Ret
   const cohortDates = Object.keys(cohortUsers).sort();
   if (cohortDates.length === 0) return null;
 
+  const allEventsByDate = new Map<string, ProcessedEvent[]>();
+  processedData.forEach(e => {
+    const dateKey = e.timestamp.toISOString().split('T')[0];
+    const bucket = allEventsByDate.get(dateKey);
+    if (bucket) {
+      bucket.push(e);
+    } else {
+      allEventsByDate.set(dateKey, [e]);
+    }
+  });
+
   const retentionData: RetentionCohort[] = [];
 
   cohortDates.slice(0, 7).forEach(cohortDate => {
@@ -160,12 +181,10 @@ export function calculateFullDataRetention(processedData: ProcessedEvent[]): Ret
       targetDate.setDate(targetDate.getDate() + day);
       const targetDateKey = targetDate.toISOString().split('T')[0];
 
-      const activeUsers = processedData.filter(event =>
-        cohortSet.has(event.userId) &&
-        event.timestamp.toISOString().split('T')[0] === targetDateKey
+      const eventsOnDay = allEventsByDate.get(targetDateKey) || [];
+      const activeUserSet = new Set(
+        eventsOnDay.filter(e => cohortSet.has(e.userId)).map(e => e.userId)
       );
-
-      const activeUserSet = new Set(activeUsers.map(e => e.userId));
       retention.days[`D${day}`] = cohortSet.size > 0 ? (activeUserSet.size / cohortSet.size) * 100 : 0;
     }
 

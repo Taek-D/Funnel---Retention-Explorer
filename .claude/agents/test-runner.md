@@ -1,3 +1,7 @@
+---
+name: test-runner
+---
+
 # Test Runner Agent
 
 테스트를 실행하고 결과를 분석합니다.

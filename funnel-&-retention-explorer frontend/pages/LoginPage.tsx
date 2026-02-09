@@ -28,8 +28,8 @@ export const LoginPage: React.FC = () => {
       } else {
         navigate('/app/dashboard');
       }
-    } catch (err: any) {
-      setError(err.message || '로그인 실패');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : '로그인 실패');
     } finally {
       setLoading(false);
     }

@@ -54,8 +54,8 @@ export const SignupPage: React.FC = () => {
       } else {
         setSuccess('계정이 생성되었습니다! 이메일에서 확인 링크를 클릭한 후 로그인하세요.');
       }
-    } catch (err: any) {
-      setError(err.message || '회원가입 실패');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : '회원가입 실패');
     } finally {
       setLoading(false);
     }

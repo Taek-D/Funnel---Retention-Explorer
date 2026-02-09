@@ -1,3 +1,7 @@
+---
+name: build-validator
+---
+
 # Build Validator Agent
 
 React 프론트엔드 빌드를 검증합니다.

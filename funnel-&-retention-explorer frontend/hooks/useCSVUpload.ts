@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { parseCSV, parseCSVText, getCSVTextFromFile } from '../lib/csvParser';
+import { parseCSV } from '../lib/csvParser';
 import { processData, detectDatasetType, autoDetectColumns, getUniqueEvents, generateDataQualityReport } from '../lib/dataProcessor';
 import { saveRecentFile, loadRecentFiles } from '../lib/recentFiles';
 import { calculateSubscriptionKPIs, analyzeTrialConversion, analyzeChurn } from '../lib/subscriptionEngine';
@@ -24,7 +24,6 @@ export function useCSVUpload() {
     dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: '파일 읽는 중...' } });
 
     try {
-      const csvText = await getCSVTextFromFile(file);
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: 'CSV 파싱 중...' } });
 
       const result = await parseCSV(file);
@@ -37,11 +36,12 @@ export function useCSVUpload() {
       const autoMapping = autoDetectColumns(result.headers, result.data);
       dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
 
-      // Save to recent files
+      // Save metadata only (no CSV data in localStorage)
       saveRecentFile({
         fileName: file.name,
         lastOpened: new Date().toISOString(),
-        csvData: csvText
+        rowCount: result.data.length,
+        columnCount: result.headers.length
       });
       dispatch({ type: 'SET_RECENT_FILES', payload: loadRecentFiles() });
 
@@ -50,37 +50,6 @@ export function useCSVUpload() {
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
       toast('error', 'CSV 파싱 오류', error instanceof Error ? error.message : '알 수 없는 오류');
-    }
-  }, [dispatch, toast]);
-
-  const loadRecentFileByIndex = useCallback(async (index: number) => {
-    const recentFiles = loadRecentFiles();
-    const file = recentFiles[index];
-    if (!file) {
-      toast('warning', '파일을 찾을 수 없습니다.');
-      return;
-    }
-
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: '파일 로딩 중...' } });
-
-    try {
-      const result = await parseCSVText(file.csvData);
-      dispatch({
-        type: 'SET_RAW_DATA',
-        payload: { rawData: result.data, headers: result.headers, fileName: file.fileName }
-      });
-
-      const autoMapping = autoDetectColumns(result.headers, result.data);
-      dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
-
-      // Update last opened time
-      saveRecentFile({ ...file, lastOpened: new Date().toISOString() });
-      dispatch({ type: 'SET_RECENT_FILES', payload: loadRecentFiles() });
-
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
-    } catch (error) {
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
-      toast('error', '파일 로딩 오류', error instanceof Error ? error.message : '알 수 없는 오류');
     }
   }, [dispatch, toast]);
 
@@ -149,7 +118,6 @@ export function useCSVUpload() {
 
   return {
     handleFileUpload,
-    loadRecentFileByIndex,
     confirmMapping,
     isProcessing: state.isProcessing,
     processingProgress: state.processingProgress,

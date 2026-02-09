@@ -1,6 +1,7 @@
 import type { RawRow, ProcessedEvent, ColumnMapping, DatasetType, DataQualityReport } from '../types';
 import { EVENT_PATTERNS, AUTO_COLUMN_MAPPING } from './constants';
 import { detectColumnsByValues } from './columnValueDetector';
+import { sanitizeEventName } from './formatters';
 
 export function processData(rawData: RawRow[], mapping: ColumnMapping): ProcessedEvent[] {
   const processed = rawData
@@ -8,7 +9,7 @@ export function processData(rawData: RawRow[], mapping: ColumnMapping): Processe
       const event: ProcessedEvent = {
         timestamp: new Date(row[mapping.timestamp || '']),
         userId: row[mapping.userid || ''],
-        eventName: row[mapping.eventname || '']
+        eventName: sanitizeEventName(row[mapping.eventname || ''] || '')
       };
 
       if (mapping.sessionid) {

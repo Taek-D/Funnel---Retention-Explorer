@@ -1,5 +1,10 @@
 import { supabase } from './supabase';
 
+function getSupabase() {
+  if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
+  return supabase;
+}
+
 // ===== Projects =====
 
 export interface FREProject {
@@ -12,7 +17,8 @@ export interface FREProject {
 }
 
 export async function listProjects(): Promise<FREProject[]> {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  const { data, error } = await client
     .from('fre_projects')
     .select('*')
     .order('updated_at', { ascending: false });
@@ -22,10 +28,11 @@ export async function listProjects(): Promise<FREProject[]> {
 }
 
 export async function createProject(name: string, description?: string): Promise<FREProject> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('fre_projects')
     .insert({ name, description: description || null, user_id: user.id })
     .select()
@@ -36,7 +43,8 @@ export async function createProject(name: string, description?: string): Promise
 }
 
 export async function deleteProject(projectId: string): Promise<void> {
-  const { error } = await supabase
+  const client = getSupabase();
+  const { error } = await client
     .from('fre_projects')
     .delete()
     .eq('id', projectId);
@@ -53,12 +61,13 @@ export interface FREDataset {
   row_count: number | null;
   column_mapping: Record<string, string> | null;
   detected_type: string | null;
-  quality_report: Record<string, any> | null;
+  quality_report: Record<string, unknown> | null;
   created_at: string;
 }
 
 export async function listDatasets(projectId: string): Promise<FREDataset[]> {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  const { data, error } = await client
     .from('fre_datasets')
     .select('*')
     .eq('project_id', projectId)
@@ -74,9 +83,10 @@ export async function createDataset(params: {
   rowCount: number;
   columnMapping: Record<string, string>;
   detectedType: string | null;
-  qualityReport: Record<string, any> | null;
+  qualityReport: Record<string, unknown> | null;
 }): Promise<FREDataset> {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  const { data, error } = await client
     .from('fre_datasets')
     .insert({
       project_id: params.projectId,
@@ -99,13 +109,14 @@ export interface FRESnapshot {
   id: string;
   dataset_id: string;
   snapshot_type: string;
-  config: Record<string, any> | null;
-  results: Record<string, any> | null;
+  config: Record<string, unknown> | null;
+  results: Record<string, unknown> | null;
   created_at: string;
 }
 
 export async function listSnapshots(datasetId: string): Promise<FRESnapshot[]> {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  const { data, error } = await client
     .from('fre_analysis_snapshots')
     .select('*')
     .eq('dataset_id', datasetId)
@@ -118,10 +129,11 @@ export async function listSnapshots(datasetId: string): Promise<FRESnapshot[]> {
 export async function saveSnapshot(params: {
   datasetId: string;
   snapshotType: string;
-  config: Record<string, any>;
-  results: Record<string, any>;
+  config: Record<string, unknown>;
+  results: Record<string, unknown>;
 }): Promise<FRESnapshot> {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  const { data, error } = await client
     .from('fre_analysis_snapshots')
     .insert({
       dataset_id: params.datasetId,

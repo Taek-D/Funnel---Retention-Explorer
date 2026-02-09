@@ -7,8 +7,8 @@ import { useToast } from './Toast';
 interface SaveAnalysisButtonProps {
   datasetId: string | null;
   snapshotType: string;
-  config: Record<string, any>;
-  results: Record<string, any>;
+  config: Record<string, unknown>;
+  results: Record<string, unknown>;
 }
 
 export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({

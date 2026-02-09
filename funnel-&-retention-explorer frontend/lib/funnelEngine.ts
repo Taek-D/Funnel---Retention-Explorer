@@ -64,24 +64,30 @@ export function calculateFunnel(processedData: ProcessedEvent[], steps: string[]
 function calculateMedianTimeBetweenSteps(
   processedData: ProcessedEvent[], step1: string, step2: string, userSet: Set<string>
 ): { median: number } {
+  if (userSet.size === 0) return { median: 0 };
+
   const times: number[] = [];
 
   userSet.forEach(userId => {
     const step1Events = processedData.filter(e => e.userId === userId && e.eventName === step1);
     const step2Events = processedData.filter(e => e.userId === userId && e.eventName === step2);
 
-    if (step1Events.length > 0 && step2Events.length > 0) {
-      const time1 = step1Events[0].timestamp.getTime();
-      const time2 = step2Events.find(e => e.timestamp.getTime() > time1);
-      if (time2) {
-        const diff = (time2.timestamp.getTime() - time1) / 1000 / 60;
+    if (step1Events.length === 0 || step2Events.length === 0) return;
+
+    const time1 = step1Events[0].timestamp.getTime();
+    const time2Event = step2Events.find(e => e.timestamp.getTime() > time1);
+    if (time2Event) {
+      const diff = (time2Event.timestamp.getTime() - time1) / 1000 / 60;
+      if (diff > 0) {
         times.push(diff);
       }
     }
   });
 
+  if (times.length === 0) return { median: 0 };
+
   times.sort((a, b) => a - b);
-  const median = times.length > 0 ? times[Math.floor(times.length / 2)] : 0;
+  const median = times[Math.floor(times.length / 2)];
 
   return { median };
 }

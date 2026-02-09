@@ -166,7 +166,8 @@ export interface ChurnAnalysis {
 export interface RecentFile {
   fileName: string;
   lastOpened: string;
-  csvData: string;
+  rowCount: number;
+  columnCount: number;
 }
 
 // ===== App State =====

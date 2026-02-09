@@ -26,7 +26,7 @@ export async function generateContent(
     { role: 'user', parts: [{ text: prompt }] },
   ];
 
-  const body: Record<string, any> = { contents };
+  const body: Record<string, unknown> = { contents };
 
   if (systemInstruction) {
     body.systemInstruction = { parts: [{ text: systemInstruction }] };
@@ -52,8 +52,8 @@ export async function generateContent(
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
     return { text };
-  } catch (err: any) {
-    return { text: '', error: err.message || 'Network error' };
+  } catch (err: unknown) {
+    return { text: '', error: err instanceof Error ? err.message : 'Network error' };
   }
 }
 
@@ -67,7 +67,7 @@ export function buildAnalysisPrompt(context: {
   retentionDay1?: number | null;
   retentionDay7?: number | null;
   topInsights?: string[];
-  subscriptionKPIs?: Record<string, any> | null;
+  subscriptionKPIs?: Record<string, number | string | null> | null;
 }): string {
   const parts: string[] = [];
 

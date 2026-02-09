@@ -18,7 +18,7 @@ const MAPPING_FIELDS: { key: keyof ColumnMapping; label: string; required: boole
 
 export const DataImport: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const { handleFileUpload, loadRecentFileByIndex, confirmMapping, isProcessing, processingProgress, processingMessage } = useCSVUpload();
+  const { handleFileUpload, confirmMapping, isProcessing, processingProgress, processingMessage } = useCSVUpload();
   const { mapping, updateMapping, headers } = useColumnMapping();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [recentFiles, setRecentFiles] = useState(loadRecentFiles());
@@ -249,15 +249,14 @@ export const DataImport: React.FC = () => {
                 recentFiles.map((file, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-background border border-white/5 hover:border-accent/30 transition-all cursor-pointer"
-                    onClick={() => loadRecentFileByIndex(i)}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-background border border-white/5 transition-all"
                   >
                     <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center text-slate-400">
                       <FileText size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-white truncate">{file.fileName}</p>
-                      <p className="text-xs text-slate-400">{formatDateTime(file.lastOpened)}</p>
+                      <p className="text-xs text-slate-400">{formatDateTime(file.lastOpened)}{file.rowCount ? ` · ${file.rowCount.toLocaleString()}행` : ''}</p>
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRemoveRecent(i); }}
