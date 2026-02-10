@@ -135,7 +135,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
   let itemIndex = -1;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150" onClick={onClose} role="dialog" aria-modal="true" aria-label="검색">
       <div
         className="bg-surface border border-white/[0.06] rounded-xl w-full max-w-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
@@ -150,6 +150,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             className="flex-1 bg-transparent text-white text-sm placeholder-slate-500 focus:outline-none"
+            aria-label="페이지, 인사이트, 이벤트 검색"
             placeholder="페이지, 인사이트, 이벤트 검색..."
           />
           <kbd className="hidden md:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-slate-600 bg-white/[0.03] border border-white/[0.06] rounded font-mono">

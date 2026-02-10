@@ -8,6 +8,7 @@ import { useSavedAnalyses } from '../hooks/useSavedAnalyses';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 import { useToast } from '../components/Toast';
 import { ShareButton } from '../components/ShareButton';
+import { CHART_COLORS } from '../lib/constants';
 import type { AppState } from '../types';
 
 export const Dashboard: React.FC = () => {
@@ -201,15 +202,15 @@ export const Dashboard: React.FC = () => {
           <div className="h-64 w-full relative z-10">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={funnelChartData} barSize={60}>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} dy={10} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 12 }} dy={10} />
                 <Tooltip
-                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                  contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
+                  cursor={{ fill: CHART_COLORS.cursorFill }}
+                  contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
                   formatter={(value: number) => [value.toLocaleString(), '사용자']}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {funnelChartData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={`rgba(0, 212, 170, ${1 - (index * 0.15)})`} />
+                    <Cell key={`cell-${index}`} fill={CHART_COLORS.cellOpacity(index)} />
                   ))}
                 </Bar>
               </BarChart>
@@ -274,18 +275,18 @@ export const Dashboard: React.FC = () => {
                 <AreaChart data={retentionCurveData}>
                   <defs>
                     <linearGradient id="colorValueDash" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
+                      <stop offset="5%" stopColor={CHART_COLORS.accent} stopOpacity={0.3} />
+                      <stop offset="95%" stopColor={CHART_COLORS.accent} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10 }} domain={[0, 100]} />
+                  <CartesianGrid vertical={false} stroke={CHART_COLORS.gridLine} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 10 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 10 }} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
+                    contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
                     formatter={(value: number) => [`${value}%`, '리텐션']}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#00d4aa" strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
+                  <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

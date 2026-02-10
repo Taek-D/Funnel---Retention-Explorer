@@ -53,6 +53,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
       <div
         className="w-8 h-8 flex items-center justify-center rounded-md bg-accent/10 text-accent cursor-pointer hover:bg-accent/20 transition-colors"
         onClick={() => handleNav('/')}
+        role="button"
+        aria-label="홈으로 이동"
         title="홈"
       >
         <Activity size={18} />
@@ -70,6 +72,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
                   ? 'text-accent bg-accent/10'
                   : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
               }`}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
               title={item.label}
               {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
             >
@@ -92,6 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
           <button
             onClick={onStartTour}
             className="w-10 h-10 flex items-center justify-center rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors"
+            aria-label="시작 가이드"
             title="시작 가이드"
           >
             <HelpCircle size={18} />
@@ -101,6 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"
           onClick={handleSignOut}
+          aria-label="로그아웃"
           title="로그아웃"
         >
           <LogOut size={16} />
@@ -124,8 +130,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50">
-          <div className="sidebar-overlay absolute inset-0" onClick={onCloseMobile} />
+        <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="내비게이션 메뉴">
+          <div className="sidebar-overlay absolute inset-0" onClick={onCloseMobile} aria-hidden="true" />
           <aside className="absolute left-0 top-0 h-full w-16 flex flex-col items-center bg-background border-r border-white/[0.06] py-4 gap-6 animate-slide-in-left">
             {sidebarContent}
           </aside>

@@ -107,6 +107,13 @@
       .animate-pulse-subtle {
         animation: pulse-subtle 3s ease-in-out infinite;
       }
+      @keyframes fade-out {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(8px); }
+      }
+      .animate-fade-out {
+        animation: fade-out 0.2s ease-in forwards;
+      }
       .delay-100 { animation-delay: 0.1s; }
       .delay-150 { animation-delay: 150ms; }
       .delay-200 { animation-delay: 0.2s; }

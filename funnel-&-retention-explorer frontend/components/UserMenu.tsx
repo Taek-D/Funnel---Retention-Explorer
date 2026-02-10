@@ -35,6 +35,9 @@ export const UserMenu: React.FC = () => {
       <button
         onClick={() => setOpen(!open)}
         className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold border border-accent/20 hover:bg-accent/20 transition-colors"
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-label="사용자 메뉴"
         title={user.email || ''}
       >
         {initial}

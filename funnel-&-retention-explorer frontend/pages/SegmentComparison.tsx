@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, Users } from '../components/Icons';
 import { useSegmentComparison } from '../hooks/useSegmentComparison';
+import { ChartSkeleton } from '../components/ChartSkeleton';
 
 export const SegmentComparison: React.FC = () => {
   const { segmentResults, availablePlatforms, availableChannels, hasData, hasFunnel, runComparison } = useSegmentComparison();
@@ -90,6 +91,14 @@ export const SegmentComparison: React.FC = () => {
         </button>
       </div>
 
+      {/* Pre-calculation placeholder */}
+      {!segmentResults && hasFunnel && (
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">세그먼트 비교 결과가 여기에 표시됩니다</h3>
+          <ChartSkeleton variant="bar" />
+        </div>
+      )}
+
       {/* Results */}
       {segmentResults && segmentResults.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -155,7 +164,9 @@ export const SegmentComparison: React.FC = () => {
 
       {/* Detailed Table */}
       {segmentResults && segmentResults.length > 0 && (
-        <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
+        <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden relative">
+          <div className="overflow-x-auto" style={{ scrollbarGutter: 'stable' }}>
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface to-transparent z-10 md:hidden" />
           <table className="w-full text-sm text-left">
             <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
               <tr>
@@ -184,6 +195,7 @@ export const SegmentComparison: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

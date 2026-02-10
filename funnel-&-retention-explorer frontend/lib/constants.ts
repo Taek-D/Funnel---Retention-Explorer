@@ -45,6 +45,21 @@ export const FULL_DATA_RETENTION_MAX_COHORTS = 7;
 export const INSIGHTS_RETENTION_MAX_DAYS = 14;
 export const RECENT_FILES_MAX_COUNT = 5;
 
+// === Chart Theme Tokens ===
+export const CHART_COLORS = {
+  accent: '#00d4aa',
+  accentGradientStart: 'rgba(0, 212, 170, 0.3)',
+  accentGradientEnd: 'rgba(0, 212, 170, 0)',
+  accentGradientMidStart: 'rgba(0, 212, 170, 0.5)',
+  axisText: '#94a3b8',
+  axisTextSecondary: '#64748b',
+  gridLine: 'rgba(255,255,255,0.05)',
+  tooltipBg: '#1a1f28',
+  tooltipBorder: 'rgba(255,255,255,0.06)',
+  cursorFill: 'rgba(255,255,255,0.05)',
+  cellOpacity: (index: number) => `rgba(0, 212, 170, ${Math.max(0.25, 1 - index * 0.15)})`,
+} as const;
+
 export const AUTO_COLUMN_MAPPING: Record<string, string[]> = {
   timestamp: ['timestamp', 'time', 'date', 'datetime', 'created_at', 'updated_at', '날짜', '일자', '일시', '시간'],
   userid: ['user_id', 'userid', 'user', 'customer_id', 'customer', '사용자', '유저', '고객', '회원'],

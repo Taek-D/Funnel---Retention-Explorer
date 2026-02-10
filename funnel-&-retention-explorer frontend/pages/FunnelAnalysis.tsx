@@ -3,6 +3,8 @@ import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown,
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
 import { formatTime } from '../lib/formatters';
+import { CHART_COLORS } from '../lib/constants';
+import { ChartSkeleton } from '../components/ChartSkeleton';
 
 export const FunnelAnalysis: React.FC = () => {
   const {
@@ -121,9 +123,9 @@ export const FunnelAnalysis: React.FC = () => {
                       value={step}
                       onChange={(e) => updateStep(i, e.target.value)}
                     >
-                      <option value="" className="bg-[#14181f]">이벤트 선택...</option>
+                      <option value="" className="bg-surface">이벤트 선택...</option>
                       {uniqueEvents.map(event => (
-                        <option key={event} value={event} className="bg-[#14181f]">{event}</option>
+                        <option key={event} value={event} className="bg-surface">{event}</option>
                       ))}
                     </select>
                     {i > 0 && (
@@ -153,6 +155,14 @@ export const FunnelAnalysis: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Calculating placeholder */}
+      {!hasResults && funnelSteps.filter(Boolean).length >= 2 && (
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">퍼널 결과가 여기에 표시됩니다</h3>
+          <ChartSkeleton variant="bar" />
+        </div>
+      )}
 
       {/* Results Section */}
       {hasResults && (
@@ -194,16 +204,16 @@ export const FunnelAnalysis: React.FC = () => {
               <div className="h-[320px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} barSize={60}>
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 11 }} />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 12 }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} />
                     <Tooltip
-                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                      contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff', borderRadius: '6px' }}
+                      cursor={{ fill: CHART_COLORS.cursorFill }}
+                      contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
                       formatter={(value: number) => [value.toLocaleString(), '사용자']}
                     />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {chartData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={`rgba(0, 212, 170, ${1 - (index * 0.15)})`} />
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS.cellOpacity(index)} />
                       ))}
                     </Bar>
                   </BarChart>

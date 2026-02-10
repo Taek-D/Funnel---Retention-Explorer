@@ -8,6 +8,7 @@ interface Toast {
   type: ToastType;
   title: string;
   message?: string;
+  exiting?: boolean;
 }
 
 interface ToastContextValue {
@@ -32,32 +33,40 @@ const colors: Record<ToastType, { border: string; icon: string; bg: string }> = 
   info: { border: 'border-l-sky-400', icon: 'text-sky-400', bg: 'bg-sky-400/5' },
 };
 
+function calcTimeout(title: string, message?: string): number {
+  const len = title.length + (message?.length || 0);
+  return Math.max(3000, Math.min(len * 50, 8000));
+}
+
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const startExit = useCallback((id: number) => {
+    setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 200);
+  }, []);
 
   const addToast = useCallback((type: ToastType, title: string, message?: string) => {
     const id = ++toastId;
     setToasts(prev => [...prev, { id, type, title, message }]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, 4000);
-  }, []);
-
-  const removeToast = useCallback((id: number) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  }, []);
+    const timeout = calcTimeout(title, message);
+    setTimeout(() => startExit(id), timeout);
+  }, [startExit]);
 
   return (
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] flex flex-col gap-2 pointer-events-none">
+      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] flex flex-col gap-2 pointer-events-none" role="status" aria-live="polite">
         {toasts.map(t => {
           const Icon = icons[t.type];
           const c = colors[t.type];
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto animate-fade-up ${c.bg} flex items-start gap-3 px-4 py-3 rounded-lg border-l-2 ${c.border} border border-white/[0.06] shadow-xl backdrop-blur-sm min-w-[280px] max-w-[400px]`}
+              className={`pointer-events-auto ${t.exiting ? 'animate-fade-out' : 'animate-fade-up'} ${c.bg} flex items-start gap-3 px-4 py-3 rounded-lg border-l-2 ${c.border} border border-white/[0.06] shadow-xl backdrop-blur-sm min-w-[280px] max-w-[400px]`}
+              role="alert"
             >
               <Icon size={18} className={`${c.icon} shrink-0 mt-0.5`} />
               <div className="flex-1 min-w-0">
@@ -65,8 +74,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 {t.message && <span className="text-[11px] text-slate-400 block mt-0.5">{t.message}</span>}
               </div>
               <button
-                onClick={() => removeToast(t.id)}
+                onClick={() => startExit(t.id)}
                 className="text-slate-500 hover:text-white transition-colors shrink-0"
+                aria-label="알림 닫기"
               >
                 <X size={14} />
               </button>

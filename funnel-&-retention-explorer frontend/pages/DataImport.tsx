@@ -294,7 +294,11 @@ export const DataImport: React.FC = () => {
             </div>
             <div className="flex flex-col gap-3">
               {recentFiles.length === 0 ? (
-                <p className="text-slate-500 text-sm text-center py-4">아직 열어본 파일이 없습니다.</p>
+                <div className="flex flex-col items-center py-8 text-center">
+                  <FileText size={32} className="text-slate-700 mb-2" />
+                  <p className="text-slate-500 text-sm">아직 열어본 파일이 없습니다.</p>
+                  <p className="text-slate-600 text-xs mt-1">CSV 파일을 업로드하면 여기에 표시됩니다.</p>
+                </div>
               ) : (
                 recentFiles.map((file, i) => (
                   <div

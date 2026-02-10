@@ -91,6 +91,7 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
         className="fixed inset-0 z-[9998] pointer-events-auto"
         style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
         onClick={skipTour}
+        aria-hidden="true"
       />
 
       {/* Target highlight */}
@@ -113,6 +114,8 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
         <div
           className="fixed z-[10000]"
           style={calcTooltipStyle(targetRect, step.placement)}
+          role="dialog"
+          aria-label={step.title}
         >
           <div className="bg-surface border border-accent/30 rounded-lg p-4 shadow-2xl">
             <div className="flex items-center gap-2 mb-2">
@@ -140,7 +143,7 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
 
       {/* Fallback: no target found → skip to next or show centered */}
       {!targetRect && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center" role="dialog" aria-label={step.title}>
           <div className="bg-surface border border-accent/30 rounded-lg p-6 shadow-2xl max-w-xs">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-accent font-mono text-xs font-bold">{currentStep + 1}/{steps.length}</span>

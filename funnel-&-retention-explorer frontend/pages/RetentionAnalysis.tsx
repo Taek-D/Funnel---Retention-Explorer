@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
+import { CHART_COLORS } from '../lib/constants';
+import { ChartSkeleton } from '../components/ChartSkeleton';
 
 export const RetentionAnalysis: React.FC = () => {
   const {
@@ -137,6 +139,14 @@ export const RetentionAnalysis: React.FC = () => {
         </button>
       )}
 
+      {/* Pre-calculation placeholder */}
+      {!retentionResults && hasData && (
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">리텐션 결과가 여기에 표시됩니다</h3>
+          <ChartSkeleton variant="table" />
+        </div>
+      )}
+
       {/* Stats Cards */}
       {retentionResults && retentionResults.length > 0 && (
         <>
@@ -164,11 +174,13 @@ export const RetentionAnalysis: React.FC = () => {
           </div>
 
           {/* Cohort Table */}
-          <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
+          <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden relative">
+            <div className="overflow-x-auto" style={{ scrollbarGutter: 'stable' }}>
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface to-transparent z-10 md:hidden" />
             <table className="w-full text-sm text-left">
               <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
                 <tr>
-                  <th className="px-6 py-4 min-w-[140px] sticky left-0 bg-[#14181f]">
+                  <th className="px-6 py-4 min-w-[140px] sticky left-0 bg-surface">
                     {isPaid ? '구독 날짜' : '코호트 날짜'}
                   </th>
                   <th className="px-4 py-4 text-center">규모</th>
@@ -180,7 +192,7 @@ export const RetentionAnalysis: React.FC = () => {
               <tbody className="divide-y divide-white/5">
                 {retentionResults.slice(0, 10).map((row, idx) => (
                   <tr key={idx} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-3 font-medium text-white sticky left-0 bg-[#14181f] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">{row.cohortDate}</td>
+                    <td className="px-6 py-3 font-medium text-white sticky left-0 bg-surface shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">{row.cohortDate}</td>
                     <td className="px-4 py-3 text-center text-slate-400 font-mono">{row.cohortSize.toLocaleString()}</td>
                     {dayColumns.map((day) => {
                       const rate = row.days[day] || 0;
@@ -203,6 +215,7 @@ export const RetentionAnalysis: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Curve Chart */}
@@ -221,18 +234,18 @@ export const RetentionAnalysis: React.FC = () => {
                 <AreaChart data={curveData}>
                   <defs>
                     <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.5} />
-                      <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
+                      <stop offset="5%" stopColor={CHART_COLORS.accent} stopOpacity={0.5} />
+                      <stop offset="95%" stopColor={CHART_COLORS.accent} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} domain={[0, 100]} />
+                  <CartesianGrid vertical={false} stroke={CHART_COLORS.gridLine} />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1a1f28', borderColor: 'rgba(255,255,255,0.06)', color: '#fff', borderRadius: '6px' }}
+                    contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
                     formatter={(value: number) => [`${value}%`, '리텐션']}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#00d4aa" strokeWidth={3} fill="url(#curveGradient)" />
+                  <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fill="url(#curveGradient)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
