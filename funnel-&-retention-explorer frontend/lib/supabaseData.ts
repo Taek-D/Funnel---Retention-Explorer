@@ -112,6 +112,9 @@ export interface FRESnapshot {
   config: Record<string, unknown> | null;
   results: Record<string, unknown> | null;
   created_at: string;
+  share_token?: string | null;
+  is_shared?: boolean;
+  dataset_name?: string;
 }
 
 export async function listSnapshots(datasetId: string): Promise<FRESnapshot[]> {
@@ -124,6 +127,41 @@ export async function listSnapshots(datasetId: string): Promise<FRESnapshot[]> {
 
   if (error) throw new Error(error.message);
   return data || [];
+}
+
+export async function listAllSnapshots(): Promise<(FRESnapshot & { dataset_name?: string })[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_analysis_snapshots')
+    .select('*, fre_datasets!inner(file_name)')
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (error) throw new Error(error.message);
+  return (data || []).map((row: Record<string, unknown>) => {
+    const datasets = row.fre_datasets as { file_name: string } | null;
+    return {
+      id: row.id as string,
+      dataset_id: row.dataset_id as string,
+      snapshot_type: row.snapshot_type as string,
+      config: row.config as Record<string, unknown> | null,
+      results: row.results as Record<string, unknown> | null,
+      created_at: row.created_at as string,
+      share_token: row.share_token as string | null | undefined,
+      is_shared: row.is_shared as boolean | undefined,
+      dataset_name: datasets?.file_name || undefined,
+    };
+  });
+}
+
+export async function deleteSnapshot(snapshotId: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_analysis_snapshots')
+    .delete()
+    .eq('id', snapshotId);
+
+  if (error) throw new Error(error.message);
 }
 
 export async function saveSnapshot(params: {
@@ -145,5 +183,31 @@ export async function saveSnapshot(params: {
     .single();
 
   if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function shareSnapshot(snapshotId: string): Promise<string> {
+  const client = getSupabase();
+  const shareToken = crypto.randomUUID();
+
+  const { error } = await client
+    .from('fre_analysis_snapshots')
+    .update({ share_token: shareToken, is_shared: true })
+    .eq('id', snapshotId);
+
+  if (error) throw new Error(error.message);
+  return shareToken;
+}
+
+export async function getSharedSnapshot(shareToken: string): Promise<FRESnapshot | null> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_analysis_snapshots')
+    .select('*')
+    .eq('share_token', shareToken)
+    .eq('is_shared', true)
+    .single();
+
+  if (error) return null;
   return data;
 }

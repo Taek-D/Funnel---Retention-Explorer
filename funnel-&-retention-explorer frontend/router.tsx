@@ -19,6 +19,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m
 const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
 const BillingSuccessPage = lazy(() => import('./pages/BillingSuccessPage').then(m => ({ default: m.BillingSuccessPage })));
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage').then(m => ({ default: m.SubscriptionPage })));
+const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ default: m.SharedReport })));
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
   {
     path: '/pricing',
     element: <Suspense fallback={<PageLoader />}><PricingPage /></Suspense>,
+  },
+  {
+    path: '/shared/:token',
+    element: <Suspense fallback={<PageLoader />}><SharedReport /></Suspense>,
   },
   {
     path: '/login',

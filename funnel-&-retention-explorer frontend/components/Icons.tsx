@@ -46,7 +46,12 @@ import {
   ArrowLeft,
   ShoppingBag,
   Briefcase,
-  Sparkles
+  Sparkles,
+  Share2,
+  Copy,
+  Check,
+  Trash2,
+  Loader2
 } from 'lucide-react';
 
 export {
@@ -97,5 +102,10 @@ export {
   ArrowLeft,
   ShoppingBag,
   Briefcase,
-  Sparkles
+  Sparkles,
+  Share2,
+  Copy,
+  Check,
+  Trash2,
+  Loader2
 };

@@ -213,3 +213,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 tasks completed (OB-1 ~ OB-5): `lib/sampleData.ts` 이커머스/SaaS 샘플 데이터 생성기 (300/200명 사용자, ~1,800/~1,600행), `useCSVUpload.ts` loadSampleData 원클릭 로드 (dynamic import + 풀 파이프라인), DataImport 샘플 카드 UI + query param 자동 로드, Dashboard 빈 상태 CTA (그라데이션 히어로 + 2개 버튼 + 기능 미리보기 3카드), `useOnboardingTour.ts` + `OnboardingTour.tsx` 인터랙티브 3단계 투어 (overlay + tooltip + localStorage 영속), Sidebar HelpCircle 가이드 버튼 + data-tour 속성. 9개 파일 변경 (3 신규, 6 수정, ~668 lines). 번들 영향: +2.5KB lazy chunk (main bundle 0). 테스트 98/98 통과.
+
+---
+
+## core-features
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Phase 4 Core Features Enhancement |
+| **Match Rate** | 100% (83/83, 80 PASS, 3 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `core-features/core-features.plan.md` |
+| Design | `core-features/core-features.design.md` |
+| Analysis | `core-features/core-features.analysis.md` |
+| Report | `core-features/core-features.report.md` |
+
+### Summary
+
+4 tasks completed (CF-1 ~ CF-4): `reportEngine.ts` drawWatermark + isPro 매개변수 (Free 플랜 워터마크), exportReportAsPDF jsPDF dynamic import (Pro 전용 PDF 내보내기), `useExportReport.ts` PNG/PDF 포맷 선택 + usePlanGate 통합, `useSavedAnalyses.ts` 저장된 분석 CRUD 훅 + Dashboard 복원/삭제 UI, `supabaseData.ts` listAllSnapshots/deleteSnapshot/shareSnapshot/getSharedSnapshot, `ShareButton.tsx` 공유 링크 생성 (Pro 전용), `SharedReport.tsx` 공유 리포트 읽기 전용 페이지 + `/shared/:token` 라우트, Supabase migration (share_token + is_shared + RLS + index). 10개 파일 변경 (3 신규, 7 수정). jsPDF 390KB 별도 chunk (main bundle 0). 테스트 98/98 통과. 수익화 준비도 88 → 95/100.

@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight } from '../components/Icons';
+import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2 } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
+import { useSavedAnalyses } from '../hooks/useSavedAnalyses';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
+import { useToast } from '../components/Toast';
+import { ShareButton } from '../components/ShareButton';
+import type { AppState } from '../types';
 
 export const Dashboard: React.FC = () => {
-  const { state } = useAppContext();
-  const { exportReport, exporting } = useExportReport();
+  const { state, dispatch } = useAppContext();
+  const { exportReport, exporting, isPro } = useExportReport();
+  const { snapshots, removeSnapshot } = useSavedAnalyses();
+  const { toast } = useToast();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
+
+  const restoreSnapshot = useCallback((snap: { snapshot_type: string; results: Record<string, unknown> | null }) => {
+    const results = snap.results;
+    if (!results) return;
+
+    if (results.funnelResults) {
+      dispatch({ type: 'SET_FUNNEL_RESULTS', payload: results.funnelResults as AppState['funnelResults'] });
+    }
+    if (results.retentionResults) {
+      dispatch({ type: 'SET_RETENTION_RESULTS', payload: results.retentionResults as AppState['retentionResults'] });
+    }
+    if (results.insights) {
+      dispatch({ type: 'SET_INSIGHTS', payload: results.insights as AppState['insights'] });
+    }
+
+    toast('success', '분석 복원 완료', `${snap.snapshot_type} 분석이 복원되었습니다.`);
+  }, [dispatch, toast]);
 
   const hasData = processedData.length > 0;
 
@@ -122,15 +145,24 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Export button */}
-      <div className="flex justify-end">
+      {/* Export buttons */}
+      <div className="flex justify-end gap-2">
         <button
-          onClick={exportReport}
+          onClick={() => exportReport('png')}
           disabled={exporting}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
         >
           <Download size={16} />
-          {exporting ? '내보내는 중...' : '리포트 내보내기'}
+          {exporting ? '내보내는 중...' : 'PNG 내보내기'}
+        </button>
+        <button
+          onClick={() => exportReport('pdf')}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
+        >
+          <Download size={16} />
+          PDF 내보내기
+          {!isPro && <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>}
         </button>
       </div>
 
@@ -264,6 +296,46 @@ export const Dashboard: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Saved Analyses */}
+      {snapshots.length > 0 && (
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Clock size={16} className="text-accent" />
+              저장된 분석
+            </h3>
+            <span className="text-xs text-slate-500">{snapshots.length}개</span>
+          </div>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {snapshots.map(snap => (
+              <div
+                key={snap.id}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
+                onClick={() => restoreSnapshot(snap)}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm text-white font-medium truncate">
+                    {snap.snapshot_type} — {snap.dataset_name || '알 수 없는 데이터'}
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    {new Date(snap.created_at).toLocaleString('ko-KR')}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                  <ShareButton snapshotId={snap.id} existingToken={snap.share_token} />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeSnapshot(snap.id); }}
+                    className="p-1.5 rounded text-slate-500 hover:text-coral hover:bg-coral/10 transition-all"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
