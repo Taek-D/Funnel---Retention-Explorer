@@ -93,8 +93,9 @@ export const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-background text-white font-sans">
       <LandingHeader />
 
+      <main>
       {/* Hero */}
-      <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
+      <section aria-label="소개" className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
         {/* Background blurs */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[700px] bg-accent/20 rounded-full blur-[200px] opacity-40 pointer-events-none animate-glow-pulse" />
         <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-sky-400/15 rounded-full blur-[150px] opacity-30 pointer-events-none animate-float" />
@@ -136,7 +137,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-24 px-6" ref={featuresView.ref}>
+      <section id="features" aria-label="주요 기능" className="py-24 px-6" ref={featuresView.ref}>
         <div className="max-w-6xl mx-auto">
           <div className={`text-center mb-16 ${featuresView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">사용자 행동 분석에 필요한 모든 것</h2>
@@ -162,7 +163,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-6" ref={pricingView.ref}>
+      <section id="pricing" aria-label="요금제" className="py-24 px-6" ref={pricingView.ref}>
         <div className="max-w-5xl mx-auto">
           <div className={`text-center mb-16 ${pricingView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tightest mb-4">간단하고 투명한 요금제</h2>
@@ -222,7 +223,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 px-6" ref={faqView.ref}>
+      <section id="faq" aria-label="자주 묻는 질문" className="py-24 px-6" ref={faqView.ref}>
         <div className="max-w-3xl mx-auto">
           <h2 className={`text-3xl md:text-4xl font-extrabold text-white text-center tracking-tightest mb-12 ${faqView.visible ? 'animate-fade-up' : 'opacity-0'}`}>
             자주 묻는 질문
@@ -257,7 +258,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* CTA Banner */}
-      <section className="py-20 px-6">
+      <section aria-label="시작하기" className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center bg-surface border border-white/[0.06] rounded-lg p-12 md:p-16 relative overflow-hidden">
           <div className="absolute inset-0 dot-grid opacity-50 pointer-events-none" />
           <div className="relative">
@@ -273,6 +274,8 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-white/[0.06] py-12 px-6">
