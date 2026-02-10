@@ -2,32 +2,17 @@
   "version": "2.0",
   "lastUpdated": "2026-02-10T12:55:12.086Z",
   "activeFeatures": [
-    "ui-polish",
     "funnel-&-retention-explorer frontend"
   ],
-  "primaryFeature": "ui-polish",
+  "primaryFeature": null,
   "features": {
     "ui-polish": {
-      "phase": "completed",
-      "phaseNumber": 6,
+      "phase": "archived",
       "matchRate": 97,
       "iterationCount": 1,
-      "requirements": [
-        "UP-1: Accessibility (ARIA + Keyboard)",
-        "UP-2: Chart Theme Tokens",
-        "UP-3: Loading & Empty States",
-        "UP-4: Transitions & Mobile Polish"
-      ],
-      "documents": {
-        "plan": "docs/01-plan/features/ui-polish.plan.md",
-        "design": "docs/02-design/features/ui-polish.design.md",
-        "analysis": "docs/03-analysis/ui-polish.analysis.md",
-        "report": "docs/04-report/features/ui-polish.report.md"
-      },
-      "timestamps": {
-        "started": "2026-02-10T19:00:00.000Z",
-        "lastUpdated": "2026-02-10T19:00:00.000Z"
-      }
+      "startedAt": "2026-02-10T19:00:00.000Z",
+      "archivedAt": "2026-02-10T21:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/ui-polish/"
     },
     "funnel-&-retention-explorer frontend": {
       "phase": "do",
@@ -985,6 +970,12 @@
       "feature": "funnel-&-retention-explorer frontend",
       "phase": "do",
       "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-10T21:00:00.000Z",
+      "feature": "ui-polish",
+      "phase": "archived",
+      "action": "archived"
     }
   ]
 }

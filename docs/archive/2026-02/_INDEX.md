@@ -261,3 +261,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (OI-1 ~ OI-4): `lib/analytics.ts` GA4 통합 (type-safe trackEvent, 10 이벤트 타입, dynamic script injection, PROD only), AppShell trackPageView + 8개 hooks/pages trackEvent 삽입 (csv_upload, sample_data_load, funnel_analysis, retention_analysis, ai_insight_request, report_export, upgrade_modal_open, pro_conversion, signup_complete), `@vercel/analytics` + `@vercel/speed-insights` 연동 (vendor-monitoring chunk), Supabase Auth 이메일 템플릿 3종 (confirm-signup, reset-password, magic-link — FRE 브랜딩 다크 테마), `.github/workflows/ci.yml` GitHub Actions CI (PR 자동 빌드/테스트). 12개 파일 변경 (5 신규, 7 수정). 테스트 98/98 통과.
+
+---
+
+## ui-polish
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Phase 6: UI Polish |
+| **Match Rate** | 97% |
+| **Iterations** | 1 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `ui-polish/ui-polish.plan.md` |
+| Design | `ui-polish/ui-polish.design.md` |
+| Analysis | `ui-polish/ui-polish.analysis.md` |
+| Report | `ui-polish/ui-polish.report.md` |
+
+### Summary
+
+4 tasks completed (UP-1 ~ UP-4): ARIA 접근성 전면 적용 (role="dialog", aria-modal, aria-label, aria-current, aria-expanded, aria-haspopup, aria-hidden — Sidebar, Modal, Toast, SearchModal, UserMenu, OnboardingTour), CHART_COLORS 테마 토큰 (constants.ts → FunnelAnalysis, RetentionAnalysis, Dashboard 차트 색상 통합), ChartSkeleton 컴포넌트 (bar/area/table 3개 variant + 3개 분석 페이지 placeholder), Modal/Toast exit animation (fade-out + translateY, Escape key, dynamic timeout), 모바일 스크롤 힌트 (gradient overlay). 14개 파일 변경 (1 신규, 13 수정, ~2,006 lines). 테스트 98/98 통과.
