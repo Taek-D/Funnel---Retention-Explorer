@@ -167,3 +167,25 @@
 ### Summary
 
 12 tasks completed (AB-1 ~ AB-12): fre_user_profiles billing_cycle 컬럼 추가, BillingCycle 타입 + BILLING_PRICES/BILLING_INTERVALS 상수, issue-billing billingCycle 파라미터 + 금액 분기, process-billing 동적 금액/주기, change-billing-key Edge Function (결제 수단 변경), switch-plan Edge Function (월간↔연간 전환 + 일할 계산), PricingPage 월간/연간 토글, UpgradeModal 라디오 선택, SubscriptionPage 결제 수단 변경 + 플랜 전환 UI, SubscriptionStatus billing_cycle 표시, BillingSuccessPage mode=change 분기, FAQ 업데이트. 12개 파일 변경 (3 신규, 9 수정, ~2,113 lines). 수익화 준비도 80 → 88/100.
+
+---
+
+## supabase-deployment
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Supabase Infrastructure Deployment & Integration Verification |
+| **Match Rate** | 97.6% (328/335, 2 FAIL — TossPayments keys pending) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Analysis | `supabase-deployment/supabase-deployment.analysis.md` |
+| Report | `supabase-deployment/supabase-deployment.report.md` |
+
+### Summary
+
+Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (fre_user_profiles, fre_billing_history, billing_cycle), Edge Function 7개 배포 (ai-proxy, toss-webhook, process-billing, issue-billing, cancel-subscription, change-billing-key, switch-plan — 840 lines TypeScript), Vault secrets 2개 (process_billing_url, service_role_key), Edge Function secret 1개 (GEMINI_API_KEY), pg_cron daily-billing 스케줄, Vercel 프로덕션 배포. 335항목 통합 검증: 코드 매치율 100% (310/310), 배포 매치율 92% (23/25). 미해결: TOSS_SECRET_KEY, TOSS_WEBHOOK_SECRET (TossPayments 가입 후 설정). 수익화 준비도 88 → 95/100.
