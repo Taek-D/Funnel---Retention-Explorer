@@ -5,11 +5,14 @@ import { Modal } from './Modal';
 import { UserMenu } from './UserMenu';
 import { NotificationPanel } from './NotificationPanel';
 import { SearchModal } from './SearchModal';
+import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
 import { PastDueBanner } from './PastDueBanner';
 import { useToast } from './Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { useEmailSettings } from '../hooks/useEmailSettings';
+import { useOnboardingTour } from '../hooks/useOnboardingTour';
+import { useAppContext } from '../context/AppContext';
 
 export const AppShell: React.FC = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
@@ -21,6 +24,9 @@ export const AppShell: React.FC = () => {
   const { toast } = useToast();
   const { unreadCount } = useNotifications();
   const { settings, updateSettings, saveSettings, testConnection, testing } = useEmailSettings();
+  const { state } = useAppContext();
+  const hasData = state.processedData.length > 0;
+  const tour = useOnboardingTour(hasData);
 
   const currentSegment = location.pathname.split('/').pop() || 'dashboard';
   const pageTitle = currentSegment.replace(/-/g, ' ');
@@ -71,7 +77,7 @@ export const AppShell: React.FC = () => {
       {/* Dot grid background */}
       <div className="fixed inset-0 dot-grid pointer-events-none -z-10" />
 
-      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
+      <Sidebar mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} hasData={hasData} onStartTour={tour.startTour} />
 
       <main className="flex-1 flex flex-col md:pl-16 relative">
         {/* Top Header — minimal */}
@@ -124,6 +130,9 @@ export const AppShell: React.FC = () => {
 
       {/* Search Modal */}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+
+      {/* Onboarding Tour */}
+      <OnboardingTour {...tour} />
 
       {/* Email Settings Modal */}
       <Modal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} title="이메일 설정">

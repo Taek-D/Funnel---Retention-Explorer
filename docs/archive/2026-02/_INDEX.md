@@ -189,3 +189,27 @@
 ### Summary
 
 Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (fre_user_profiles, fre_billing_history, billing_cycle), Edge Function 7개 배포 (ai-proxy, toss-webhook, process-billing, issue-billing, cancel-subscription, change-billing-key, switch-plan — 840 lines TypeScript), Vault secrets 2개 (process_billing_url, service_role_key), Edge Function secret 1개 (GEMINI_API_KEY), pg_cron daily-billing 스케줄, Vercel 프로덕션 배포. 335항목 통합 검증: 코드 매치율 100% (310/310), 배포 매치율 92% (23/25). 미해결: TOSS_SECRET_KEY, TOSS_WEBHOOK_SECRET (TossPayments 가입 후 설정). 수익화 준비도 88 → 95/100.
+
+---
+
+## onboarding
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Phase 3 Onboarding: First-Visit Experience |
+| **Match Rate** | 97.6% (81/85, 4 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `onboarding/onboarding.plan.md` |
+| Design | `onboarding/onboarding.design.md` |
+| Analysis | `onboarding/onboarding.analysis.md` |
+| Report | `onboarding/onboarding.report.md` |
+
+### Summary
+
+5 tasks completed (OB-1 ~ OB-5): `lib/sampleData.ts` 이커머스/SaaS 샘플 데이터 생성기 (300/200명 사용자, ~1,800/~1,600행), `useCSVUpload.ts` loadSampleData 원클릭 로드 (dynamic import + 풀 파이프라인), DataImport 샘플 카드 UI + query param 자동 로드, Dashboard 빈 상태 CTA (그라데이션 히어로 + 2개 버튼 + 기능 미리보기 3카드), `useOnboardingTour.ts` + `OnboardingTour.tsx` 인터랙티브 3단계 투어 (overlay + tooltip + localStorage 영속), Sidebar HelpCircle 가이드 버튼 + data-tour 속성. 9개 파일 변경 (3 신규, 6 수정, ~668 lines). 번들 영향: +2.5KB lazy chunk (main bundle 0). 테스트 98/98 통과.

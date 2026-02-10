@@ -1,6 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, TrendingUp, Users, Zap, CreditCard, Download } from '../components/Icons';
+import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
@@ -55,21 +56,83 @@ export const Dashboard: React.FC = () => {
         { label: '데이터 유형', value: detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독' : 'N/A', change: hasData ? '감지됨' : '데이터 업로드', positive: detectedType !== null },
       ];
 
+  const navigate = useNavigate();
+
+  // Empty state — show CTA instead of empty charts
+  if (!hasData) {
+    const featureCards = [
+      { icon: Filter, title: '퍼널 분석', desc: '다단계 전환 퍼널로 이탈 지점을 발견하세요', gradient: 'from-accent to-teal-500' },
+      { icon: Users, title: '리텐션 코호트', desc: '코호트별 사용자 리텐션을 시각화합니다', gradient: 'from-sky-400 to-blue-500' },
+      { icon: Zap, title: 'AI 인사이트', desc: 'Gemini AI가 실행 가능한 인사이트를 생성합니다', gradient: 'from-coral to-pink-500' },
+    ];
+
+    return (
+      <div className="space-y-6">
+        {/* Hero CTA */}
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-10 md:p-14 relative overflow-hidden text-center">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-accent/15 rounded-full blur-[150px] pointer-events-none" />
+          <div className="relative">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
+              <Sparkles size={32} />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-3">
+              CSV 데이터를 분석해보세요
+            </h2>
+            <p className="text-slate-400 text-sm md:text-base max-w-md mx-auto mb-8">
+              퍼널, 리텐션, 세그먼트, AI 인사이트까지 — 하나의 대시보드에서 모두 가능합니다.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => navigate('/app/upload?sample=ecommerce')}
+                className="group px-6 py-3 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                <Sparkles size={16} />
+                샘플 데이터로 체험
+                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
+              <button
+                onClick={() => navigate('/app/upload')}
+                className="px-6 py-3 text-sm font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/[0.08] hover:border-white/20 rounded-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                <UploadCloud size={16} />
+                CSV 파일 업로드
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature Preview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {featureCards.map((f, i) => (
+            <div
+              key={i}
+              className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/[0.03] transition-all duration-300 group animate-fade-up delay-${(i + 1) * 100}`}
+            >
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${f.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <f.icon size={20} className="text-white" />
+              </div>
+              <h3 className="text-white font-bold mb-1">{f.title}</h3>
+              <p className="text-slate-500 text-xs leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Export button */}
-      {hasData && (
-        <div className="flex justify-end">
-          <button
-            onClick={exportReport}
-            disabled={exporting}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
-          >
-            <Download size={16} />
-            {exporting ? '내보내는 중...' : '리포트 내보내기'}
-          </button>
-        </div>
-      )}
+      <div className="flex justify-end">
+        <button
+          onClick={exportReport}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
+        >
+          <Download size={16} />
+          {exporting ? '내보내는 중...' : '리포트 내보내기'}
+        </button>
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -125,7 +188,7 @@ export const Dashboard: React.FC = () => {
       ) : (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
-          <p className="text-slate-400 text-sm">{hasData ? '에디터 탭에서 퍼널을 계산하면 여기에 결과가 표시됩니다.' : '데이터를 업로드하여 시작하세요.'}</p>
+          <p className="text-slate-400 text-sm">퍼널 분석 탭에서 퍼널을 계산하면 여기에 결과가 표시됩니다.</p>
         </div>
       )}
 
@@ -196,7 +259,7 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div className="h-48 flex items-center justify-center">
-              <p className="text-slate-500 text-sm">{hasData ? '리텐션을 계산하면 곡선이 표시됩니다.' : '데이터를 업로드하여 시작하세요.'}</p>
+              <p className="text-slate-500 text-sm">리텐션을 계산하면 곡선이 표시됩니다.</p>
             </div>
           )}
         </div>

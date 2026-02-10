@@ -10,6 +10,7 @@ import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
 import type { ColumnMapping } from '../types';
+import type { SampleDataType } from '../lib/sampleData';
 
 export function useCSVUpload() {
   const { state, dispatch } = useAppContext();
@@ -126,9 +127,69 @@ export function useCSVUpload() {
     addNotification('import', '데이터 가져오기 완료', `${processed.length}개 이벤트, ${qualityReport.uniqueUsers}명 사용자`);
   }, [state.rawData, state.headers, dispatch, toast, addNotification]);
 
+  const loadSampleData = useCallback(async (type: SampleDataType) => {
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: '샘플 데이터 생성 중...' } });
+
+    try {
+      const { generateSampleData } = await import('../lib/sampleData');
+      const sample = generateSampleData(type);
+
+      dispatch({
+        type: 'SET_RAW_DATA',
+        payload: { rawData: sample.data, headers: sample.headers, fileName: sample.fileName }
+      });
+      dispatch({ type: 'SET_COLUMN_MAPPING', payload: sample.mapping });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 40, message: '컬럼 자동 매핑 완료' } });
+
+      // Auto-process (same logic as confirmMapping)
+      dispatch({ type: 'RESET_ANALYSIS' });
+      const processed = processData(sample.data, sample.mapping);
+      dispatch({ type: 'SET_PROCESSED_DATA', payload: processed });
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 60, message: '이벤트 감지 중...' } });
+      const events = getUniqueEvents(processed);
+      dispatch({ type: 'SET_UNIQUE_EVENTS', payload: events });
+
+      const qualityReport = generateDataQualityReport(sample.data, processed);
+      dispatch({ type: 'SET_DATA_QUALITY', payload: qualityReport });
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 75, message: '데이터 유형 감지 중...' } });
+      const detectedType = detectDatasetType(processed);
+      dispatch({ type: 'SET_DETECTED_TYPE', payload: detectedType });
+
+      if (detectedType === 'subscription') {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 85, message: '구독 분석 수행 중...' } });
+        const kpis = calculateSubscriptionKPIs(sample.data, sample.mapping, sample.headers);
+        dispatch({ type: 'SET_SUBSCRIPTION_KPIS', payload: kpis });
+        const trialAnalysis = analyzeTrialConversion(sample.data, sample.mapping, sample.headers);
+        dispatch({ type: 'SET_TRIAL_ANALYSIS', payload: trialAnalysis });
+        const churnAnalysis = analyzeChurn(sample.data, sample.mapping);
+        dispatch({ type: 'SET_CHURN_ANALYSIS', payload: churnAnalysis });
+        const paidRetention = calculatePaidRetention(sample.data, sample.mapping);
+        dispatch({ type: 'SET_PAID_RETENTION', payload: paidRetention });
+        const insights = generateInsights(processed, detectedType, kpis, trialAnalysis, churnAnalysis, paidRetention);
+        dispatch({ type: 'SET_INSIGHTS', payload: insights });
+      } else {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: '인사이트 생성 중...' } });
+        const insights = generateInsights(processed, detectedType, null, null, null, null);
+        dispatch({ type: 'SET_INSIGHTS', payload: insights });
+      }
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+
+      const typeName = type === 'ecommerce' ? '이커머스' : 'SaaS';
+      toast('success', '샘플 데이터 로드 완료', `${typeName} 샘플 데이터가 로드되었습니다.`);
+      addNotification('import', '샘플 데이터 로드 완료', `${processed.length}개 이벤트, ${qualityReport.uniqueUsers}명 사용자`);
+    } catch (error) {
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+      toast('error', '샘플 데이터 로드 실패', error instanceof Error ? error.message : '알 수 없는 오류');
+    }
+  }, [dispatch, toast, addNotification]);
+
   return {
     handleFileUpload,
     confirmMapping,
+    loadSampleData,
     isProcessing: state.isProcessing,
     processingProgress: state.processingProgress,
     processingMessage: state.processingMessage,

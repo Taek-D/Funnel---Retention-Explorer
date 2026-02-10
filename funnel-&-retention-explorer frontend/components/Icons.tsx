@@ -43,7 +43,10 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  ArrowLeft
+  ArrowLeft,
+  ShoppingBag,
+  Briefcase,
+  Sparkles
 } from 'lucide-react';
 
 export {
@@ -91,5 +94,8 @@ export {
   ExternalLink,
   Eye,
   EyeOff,
-  ArrowLeft
+  ArrowLeft,
+  ShoppingBag,
+  Briefcase,
+  Sparkles
 };

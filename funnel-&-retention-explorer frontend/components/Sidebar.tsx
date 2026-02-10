@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 
@@ -8,24 +8,27 @@ interface MenuItem {
   path: string;
   icon: React.ElementType;
   label: string;
+  dataTour?: string;
 }
 
 const menuItems: MenuItem[] = [
   { path: '/app/dashboard', icon: LayoutDashboard, label: '대시보드' },
   { path: '/app/upload', icon: UploadCloud, label: '데이터 가져오기' },
-  { path: '/app/funnels', icon: Filter, label: '퍼널 분석' },
+  { path: '/app/funnels', icon: Filter, label: '퍼널 분석', dataTour: 'analysis' },
   { path: '/app/retention', icon: Users, label: '리텐션' },
   { path: '/app/segments', icon: PieChart, label: '세그먼트' },
-  { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트' },
+  { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트', dataTour: 'insights' },
   { path: '/app/subscription', icon: CreditCard, label: '구독 관리' },
 ];
 
 interface SidebarProps {
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
+  hasData?: boolean;
+  onStartTour?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, hasData, onStartTour }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -68,6 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
                   : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
               }`}
               title={item.label}
+              {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
             >
               {/* Active indicator bar */}
               {isActive && (
@@ -84,6 +88,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile }) =
       </nav>
 
       <div className="mt-auto flex flex-col gap-3 items-center">
+        {!hasData && onStartTour && (
+          <button
+            onClick={onStartTour}
+            className="w-10 h-10 flex items-center justify-center rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors"
+            title="시작 가이드"
+          >
+            <HelpCircle size={18} />
+          </button>
+        )}
         <PlanBadge />
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"

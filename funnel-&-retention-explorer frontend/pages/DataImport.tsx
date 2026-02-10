@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X } from '../components/Icons';
+import { useSearchParams } from 'react-router-dom';
+import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles } from '../components/Icons';
 import { useCSVUpload } from '../hooks/useCSVUpload';
 import { useColumnMapping } from '../hooks/useColumnMapping';
 import { useAppContext } from '../context/AppContext';
 import { loadRecentFiles, removeRecentFile } from '../lib/recentFiles';
 import { formatDateTime } from '../lib/formatters';
 import type { ColumnMapping } from '../types';
+import type { SampleDataType } from '../lib/sampleData';
 
 const MAPPING_FIELDS: { key: keyof ColumnMapping; label: string; required: boolean }[] = [
   { key: 'timestamp', label: '타임스탬프', required: true },
@@ -16,16 +18,33 @@ const MAPPING_FIELDS: { key: keyof ColumnMapping; label: string; required: boole
   { key: 'channel', label: '채널', required: false },
 ];
 
+const SAMPLE_OPTIONS: { type: SampleDataType; icon: React.ElementType; label: string; desc: string; rows: string; users: string }[] = [
+  { type: 'ecommerce', icon: ShoppingBag, label: '이커머스', desc: 'page_view → purchase 퍼널', rows: '~1,800행', users: '300명' },
+  { type: 'saas', icon: Briefcase, label: 'SaaS', desc: 'signup → subscription 퍼널', rows: '~1,600행', users: '200명' },
+];
+
 export const DataImport: React.FC = () => {
   const { state, dispatch } = useAppContext();
-  const { handleFileUpload, confirmMapping, isProcessing, processingProgress, processingMessage } = useCSVUpload();
+  const { handleFileUpload, confirmMapping, loadSampleData, isProcessing, processingProgress, processingMessage } = useCSVUpload();
   const { mapping, updateMapping, headers } = useColumnMapping();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [recentFiles, setRecentFiles] = useState(loadRecentFiles());
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sampleLoadedRef = useRef(false);
 
   useEffect(() => {
     setRecentFiles(loadRecentFiles());
   }, [state.recentFiles]);
+
+  // Auto-load sample data from query param (?sample=ecommerce|saas)
+  useEffect(() => {
+    const sampleType = searchParams.get('sample') as SampleDataType | null;
+    if (sampleType && !sampleLoadedRef.current && state.processedData.length === 0 && !isProcessing) {
+      sampleLoadedRef.current = true;
+      setSearchParams({}, { replace: true });
+      loadSampleData(sampleType);
+    }
+  }, [searchParams, state.processedData.length, isProcessing, loadSampleData, setSearchParams]);
 
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -74,6 +93,7 @@ export const DataImport: React.FC = () => {
             </div>
 
             <div
+              data-tour="upload"
               className="relative w-full rounded-md border-2 border-dashed border-accent/30 bg-accent/5 p-10 flex flex-col items-center justify-center gap-4 transition-all hover:bg-accent/10 cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); }}
@@ -121,6 +141,36 @@ export const DataImport: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Sample Data Section — visible only at Step 1 */}
+          {currentStep === 1 && (
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4" data-tour="upload-sample">
+              <div className="flex items-center gap-2">
+                <Sparkles size={18} className="text-accent" />
+                <h3 className="text-white font-bold">샘플 데이터로 체험하기</h3>
+              </div>
+              <p className="text-slate-400 text-sm">CSV 파일이 없나요? 샘플 데이터로 바로 분석을 체험해보세요.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {SAMPLE_OPTIONS.map(({ type, icon: Icon, label, desc, rows, users }) => (
+                  <button
+                    key={type}
+                    onClick={() => loadSampleData(type)}
+                    disabled={isProcessing}
+                    className="flex items-start gap-4 p-4 rounded-lg bg-background border border-white/[0.06] hover:border-accent/30 hover:bg-accent/5 transition-all text-left group disabled:opacity-50"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center text-accent shrink-0 group-hover:scale-110 transition-transform">
+                      <Icon size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-white font-semibold text-sm">{label}</h4>
+                      <p className="text-slate-500 text-xs mt-0.5">{desc}</p>
+                      <p className="text-slate-600 text-[10px] font-mono mt-1">{rows} · {users} 사용자</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Column Mapping */}
           {hasData && (
