@@ -4,6 +4,7 @@ import { calculateFunnel, loadFunnelTemplate } from '../lib/funnelEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
+import { trackEvent } from '../lib/analytics';
 
 export function useFunnelAnalysis() {
   const { state, dispatch } = useAppContext();
@@ -32,6 +33,7 @@ export function useFunnelAnalysis() {
 
     const results = calculateFunnel(state.processedData, state.funnelSteps);
     dispatch({ type: 'SET_FUNNEL_RESULTS', payload: results });
+    trackEvent('funnel_analysis', { step_count: state.funnelSteps.length });
 
     // Regenerate insights
     const insights = generateInsights(

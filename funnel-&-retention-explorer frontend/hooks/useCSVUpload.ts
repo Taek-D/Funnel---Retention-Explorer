@@ -9,6 +9,7 @@ import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
+import { trackEvent } from '../lib/analytics';
 import type { ColumnMapping } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
 
@@ -58,6 +59,7 @@ export function useCSVUpload() {
 
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 50, message: '컬럼 자동 감지 완료' } });
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+      trackEvent('csv_upload', { file_name: file.name, row_count: result.data.length });
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
       toast('error', 'CSV 파싱 오류', error instanceof Error ? error.message : '알 수 없는 오류');
@@ -176,6 +178,7 @@ export function useCSVUpload() {
       }
 
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+      trackEvent('sample_data_load', { sample_type: type });
 
       const typeName = type === 'ecommerce' ? '이커머스' : 'SaaS';
       toast('success', '샘플 데이터 로드 완료', `${typeName} 샘플 데이터가 로드되었습니다.`);

@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
+import { trackEvent } from '../lib/analytics';
 import type { RetentionType } from '../types';
 
 export function useRetentionAnalysis() {
@@ -49,6 +50,8 @@ export function useRetentionAnalysis() {
       const results = calculateActivityRetention(state.processedData, cohortEvent, activeEvents);
       dispatch({ type: 'SET_RETENTION_RESULTS', payload: results });
     }
+
+    trackEvent('retention_analysis', { retention_type: state.retentionType });
 
     // Regenerate insights
     const insights = generateInsights(

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
+import { trackEvent } from '../lib/analytics';
 import type { GeminiMessage } from '../lib/geminiClient';
 
 const SYSTEM_INSTRUCTION = `You are an expert data analyst for FRE Analytics, a SaaS analytics platform.
@@ -59,6 +60,7 @@ export function useAIInsights() {
       setAiError(result.error);
     } else {
       dispatch({ type: 'SET_AI_SUMMARY', payload: result.text });
+      trackEvent('ai_insight_request');
       addNotification('ai', 'AI 분석 완료', '대시보드에서 AI 요약을 확인하세요.');
     }
 

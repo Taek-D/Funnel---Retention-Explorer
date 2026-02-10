@@ -1,5 +1,7 @@
 import { initSentry } from './lib/sentry';
+import { initGA } from './lib/analytics';
 initSentry();
+initGA();
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -9,6 +11,8 @@ import { AuthProvider } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import { ToastProvider } from './components/Toast';
 import { NotificationProvider } from './context/NotificationContext';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { router } from './router';
 
 const rootElement = document.getElementById('root');
@@ -25,6 +29,8 @@ root.render(
           <ToastProvider>
             <NotificationProvider>
               <RouterProvider router={router} />
+              <Analytics />
+              <SpeedInsights />
             </NotificationProvider>
           </ToastProvider>
         </AppProvider>

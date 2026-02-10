@@ -237,3 +237,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (CF-1 ~ CF-4): `reportEngine.ts` drawWatermark + isPro 매개변수 (Free 플랜 워터마크), exportReportAsPDF jsPDF dynamic import (Pro 전용 PDF 내보내기), `useExportReport.ts` PNG/PDF 포맷 선택 + usePlanGate 통합, `useSavedAnalyses.ts` 저장된 분석 CRUD 훅 + Dashboard 복원/삭제 UI, `supabaseData.ts` listAllSnapshots/deleteSnapshot/shareSnapshot/getSharedSnapshot, `ShareButton.tsx` 공유 링크 생성 (Pro 전용), `SharedReport.tsx` 공유 리포트 읽기 전용 페이지 + `/shared/:token` 라우트, Supabase migration (share_token + is_shared + RLS + index). 10개 파일 변경 (3 신규, 7 수정). jsPDF 390KB 별도 chunk (main bundle 0). 테스트 98/98 통과. 수익화 준비도 88 → 95/100.
+
+---
+
+## ops-infrastructure
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Phase 5: Operations & Growth Infrastructure |
+| **Match Rate** | 100% (74/74) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-10 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `ops-infrastructure/ops-infrastructure.plan.md` |
+| Design | `ops-infrastructure/ops-infrastructure.design.md` |
+| Analysis | `ops-infrastructure/ops-infrastructure.analysis.md` |
+| Report | `ops-infrastructure/ops-infrastructure.report.md` |
+
+### Summary
+
+4 tasks completed (OI-1 ~ OI-4): `lib/analytics.ts` GA4 통합 (type-safe trackEvent, 10 이벤트 타입, dynamic script injection, PROD only), AppShell trackPageView + 8개 hooks/pages trackEvent 삽입 (csv_upload, sample_data_load, funnel_analysis, retention_analysis, ai_insight_request, report_export, upgrade_modal_open, pro_conversion, signup_complete), `@vercel/analytics` + `@vercel/speed-insights` 연동 (vendor-monitoring chunk), Supabase Auth 이메일 템플릿 3종 (confirm-signup, reset-password, magic-link — FRE 브랜딩 다크 테마), `.github/workflows/ci.yml` GitHub Actions CI (PR 자동 빌드/테스트). 12개 파일 변경 (5 신규, 7 수정). 테스트 98/98 통과.

@@ -8,6 +8,7 @@ import { SearchModal } from './SearchModal';
 import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
 import { PastDueBanner } from './PastDueBanner';
+import { trackPageView } from '../lib/analytics';
 import { useToast } from './Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { useEmailSettings } from '../hooks/useEmailSettings';
@@ -30,6 +31,11 @@ export const AppShell: React.FC = () => {
 
   const currentSegment = location.pathname.split('/').pop() || 'dashboard';
   const pageTitle = currentSegment.replace(/-/g, ' ');
+
+  // GA4 page tracking
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
 
   // Ctrl+K / Cmd+K shortcut
   useEffect(() => {

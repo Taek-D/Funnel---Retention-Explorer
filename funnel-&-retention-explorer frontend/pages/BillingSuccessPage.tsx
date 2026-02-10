@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { trackEvent } from '../lib/analytics';
 import { CheckCircle, AlertCircle } from '../components/Icons';
 
 export const BillingSuccessPage: React.FC = () => {
@@ -81,6 +82,7 @@ export const BillingSuccessPage: React.FC = () => {
         }
 
         await refreshProfile();
+        trackEvent('pro_conversion', { billing_cycle: billingCycle });
         const cycleName = billingCycle === 'annual' ? '연간' : '월간';
         setSuccessMessage(`Pro ${cycleName} 업그레이드 완료!`);
         setStatus('success');

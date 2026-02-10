@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, Zap } from './Icons';
+import { trackEvent } from '../lib/analytics';
 import { useAuth } from '../context/AuthContext';
 import { PLAN_LIMITS, BILLING_PRICES } from '../lib/planManager';
 import type { BillingCycle } from '../types';
@@ -48,6 +49,12 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
   const { user, userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+
+  useEffect(() => {
+    if (isOpen) {
+      trackEvent('upgrade_modal_open', { reason });
+    }
+  }, [isOpen, reason]);
 
   if (!isOpen) return null;
 

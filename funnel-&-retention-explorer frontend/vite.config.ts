@@ -31,7 +31,7 @@ export default defineConfig(() => {
                 if (id.includes('papaparse')) {
                   return 'vendor-data';
                 }
-                if (id.includes('@sentry')) {
+                if (id.includes('@sentry') || id.includes('@vercel')) {
                   return 'vendor-monitoring';
                 }
               }

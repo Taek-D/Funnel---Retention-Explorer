@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { fetchUserProfile, upsertUserProfile } from '../lib/planManager';
+import { trackEvent } from '../lib/analytics';
 import type { UserProfile } from '../lib/planManager';
 
 interface AuthContextValue {
@@ -76,6 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     if (!supabase) return { error: new Error('Supabase가 설정되지 않았습니다.') };
     const { error } = await supabase.auth.signUp({ email, password });
+    if (!error) {
+      trackEvent('signup_complete');
+    }
     return { error: error ? new Error(error.message) : null };
   };
 

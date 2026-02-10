@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
+import { trackEvent } from '../lib/analytics';
 
 type ExportFormat = 'png' | 'pdf';
 
@@ -37,6 +38,7 @@ export function useExportReport() {
         await exportReportAsPNG(state, isPro);
       }
       toast('success', '리포트 내보내기 완료');
+      trackEvent('report_export', { format });
       addNotification('export', '리포트 내보내기 완료', `${label} 파일이 다운로드되었습니다.`);
     } catch (err) {
       toast('error', '리포트 생성 실패', err instanceof Error ? err.message : '알 수 없는 오류');
