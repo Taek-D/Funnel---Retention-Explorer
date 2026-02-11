@@ -2,13 +2,22 @@
   "version": "2.0",
   "lastUpdated": "2026-02-11T06:52:18.952Z",
   "activeFeatures": [
+    "data-export",
     "i18n",
     "funnel-&-retention-explorer frontend",
     "unit",
     "__tests__"
   ],
-  "primaryFeature": "i18n",
+  "primaryFeature": "data-export",
   "features": {
+    "data-export": {
+      "phase": "archived",
+      "matchRate": 96.5,
+      "iterationCount": 0,
+      "startedAt": "2026-02-11T07:00:00.000Z",
+      "archivedAt": "2026-02-11T07:30:00.000Z",
+      "archivedTo": "docs/archive/2026-02/data-export/"
+    },
     "i18n": {
       "phase": "archived",
       "matchRate": 97,

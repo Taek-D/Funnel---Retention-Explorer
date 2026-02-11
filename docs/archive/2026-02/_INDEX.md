@@ -359,3 +359,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 tasks completed (I18N-1 ~ I18N-6): i18next + react-i18next + browser-languagedetector 인프라, 6개 locale JSON (common/pages/insights x ko/en, 840+ keys), 19개 컴포넌트 useTranslation() 적용, 15개 페이지 useTranslation('pages') 적용, 8개 hooks + insightsEngine i18n.t() 적용, LanguageSwitcher Globe 토글 (Sidebar + LandingHeader), SEO (document.title + og:locale + hreflang), locale-aware 날짜/시간 포맷. 66개 파일 변경 (12 신규, 54 수정, +5,491/-1,186 lines).
+
+---
+
+## data-export
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Data Export Enhancement (CSV/Excel) |
+| **Match Rate** | 96.5% (92 PASS, 7 PARTIAL, 0 FAIL / 99 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-11 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `data-export/data-export.plan.md` |
+| Design | `data-export/data-export.design.md` |
+| Analysis | `data-export/data-export.analysis.md` |
+| Report | `data-export/data-export.report.md` |
+
+### Summary
+
+6 tasks completed (DE-1 ~ DE-6): `lib/exportUtils.ts` CSV 내보내기 유틸리티 (BOM+UTF-8, 한국어 Excel 호환, comma/quote/newline escaping), `lib/excelExport.ts` SheetJS xlsx dynamic import (multi-sheet workbook, cell formatting 0.0%/+0.0%), `hooks/useDataExport.ts` 내보내기 오케스트레이션 (CSV/Excel 타입 라우팅, Pro 게이팅, toast 피드백), `components/ExportDropdown.tsx` 드롭다운 UI (ARIA haspopup/expanded, click-outside close, PRO 배지), 4개 페이지 통합 (FunnelAnalysis, RetentionAnalysis, SegmentComparison, Dashboard quick-export-all), i18n 키 20+ (ko/en, dataExport.headers.* 11개 로컬라이즈 컬럼 헤더 포함). 12개 파일 변경 (4 신규, 8 수정, ~1,050 lines). 테스트 7/7 통과 (arrayToCSV BOM/escaping/edge cases). 7 PARTIAL 항목 모두 low-impact (3 positive simplification, 3 cosmetic filename, 1 improved key name). 11개 design 초과 개선 포함.
