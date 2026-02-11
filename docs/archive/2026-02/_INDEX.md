@@ -334,3 +334,28 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 tasks completed (TF-1 ~ TF-6): React Testing Infrastructure (jsdom + @testing-library/react + jest-dom + user-event), Context & Reducer 테스트 (22 tests, 19 action types + immutability), Custom Hook 테스트 5개 (usePlanGate, useColumnMapping, useClickOutside, useFunnelAnalysis, useRetentionAnalysis — 28 tests), UI Component 테스트 5개 (Modal, Toast, PlanBadge, PageLoader, ErrorBoundary — 32 tests), Lib Module 테스트 3개 (planManager, recentFiles, eventUtils — 28 tests), Test Utilities (renderWithProviders, mock helpers). 16개 파일 신규 + 2개 수정 (~1,538 lines). 테스트 98 → 208+ (110 신규). 실행 시간 2.7초.
+
+---
+
+## i18n
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Phase 9: Internationalization (Korean/English) |
+| **Match Rate** | 92.9% (39/42 weighted, 2 gaps fixed post-analysis) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-11 |
+| **Commit** | `ad902ba feat: Add Korean/English internationalization with react-i18next (Phase 9)` |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `i18n/i18n.plan.md` |
+| Design | `i18n/i18n.design.md` |
+| Analysis | `i18n/i18n.analysis.md` |
+| Report | `i18n/i18n.report.md` |
+
+### Summary
+
+6 tasks completed (I18N-1 ~ I18N-6): i18next + react-i18next + browser-languagedetector 인프라, 6개 locale JSON (common/pages/insights x ko/en, 840+ keys), 19개 컴포넌트 useTranslation() 적용, 15개 페이지 useTranslation('pages') 적용, 8개 hooks + insightsEngine i18n.t() 적용, LanguageSwitcher Globe 토글 (Sidebar + LandingHeader), SEO (document.title + og:locale + hreflang), locale-aware 날짜/시간 포맷. 66개 파일 변경 (12 신규, 54 수정, +5,491/-1,186 lines).
