@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2 } from '../components/Icons';
+import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2, ChevronRight, BarChart2, Shield, AlertTriangle, Activity } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
 import { useDataExport } from '../hooks/useDataExport';
@@ -74,16 +74,16 @@ export const Dashboard: React.FC = () => {
   // KPI cards
   const kpiCards = subscriptionKPIs
     ? [
-        { label: t('dashboard.totalUsers'), value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? t('dashboard.subscription') : t('dashboard.ecommerce'), positive: true },
-        { label: t('dashboard.paidUsers'), value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true },
-        { label: t('dashboard.churnRate'), value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10 },
-        { label: t('dashboard.revenue'), value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true },
+        { label: t('dashboard.totalUsers'), value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? t('dashboard.subscription') : t('dashboard.ecommerce'), positive: true, link: '/app/upload' },
+        { label: t('dashboard.paidUsers'), value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true, link: '/app/funnels' },
+        { label: t('dashboard.churnRate'), value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10, link: '/app/retention' },
+        { label: t('dashboard.revenue'), value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true, link: '/app/insights' },
       ]
     : [
-        { label: t('dashboard.uniqueUsers'), value: formatNum(uniqueUsers), change: hasData ? t('dashboard.active') : t('dashboard.noData'), positive: hasData },
-        { label: t('dashboard.totalEvents'), value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} ${t('dashboard.types')}` : t('dashboard.noData'), positive: hasData },
-        { label: t('dashboard.conversionRate'), value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} ${t('dashboard.steps')}` : t('dashboard.notCalculated'), positive: overallConversion != null && overallConversion > 20 },
-        { label: t('dashboard.dataType'), value: detectedType === 'ecommerce' ? t('dashboard.ecommerce') : detectedType === 'subscription' ? t('dashboard.subscription') : 'N/A', change: hasData ? t('dashboard.detected') : t('dashboard.uploadData'), positive: detectedType !== null },
+        { label: t('dashboard.uniqueUsers'), value: formatNum(uniqueUsers), change: hasData ? t('dashboard.active') : t('dashboard.noData'), positive: hasData, link: '/app/upload' },
+        { label: t('dashboard.totalEvents'), value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} ${t('dashboard.types')}` : t('dashboard.noData'), positive: hasData, link: '/app/upload' },
+        { label: t('dashboard.conversionRate'), value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} ${t('dashboard.steps')}` : t('dashboard.notCalculated'), positive: overallConversion != null && overallConversion > 20, link: '/app/funnels' },
+        { label: t('dashboard.dataType'), value: detectedType === 'ecommerce' ? t('dashboard.ecommerce') : detectedType === 'subscription' ? t('dashboard.subscription') : 'N/A', change: hasData ? t('dashboard.detected') : t('dashboard.uploadData'), positive: detectedType !== null, link: '/app/upload' },
       ];
 
   const navigate = useNavigate();
@@ -182,16 +182,113 @@ export const Dashboard: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, i) => (
-          <div key={i} className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 animate-fade-up delay-${(i + 1) * 100}`}>
+          <div
+            key={i}
+            onClick={() => navigate(kpi.link)}
+            className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group animate-fade-up delay-${(i + 1) * 100}`}
+          >
             <div className="flex justify-between items-start mb-3">
               <span className="text-slate-400 text-sm font-medium">{kpi.label}</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-accent/10 text-accent' : 'bg-coral/10 text-coral'}`}>
                 {kpi.change}
               </span>
             </div>
-            <div className="text-2xl font-bold font-mono text-white">{kpi.value}</div>
+            <div className="flex justify-between items-end">
+              <div className="text-2xl font-bold font-mono text-white">{kpi.value}</div>
+              <ChevronRight size={16} className="text-slate-600 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Quick Actions + Data Quality */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Quick Action Links */}
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+          <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+            <Zap size={14} className="text-accent" />
+            {t('dashboard.quickActions')}
+          </h3>
+          <div className="space-y-2">
+            {[
+              { label: t('dashboard.goToFunnel'), link: '/app/funnels', icon: Filter, color: 'text-accent' },
+              { label: t('dashboard.goToRetention'), link: '/app/retention', icon: Users, color: 'text-sky-400' },
+              { label: t('dashboard.goToSegments'), link: '/app/segments', icon: BarChart2, color: 'text-violet-400' },
+              { label: t('dashboard.goToInsights'), link: '/app/insights', icon: Sparkles, color: 'text-amber-400' },
+            ].map((action) => (
+              <button
+                key={action.link}
+                onClick={() => navigate(action.link)}
+                className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors group text-left"
+              >
+                <action.icon size={16} className={action.color} />
+                <span className="text-sm text-slate-300 group-hover:text-white transition-colors flex-1">{action.label}</span>
+                <ChevronRight size={14} className="text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Data Quality Widget */}
+        {dataQualityReport && (
+          <div className="lg:col-span-2 bg-surface border border-white/[0.06] rounded-lg p-5">
+            <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+              <Shield size={14} className="text-accent" />
+              {t('dashboard.dataQuality')}
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <div className="text-xs text-slate-500 mb-1">{t('dashboard.totalRows')}</div>
+                <div className="text-lg font-bold font-mono text-white">{formatNum(dataQualityReport.totalRows)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">{t('dashboard.validRows')}</div>
+                <div className="text-lg font-bold font-mono text-accent">{formatNum(dataQualityReport.validRows)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">{t('dashboard.failedRows')}</div>
+                <div className={`text-lg font-bold font-mono ${dataQualityReport.failedRows > 0 ? 'text-coral' : 'text-white'}`}>{formatNum(dataQualityReport.failedRows)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-slate-500 mb-1">{t('dashboard.dateRange')}</div>
+                <div className="text-sm font-medium text-white">
+                  {dataQualityReport.minDate && dataQualityReport.maxDate
+                    ? `${new Date(dataQualityReport.minDate).toLocaleDateString()} — ${new Date(dataQualityReport.maxDate).toLocaleDateString()}`
+                    : 'N/A'}
+                </div>
+              </div>
+            </div>
+            {/* Health bar */}
+            <div>
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="text-xs text-slate-500">{t('dashboard.dataHealth')}</span>
+                <span className="text-xs font-bold text-accent font-mono">
+                  {dataQualityReport.totalRows > 0
+                    ? ((dataQualityReport.validRows / dataQualityReport.totalRows) * 100).toFixed(1)
+                    : 0}%
+                </span>
+              </div>
+              <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-accent to-teal-400 rounded-full transition-all duration-500"
+                  style={{ width: `${dataQualityReport.totalRows > 0 ? (dataQualityReport.validRows / dataQualityReport.totalRows) * 100 : 0}%` }}
+                />
+              </div>
+              {(dataQualityReport.platformMissingRate !== '0%' || dataQualityReport.channelMissingRate !== '0%') && (
+                <div className="flex gap-4 mt-3">
+                  <span className="text-xs text-slate-500 flex items-center gap-1">
+                    <AlertTriangle size={12} className="text-amber-500" />
+                    {t('dashboard.platformMissing')}: {dataQualityReport.platformMissingRate}
+                  </span>
+                  <span className="text-xs text-slate-500 flex items-center gap-1">
+                    <AlertTriangle size={12} className="text-amber-500" />
+                    {t('dashboard.channelMissing')}: {dataQualityReport.channelMissingRate}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Funnel Section */}

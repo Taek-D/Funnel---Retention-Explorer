@@ -137,7 +137,20 @@
     "count": "{{count}}개",
     "unknownData": "알 수 없는 데이터",
     "restoreSuccess": "분석 복원 완료",
-    "restoreDesc": "{{type}} 분석이 복원되었습니다."
+    "restoreDesc": "{{type}} 분석이 복원되었습니다.",
+    "dataQuality": "데이터 품질",
+    "totalRows": "전체 행",
+    "validRows": "유효 행",
+    "failedRows": "실패 행",
+    "dateRange": "날짜 범위",
+    "platformMissing": "플랫폼 누락",
+    "channelMissing": "채널 누락",
+    "dataHealth": "데이터 건강도",
+    "quickActions": "빠른 분석",
+    "goToFunnel": "퍼널 분석",
+    "goToRetention": "리텐션 분석",
+    "goToSegments": "세그먼트 비교",
+    "goToInsights": "AI 인사이트"
   },
   "dataImport": {
     "title": "데이터 업로드",

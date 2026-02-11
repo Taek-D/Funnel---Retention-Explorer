@@ -137,7 +137,20 @@
     "count": "{{count}}",
     "unknownData": "Unknown data",
     "restoreSuccess": "Analysis Restored",
-    "restoreDesc": "{{type}} analysis has been restored."
+    "restoreDesc": "{{type}} analysis has been restored.",
+    "dataQuality": "Data Quality",
+    "totalRows": "Total Rows",
+    "validRows": "Valid Rows",
+    "failedRows": "Failed Rows",
+    "dateRange": "Date Range",
+    "platformMissing": "Platform Missing",
+    "channelMissing": "Channel Missing",
+    "dataHealth": "Data Health",
+    "quickActions": "Quick Analysis",
+    "goToFunnel": "Funnel Analysis",
+    "goToRetention": "Retention Analysis",
+    "goToSegments": "Segment Comparison",
+    "goToInsights": "AI Insights"
   },
   "dataImport": {
     "title": "Data Upload",
