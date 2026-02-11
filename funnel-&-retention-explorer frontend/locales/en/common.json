@@ -237,5 +237,29 @@
     "ko": "한국어",
     "en": "English"
   },
-  "unknown": "Unknown error"
+  "unknown": "Unknown error",
+  "dataExport": {
+    "export": "Export",
+    "csv": "Download CSV",
+    "excel": "Download Excel",
+    "excelProOnly": "Excel export is available on the Pro plan.",
+    "exporting": "Exporting...",
+    "complete": "Download complete",
+    "noData": "No data to export",
+    "error": "Export failed",
+    "all": "All data",
+    "headers": {
+      "step": "Step",
+      "users": "Users",
+      "conversionRate": "Conversion Rate",
+      "dropOff": "Drop-off",
+      "cohort": "Cohort",
+      "cohortSize": "Cohort Size",
+      "segment": "Segment",
+      "type": "Type",
+      "population": "Population",
+      "uplift": "Uplift",
+      "pValue": "p-value"
+    }
+  }
 }

@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
+import { useDataExport } from '../hooks/useDataExport';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
+import { ExportDropdown } from '../components/ExportDropdown';
 
 export const RetentionAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -12,6 +14,7 @@ export const RetentionAnalysis: React.FC = () => {
     retentionResults, retentionType, uniqueEvents, detectedType, hasData,
     setRetentionType, runRetentionAnalysis
   } = useRetentionAnalysis();
+  const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
 
   const [cohortEvent, setCohortEvent] = useState('');
   const [selectedActiveEvents, setSelectedActiveEvents] = useState<string[]>([]);
@@ -70,6 +73,14 @@ export const RetentionAnalysis: React.FC = () => {
             {t('retention.desc')}
           </p>
         </div>
+        {retentionResults && retentionResults.length > 0 && (
+          <ExportDropdown
+            onCSV={() => exportCSV('retention')}
+            onExcel={() => exportExcel('retention')}
+            exporting={exporting}
+            isPro={isPro}
+          />
+        )}
       </div>
 
       {/* Retention Type Toggle (for subscription data) */}

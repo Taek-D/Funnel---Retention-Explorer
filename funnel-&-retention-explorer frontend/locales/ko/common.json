@@ -237,5 +237,29 @@
     "ko": "한국어",
     "en": "English"
   },
-  "unknown": "알 수 없는 오류"
+  "unknown": "알 수 없는 오류",
+  "dataExport": {
+    "export": "내보내기",
+    "csv": "CSV 다운로드",
+    "excel": "Excel 다운로드",
+    "excelProOnly": "Excel 내보내기는 Pro 요금제에서 사용할 수 있습니다.",
+    "exporting": "내보내는 중...",
+    "complete": "다운로드 완료",
+    "noData": "내보낼 데이터가 없습니다",
+    "error": "내보내기 실패",
+    "all": "전체 데이터",
+    "headers": {
+      "step": "단계",
+      "users": "사용자 수",
+      "conversionRate": "전환율",
+      "dropOff": "이탈 수",
+      "cohort": "코호트",
+      "cohortSize": "코호트 크기",
+      "segment": "세그먼트",
+      "type": "유형",
+      "population": "모수",
+      "uplift": "리프트",
+      "pValue": "p-value"
+    }
+  }
 }

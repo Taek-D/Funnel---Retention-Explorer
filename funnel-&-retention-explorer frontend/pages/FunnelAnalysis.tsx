@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
+import { useDataExport } from '../hooks/useDataExport';
 import { formatTime } from '../lib/formatters';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
+import { ExportDropdown } from '../components/ExportDropdown';
 
 export const FunnelAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -13,6 +15,7 @@ export const FunnelAnalysis: React.FC = () => {
     funnelSteps, funnelResults, uniqueEvents, detectedType, hasData,
     setFunnelSteps, applyTemplate, runFunnelAnalysis
   } = useFunnelAnalysis();
+  const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
 
   const [editorCollapsed, setEditorCollapsed] = useState(false);
 
@@ -59,6 +62,15 @@ export const FunnelAnalysis: React.FC = () => {
             {detectedType === 'ecommerce' ? t('funnel.ecommerce') : detectedType === 'subscription' ? t('funnel.subscription') : t('funnel.custom')} {t('funnel.desc')}
           </p>
         </div>
+        {hasResults && (
+          <ExportDropdown
+            onCSV={() => exportCSV('funnel')}
+            onExcel={() => exportExcel('funnel')}
+            disabled={!hasResults}
+            exporting={exporting}
+            isPro={isPro}
+          />
+        )}
       </div>
 
       {/* Editor Section (collapsible when results exist) */}

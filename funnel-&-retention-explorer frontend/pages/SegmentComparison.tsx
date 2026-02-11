@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Users } from '../components/Icons';
 import { useSegmentComparison } from '../hooks/useSegmentComparison';
+import { useDataExport } from '../hooks/useDataExport';
 import { ChartSkeleton } from '../components/ChartSkeleton';
+import { ExportDropdown } from '../components/ExportDropdown';
 
 export const SegmentComparison: React.FC = () => {
   const { t } = useTranslation('pages');
   const { segmentResults, availablePlatforms, availableChannels, hasData, hasFunnel, runComparison } = useSegmentComparison();
+  const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
 
@@ -33,9 +36,19 @@ export const SegmentComparison: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold text-white">{t('segments.title')}</h1>
-        <p className="text-slate-400 text-lg">{t('segments.desc')}</p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white">{t('segments.title')}</h1>
+          <p className="text-slate-400 text-lg">{t('segments.desc')}</p>
+        </div>
+        {segmentResults && segmentResults.length > 0 && (
+          <ExportDropdown
+            onCSV={() => exportCSV('segment')}
+            onExcel={() => exportExcel('segment')}
+            exporting={exporting}
+            isPro={isPro}
+          />
+        )}
       </div>
 
       {/* Controls */}

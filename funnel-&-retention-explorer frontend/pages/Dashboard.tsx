@@ -5,17 +5,20 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2 } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
+import { useDataExport } from '../hooks/useDataExport';
 import { useSavedAnalyses } from '../hooks/useSavedAnalyses';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 import { useToast } from '../components/Toast';
 import { ShareButton } from '../components/ShareButton';
+import { ExportDropdown } from '../components/ExportDropdown';
 import { CHART_COLORS } from '../lib/constants';
 import type { AppState } from '../types';
 
 export const Dashboard: React.FC = () => {
   const { t } = useTranslation('pages');
   const { state, dispatch } = useAppContext();
-  const { exportReport, exporting, isPro } = useExportReport();
+  const { exportReport, exporting: reportExporting, isPro } = useExportReport();
+  const { exportCSV, exportExcel, exporting: dataExporting, isPro: dataPro } = useDataExport();
   const { snapshots, removeSnapshot } = useSavedAnalyses();
   const { toast } = useToast();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
@@ -150,17 +153,23 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-6">
       {/* Export buttons */}
       <div className="flex justify-end gap-2">
+        <ExportDropdown
+          onCSV={() => { exportCSV('funnel'); exportCSV('retention'); exportCSV('segment'); }}
+          onExcel={() => exportExcel('all')}
+          exporting={dataExporting}
+          isPro={dataPro}
+        />
         <button
           onClick={() => exportReport('png')}
-          disabled={exporting}
+          disabled={reportExporting}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
         >
           <Download size={16} />
-          {exporting ? t('dashboard.exporting') : t('dashboard.exportPng')}
+          {reportExporting ? t('dashboard.exporting') : t('dashboard.exportPng')}
         </button>
         <button
           onClick={() => exportReport('pdf')}
-          disabled={exporting}
+          disabled={reportExporting}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
         >
           <Download size={16} />
