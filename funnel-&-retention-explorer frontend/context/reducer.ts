@@ -24,7 +24,8 @@ export const initialState: AppState = {
   dataQualityReport: null,
   recentFiles: [],
   uniqueEvents: [],
-  aiSummary: ''
+  aiSummary: '',
+  dashboardLayout: []
 };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -95,6 +96,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_AI_SUMMARY':
       return { ...state, aiSummary: action.payload };
+
+    case 'SET_DASHBOARD_LAYOUT':
+      return { ...state, dashboardLayout: action.payload };
 
     case 'RESET_ANALYSIS':
       return {

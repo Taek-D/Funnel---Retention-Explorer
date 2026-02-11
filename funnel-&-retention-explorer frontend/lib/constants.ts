@@ -1,4 +1,4 @@
-import type { FunnelTemplates } from '../types';
+import type { FunnelTemplates, WidgetId, WidgetWidth, WidgetLayout } from '../types';
 
 export const EVENT_PATTERNS = {
   ecommerce: [
@@ -44,6 +44,33 @@ export const PAID_RETENTION_MAX_COHORTS = 10;
 export const FULL_DATA_RETENTION_MAX_COHORTS = 7;
 export const INSIGHTS_RETENTION_MAX_DAYS = 14;
 export const RECENT_FILES_MAX_COUNT = 5;
+
+// === Dashboard Widget Registry ===
+
+export const DASHBOARD_WIDGETS: Record<WidgetId, {
+  labelKey: string;
+  icon: string;
+  defaultWidth: WidgetWidth;
+  minWidth: WidgetWidth;
+}> = {
+  'kpi-cards':        { labelKey: 'dashboard.widgets.kpiCards',       icon: 'BarChart2',  defaultWidth: 'full', minWidth: 'full' },
+  'funnel-chart':     { labelKey: 'dashboard.widgets.funnelChart',    icon: 'Filter',     defaultWidth: 'full', minWidth: 'half' },
+  'retention-chart':  { labelKey: 'dashboard.widgets.retentionChart', icon: 'Clock',      defaultWidth: 'full', minWidth: 'half' },
+  'data-quality':     { labelKey: 'dashboard.widgets.dataQuality',    icon: 'Shield',     defaultWidth: 'half', minWidth: 'half' },
+  'quick-actions':    { labelKey: 'dashboard.widgets.quickActions',   icon: 'Zap',        defaultWidth: 'half', minWidth: 'half' },
+  'recent-insights':  { labelKey: 'dashboard.widgets.recentInsights', icon: 'Sparkles',   defaultWidth: 'full', minWidth: 'half' },
+  'saved-analyses':   { labelKey: 'dashboard.widgets.savedAnalyses',  icon: 'Download',   defaultWidth: 'full', minWidth: 'half' },
+};
+
+export const DEFAULT_LAYOUT: WidgetLayout[] = [
+  { widgetId: 'kpi-cards',       visible: true, width: 'full', order: 0 },
+  { widgetId: 'funnel-chart',    visible: true, width: 'full', order: 1 },
+  { widgetId: 'retention-chart', visible: true, width: 'full', order: 2 },
+  { widgetId: 'data-quality',    visible: true, width: 'half', order: 3 },
+  { widgetId: 'quick-actions',   visible: true, width: 'half', order: 4 },
+  { widgetId: 'recent-insights', visible: true, width: 'full', order: 5 },
+  { widgetId: 'saved-analyses',  visible: true, width: 'full', order: 6 },
+];
 
 // === Chart Theme Tokens ===
 export const CHART_COLORS = {

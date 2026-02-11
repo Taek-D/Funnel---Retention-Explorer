@@ -383,3 +383,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 tasks completed (DE-1 ~ DE-6): `lib/exportUtils.ts` CSV 내보내기 유틸리티 (BOM+UTF-8, 한국어 Excel 호환, comma/quote/newline escaping), `lib/excelExport.ts` SheetJS xlsx dynamic import (multi-sheet workbook, cell formatting 0.0%/+0.0%), `hooks/useDataExport.ts` 내보내기 오케스트레이션 (CSV/Excel 타입 라우팅, Pro 게이팅, toast 피드백), `components/ExportDropdown.tsx` 드롭다운 UI (ARIA haspopup/expanded, click-outside close, PRO 배지), 4개 페이지 통합 (FunnelAnalysis, RetentionAnalysis, SegmentComparison, Dashboard quick-export-all), i18n 키 20+ (ko/en, dataExport.headers.* 11개 로컬라이즈 컬럼 헤더 포함). 12개 파일 변경 (4 신규, 8 수정, ~1,050 lines). 테스트 7/7 통과 (arrayToCSV BOM/escaping/edge cases). 7 PARTIAL 항목 모두 low-impact (3 positive simplification, 3 cosmetic filename, 1 improved key name). 11개 design 초과 개선 포함.
+
+---
+
+## dashboard-customization
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Dashboard Customization (Widget Visibility, Reorder, Resize, Persistence) |
+| **Match Rate** | 100% (92/92) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-11 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `dashboard-customization/dashboard-customization.plan.md` |
+| Design | `dashboard-customization/dashboard-customization.design.md` |
+| Analysis | `dashboard-customization/dashboard-customization.analysis.md` |
+| Report | `dashboard-customization/dashboard-customization.report.md` |
+
+### Summary
+
+7 tasks completed (DC-1 ~ DC-7): WidgetId/WidgetWidth/WidgetLayout 타입 + AppState 확장 + SET_DASHBOARD_LAYOUT 리듀서, DASHBOARD_WIDGETS 레지스트리 + DEFAULT_LAYOUT 상수, useDashboardLayout 훅 (show/hide, reorder, resize, resetToDefault + localStorage + Supabase 1s 디바운스 동기화), DashboardWidget 래퍼 컴포넌트 (3 렌더 모드: view/edit/hidden + HTML5 DnD), Dashboard.tsx 동적 레이아웃 리팩토링 (grid-cols-2 + Settings/Check 편집 모드), Supabase migration (dashboard_layout JSONB), i18n 15 키 (ko/en). 11개 파일 변경 (3 신규, 8 수정, ~2,401 lines). 테스트 223/223 통과. 9개 design 초과 개선 (StrictMode 가드, 디바운스 cleanup, localStorage 검증, minWidth UI 제약, onDragEnd 등).

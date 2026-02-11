@@ -150,7 +150,24 @@
     "goToFunnel": "퍼널 분석",
     "goToRetention": "리텐션 분석",
     "goToSegments": "세그먼트 비교",
-    "goToInsights": "AI 인사이트"
+    "goToInsights": "AI 인사이트",
+    "editLayout": "레이아웃 편집",
+    "editDone": "편집 완료",
+    "resetLayout": "기본 레이아웃으로 복원",
+    "resetConfirm": "기본 레이아웃으로 복원하시겠습니까?",
+    "widgets": {
+      "kpiCards": "KPI 카드",
+      "funnelChart": "퍼널 이탈 차트",
+      "retentionChart": "리텐션 곡선",
+      "dataQuality": "데이터 품질",
+      "quickActions": "빠른 분석",
+      "recentInsights": "최근 인사이트",
+      "savedAnalyses": "저장된 분석"
+    },
+    "widgetHidden": "숨겨진 위젯",
+    "dragToReorder": "드래그하여 순서 변경",
+    "widgetFullWidth": "전체 너비",
+    "widgetHalfWidth": "반 너비"
   },
   "dataImport": {
     "title": "데이터 업로드",

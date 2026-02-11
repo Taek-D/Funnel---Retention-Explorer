@@ -150,7 +150,24 @@
     "goToFunnel": "Funnel Analysis",
     "goToRetention": "Retention Analysis",
     "goToSegments": "Segment Comparison",
-    "goToInsights": "AI Insights"
+    "goToInsights": "AI Insights",
+    "editLayout": "Edit Layout",
+    "editDone": "Done Editing",
+    "resetLayout": "Reset to Default",
+    "resetConfirm": "Reset to default layout?",
+    "widgets": {
+      "kpiCards": "KPI Cards",
+      "funnelChart": "Funnel Drop-off Chart",
+      "retentionChart": "Retention Curve",
+      "dataQuality": "Data Quality",
+      "quickActions": "Quick Analysis",
+      "recentInsights": "Recent Insights",
+      "savedAnalyses": "Saved Analyses"
+    },
+    "widgetHidden": "Hidden Widgets",
+    "dragToReorder": "Drag to reorder",
+    "widgetFullWidth": "Full Width",
+    "widgetHalfWidth": "Half Width"
   },
   "dataImport": {
     "title": "Data Upload",

@@ -2,7 +2,7 @@ import type {
   RawRow, ProcessedEvent, ColumnMapping, DatasetType,
   FunnelStep, RetentionCohort, SegmentResult, Insight,
   SubscriptionKPIs, TrialAnalysis, ChurnAnalysis,
-  DataQualityReport, RecentFile, RetentionType
+  DataQualityReport, RecentFile, RetentionType, WidgetLayout
 } from '../types';
 
 export type AppAction =
@@ -25,4 +25,5 @@ export type AppAction =
   | { type: 'SET_DATA_QUALITY'; payload: DataQualityReport | null }
   | { type: 'SET_RECENT_FILES'; payload: RecentFile[] }
   | { type: 'SET_AI_SUMMARY'; payload: string }
+  | { type: 'SET_DASHBOARD_LAYOUT'; payload: WidgetLayout[] }
   | { type: 'RESET_ANALYSIS' };

@@ -1,3 +1,23 @@
+// ===== Dashboard Layout =====
+
+export type WidgetId =
+  | 'kpi-cards'
+  | 'funnel-chart'
+  | 'retention-chart'
+  | 'data-quality'
+  | 'quick-actions'
+  | 'recent-insights'
+  | 'saved-analyses';
+
+export type WidgetWidth = 'full' | 'half';
+
+export interface WidgetLayout {
+  widgetId: WidgetId;
+  visible: boolean;
+  width: WidgetWidth;
+  order: number;
+}
+
 // ===== Plan & Subscription =====
 
 export type PlanType = 'free' | 'pro' | 'team';
@@ -234,4 +254,5 @@ export interface AppState {
   recentFiles: RecentFile[];
   uniqueEvents: string[];
   aiSummary: string;
+  dashboardLayout: WidgetLayout[];
 }

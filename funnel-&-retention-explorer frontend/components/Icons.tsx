@@ -52,7 +52,10 @@ import {
   Check,
   Trash2,
   Loader2,
-  Globe
+  Globe,
+  RotateCcw,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 
 export {
@@ -109,5 +112,8 @@ export {
   Check,
   Trash2,
   Loader2,
-  Globe
+  Globe,
+  RotateCcw,
+  Maximize2,
+  Minimize2
 };
