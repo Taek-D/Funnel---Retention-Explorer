@@ -1,25 +1,17 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface MenuItem {
   path: string;
   icon: React.ElementType;
-  label: string;
+  labelKey: string;
   dataTour?: string;
 }
-
-const menuItems: MenuItem[] = [
-  { path: '/app/dashboard', icon: LayoutDashboard, label: '대시보드' },
-  { path: '/app/upload', icon: UploadCloud, label: '데이터 가져오기' },
-  { path: '/app/funnels', icon: Filter, label: '퍼널 분석', dataTour: 'analysis' },
-  { path: '/app/retention', icon: Users, label: '리텐션' },
-  { path: '/app/segments', icon: PieChart, label: '세그먼트' },
-  { path: '/app/insights', icon: BarChart2, label: 'AI 인사이트', dataTour: 'insights' },
-  { path: '/app/subscription', icon: CreditCard, label: '구독 관리' },
-];
 
 interface SidebarProps {
   mobileOpen?: boolean;
@@ -29,9 +21,20 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, hasData, onStartTour }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  const menuItems: MenuItem[] = [
+    { path: '/app/dashboard', icon: LayoutDashboard, labelKey: 'nav.dashboard' },
+    { path: '/app/upload', icon: UploadCloud, labelKey: 'nav.dataImport' },
+    { path: '/app/funnels', icon: Filter, labelKey: 'nav.funnel', dataTour: 'analysis' },
+    { path: '/app/retention', icon: Users, labelKey: 'nav.retention' },
+    { path: '/app/segments', icon: PieChart, labelKey: 'nav.segments' },
+    { path: '/app/insights', icon: BarChart2, labelKey: 'nav.aiInsights', dataTour: 'insights' },
+    { path: '/app/subscription', icon: CreditCard, labelKey: 'nav.subscription' },
+  ];
 
   const initial = user?.email ? user.email.charAt(0).toUpperCase() : 'G';
 
@@ -54,8 +57,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
         className="w-8 h-8 flex items-center justify-center rounded-md bg-accent/10 text-accent cursor-pointer hover:bg-accent/20 transition-colors"
         onClick={() => handleNav('/')}
         role="button"
-        aria-label="홈으로 이동"
-        title="홈"
+        aria-label={t('nav.home')}
+        title={t('nav.home')}
       >
         <Activity size={18} />
       </div>
@@ -72,9 +75,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
                   ? 'text-accent bg-accent/10'
                   : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
               }`}
-              aria-label={item.label}
+              aria-label={t(item.labelKey)}
               aria-current={isActive ? 'page' : undefined}
-              title={item.label}
+              title={t(item.labelKey)}
               {...(item.dataTour ? { 'data-tour': item.dataTour } : {})}
             >
               {/* Active indicator bar */}
@@ -84,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
               <item.icon size={18} />
               {/* Tooltip */}
               <span className="absolute left-full ml-3 px-2 py-1 text-[11px] font-medium text-white bg-elevated border border-white/[0.06] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 hidden md:block">
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </button>
           );
@@ -96,24 +99,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
           <button
             onClick={onStartTour}
             className="w-10 h-10 flex items-center justify-center rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors"
-            aria-label="시작 가이드"
-            title="시작 가이드"
+            aria-label={t('nav.startGuide')}
+            title={t('nav.startGuide')}
           >
             <HelpCircle size={18} />
           </button>
         )}
         <PlanBadge />
+        <LanguageSwitcher />
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"
           onClick={handleSignOut}
-          aria-label="로그아웃"
-          title="로그아웃"
+          aria-label={t('nav.logout')}
+          title={t('nav.logout')}
         >
           <LogOut size={16} />
         </button>
         <div
           className="w-7 h-7 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold"
-          title={user?.email || '게스트'}
+          title={user?.email || t('nav.guest')}
         >
           {initial}
         </div>
@@ -130,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="내비게이션 메뉴">
+        <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t('nav.navMenu')}>
           <div className="sidebar-overlay absolute inset-0" onClick={onCloseMobile} aria-hidden="true" />
           <aside className="absolute left-0 top-0 h-full w-16 flex flex-col items-center bg-background border-r border-white/[0.06] py-4 gap-6 animate-slide-in-left">
             {sidebarContent}

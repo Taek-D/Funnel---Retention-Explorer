@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from './Icons';
 import { useAuth } from '../context/AuthContext';
 
 export const PastDueBanner: React.FC = () => {
+  const { t } = useTranslation();
   const { userProfile } = useAuth();
   const navigate = useNavigate();
 
@@ -16,10 +18,10 @@ export const PastDueBanner: React.FC = () => {
       <div className="flex items-center gap-2.5 min-w-0">
         <AlertTriangle size={16} className="text-amber-400 shrink-0" />
         <p className="text-sm text-amber-200 truncate">
-          결제에 문제가 있습니다. 카드 정보를 확인해주세요.
+          {t('pastDue.message')}
           {userProfile.grace_period_end && (
             <span className="text-amber-400 ml-1">
-              {userProfile.grace_period_end}까지 Pro 기능 유지
+              {t('pastDue.gracePeriod', { date: userProfile.grace_period_end })}
             </span>
           )}
         </p>
@@ -28,7 +30,7 @@ export const PastDueBanner: React.FC = () => {
         onClick={() => navigate('/app/subscription')}
         className="shrink-0 text-xs font-medium text-amber-300 hover:text-amber-200 transition-colors whitespace-nowrap"
       >
-        구독 관리 &rarr;
+        {t('pastDue.action')} &rarr;
       </button>
     </div>
   );

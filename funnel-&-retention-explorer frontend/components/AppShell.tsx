@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
 import { Modal } from './Modal';
 import { UserMenu } from './UserMenu';
@@ -16,6 +17,7 @@ import { useOnboardingTour } from '../hooks/useOnboardingTour';
 import { useAppContext } from '../context/AppContext';
 
 export const AppShell: React.FC = () => {
+  const { t } = useTranslation();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -51,32 +53,32 @@ export const AppShell: React.FC = () => {
 
   const handleSaveEmailSettings = useCallback(() => {
     if (!settings.webhookUrl.trim()) {
-      toast('warning', '웹훅 URL을 입력해주세요');
+      toast('warning', t('email.webhookRequired'));
       return;
     }
     try {
       new URL(settings.webhookUrl);
     } catch {
-      toast('error', '유효한 URL을 입력해주세요');
+      toast('error', t('email.invalidUrl'));
       return;
     }
     saveSettings();
     setEmailModalOpen(false);
-    toast('success', '설정 저장 완료', '이메일 설정이 저장되었습니다.');
-  }, [settings.webhookUrl, saveSettings, toast]);
+    toast('success', t('email.settingsSaved'), t('email.settingsSavedDesc'));
+  }, [settings.webhookUrl, saveSettings, toast, t]);
 
   const handleTestConnection = useCallback(async () => {
     if (!settings.webhookUrl.trim()) {
-      toast('warning', '웹훅 URL을 먼저 입력해주세요');
+      toast('warning', t('email.webhookUrlFirst'));
       return;
     }
     const success = await testConnection();
     if (success) {
-      toast('success', '연결 성공', '웹훅 서버가 정상 응답했습니다.');
+      toast('success', t('email.connectionSuccess'), t('email.connectionSuccessDesc'));
     } else {
-      toast('error', '연결 실패', '웹훅 URL을 확인해주세요.');
+      toast('error', t('email.connectionFailed'), t('email.connectionFailedDesc'));
     }
-  }, [settings.webhookUrl, testConnection, toast]);
+  }, [settings.webhookUrl, testConnection, toast, t]);
 
   return (
     <div className="flex min-h-screen bg-background text-white font-sans selection:bg-accent/30 selection:text-white">
@@ -107,7 +109,7 @@ export const AppShell: React.FC = () => {
             <button
               onClick={() => setSearchOpen(true)}
               className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
-              title="검색 (Ctrl+K)"
+              title={t('search.shortcut')}
             >
               <Search size={16} />
             </button>
@@ -141,10 +143,10 @@ export const AppShell: React.FC = () => {
       <OnboardingTour {...tour} />
 
       {/* Email Settings Modal */}
-      <Modal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} title="이메일 설정">
+      <Modal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} title={t('email.settingsTitle')}>
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">n8n 웹훅 URL</label>
+            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">{t('email.webhookUrl')}</label>
             <input
               type="text"
               value={settings.webhookUrl}
@@ -152,12 +154,12 @@ export const AppShell: React.FC = () => {
               className="w-full bg-white/[0.03] border-b border-white/10 px-0 py-3 text-sm text-white focus:outline-none focus:border-accent transition-colors"
               placeholder="https://primary.n8n.cloud/webhook/..."
             />
-            <p className="text-[11px] text-slate-600">이벤트 발생 시 호출할 n8n 웹훅 주소를 입력하세요.</p>
+            <p className="text-[11px] text-slate-600">{t('email.webhookHint')}</p>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-              수신자 이메일 <span className="text-slate-600 font-normal normal-case">(쉼표로 구분)</span>
+              {t('email.recipientEmails')} <span className="text-slate-600 font-normal normal-case">({t('email.commaHint')})</span>
             </label>
             <textarea
               value={settings.recipientEmails}
@@ -173,8 +175,8 @@ export const AppShell: React.FC = () => {
                 <Mail size={18} />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-white">분석 시 자동 발송</span>
-                <span className="text-[11px] text-slate-500">데이터 집계 완료 후 즉시 리포트를 발송합니다.</span>
+                <span className="text-sm font-medium text-white">{t('email.autoSend')}</span>
+                <span className="text-[11px] text-slate-500">{t('email.autoSendDesc')}</span>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
@@ -194,19 +196,19 @@ export const AppShell: React.FC = () => {
               disabled={testing}
               className="px-4 py-2 text-sm font-medium text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-md transition-colors disabled:opacity-50"
             >
-              {testing ? '테스트 중...' : '연결 테스트'}
+              {testing ? t('email.testing') : t('email.testConnection')}
             </button>
             <button
               className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               onClick={() => setEmailModalOpen(false)}
             >
-              닫기
+              {t('email.close')}
             </button>
             <button
               onClick={handleSaveEmailSettings}
               className="px-5 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
             >
-              저장
+              {t('email.save')}
             </button>
           </div>
         </div>

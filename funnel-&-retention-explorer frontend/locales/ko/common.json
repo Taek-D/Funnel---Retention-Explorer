@@ -1,0 +1,241 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "dataImport": "데이터 가져오기",
+    "funnel": "퍼널 분석",
+    "retention": "리텐션",
+    "segments": "세그먼트",
+    "aiInsights": "AI 인사이트",
+    "subscription": "구독 관리",
+    "home": "홈으로 이동",
+    "startGuide": "시작 가이드",
+    "logout": "로그아웃",
+    "guest": "게스트",
+    "navMenu": "내비게이션 메뉴"
+  },
+  "search": {
+    "label": "검색",
+    "placeholder": "페이지, 인사이트, 이벤트 검색...",
+    "noResults": "검색 결과 없음: \"{{query}}\"",
+    "categoryPage": "페이지",
+    "categoryInsight": "인사이트",
+    "categoryEvent": "이벤트",
+    "eventType": "이벤트 유형",
+    "move": "이동",
+    "select": "선택",
+    "close": "닫기",
+    "shortcut": "검색 (Ctrl+K)"
+  },
+  "modal": {
+    "close": "닫기"
+  },
+  "toast": {
+    "closeAlert": "알림 닫기"
+  },
+  "error": {
+    "title": "오류가 발생했습니다",
+    "description": "예기치 않은 문제가 발생했습니다. 페이지를 새로고침하거나 아래 버튼을 눌러주세요.",
+    "retry": "다시 시도",
+    "reload": "페이지 새로고침"
+  },
+  "loading": "로딩 중...",
+  "plan": {
+    "pro": "Pro",
+    "free": "Free",
+    "upgrade": "업그레이드",
+    "upgradeTitle": "Pro로 업그레이드",
+    "recommended": "추천",
+    "monthly": "월간",
+    "annual": "연간",
+    "discount": "20% 할인",
+    "perMonth": "/월",
+    "perYear": "/년",
+    "processing": "처리 중...",
+    "proUpgrade": "Pro 업그레이드",
+    "loginRequired": "업그레이드하려면 먼저 로그인이 필요합니다.",
+    "billingCycle": "결제 주기 선택:",
+    "csvLimitReason": "CSV 업로드 행 수 제한({{limit}}행)에 도달했습니다.",
+    "aiLimitReason": "AI 인사이트 일일 호출 제한({{limit}}회)에 도달했습니다.",
+    "generalReason": "Pro 플랜으로 업그레이드하여 더 강력한 기능을 이용하세요.",
+    "csvRows": "CSV {{count}}행",
+    "aiCalls": "AI 인사이트 일 {{count}}회",
+    "projectOne": "프로젝트 1개",
+    "projectUnlimited": "프로젝트 무제한",
+    "funnelRetention": "퍼널 & 리텐션 분석",
+    "segmentCompare": "세그먼트 비교",
+    "pdfExport": "PDF 내보내기",
+    "prioritySupport": "우선 지원",
+    "proPlan": "Pro 플랜",
+    "freePlan": "Free 플랜"
+  },
+  "subscription": {
+    "title": "구독 상태",
+    "active": "활성",
+    "cancelled": "취소됨",
+    "pastDue": "결제 실패",
+    "none": "미구독",
+    "currentPlan": "현재 플랜",
+    "nextBilling": "다음 결제일",
+    "billingCycle": "결제 주기",
+    "billingAmount": "결제 금액",
+    "annualSub": "연간 구독",
+    "monthlySub": "월간 구독",
+    "changeBillingKey": "결제 수단 변경",
+    "switchToMonthly": "월간 전환",
+    "switchToAnnual": "연간 전환",
+    "cancelSubscription": "구독 취소",
+    "cancelling": "처리 중...",
+    "gracePeriod": "{{date}}까지 Pro 기능이 유지됩니다. 이후 Free 플랜으로 전환됩니다.",
+    "cancelledNotice": "구독이 취소되었습니다. {{date}}까지 Pro 기능을 이용할 수 있습니다.",
+    "manage": "구독 관리"
+  },
+  "billing": {
+    "history": "결제 내역",
+    "empty": "결제 내역이 없습니다.",
+    "date": "날짜",
+    "amount": "금액",
+    "status": "상태",
+    "orderId": "주문번호",
+    "success": "성공",
+    "failed": "실패",
+    "refunded": "환불"
+  },
+  "pastDue": {
+    "message": "결제에 문제가 있습니다. 카드 정보를 확인해주세요.",
+    "gracePeriod": "{{date}}까지 Pro 기능 유지",
+    "action": "구독 관리"
+  },
+  "share": {
+    "button": "공유",
+    "linkCopied": "링크 복사됨",
+    "linkCreated": "공유 링크 생성됨",
+    "copiedToClipboard": "클립보드에 복사되었습니다.",
+    "failed": "공유 실패",
+    "proOnly": "공유 리포트 URL은 Pro 요금제에서 사용할 수 있습니다.",
+    "creating": "생성 중...",
+    "copied": "복사됨",
+    "copyLink": "링크 복사"
+  },
+  "save": {
+    "button": "클라우드에 저장",
+    "saving": "저장 중...",
+    "saved": "저장됨",
+    "failed": "저장 실패"
+  },
+  "ai": {
+    "askLabel": "AI에게 질문",
+    "poweredBy": "Powered by Gemini 2.0 Flash",
+    "clearChat": "대화 초기화",
+    "noData": "질문을 시작하려면 데이터를 업로드하고 처리하세요.",
+    "emptyChat": "데이터 분석에 대해 무엇이든 질문하세요.",
+    "suggestion1": "내 데이터의 주요 트렌드는?",
+    "suggestion2": "전환율이 낮은 이유는?",
+    "suggestion3": "리텐션을 개선하려면?",
+    "suggestion4": "성과가 가장 좋은 세그먼트는?",
+    "placeholder": "데이터에 대해 질문하세요...",
+    "placeholderNoData": "먼저 데이터를 업로드하세요...",
+    "analysisComplete": "AI 분석 완료",
+    "analysisCompleteDesc": "대시보드에서 AI 요약을 확인하세요.",
+    "systemLang": "Always respond in Korean (한국어)."
+  },
+  "notification": {
+    "title": "알림",
+    "empty": "아직 알림이 없습니다",
+    "emptyDesc": "활동이 여기에 표시됩니다",
+    "emailSettings": "이메일 설정",
+    "deleteAll": "모두 삭제",
+    "analysis": "분석",
+    "import": "가져오기",
+    "ai": "AI",
+    "export": "내보내기",
+    "justNow": "방금 전",
+    "minutesAgo": "{{count}}분 전",
+    "hoursAgo": "{{count}}시간 전",
+    "daysAgo": "{{count}}일 전"
+  },
+  "onboarding": {
+    "skip": "건너뛰기",
+    "next": "다음",
+    "done": "완료",
+    "step1Title": "데이터 업로드",
+    "step1Desc": "CSV 파일을 업로드하거나 샘플 데이터를 로드하세요. 이커머스와 SaaS 샘플이 준비되어 있습니다.",
+    "step2Title": "분석 시작",
+    "step2Desc": "퍼널 분석, 리텐션 코호트, 세그먼트 비교 — 사이드바에서 원하는 분석을 선택하세요.",
+    "step3Title": "AI 인사이트",
+    "step3Desc": "Gemini AI가 데이터를 분석하여 실행 가능한 인사이트를 자동 생성합니다."
+  },
+  "email": {
+    "settingsTitle": "이메일 설정",
+    "webhookUrl": "n8n 웹훅 URL",
+    "webhookHint": "이벤트 발생 시 호출할 n8n 웹훅 주소를 입력하세요.",
+    "recipientEmails": "수신자 이메일",
+    "commaHint": "쉼표로 구분",
+    "autoSend": "분석 시 자동 발송",
+    "autoSendDesc": "데이터 집계 완료 후 즉시 리포트를 발송합니다.",
+    "testConnection": "연결 테스트",
+    "testing": "테스트 중...",
+    "save": "저장",
+    "close": "닫기",
+    "webhookRequired": "웹훅 URL을 입력해주세요",
+    "invalidUrl": "유효한 URL을 입력해주세요",
+    "settingsSaved": "설정 저장 완료",
+    "settingsSavedDesc": "이메일 설정이 저장되었습니다.",
+    "webhookUrlFirst": "웹훅 URL을 먼저 입력해주세요",
+    "connectionSuccess": "연결 성공",
+    "connectionSuccessDesc": "웹훅 서버가 정상 응답했습니다.",
+    "connectionFailed": "연결 실패",
+    "connectionFailedDesc": "웹훅 URL을 확인해주세요."
+  },
+  "header": {
+    "features": "기능",
+    "pricing": "요금제",
+    "faq": "FAQ",
+    "login": "로그인",
+    "getStarted": "시작하기"
+  },
+  "userMenu": {
+    "label": "사용자 메뉴",
+    "login": "로그인",
+    "freePlan": "무료 플랜",
+    "logout": "로그아웃"
+  },
+  "export": {
+    "noData": "데이터 없음",
+    "noDataDesc": "리포트를 생성하려면 먼저 데이터를 업로드하세요.",
+    "pdfProOnly": "PDF 리포트 내보내기는 Pro 요금제에서 사용할 수 있습니다.",
+    "generating": "리포트 생성 중...",
+    "generatingDesc": "{{format}} 파일을 다운로드합니다.",
+    "complete": "리포트 내보내기 완료",
+    "completeDesc": "{{format}} 파일이 다운로드되었습니다.",
+    "failed": "리포트 생성 실패"
+  },
+  "analysis": {
+    "minFunnelSteps": "최소 2개 이상의 퍼널 단계를 선택해주세요",
+    "funnelComplete": "퍼널 분석 완료",
+    "funnelCompleteDesc": "{{steps}}단계, 전환율 {{conversion}}%",
+    "selectSegment": "비교할 세그먼트를 최소 1개 선택해주세요",
+    "calculateFunnel": "먼저 퍼널을 계산해주세요",
+    "paidNoData": "Paid Retention 데이터 없음",
+    "paidNoDataDesc": "subscribe 이벤트가 필요합니다.",
+    "selectCohort": "코호트 이벤트를 선택해주세요",
+    "selectActive": "최소 1개 이상의 활성 이벤트를 선택해주세요"
+  },
+  "segment": {
+    "platformPrefix": "플랫폼",
+    "channelPrefix": "채널"
+  },
+  "time": {
+    "minutes": "{{count}}분",
+    "hours": "{{count}}시간",
+    "days": "{{count}}일"
+  },
+  "saved": {
+    "loadFailed": "불러오기 실패",
+    "deleteFailed": "삭제 실패"
+  },
+  "language": {
+    "ko": "한국어",
+    "en": "English"
+  },
+  "unknown": "알 수 없는 오류"
+}

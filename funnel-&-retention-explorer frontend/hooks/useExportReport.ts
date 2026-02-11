@@ -4,6 +4,7 @@ import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
 import { trackEvent } from '../lib/analytics';
+import i18n from '../lib/i18n';
 
 type ExportFormat = 'png' | 'pdf';
 
@@ -16,18 +17,18 @@ export function useExportReport() {
 
   const exportReport = useCallback(async (format: ExportFormat = 'png') => {
     if (state.processedData.length === 0) {
-      toast('warning', '데이터 없음', '리포트를 생성하려면 먼저 데이터를 업로드하세요.');
+      toast('warning', i18n.t('export.noData'), i18n.t('export.noDataDesc'));
       return;
     }
 
     if (format === 'pdf' && !isPro) {
-      openUpgradeModal('PDF 리포트 내보내기는 Pro 요금제에서 사용할 수 있습니다.');
+      openUpgradeModal(i18n.t('export.pdfProOnly'));
       return;
     }
 
     setExporting(true);
     const label = format === 'pdf' ? 'PDF' : 'PNG';
-    toast('info', '리포트 생성 중...', `${label} 파일을 다운로드합니다.`);
+    toast('info', i18n.t('export.generating'), i18n.t('export.generatingDesc', { format: label }));
 
     try {
       if (format === 'pdf') {
@@ -37,11 +38,11 @@ export function useExportReport() {
         const { exportReportAsPNG } = await import('../lib/reportEngine');
         await exportReportAsPNG(state, isPro);
       }
-      toast('success', '리포트 내보내기 완료');
+      toast('success', i18n.t('export.complete'));
       trackEvent('report_export', { format });
-      addNotification('export', '리포트 내보내기 완료', `${label} 파일이 다운로드되었습니다.`);
+      addNotification('export', i18n.t('export.complete'), i18n.t('export.completeDesc', { format: label }));
     } catch (err) {
-      toast('error', '리포트 생성 실패', err instanceof Error ? err.message : '알 수 없는 오류');
+      toast('error', i18n.t('export.failed'), err instanceof Error ? err.message : i18n.t('unknown'));
     } finally {
       setExporting(false);
     }

@@ -1,10 +1,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LogOut } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { useClickOutside } from '../hooks/useClickOutside';
 
 export const UserMenu: React.FC = () => {
+  const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -18,7 +20,7 @@ export const UserMenu: React.FC = () => {
         onClick={() => navigate('/login')}
         className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
       >
-        로그인
+        {t('userMenu.login')}
       </button>
     );
   }
@@ -37,7 +39,7 @@ export const UserMenu: React.FC = () => {
         className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[11px] font-mono font-semibold border border-accent/20 hover:bg-accent/20 transition-colors"
         aria-expanded={open}
         aria-haspopup="true"
-        aria-label="사용자 메뉴"
+        aria-label={t('userMenu.label')}
         title={user.email || ''}
       >
         {initial}
@@ -50,7 +52,7 @@ export const UserMenu: React.FC = () => {
       >
         <div className="px-4 py-3 border-b border-white/5">
           <p className="text-sm font-medium text-white truncate">{user.email}</p>
-          <p className="text-xs text-slate-500">무료 플랜</p>
+          <p className="text-xs text-slate-500">{t('userMenu.freePlan')}</p>
         </div>
         <div className="py-1">
           <button
@@ -58,7 +60,7 @@ export const UserMenu: React.FC = () => {
             className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/5 transition-colors"
           >
             <LogOut size={16} />
-            로그아웃
+            {t('userMenu.logout')}
           </button>
         </div>
       </div>

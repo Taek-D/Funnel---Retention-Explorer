@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles } from '../components/Icons';
 import { useCSVUpload } from '../hooks/useCSVUpload';
 import { useColumnMapping } from '../hooks/useColumnMapping';
@@ -9,21 +10,22 @@ import { formatDateTime } from '../lib/formatters';
 import type { ColumnMapping } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
 
-const MAPPING_FIELDS: { key: keyof ColumnMapping; label: string; required: boolean }[] = [
-  { key: 'timestamp', label: '타임스탬프', required: true },
-  { key: 'userid', label: '사용자 ID', required: true },
-  { key: 'eventname', label: '이벤트명', required: true },
-  { key: 'sessionid', label: '세션 ID', required: false },
-  { key: 'platform', label: '플랫폼', required: false },
-  { key: 'channel', label: '채널', required: false },
+const MAPPING_FIELDS: { key: keyof ColumnMapping; labelKey: string; required: boolean }[] = [
+  { key: 'timestamp', labelKey: 'dataImport.colTimestamp', required: true },
+  { key: 'userid', labelKey: 'dataImport.colUserId', required: true },
+  { key: 'eventname', labelKey: 'dataImport.colEventName', required: true },
+  { key: 'sessionid', labelKey: 'dataImport.colSessionId', required: false },
+  { key: 'platform', labelKey: 'dataImport.colPlatform', required: false },
+  { key: 'channel', labelKey: 'dataImport.colChannel', required: false },
 ];
 
-const SAMPLE_OPTIONS: { type: SampleDataType; icon: React.ElementType; label: string; desc: string; rows: string; users: string }[] = [
-  { type: 'ecommerce', icon: ShoppingBag, label: '이커머스', desc: 'page_view → purchase 퍼널', rows: '~1,800행', users: '300명' },
-  { type: 'saas', icon: Briefcase, label: 'SaaS', desc: 'signup → subscription 퍼널', rows: '~1,600행', users: '200명' },
+const SAMPLE_OPTIONS: { type: SampleDataType; icon: React.ElementType; labelKey: string; descKey: string; rowsKey: string; usersKey: string }[] = [
+  { type: 'ecommerce', icon: ShoppingBag, labelKey: 'dataImport.ecommerce', descKey: 'dataImport.sampleEcomDesc', rowsKey: 'dataImport.sampleEcomRows', usersKey: 'dataImport.sampleEcomUsers' },
+  { type: 'saas', icon: Briefcase, labelKey: 'dataImport.saas', descKey: 'dataImport.sampleSaasDesc', rowsKey: 'dataImport.sampleSaasRows', usersKey: 'dataImport.sampleSaasUsers' },
 ];
 
 export const DataImport: React.FC = () => {
+  const { t } = useTranslation('pages');
   const { state, dispatch } = useAppContext();
   const { handleFileUpload, confirmMapping, loadSampleData, isProcessing, processingProgress, processingMessage } = useCSVUpload();
   const { mapping, updateMapping, headers } = useColumnMapping();
@@ -74,8 +76,8 @@ export const DataImport: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-end justify-between pb-2 border-b border-white/5 pb-6">
         <div>
-          <h1 className="text-white text-3xl font-bold tracking-tight mb-2">데이터 업로드</h1>
-          <p className="text-slate-400 text-sm">리텐션 분석을 위해 데이터를 업로드하고 매핑하세요.</p>
+          <h1 className="text-white text-3xl font-bold tracking-tight mb-2">{t('dataImport.title')}</h1>
+          <p className="text-slate-400 text-sm">{t('dataImport.desc')}</p>
         </div>
       </div>
 
@@ -84,7 +86,7 @@ export const DataImport: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col gap-6">
           <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-8 relative overflow-hidden group">
             <div className="flex items-center justify-between">
-              <h2 className="text-white text-xl font-bold">파일 업로드</h2>
+              <h2 className="text-white text-xl font-bold">{t('dataImport.fileUpload')}</h2>
               <span className={`px-3 py-1 rounded-full text-xs font-bold border tracking-wide uppercase ${
                 currentStep === 3 ? 'bg-accent/20 text-accent border-accent/30' : 'bg-accent/10 text-accent border-accent/20'
               }`}>
@@ -103,7 +105,7 @@ export const DataImport: React.FC = () => {
 
               {hasData && (
                 <div className="absolute top-4 left-4 text-accent flex items-center gap-1.5 bg-accent/10 px-2 py-1 rounded border border-accent/20">
-                  <CheckCircle size={14} /> <span className="text-xs font-bold">로드 완료</span>
+                  <CheckCircle size={14} /> <span className="text-xs font-bold">{t('dataImport.loaded')}</span>
                 </div>
               )}
 
@@ -118,8 +120,8 @@ export const DataImport: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <p className="text-white font-semibold text-lg">CSV 파일을 여기에 드롭하거나 클릭하여 업로드</p>
-                    <p className="text-slate-400 text-sm mt-1">.csv 파일 (헤더 행 포함) 지원</p>
+                    <p className="text-white font-semibold text-lg">{t('dataImport.dropzone')}</p>
+                    <p className="text-slate-400 text-sm mt-1">{t('dataImport.csvHint')}</p>
                   </>
                 )}
               </div>
@@ -147,11 +149,11 @@ export const DataImport: React.FC = () => {
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4" data-tour="upload-sample">
               <div className="flex items-center gap-2">
                 <Sparkles size={18} className="text-accent" />
-                <h3 className="text-white font-bold">샘플 데이터로 체험하기</h3>
+                <h3 className="text-white font-bold">{t('dataImport.sampleTitle')}</h3>
               </div>
-              <p className="text-slate-400 text-sm">CSV 파일이 없나요? 샘플 데이터로 바로 분석을 체험해보세요.</p>
+              <p className="text-slate-400 text-sm">{t('dataImport.sampleDesc')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {SAMPLE_OPTIONS.map(({ type, icon: Icon, label, desc, rows, users }) => (
+                {SAMPLE_OPTIONS.map(({ type, icon: Icon, labelKey, descKey, rowsKey, usersKey }) => (
                   <button
                     key={type}
                     onClick={() => loadSampleData(type)}
@@ -162,9 +164,9 @@ export const DataImport: React.FC = () => {
                       <Icon size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-white font-semibold text-sm">{label}</h4>
-                      <p className="text-slate-500 text-xs mt-0.5">{desc}</p>
-                      <p className="text-slate-600 text-[10px] font-mono mt-1">{rows} · {users} 사용자</p>
+                      <h4 className="text-white font-semibold text-sm">{t(labelKey)}</h4>
+                      <p className="text-slate-500 text-xs mt-0.5">{t(descKey)}</p>
+                      <p className="text-slate-600 text-[10px] font-mono mt-1">{t(rowsKey)} · {t(usersKey)} {t('dataImport.users')}</p>
                     </div>
                   </button>
                 ))}
@@ -176,14 +178,14 @@ export const DataImport: React.FC = () => {
           {hasData && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col gap-6">
               <div className="flex items-center gap-2 text-white mb-2">
-                <h3 className="font-bold text-lg">컬럼 매핑</h3>
+                <h3 className="font-bold text-lg">{t('dataImport.columnMapping')}</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {MAPPING_FIELDS.map(({ key, label, required }) => (
+                {MAPPING_FIELDS.map(({ key, labelKey, required }) => (
                   <div key={key} className="flex flex-col gap-2">
                     <label className="text-slate-400 text-xs uppercase font-bold tracking-wider pl-1">
-                      {label} {required && <span className="text-red-400">*</span>}
+                      {t(labelKey)} {required && <span className="text-red-400">*</span>}
                     </label>
                     <div className="relative">
                       <select
@@ -191,7 +193,7 @@ export const DataImport: React.FC = () => {
                         value={mapping[key] || ''}
                         onChange={(e) => updateMapping(key, e.target.value)}
                       >
-                        <option value="">컬럼 선택...</option>
+                        <option value="">{t('dataImport.selectColumn')}</option>
                         {headers.map(h => <option key={h} value={h}>{h}</option>)}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
@@ -205,7 +207,7 @@ export const DataImport: React.FC = () => {
               <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 flex items-start gap-3">
                 <Zap size={16} className="text-accent mt-0.5" />
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  컬럼명 + 값 분석을 통해 컬럼의 <span className="text-white font-bold font-mono">{autoMappedPct}%</span>를 자동 매핑했습니다.
+                  {t('dataImport.autoDetectHint')} <span className="text-white font-bold font-mono">{autoMappedPct}%</span> {t('dataImport.autoDetected')}
                 </p>
               </div>
 
@@ -235,10 +237,10 @@ export const DataImport: React.FC = () => {
               {state.dataQualityReport && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: '전체 행', value: state.dataQualityReport.totalRows.toLocaleString() },
-                    { label: '유효 행', value: `${state.dataQualityReport.validRows.toLocaleString()} (${state.dataQualityReport.failedRows} 실패)` },
-                    { label: '고유 사용자', value: state.dataQualityReport.uniqueUsers.toLocaleString() },
-                    { label: '날짜 범위', value: state.dataQualityReport.minDate && state.dataQualityReport.maxDate
+                    { label: t('dataImport.totalRows'), value: state.dataQualityReport.totalRows.toLocaleString() },
+                    { label: t('dataImport.validRows'), value: `${state.dataQualityReport.validRows.toLocaleString()} (${state.dataQualityReport.failedRows} ${t('dataImport.failed')})` },
+                    { label: t('dataImport.uniqueUsers'), value: state.dataQualityReport.uniqueUsers.toLocaleString() },
+                    { label: t('dataImport.dateRange'), value: state.dataQualityReport.minDate && state.dataQualityReport.maxDate
                       ? `${state.dataQualityReport.minDate.toLocaleDateString()} ~ ${state.dataQualityReport.maxDate.toLocaleDateString()}`
                       : 'N/A' },
                   ].map((item, i) => (
@@ -256,7 +258,7 @@ export const DataImport: React.FC = () => {
                   disabled={isProcessing}
                   className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50"
                 >
-                  매핑 확인 <ArrowRight size={16} />
+                  {t('dataImport.confirmMapping')} <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -271,9 +273,9 @@ export const DataImport: React.FC = () => {
                     <CheckCircle size={24} />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-lg">데이터 처리 완료</h3>
+                    <h3 className="text-white font-bold text-lg">{t('dataImport.processComplete')}</h3>
                     <p className="text-slate-400 text-sm">
-                      <span className="font-mono text-accent">{state.processedData.length.toLocaleString()}</span>개 이벤트가 처리되었습니다
+                      {t('dataImport.eventsProcessed', { count: state.processedData.length.toLocaleString() })}
                     </p>
                   </div>
                 </div>
@@ -281,7 +283,7 @@ export const DataImport: React.FC = () => {
                   Step 3/3
                 </span>
               </div>
-              <p className="text-slate-400 text-sm">퍼널 분석, 리텐션, 세그먼트 탭에서 분석을 시작할 수 있습니다.</p>
+              <p className="text-slate-400 text-sm">{t('dataImport.analyzeHint')}</p>
             </div>
           )}
         </div>
@@ -290,14 +292,14 @@ export const DataImport: React.FC = () => {
         <div className="lg:col-span-5 flex flex-col gap-6">
           <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-white font-bold text-lg">최근 파일</h3>
+              <h3 className="text-white font-bold text-lg">{t('dataImport.recentFiles')}</h3>
             </div>
             <div className="flex flex-col gap-3">
               {recentFiles.length === 0 ? (
                 <div className="flex flex-col items-center py-8 text-center">
                   <FileText size={32} className="text-slate-700 mb-2" />
-                  <p className="text-slate-500 text-sm">아직 열어본 파일이 없습니다.</p>
-                  <p className="text-slate-600 text-xs mt-1">CSV 파일을 업로드하면 여기에 표시됩니다.</p>
+                  <p className="text-slate-500 text-sm">{t('dataImport.noRecentFiles')}</p>
+                  <p className="text-slate-600 text-xs mt-1">{t('dataImport.recentFilesHint')}</p>
                 </div>
               ) : (
                 recentFiles.map((file, i) => (
@@ -310,7 +312,7 @@ export const DataImport: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-white truncate">{file.fileName}</p>
-                      <p className="text-xs text-slate-400">{formatDateTime(file.lastOpened)}{file.rowCount ? ` · ${file.rowCount.toLocaleString()}행` : ''}</p>
+                      <p className="text-xs text-slate-400">{formatDateTime(file.lastOpened)}{file.rowCount ? ` · ${file.rowCount.toLocaleString()} ${t('dataImport.rows')}` : ''}</p>
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRemoveRecent(i); }}
@@ -327,7 +329,7 @@ export const DataImport: React.FC = () => {
           {/* Top Events (after data quality report) */}
           {state.dataQualityReport && state.dataQualityReport.topEvents.length > 0 && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
-              <h3 className="text-white font-bold text-lg">상위 이벤트</h3>
+              <h3 className="text-white font-bold text-lg">{t('dataImport.topEvents')}</h3>
               <div className="space-y-2">
                 {state.dataQualityReport.topEvents.slice(0, 8).map((evt, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
@@ -343,9 +345,9 @@ export const DataImport: React.FC = () => {
           {/* Detected Type Badge */}
           {state.detectedType && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center gap-3">
-              <p className="text-slate-400 text-xs uppercase font-bold">감지된 데이터 유형</p>
+              <p className="text-slate-400 text-xs uppercase font-bold">{t('dataImport.detectedType')}</p>
               <span className="px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-bold border border-accent/20">
-                {state.detectedType === 'ecommerce' ? '이커머스 (E-commerce)' : '구독 서비스 (Subscription)'}
+                {state.detectedType === 'ecommerce' ? t('dataImport.ecommerceType') : t('dataImport.subscriptionType')}
               </span>
             </div>
           )}

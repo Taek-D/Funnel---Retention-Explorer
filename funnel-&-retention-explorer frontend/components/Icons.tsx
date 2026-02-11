@@ -51,7 +51,8 @@ import {
   Copy,
   Check,
   Trash2,
-  Loader2
+  Loader2,
+  Globe
 } from 'lucide-react';
 
 export {
@@ -107,5 +108,6 @@ export {
   Copy,
   Check,
   Trash2,
-  Loader2
+  Loader2,
+  Globe
 };

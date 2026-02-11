@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
@@ -6,6 +7,7 @@ import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 
 export const RetentionAnalysis: React.FC = () => {
+  const { t } = useTranslation('pages');
   const {
     retentionResults, retentionType, uniqueEvents, detectedType, hasData,
     setRetentionType, runRetentionAnalysis
@@ -18,8 +20,8 @@ export const RetentionAnalysis: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Users size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
-        <p className="text-slate-400">리텐션 분석을 시작하려면 데이터 가져오기 탭에서 CSV 파일을 업로드하세요.</p>
+        <h2 className="text-xl font-bold text-white mb-2">{t('retention.noData')}</h2>
+        <p className="text-slate-400">{t('retention.noDataDesc')}</p>
       </div>
     );
   }
@@ -61,11 +63,11 @@ export const RetentionAnalysis: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider mb-2">
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse-subtle"></span>
-            코호트 분석
+            {t('retention.subtitle')}
           </div>
-          <h1 className="text-3xl font-bold text-white">리텐션 분석</h1>
+          <h1 className="text-3xl font-bold text-white">{t('retention.title')}</h1>
           <p className="text-slate-400 text-sm max-w-xl mt-1">
-            코호트 히트맵으로 시간에 따른 사용자 참여를 분석합니다.
+            {t('retention.desc')}
           </p>
         </div>
       </div>
@@ -77,13 +79,13 @@ export const RetentionAnalysis: React.FC = () => {
             onClick={() => setRetentionType('activity')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!isPaid ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}
           >
-            활동 리텐션
+            {t('retention.activityRetention')}
           </button>
           <button
             onClick={() => setRetentionType('paid')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${isPaid ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'}`}
           >
-            유료 전환 유지
+            {t('retention.paidConversion')}
           </button>
         </div>
       )}
@@ -93,18 +95,18 @@ export const RetentionAnalysis: React.FC = () => {
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">코호트 이벤트</label>
+              <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">{t('retention.cohortEvent')}</label>
               <select
                 className="w-full bg-background border border-white/10 text-white text-sm rounded-lg p-3"
                 value={cohortEvent}
                 onChange={e => setCohortEvent(e.target.value)}
               >
-                <option value="">이벤트 선택...</option>
+                <option value="">{t('retention.selectEvent')}</option>
                 {uniqueEvents.map(e => <option key={e} value={e}>{e}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">활성 이벤트 (다중 선택)</label>
+              <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">{t('retention.activeEvents')}</label>
               <div className="flex flex-wrap gap-2 max-h-[100px] overflow-y-auto p-2 bg-background border border-white/10 rounded-lg">
                 {uniqueEvents.map(e => (
                   <button
@@ -124,7 +126,7 @@ export const RetentionAnalysis: React.FC = () => {
             onClick={handleCalculate}
             className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
           >
-            리텐션 계산
+            {t('retention.calculate')}
           </button>
         </div>
       )}
@@ -135,14 +137,14 @@ export const RetentionAnalysis: React.FC = () => {
           onClick={() => runRetentionAnalysis('', [])}
           className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
         >
-          유료 전환 유지 계산
+          {t('retention.calculatePaid')}
         </button>
       )}
 
       {/* Pre-calculation placeholder */}
       {!retentionResults && hasData && (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">리텐션 결과가 여기에 표시됩니다</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">{t('retention.emptyHint')}</h3>
           <ChartSkeleton variant="table" />
         </div>
       )}
@@ -181,9 +183,9 @@ export const RetentionAnalysis: React.FC = () => {
               <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
                 <tr>
                   <th className="px-6 py-4 min-w-[140px] sticky left-0 bg-surface">
-                    {isPaid ? '구독 날짜' : '코호트 날짜'}
+                    {isPaid ? t('retention.subscriptionDate') : t('retention.cohortDate')}
                   </th>
-                  <th className="px-4 py-4 text-center">규모</th>
+                  <th className="px-4 py-4 text-center">{t('retention.size')}</th>
                   {dayColumns.map(day => (
                     <th key={day} className="px-2 py-4 text-center min-w-[60px]">{day}</th>
                   ))}
@@ -224,8 +226,8 @@ export const RetentionAnalysis: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-accent/10 rounded-lg text-accent"><TrendingUp size={20} /></div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">평균 리텐션 곡선</h3>
-                  <p className="text-xs text-slate-400">전체 코호트의 평균 리텐션율</p>
+                  <h3 className="text-lg font-bold text-white">{t('retention.avgCurve')}</h3>
+                  <p className="text-xs text-slate-400">{t('retention.avgCurveDesc')}</p>
                 </div>
               </div>
             </div>
@@ -243,7 +245,7 @@ export const RetentionAnalysis: React.FC = () => {
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} domain={[0, 100]} />
                   <Tooltip
                     contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                    formatter={(value: number) => [`${value}%`, '리텐션']}
+                    formatter={(value: number) => [`${value}%`, t('retention.retentionLabel')]}
                   />
                   <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fill="url(#curveGradient)" />
                 </AreaChart>

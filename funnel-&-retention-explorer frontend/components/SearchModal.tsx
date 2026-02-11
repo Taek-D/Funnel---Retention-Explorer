@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Search, X, LayoutDashboard, Filter, Users, UploadCloud, PieChart, BarChart2, Zap } from './Icons';
 import { useAppContext } from '../context/AppContext';
 
@@ -12,20 +13,22 @@ interface SearchResult {
   icon?: React.ElementType;
 }
 
-const pageItems: SearchResult[] = [
-  { id: 'p-dashboard', category: 'page', title: '대시보드', subtitle: '대시보드 & KPI', path: '/app/dashboard', icon: LayoutDashboard },
-  { id: 'p-upload', category: 'page', title: '데이터 가져오기', subtitle: 'CSV 데이터 업로드', path: '/app/upload', icon: UploadCloud },
-  { id: 'p-funnels', category: 'page', title: '퍼널 분석', subtitle: '퍼널 설정 및 분석', path: '/app/funnels', icon: Filter },
-  { id: 'p-retention', category: 'page', title: '리텐션', subtitle: '코호트 리텐션 분석', path: '/app/retention', icon: Users },
-  { id: 'p-segments', category: 'page', title: '세그먼트', subtitle: '세그먼트 비교', path: '/app/segments', icon: PieChart },
-  { id: 'p-insights', category: 'page', title: 'AI 인사이트', subtitle: 'AI 기반 분석', path: '/app/insights', icon: BarChart2 },
-];
+interface PageItemDef {
+  id: string;
+  titleKey: string;
+  subtitleKey: string;
+  path: string;
+  icon: React.ElementType;
+}
 
-const categoryLabels: Record<string, string> = {
-  page: '페이지',
-  insight: '인사이트',
-  event: '이벤트',
-};
+const pageItemDefs: PageItemDef[] = [
+  { id: 'p-dashboard', titleKey: 'nav.dashboard', subtitleKey: 'pages:dashboard.title', path: '/app/dashboard', icon: LayoutDashboard },
+  { id: 'p-upload', titleKey: 'nav.dataImport', subtitleKey: 'pages:dataImport.title', path: '/app/upload', icon: UploadCloud },
+  { id: 'p-funnels', titleKey: 'nav.funnel', subtitleKey: 'pages:funnel.title', path: '/app/funnels', icon: Filter },
+  { id: 'p-retention', titleKey: 'nav.retention', subtitleKey: 'pages:retention.title', path: '/app/retention', icon: Users },
+  { id: 'p-segments', titleKey: 'nav.segments', subtitleKey: 'pages:segments.title', path: '/app/segments', icon: PieChart },
+  { id: 'p-insights', titleKey: 'nav.aiInsights', subtitleKey: 'pages:insights.title', path: '/app/insights', icon: BarChart2 },
+];
 
 interface SearchModalProps {
   open: boolean;
@@ -33,12 +36,29 @@ interface SearchModalProps {
 }
 
 export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { state } = useAppContext();
+
+  const pageItems: SearchResult[] = useMemo(() =>
+    pageItemDefs.map(d => ({
+      id: d.id,
+      category: 'page' as const,
+      title: t(d.titleKey),
+      subtitle: t(d.subtitleKey),
+      path: d.path,
+      icon: d.icon,
+    })), [t]);
+
+  const categoryLabels: Record<string, string> = useMemo(() => ({
+    page: t('search.categoryPage'),
+    insight: t('search.categoryInsight'),
+    event: t('search.categoryEvent'),
+  }), [t]);
 
   // Build dynamic results
   const allResults = useMemo(() => {
@@ -61,13 +81,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
         id: `e-${i}`,
         category: 'event',
         title: event,
-        subtitle: '이벤트 유형',
+        subtitle: t('search.eventType'),
         path: '/app/funnels',
       });
     });
 
     return results;
-  }, [state.insights, state.uniqueEvents]);
+  }, [state.insights, state.uniqueEvents, pageItems, t]);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return pageItems;
@@ -135,7 +155,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
   let itemIndex = -1;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150" onClick={onClose} role="dialog" aria-modal="true" aria-label="검색">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150" onClick={onClose} role="dialog" aria-modal="true" aria-label={t('search.label')}>
       <div
         className="bg-surface border border-white/[0.06] rounded-xl w-full max-w-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
@@ -150,8 +170,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             className="flex-1 bg-transparent text-white text-sm placeholder-slate-500 focus:outline-none"
-            aria-label="페이지, 인사이트, 이벤트 검색"
-            placeholder="페이지, 인사이트, 이벤트 검색..."
+            aria-label={t('search.placeholder')}
+            placeholder={t('search.placeholder')}
           />
           <kbd className="hidden md:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-slate-600 bg-white/[0.03] border border-white/[0.06] rounded font-mono">
             ESC
@@ -163,7 +183,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <Search size={32} className="text-slate-700 mb-3" />
-              <p className="text-slate-500 text-sm">검색 결과 없음: &quot;{query}&quot;</p>
+              <p className="text-slate-500 text-sm">{t('search.noResults', { query })}</p>
             </div>
           ) : (
             Object.entries(grouped).map(([category, items]) => (
@@ -208,9 +228,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
 
         {/* Footer hint */}
         <div className="flex items-center gap-4 px-4 py-2 border-t border-white/[0.06] text-[10px] text-slate-600">
-          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">↑↓</kbd> 이동</span>
-          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">↵</kbd> 선택</span>
-          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">esc</kbd> 닫기</span>
+          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">↑↓</kbd> {t('search.move')}</span>
+          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">↵</kbd> {t('search.select')}</span>
+          <span className="flex items-center gap-1"><kbd className="px-1 py-0.5 bg-white/[0.03] border border-white/[0.06] rounded font-mono">esc</kbd> {t('search.close')}</span>
         </div>
       </div>
     </div>

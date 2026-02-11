@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { OnboardingTourAPI } from '../hooks/useOnboardingTour';
 
 interface TargetRect {
@@ -60,6 +61,7 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
   nextStep,
   skipTour,
 }) => {
+  const { t } = useTranslation();
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
 
   const updateRect = useCallback(() => {
@@ -128,13 +130,13 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
                 onClick={skipTour}
                 className="text-slate-500 text-xs hover:text-white transition-colors"
               >
-                건너뛰기
+                {t('onboarding.skip')}
               </button>
               <button
                 onClick={nextStep}
                 className="px-4 py-1.5 bg-accent text-background text-xs font-semibold rounded-md hover:bg-accent/90 transition-colors"
               >
-                {isLastStep ? '완료' : '다음'}
+                {isLastStep ? t('onboarding.done') : t('onboarding.next')}
               </button>
             </div>
           </div>
@@ -152,10 +154,10 @@ export const OnboardingTour: React.FC<OnboardingTourAPI> = ({
             <p className="text-slate-400 text-xs leading-relaxed mb-4">{step.description}</p>
             <div className="flex justify-between items-center">
               <button onClick={skipTour} className="text-slate-500 text-xs hover:text-white transition-colors">
-                건너뛰기
+                {t('onboarding.skip')}
               </button>
               <button onClick={nextStep} className="px-4 py-1.5 bg-accent text-background text-xs font-semibold rounded-md hover:bg-accent/90 transition-colors">
-                {isLastStep ? '완료' : '다음'}
+                {isLastStep ? t('onboarding.done') : t('onboarding.next')}
               </button>
             </div>
           </div>

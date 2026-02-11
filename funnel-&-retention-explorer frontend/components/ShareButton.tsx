@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Share2, Check, Copy, Loader2 } from './Icons';
 import { usePlanGate } from '../hooks/usePlanGate';
 import { useToast } from './Toast';
@@ -9,6 +10,7 @@ type ShareButtonProps = {
 };
 
 export const ShareButton: React.FC<ShareButtonProps> = ({ snapshotId, existingToken }) => {
+  const { t } = useTranslation();
   const { isPro, openUpgradeModal } = usePlanGate();
   const { toast } = useToast();
   const [sharing, setSharing] = useState(false);
@@ -19,14 +21,14 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ snapshotId, existingTo
 
   const handleShare = async () => {
     if (!isPro) {
-      openUpgradeModal('공유 리포트 URL은 Pro 요금제에서 사용할 수 있습니다.');
+      openUpgradeModal(t('share.proOnly'));
       return;
     }
 
     if (shareUrl) {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast('success', '링크 복사됨');
+      toast('success', t('share.linkCopied'));
       setTimeout(() => setCopied(false), 2000);
       return;
     }
@@ -39,10 +41,10 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ snapshotId, existingTo
       setShareUrl(url);
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast('success', '공유 링크 생성됨', '클립보드에 복사되었습니다.');
+      toast('success', t('share.linkCreated'), t('share.copiedToClipboard'));
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      toast('error', '공유 실패', err instanceof Error ? err.message : '알 수 없는 오류');
+      toast('error', t('share.failed'), err instanceof Error ? err.message : t('unknown'));
     } finally {
       setSharing(false);
     }
@@ -63,7 +65,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ snapshotId, existingTo
       ) : (
         <Share2 size={14} />
       )}
-      {sharing ? '생성 중...' : copied ? '복사됨' : shareUrl ? '링크 복사' : '공유'}
+      {sharing ? t('share.creating') : copied ? t('share.copied') : shareUrl ? t('share.copyLink') : t('share.button')}
       {!isPro && <span className="text-xs bg-amber-500/20 text-amber-400 px-1 py-0.5 rounded-full">Pro</span>}
     </button>
   );

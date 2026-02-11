@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, CheckCircle, Zap } from './Icons';
 import { trackEvent } from '../lib/analytics';
 import { useAuth } from '../context/AuthContext';
@@ -21,34 +22,35 @@ interface UpgradeModalProps {
   reason: string;
 }
 
-const REASON_MESSAGES: Record<string, string> = {
-  csv_limit: `CSV 업로드 행 수 제한(${PLAN_LIMITS.free.csvRows.toLocaleString()}행)에 도달했습니다.`,
-  ai_limit: `AI 인사이트 일일 호출 제한(${PLAN_LIMITS.free.aiCallsPerDay}회)에 도달했습니다.`,
-  general: 'Pro 플랜으로 업그레이드하여 더 강력한 기능을 이용하세요.',
-};
-
-const FREE_FEATURES = [
-  `CSV ${PLAN_LIMITS.free.csvRows.toLocaleString()}행`,
-  `AI 인사이트 일 ${PLAN_LIMITS.free.aiCallsPerDay}회`,
-  '프로젝트 1개',
-  '퍼널 & 리텐션 분석',
-];
-
-const PRO_FEATURES = [
-  `CSV ${PLAN_LIMITS.pro.csvRows.toLocaleString()}행`,
-  `AI 인사이트 일 ${PLAN_LIMITS.pro.aiCallsPerDay}회`,
-  '프로젝트 무제한',
-  '세그먼트 비교',
-  'PDF 내보내기',
-  '우선 지원',
-];
-
 const annualPerMonth = Math.round(BILLING_PRICES.annual / 12);
 
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, reason }) => {
+  const { t } = useTranslation();
   const { user, userProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+
+  const REASON_MESSAGES: Record<string, string> = {
+    csv_limit: t('plan.csvLimitReason', { limit: PLAN_LIMITS.free.csvRows.toLocaleString() }),
+    ai_limit: t('plan.aiLimitReason', { limit: PLAN_LIMITS.free.aiCallsPerDay }),
+    general: t('plan.generalReason'),
+  };
+
+  const FREE_FEATURES = [
+    t('plan.csvRows', { count: PLAN_LIMITS.free.csvRows.toLocaleString() }),
+    t('plan.aiCalls', { count: PLAN_LIMITS.free.aiCallsPerDay }),
+    t('plan.projectOne'),
+    t('plan.funnelRetention'),
+  ];
+
+  const PRO_FEATURES = [
+    t('plan.csvRows', { count: PLAN_LIMITS.pro.csvRows.toLocaleString() }),
+    t('plan.aiCalls', { count: PLAN_LIMITS.pro.aiCallsPerDay }),
+    t('plan.projectUnlimited'),
+    t('plan.segmentCompare'),
+    t('plan.pdfExport'),
+    t('plan.prioritySupport'),
+  ];
 
   useEffect(() => {
     if (isOpen) {
@@ -86,7 +88,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
         <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
             <Zap size={20} className="text-accent" />
-            <h2 className="text-lg font-bold text-white">Pro로 업그레이드</h2>
+            <h2 className="text-lg font-bold text-white">{t('plan.upgradeTitle')}</h2>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
             <X size={20} />
@@ -103,7 +105,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
           <div className="grid grid-cols-2 gap-4 mb-6">
             {/* Free */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-slate-400 mb-3">Free</h3>
+              <h3 className="text-sm font-semibold text-slate-400 mb-3">{t('plan.free')}</h3>
               <ul className="space-y-2">
                 {FREE_FEATURES.map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs text-slate-500">
@@ -117,9 +119,9 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
             {/* Pro */}
             <div className="bg-accent/5 border border-accent/20 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm font-semibold text-accent">Pro</h3>
+                <h3 className="text-sm font-semibold text-accent">{t('plan.pro')}</h3>
                 <span className="text-[10px] font-mono font-semibold uppercase tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-full">
-                  추천
+                  {t('plan.recommended')}
                 </span>
               </div>
               <ul className="space-y-2">
@@ -135,29 +137,29 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
 
           {/* Billing Cycle Selection */}
           <div className="mb-4 space-y-2">
-            <p className="text-xs text-slate-400 font-medium mb-2">결제 주기 선택:</p>
+            <p className="text-xs text-slate-400 font-medium mb-2">{t('plan.billingCycle')}</p>
             <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${billingCycle === 'monthly' ? 'border-accent/30 bg-accent/5' : 'border-white/[0.06] hover:border-white/10'}`}>
               <input type="radio" name="cycle" checked={billingCycle === 'monthly'} onChange={() => setBillingCycle('monthly')} className="accent-accent" />
               <div className="flex-1">
-                <span className="text-sm text-white font-medium">월간</span>
-                <span className="text-xs text-slate-400 ml-2">₩{BILLING_PRICES.monthly.toLocaleString()}/월</span>
+                <span className="text-sm text-white font-medium">{t('plan.monthly')}</span>
+                <span className="text-xs text-slate-400 ml-2">₩{BILLING_PRICES.monthly.toLocaleString()}{t('plan.perMonth')}</span>
               </div>
             </label>
             <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${billingCycle === 'annual' ? 'border-accent/30 bg-accent/5' : 'border-white/[0.06] hover:border-white/10'}`}>
               <input type="radio" name="cycle" checked={billingCycle === 'annual'} onChange={() => setBillingCycle('annual')} className="accent-accent" />
               <div className="flex-1">
-                <span className="text-sm text-white font-medium">연간</span>
-                <span className="text-xs text-slate-400 ml-2">₩{annualPerMonth.toLocaleString()}/월</span>
-                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded-full">20% 할인</span>
+                <span className="text-sm text-white font-medium">{t('plan.annual')}</span>
+                <span className="text-xs text-slate-400 ml-2">₩{annualPerMonth.toLocaleString()}{t('plan.perMonth')}</span>
+                <span className="ml-2 px-1.5 py-0.5 text-[10px] font-semibold bg-accent/10 text-accent rounded-full">{t('plan.discount')}</span>
               </div>
-              <span className="text-[10px] text-slate-500">₩{BILLING_PRICES.annual.toLocaleString()}/년</span>
+              <span className="text-[10px] text-slate-500">₩{BILLING_PRICES.annual.toLocaleString()}{t('plan.perYear')}</span>
             </label>
           </div>
 
           {/* Price & CTA */}
           <div className="text-center mb-4">
             <span className="text-3xl font-mono font-bold text-white">₩{displayPrice.toLocaleString()}</span>
-            <span className="text-slate-400 text-sm ml-1">/월</span>
+            <span className="text-slate-400 text-sm ml-1">{t('plan.perMonth')}</span>
           </div>
 
           <button
@@ -165,12 +167,12 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
             disabled={isLoading || !userProfile?.toss_customer_key}
             className="w-full py-3 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? '처리 중...' : 'Pro 업그레이드'}
+            {isLoading ? t('plan.processing') : t('plan.proUpgrade')}
           </button>
 
           {!user && (
             <p className="text-slate-500 text-xs text-center mt-3">
-              업그레이드하려면 먼저 로그인이 필요합니다.
+              {t('plan.loginRequired')}
             </p>
           )}
         </div>

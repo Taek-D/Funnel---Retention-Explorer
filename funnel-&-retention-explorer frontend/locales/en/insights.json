@@ -1,0 +1,137 @@
+{
+  "funnel": {
+    "maxDropoff": {
+      "title": "Maximum Drop-off Point Found",
+      "body": "The biggest drop-off occurs at the \"{{step}}\" step. Conversion rate is {{rate}}%, with {{dropOff}} users dropping off at this step.",
+      "rec1": "Simplify the user experience at this step",
+      "rec2": "Add a progress indicator to encourage completion",
+      "rec3": "Consider A/B testing different flows"
+    }
+  },
+  "segment": {
+    "platformGap": {
+      "title": "Platform Performance Gap Found",
+      "body": "{{worst}} has a {{gap}}%p lower conversion rate than {{best}}.",
+      "metric": "{{gap}}%p gap",
+      "rec1": "Investigate bugs or UX issues per platform",
+      "rec2": "Test the flow on the underperforming platform",
+      "rec3": "Consider platform-specific optimizations"
+    },
+    "channelGap": {
+      "title": "Large Channel Performance Variance Found",
+      "body": "{{best}} outperforms {{worst}} by {{gap}}%p.",
+      "metric": "{{gap}}%p difference",
+      "rec1": "Increase investment in top-performing channels",
+      "rec2": "Analyze user quality differences across channels",
+      "rec3": "Review landing page experience per channel"
+    },
+    "bestSegment": {
+      "title": "Best Performing Segment",
+      "body": "{{name}} shows strong performance with a {{rate}}% conversion rate.",
+      "rec1": "Analyze what makes this segment successful",
+      "rec2": "Apply learnings to other segments",
+      "rec3": "Increase investment in similar audience profiles"
+    }
+  },
+  "retention": {
+    "lowD1": {
+      "title": "Low D1 Retention Warning",
+      "body": "D1 retention is only {{rate}}%, which is below the healthy threshold of 25%.",
+      "rec1": "Improve onboarding to quickly demonstrate value",
+      "rec2": "Send personalized D1 engagement notifications",
+      "rec3": "Implement quick wins or achievements in the first session"
+    },
+    "steepestDrop": {
+      "title": "Steepest Retention Drop Identified",
+      "body": "The steepest retention drop ({{drop}}%p) occurs between Day {{dayFrom}} and Day {{dayTo}}.",
+      "rec1": "Start an engagement campaign on Day {{dayFrom}}",
+      "rec2": "Introduce new content or features at this point",
+      "rec3": "Survey users who dropped off"
+    }
+  },
+  "subscription": {
+    "trialConversion": {
+      "title": "Trial → Subscription Conversion Needs Improvement",
+      "body": "Only {{rate}}% of trial users convert to paid subscriptions (n={{count}}).",
+      "rec1": "Encourage core feature usage during trial",
+      "rec2": "Offer reminders and benefits before trial ends",
+      "rec3": "Improve onboarding flow for faster value delivery"
+    },
+    "slowConversion": {
+      "title": "Subscription Decision Delay",
+      "body": "Median time from trial start to subscription is {{days}} days.",
+      "metric": "{{days}} days",
+      "rec1": "Test shorter trial periods (7 days vs 14 days)",
+      "rec2": "Offer early conversion incentives",
+      "rec3": "Add value proof points during trial"
+    },
+    "paymentFailure": {
+      "title": "High Payment Failure Rate",
+      "body": "{{rate}}% of payment attempts failed ({{count}} attempts).",
+      "rec1": "Send payment method update reminders",
+      "rec2": "Support diverse payment methods",
+      "rec3": "Implement immediate retry logic on payment failure"
+    },
+    "highChurn": {
+      "title": "High Paid Subscription Churn Rate",
+      "body": "{{rate}}% of paid users have churned ({{count}} users).",
+      "rec1": "Identify and intervene with at-risk users",
+      "rec2": "Analyze churn reasons and respond accordingly",
+      "rec3": "Offer loyalty programs or long-term discounts"
+    },
+    "cancelReason": {
+      "title": "Top Cancellation Reason: {{reason}}",
+      "body": "{{share}}% of churned users cited \"{{reason}}\" as their reason.",
+      "rec1": "Conduct in-depth interviews on cancellation reasons",
+      "rec2": "Test win-back offers",
+      "rec3": "Derive and apply service improvements"
+    },
+    "lowD7Paid": {
+      "title": "Low D7 Paid Subscription Retention",
+      "body": "7-day retention after subscription is {{rate}}%, below the 70% target.",
+      "rec1": "Strengthen post-subscription onboarding",
+      "rec2": "Set first-week usage goals and guidance",
+      "rec3": "Provide early success experiences"
+    },
+    "lowD30Paid": {
+      "title": "D30 Paid Subscription Retention Warning",
+      "body": "30-day retention after subscription is {{rate}}%.",
+      "rec1": "Send regular value-delivery content",
+      "rec2": "Intervene when usage frequency drops",
+      "rec3": "Activate community or social features"
+    }
+  },
+  "processing": {
+    "readingFile": "Reading file...",
+    "parsingCSV": "Parsing CSV...",
+    "autoDetectComplete": "Column auto-detection complete",
+    "done": "Done!",
+    "processingData": "Processing data...",
+    "detectingEvents": "Detecting events...",
+    "detectingType": "Detecting data type...",
+    "analyzingSubscription": "Analyzing subscriptions...",
+    "generatingInsights": "Generating insights...",
+    "autoMappingComplete": "Column auto-mapping complete",
+    "generatingSample": "Generating sample data..."
+  },
+  "toast": {
+    "csvOnly": "Please upload a CSV file",
+    "csvParseError": "CSV Parse Error",
+    "unknownError": "Unknown error",
+    "requiredColumns": "Required columns not mapped",
+    "requiredColumnsDesc": "Timestamp, User ID, and Event Name columns are required.",
+    "processComplete": "Data Processing Complete",
+    "detectedType": "Detected data type: {{type}}",
+    "processCompleteDesc": "Navigate to other pages to analyze.",
+    "importComplete": "Data Import Complete",
+    "importStats": "{{events}} events, {{users}} users",
+    "sampleLoadComplete": "Sample Data Loaded",
+    "sampleLoadDesc": "{{type}} sample data has been loaded.",
+    "sampleLoadFailed": "Sample Data Load Failed"
+  },
+  "dataType": {
+    "ecommerce": "E-commerce",
+    "subscription": "Subscription",
+    "saas": "SaaS"
+  }
+}

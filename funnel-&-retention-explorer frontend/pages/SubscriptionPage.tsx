@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { cancelSubscription, fetchBillingHistory, switchPlan, BILLING_PRICES } from '../lib/planManager';
 import type { BillingRecord } from '../lib/planManager';
@@ -19,6 +20,7 @@ declare const TossPayments: (clientKey: string) => {
 };
 
 export const SubscriptionPage: React.FC = () => {
+  const { t } = useTranslation('pages');
   const { user, session, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [billingHistory, setBillingHistory] = useState<BillingRecord[]>([]);
@@ -101,7 +103,7 @@ export const SubscriptionPage: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold text-white">구독 관리</h2>
+      <h2 className="text-2xl font-bold text-white">{t('subscriptionPage.title')}</h2>
 
       {cancelResult && (
         <div className="p-3 bg-accent/5 border border-accent/10 rounded-md text-sm text-accent">
@@ -123,16 +125,16 @@ export const SubscriptionPage: React.FC = () => {
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 text-center">
               <div className="flex items-center justify-center gap-2 mb-3">
                 <Zap size={20} className="text-accent" />
-                <h3 className="text-lg font-semibold text-white">Pro 플랜</h3>
+                <h3 className="text-lg font-semibold text-white">{t('subscriptionPage.proTitle')}</h3>
               </div>
               <p className="text-sm text-slate-400 mb-4">
-                Pro 플랜으로 업그레이드하면 CSV 50만 행, AI 하루 50회, 무제한 프로젝트를 이용할 수 있습니다.
+                {t('subscriptionPage.proDesc')}
               </p>
               <button
                 onClick={() => navigate('/pricing')}
                 className="px-6 py-2.5 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
               >
-                Pro 업그레이드
+                {t('subscriptionPage.proUpgrade')}
               </button>
             </div>
           )}
@@ -141,24 +143,23 @@ export const SubscriptionPage: React.FC = () => {
         </>
       ) : (
         <div className="text-center py-12 text-slate-500">
-          로그인 후 이용할 수 있습니다.
+          {t('subscriptionPage.loginRequired')}
         </div>
       )}
 
-      {/* 구독 취소 확인 모달 */}
+      {/* Cancel subscription confirmation modal */}
       <Modal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
-        title="구독 취소"
+        title={t('subscriptionPage.cancelTitle')}
       >
         <div className="space-y-4">
           <p className="text-sm text-slate-300">
-            정말 구독을 취소하시겠습니까?
+            {t('subscriptionPage.cancelConfirm')}
           </p>
           <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-md">
             <p className="text-sm text-amber-300">
-              다음 결제일({userProfile?.next_billing_date ?? '-'})까지 Pro 기능을 계속 이용할 수 있습니다.
-              이후 Free 플랜으로 자동 전환됩니다.
+              {t('subscriptionPage.cancelDesc', { date: userProfile?.next_billing_date ?? '-' })}
             </p>
           </div>
           <div className="flex justify-end gap-3 pt-2">
@@ -166,42 +167,42 @@ export const SubscriptionPage: React.FC = () => {
               onClick={() => setShowCancelModal(false)}
               className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
             >
-              취소
+              {t('subscriptionPage.cancel')}
             </button>
             <button
               onClick={handleCancel}
               disabled={cancelling}
               className="px-4 py-2 text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-md transition-colors disabled:opacity-50"
             >
-              {cancelling ? '처리 중...' : '구독 취소 확인'}
+              {cancelling ? t('subscriptionPage.cancelling') : t('subscriptionPage.cancelConfirmButton')}
             </button>
           </div>
         </div>
       </Modal>
 
-      {/* 플랜 전환 확인 모달 */}
+      {/* Plan switch confirmation modal */}
       <Modal
         isOpen={showSwitchModal}
         onClose={() => setShowSwitchModal(false)}
-        title={userProfile?.billing_cycle === 'monthly' ? '연간 구독으로 전환' : '월간 구독으로 전환'}
+        title={userProfile?.billing_cycle === 'monthly' ? t('subscriptionPage.switchToAnnual') : t('subscriptionPage.switchToMonthly')}
       >
         <div className="space-y-4">
           {userProfile?.billing_cycle === 'monthly' ? (
             <>
               <p className="text-sm text-slate-300">
-                연간 구독으로 전환하시겠습니까? 남은 월간 기간의 크레딧이 차감되어 차액만 결제됩니다.
+                {t('subscriptionPage.switchAnnualDesc')}
               </p>
               <div className="p-3 bg-accent/5 border border-accent/10 rounded-md text-sm text-accent">
-                연간 결제: ₩{BILLING_PRICES.annual.toLocaleString()}/년 (₩{Math.round(BILLING_PRICES.annual / 12).toLocaleString()}/월, 20% 할인)
+                {t('pricing.annualBilling')}: ₩{BILLING_PRICES.annual.toLocaleString()}/{t('pricing.annual')} (₩{Math.round(BILLING_PRICES.annual / 12).toLocaleString()}/{t('pricing.monthly')}, 20% off)
               </div>
             </>
           ) : (
             <>
               <p className="text-sm text-slate-300">
-                월간 구독으로 전환하시겠습니까? 다음 갱신일부터 월간 금액(₩{BILLING_PRICES.monthly.toLocaleString()}/월)으로 적용됩니다.
+                {t('subscriptionPage.switchMonthlyDesc', { price: BILLING_PRICES.monthly.toLocaleString() })}
               </p>
               <div className="p-3 bg-amber-500/5 border border-amber-500/10 rounded-md text-sm text-amber-300">
-                현재 결제 기간({userProfile?.next_billing_date ?? '-'})까지는 연간 구독이 유지됩니다.
+                {t('subscriptionPage.switchMonthlyNote', { date: userProfile?.next_billing_date ?? '-' })}
               </div>
             </>
           )}
@@ -210,14 +211,14 @@ export const SubscriptionPage: React.FC = () => {
               onClick={() => setShowSwitchModal(false)}
               className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
             >
-              취소
+              {t('subscriptionPage.cancel')}
             </button>
             <button
               onClick={handleSwitchPlan}
               disabled={switching}
               className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors disabled:opacity-50"
             >
-              {switching ? '처리 중...' : '전환 확인'}
+              {switching ? t('subscriptionPage.cancelling') : t('subscriptionPage.switchConfirm')}
             </button>
           </div>
         </div>

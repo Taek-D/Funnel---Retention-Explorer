@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X } from './Icons';
 
 interface ModalProps {
@@ -9,6 +10,7 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
       >
         <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
           <h2 id={titleId} className="text-lg font-bold text-white">{title}</h2>
-          <button onClick={handleClose} className="text-slate-400 hover:text-white transition-colors" aria-label="닫기">
+          <button onClick={handleClose} className="text-slate-400 hover:text-white transition-colors" aria-label={t('modal.close')}>
             <X size={20} />
           </button>
         </div>

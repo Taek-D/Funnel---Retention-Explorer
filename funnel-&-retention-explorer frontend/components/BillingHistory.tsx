@@ -1,15 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { BillingRecord } from '../lib/planManager';
 
 interface BillingHistoryProps {
   records: BillingRecord[];
 }
-
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  success: { label: '성공', color: 'bg-emerald-500/10 text-emerald-400' },
-  failed: { label: '실패', color: 'bg-red-500/10 text-red-400' },
-  refunded: { label: '환불', color: 'bg-slate-500/10 text-slate-400' },
-};
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -23,21 +18,29 @@ function formatAmount(amount: number): string {
 }
 
 export const BillingHistory: React.FC<BillingHistoryProps> = ({ records }) => {
+  const { t } = useTranslation();
+
+  const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+    success: { label: t('billing.success'), color: 'bg-emerald-500/10 text-emerald-400' },
+    failed: { label: t('billing.failed'), color: 'bg-red-500/10 text-red-400' },
+    refunded: { label: t('billing.refunded'), color: 'bg-slate-500/10 text-slate-400' },
+  };
+
   return (
     <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-white mb-4">결제 내역</h3>
+      <h3 className="text-lg font-semibold text-white mb-4">{t('billing.history')}</h3>
 
       {records.length === 0 ? (
-        <p className="text-sm text-slate-500 text-center py-8">결제 내역이 없습니다.</p>
+        <p className="text-sm text-slate-500 text-center py-8">{t('billing.empty')}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-slate-500 text-xs uppercase tracking-wider border-b border-white/[0.06]">
-                <th className="text-left py-3 pr-4 font-medium">날짜</th>
-                <th className="text-right py-3 px-4 font-medium">금액</th>
-                <th className="text-center py-3 px-4 font-medium">상태</th>
-                <th className="text-left py-3 pl-4 font-medium">주문번호</th>
+                <th className="text-left py-3 pr-4 font-medium">{t('billing.date')}</th>
+                <th className="text-right py-3 px-4 font-medium">{t('billing.amount')}</th>
+                <th className="text-center py-3 px-4 font-medium">{t('billing.status')}</th>
+                <th className="text-left py-3 pl-4 font-medium">{t('billing.orderId')}</th>
               </tr>
             </thead>
             <tbody>

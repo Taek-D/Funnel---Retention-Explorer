@@ -4,12 +4,15 @@ import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
 import { trackEvent } from '../lib/analytics';
 import type { GeminiMessage } from '../lib/geminiClient';
+import i18n from '../lib/i18n';
 
-const SYSTEM_INSTRUCTION = `You are an expert data analyst for FRE Analytics, a SaaS analytics platform.
+function getSystemInstruction(): string {
+  return `You are an expert data analyst for FRE Analytics, a SaaS analytics platform.
 Your job is to provide actionable insights based on funnel, retention, and segment analysis data.
 Always be concise and data-driven. Format your response with clear headings and bullet points.
 If the data seems insufficient, explain what additional data would help.
-Always respond in Korean (한국어).`;
+${i18n.t('ai.systemLang')}`;
+}
 
 export function useAIInsights() {
   const { state, dispatch } = useAppContext();
@@ -54,14 +57,14 @@ export function useAIInsights() {
 
     const prompt = `${dataContext}\n\nBased on this data, provide a comprehensive analysis summary with:\n1. Key findings (top 3-5 observations)\n2. Areas of concern\n3. Recommended actions\n4. What additional data would help deepen the analysis`;
 
-    const result = await generateContent(prompt, SYSTEM_INSTRUCTION);
+    const result = await generateContent(prompt, getSystemInstruction());
 
     if (result.error) {
       setAiError(result.error);
     } else {
       dispatch({ type: 'SET_AI_SUMMARY', payload: result.text });
       trackEvent('ai_insight_request');
-      addNotification('ai', 'AI 분석 완료', '대시보드에서 AI 요약을 확인하세요.');
+      addNotification('ai', i18n.t('ai.analysisComplete'), i18n.t('ai.analysisCompleteDesc'));
     }
 
     setAiLoading(false);
@@ -96,7 +99,7 @@ export function useAIInsights() {
 
     const fullPrompt = `${dataContext}\n\nUser question: ${question}`;
 
-    const result = await generateContent(fullPrompt, SYSTEM_INSTRUCTION, chatHistory);
+    const result = await generateContent(fullPrompt, getSystemInstruction(), chatHistory);
 
     if (result.error) {
       setChatMessages(prev => [...prev, { role: 'assistant', text: `Error: ${result.error}` }]);

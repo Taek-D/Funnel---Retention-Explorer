@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { compareSegments } from '../lib/segmentEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
+import i18n from '../lib/i18n';
 
 export function useSegmentComparison() {
   const { state, dispatch } = useAppContext();
@@ -18,12 +19,12 @@ export function useSegmentComparison() {
 
   const runComparison = useCallback((platforms: string[], channels: string[]) => {
     if (platforms.length === 0 && channels.length === 0) {
-      toast('warning', '비교할 세그먼트를 최소 1개 선택해주세요');
+      toast('warning', i18n.t('analysis.selectSegment'));
       return;
     }
 
     if (!state.funnelSteps || state.funnelSteps.length === 0) {
-      toast('warning', '먼저 퍼널을 계산해주세요');
+      toast('warning', i18n.t('analysis.calculateFunnel'));
       return;
     }
 

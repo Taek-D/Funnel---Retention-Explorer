@@ -1,24 +1,8 @@
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bell, Settings, X } from './Icons';
 import { useNotifications, type NotificationType } from '../context/NotificationContext';
 import { useClickOutside } from '../hooks/useClickOutside';
-
-const typeLabels: Record<NotificationType, { label: string; color: string }> = {
-  analysis: { label: '분석', color: 'text-accent bg-accent/10' },
-  import: { label: '가져오기', color: 'text-sky-400 bg-sky-400/10' },
-  ai: { label: 'AI', color: 'text-amber bg-amber/10' },
-  export: { label: '내보내기', color: 'text-coral bg-coral/10' },
-};
-
-function timeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (seconds < 60) return '방금 전';
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  return `${Math.floor(hours / 24)}일 전`;
-}
 
 interface NotificationPanelProps {
   open: boolean;
@@ -35,8 +19,26 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   onOpenEmailSettings,
   unreadCount,
 }) => {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const { notifications, markAllAsRead, clearAll } = useNotifications();
+
+  const typeLabels: Record<NotificationType, { label: string; color: string }> = {
+    analysis: { label: t('notification.analysis'), color: 'text-accent bg-accent/10' },
+    import: { label: t('notification.import'), color: 'text-sky-400 bg-sky-400/10' },
+    ai: { label: t('notification.ai'), color: 'text-amber bg-amber/10' },
+    export: { label: t('notification.export'), color: 'text-coral bg-coral/10' },
+  };
+
+  function timeAgo(date: Date): string {
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return t('notification.justNow');
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return t('notification.minutesAgo', { count: minutes });
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return t('notification.hoursAgo', { count: hours });
+    return t('notification.daysAgo', { count: Math.floor(hours / 24) });
+  }
 
   useClickOutside(ref, onClose, open);
 
@@ -67,12 +69,12 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-          <h3 className="text-sm font-bold text-white">알림</h3>
+          <h3 className="text-sm font-bold text-white">{t('notification.title')}</h3>
           <div className="flex items-center gap-1">
             <button
               onClick={onOpenEmailSettings}
               className="p-1.5 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
-              title="이메일 설정"
+              title={t('notification.emailSettings')}
             >
               <Settings size={14} />
             </button>
@@ -80,7 +82,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               <button
                 onClick={clearAll}
                 className="p-1.5 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
-                title="모두 삭제"
+                title={t('notification.deleteAll')}
               >
                 <X size={14} />
               </button>
@@ -93,12 +95,12 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <Bell size={32} className="text-slate-700 mb-3" />
-              <p className="text-slate-500 text-sm text-center">아직 알림이 없습니다</p>
-              <p className="text-slate-600 text-xs text-center mt-1">활동이 여기에 표시됩니다</p>
+              <p className="text-slate-500 text-sm text-center">{t('notification.empty')}</p>
+              <p className="text-slate-600 text-xs text-center mt-1">{t('notification.emptyDesc')}</p>
             </div>
           ) : (
             notifications.map(n => {
-              const t = typeLabels[n.type];
+              const typeInfo = typeLabels[n.type];
               return (
                 <div
                   key={n.id}
@@ -106,8 +108,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                     !n.read ? 'bg-white/[0.02]' : ''
                   }`}
                 >
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${t.color} shrink-0 mt-0.5`}>
-                    {t.label}
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${typeInfo.color} shrink-0 mt-0.5`}>
+                    {typeInfo.label}
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">{n.title}</p>

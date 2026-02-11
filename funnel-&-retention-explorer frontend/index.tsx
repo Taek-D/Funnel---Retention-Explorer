@@ -1,3 +1,4 @@
+import './lib/i18n';
 import { initSentry } from './lib/sentry';
 import { initGA } from './lib/analytics';
 initSentry();

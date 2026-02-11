@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Info, TrendingUp, Users, Zap, CreditCard, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2 } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
@@ -12,6 +13,7 @@ import { CHART_COLORS } from '../lib/constants';
 import type { AppState } from '../types';
 
 export const Dashboard: React.FC = () => {
+  const { t } = useTranslation('pages');
   const { state, dispatch } = useAppContext();
   const { exportReport, exporting, isPro } = useExportReport();
   const { snapshots, removeSnapshot } = useSavedAnalyses();
@@ -32,8 +34,8 @@ export const Dashboard: React.FC = () => {
       dispatch({ type: 'SET_INSIGHTS', payload: results.insights as AppState['insights'] });
     }
 
-    toast('success', '분석 복원 완료', `${snap.snapshot_type} 분석이 복원되었습니다.`);
-  }, [dispatch, toast]);
+    toast('success', t('dashboard.restoreSuccess'), t('dashboard.restoreDesc', { type: snap.snapshot_type }));
+  }, [dispatch, toast, t]);
 
   const hasData = processedData.length > 0;
 
@@ -68,16 +70,16 @@ export const Dashboard: React.FC = () => {
   // KPI cards
   const kpiCards = subscriptionKPIs
     ? [
-        { label: '전체 사용자', value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? '구독' : '이커머스', positive: true },
-        { label: '유료 사용자', value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true },
-        { label: '이탈률', value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10 },
-        { label: '매출', value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true },
+        { label: t('dashboard.totalUsers'), value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? t('dashboard.subscription') : t('dashboard.ecommerce'), positive: true },
+        { label: t('dashboard.paidUsers'), value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true },
+        { label: t('dashboard.churnRate'), value: formatPct(subscriptionKPIs.cancel_rate_paid), change: `${subscriptionKPIs.cancel_events} events`, positive: subscriptionKPIs.cancel_rate_paid < 10 },
+        { label: t('dashboard.revenue'), value: formatCurrency(subscriptionKPIs.gross_revenue), change: `ARPPU: ${formatCurrency(subscriptionKPIs.arppu)}`, positive: true },
       ]
     : [
-        { label: '고유 사용자', value: formatNum(uniqueUsers), change: hasData ? '활성' : '데이터 없음', positive: hasData },
-        { label: '전체 이벤트', value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} 유형` : '데이터 없음', positive: hasData },
-        { label: '전환율', value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} 단계` : '미계산', positive: overallConversion != null && overallConversion > 20 },
-        { label: '데이터 유형', value: detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독' : 'N/A', change: hasData ? '감지됨' : '데이터 업로드', positive: detectedType !== null },
+        { label: t('dashboard.uniqueUsers'), value: formatNum(uniqueUsers), change: hasData ? t('dashboard.active') : t('dashboard.noData'), positive: hasData },
+        { label: t('dashboard.totalEvents'), value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} ${t('dashboard.types')}` : t('dashboard.noData'), positive: hasData },
+        { label: t('dashboard.conversionRate'), value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} ${t('dashboard.steps')}` : t('dashboard.notCalculated'), positive: overallConversion != null && overallConversion > 20 },
+        { label: t('dashboard.dataType'), value: detectedType === 'ecommerce' ? t('dashboard.ecommerce') : detectedType === 'subscription' ? t('dashboard.subscription') : 'N/A', change: hasData ? t('dashboard.detected') : t('dashboard.uploadData'), positive: detectedType !== null },
       ];
 
   const navigate = useNavigate();
@@ -85,9 +87,9 @@ export const Dashboard: React.FC = () => {
   // Empty state — show CTA instead of empty charts
   if (!hasData) {
     const featureCards = [
-      { icon: Filter, title: '퍼널 분석', desc: '다단계 전환 퍼널로 이탈 지점을 발견하세요', gradient: 'from-accent to-teal-500' },
-      { icon: Users, title: '리텐션 코호트', desc: '코호트별 사용자 리텐션을 시각화합니다', gradient: 'from-sky-400 to-blue-500' },
-      { icon: Zap, title: 'AI 인사이트', desc: 'Gemini AI가 실행 가능한 인사이트를 생성합니다', gradient: 'from-coral to-pink-500' },
+      { icon: Filter, title: t('dashboard.featureFunnel'), desc: t('dashboard.featureFunnelDesc'), gradient: 'from-accent to-teal-500' },
+      { icon: Users, title: t('dashboard.featureRetention'), desc: t('dashboard.featureRetentionDesc'), gradient: 'from-sky-400 to-blue-500' },
+      { icon: Zap, title: t('dashboard.featureAI'), desc: t('dashboard.featureAIDesc'), gradient: 'from-coral to-pink-500' },
     ];
 
     return (
@@ -100,10 +102,10 @@ export const Dashboard: React.FC = () => {
               <Sparkles size={32} />
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-3">
-              CSV 데이터를 분석해보세요
+              {t('dashboard.heroTitle')}
             </h2>
             <p className="text-slate-400 text-sm md:text-base max-w-md mx-auto mb-8">
-              퍼널, 리텐션, 세그먼트, AI 인사이트까지 — 하나의 대시보드에서 모두 가능합니다.
+              {t('dashboard.heroDesc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
@@ -111,7 +113,7 @@ export const Dashboard: React.FC = () => {
                 className="group px-6 py-3 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <Sparkles size={16} />
-                샘플 데이터로 체험
+                {t('dashboard.trySample')}
                 <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
               </button>
               <button
@@ -119,7 +121,7 @@ export const Dashboard: React.FC = () => {
                 className="px-6 py-3 text-sm font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/[0.08] hover:border-white/20 rounded-lg transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <UploadCloud size={16} />
-                CSV 파일 업로드
+                {t('dashboard.uploadCsv')}
               </button>
             </div>
           </div>
@@ -154,7 +156,7 @@ export const Dashboard: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all disabled:opacity-50"
         >
           <Download size={16} />
-          {exporting ? '내보내는 중...' : 'PNG 내보내기'}
+          {exporting ? t('dashboard.exporting') : t('dashboard.exportPng')}
         </button>
         <button
           onClick={() => exportReport('pdf')}
@@ -162,7 +164,7 @@ export const Dashboard: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
         >
           <Download size={16} />
-          PDF 내보내기
+          {t('dashboard.exportPdf')}
           {!isPro && <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full ml-1">Pro</span>}
         </button>
       </div>
@@ -188,14 +190,14 @@ export const Dashboard: React.FC = () => {
           <div className="flex justify-between items-center mb-8 relative z-10">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                퍼널 이탈 분석
+                {t('dashboard.funnelDropoff')}
                 <Info size={16} className="text-slate-500 cursor-help" />
               </h3>
-              <p className="text-slate-400 text-sm">{funnelResults?.length || 0}단계 퍼널 분석</p>
+              <p className="text-slate-400 text-sm">{t('dashboard.nStepFunnel', { count: funnelResults?.length || 0 })}</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
-              <div className="text-accent text-sm font-medium">전체 전환율</div>
+              <div className="text-accent text-sm font-medium">{t('dashboard.overallConversion')}</div>
             </div>
           </div>
 
@@ -206,7 +208,7 @@ export const Dashboard: React.FC = () => {
                 <Tooltip
                   cursor={{ fill: CHART_COLORS.cursorFill }}
                   contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-                  formatter={(value: number) => [value.toLocaleString(), '사용자']}
+                  formatter={(value: number) => [value.toLocaleString(), t('dashboard.users')]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {funnelChartData.map((_, index) => (
@@ -221,7 +223,7 @@ export const Dashboard: React.FC = () => {
       ) : (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
           <Zap size={32} className="text-slate-600 mb-2" />
-          <p className="text-slate-400 text-sm">퍼널 분석 탭에서 퍼널을 계산하면 여기에 결과가 표시됩니다.</p>
+          <p className="text-slate-400 text-sm">{t('dashboard.funnelEmptyHint')}</p>
         </div>
       )}
 
@@ -230,12 +232,12 @@ export const Dashboard: React.FC = () => {
         {/* Recent Insights */}
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-white">최근 인사이트</h3>
-            <span className="text-xs text-slate-500">{insights.length} 전체</span>
+            <h3 className="font-bold text-white">{t('dashboard.recentInsights')}</h3>
+            <span className="text-xs text-slate-500">{insights.length} {t('dashboard.total')}</span>
           </div>
           <div className="space-y-4">
             {insights.length === 0 ? (
-              <p className="text-slate-500 text-sm">아직 인사이트가 없습니다. 데이터를 처리하면 인사이트가 생성됩니다.</p>
+              <p className="text-slate-500 text-sm">{t('dashboard.noInsightsYet')}</p>
             ) : (
               insights.slice(0, 4).map((insight, i) => {
                 const colors: Record<string, { text: string; bg: string }> = {
@@ -267,7 +269,7 @@ export const Dashboard: React.FC = () => {
         {/* User Retention Chart */}
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-white">리텐션 곡선</h3>
+            <h3 className="font-bold text-white">{t('dashboard.retentionCurve')}</h3>
           </div>
           {retentionCurveData.length > 0 ? (
             <div className="h-48 w-full">
@@ -284,7 +286,7 @@ export const Dashboard: React.FC = () => {
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 10 }} domain={[0, 100]} />
                   <Tooltip
                     contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-                    formatter={(value: number) => [`${value}%`, '리텐션']}
+                    formatter={(value: number) => [`${value}%`, t('dashboard.retention')]}
                   />
                   <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
                 </AreaChart>
@@ -292,7 +294,7 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div className="h-48 flex items-center justify-center">
-              <p className="text-slate-500 text-sm">리텐션을 계산하면 곡선이 표시됩니다.</p>
+              <p className="text-slate-500 text-sm">{t('dashboard.retentionEmptyHint')}</p>
             </div>
           )}
         </div>
@@ -304,9 +306,9 @@ export const Dashboard: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-white flex items-center gap-2">
               <Clock size={16} className="text-accent" />
-              저장된 분석
+              {t('dashboard.savedAnalyses')}
             </h3>
-            <span className="text-xs text-slate-500">{snapshots.length}개</span>
+            <span className="text-xs text-slate-500">{t('dashboard.count', { count: snapshots.length })}</span>
           </div>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {snapshots.map(snap => (
@@ -317,7 +319,7 @@ export const Dashboard: React.FC = () => {
               >
                 <div className="min-w-0 flex-1">
                   <div className="text-sm text-white font-medium truncate">
-                    {snap.snapshot_type} — {snap.dataset_name || '알 수 없는 데이터'}
+                    {snap.snapshot_type} — {snap.dataset_name || t('dashboard.unknownData')}
                   </div>
                   <div className="text-xs text-slate-500">
                     {new Date(snap.created_at).toLocaleString('ko-KR')}

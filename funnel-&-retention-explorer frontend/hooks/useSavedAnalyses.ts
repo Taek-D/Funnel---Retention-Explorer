@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { FRESnapshot } from '../lib/supabaseData';
 import { useAuth } from '../context/AuthContext';
+import i18n from '../lib/i18n';
 
 export function useSavedAnalyses() {
   const { user } = useAuth();
@@ -17,7 +18,7 @@ export function useSavedAnalyses() {
       const data = await listAllSnapshots();
       setSnapshots(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '불러오기 실패');
+      setError(err instanceof Error ? err.message : i18n.t('saved.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -29,7 +30,7 @@ export function useSavedAnalyses() {
       await deleteSnapshot(id);
       setSnapshots(prev => prev.filter(s => s.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : '삭제 실패');
+      setError(err instanceof Error ? err.message : i18n.t('saved.deleteFailed'));
     }
   }, []);
 

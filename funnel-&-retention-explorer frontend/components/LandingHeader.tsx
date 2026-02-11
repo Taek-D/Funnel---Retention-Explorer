@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Activity } from './Icons';
+import { useTranslation } from 'react-i18next';
+import { Menu, X, Activity, Globe } from './Icons';
 
 export const LandingHeader: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language?.startsWith('ko') ? 'ko' : 'en';
+  const toggleLang = () => i18n.changeLanguage(currentLang === 'ko' ? 'en' : 'ko');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,23 +29,31 @@ export const LandingHeader: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-[13px] text-slate-500">
-          <a href="#features" className="hover:text-white transition-colors">기능</a>
-          <a href="#pricing" className="hover:text-white transition-colors">요금제</a>
-          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          <a href="#features" className="hover:text-white transition-colors">{t('header.features')}</a>
+          <a href="#pricing" className="hover:text-white transition-colors">{t('header.pricing')}</a>
+          <a href="#faq" className="hover:text-white transition-colors">{t('header.faq')}</a>
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
+          <button
+            onClick={toggleLang}
+            className="px-2 py-1.5 text-[13px] text-slate-500 hover:text-white transition-colors flex items-center gap-1"
+            aria-label={t(`language.${currentLang}`)}
+          >
+            <Globe size={14} />
+            <span className="uppercase text-[11px] font-mono">{currentLang}</span>
+          </button>
           <Link
             to="/login"
             className="px-3 py-1.5 text-[13px] font-medium text-slate-400 hover:text-white transition-colors"
           >
-            로그인
+            {t('header.login')}
           </Link>
           <Link
             to="/signup"
             className="px-4 py-1.5 text-[13px] font-semibold text-background bg-accent hover:bg-accent/90 rounded-md transition-colors"
           >
-            시작하기
+            {t('header.getStarted')}
           </Link>
         </div>
 
@@ -60,12 +72,16 @@ export const LandingHeader: React.FC = () => {
         }`}
       >
         <div className="bg-surface border-t border-white/[0.06] px-6 py-4 space-y-2">
-          <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>기능</a>
-          <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>요금제</a>
-          <a href="#faq" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>FAQ</a>
-          <div className="flex gap-3 pt-3 border-t border-white/[0.06]">
-            <Link to="/login" className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">로그인</Link>
-            <Link to="/signup" className="px-4 py-1.5 text-sm font-semibold text-background bg-accent rounded-md">시작하기</Link>
+          <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.features')}</a>
+          <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.pricing')}</a>
+          <a href="#faq" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.faq')}</a>
+          <div className="flex items-center gap-3 pt-3 border-t border-white/[0.06]">
+            <button onClick={toggleLang} className="px-2 py-1.5 text-sm text-slate-500 hover:text-white transition-colors flex items-center gap-1">
+              <Globe size={14} />
+              <span className="uppercase text-[11px] font-mono">{currentLang}</span>
+            </button>
+            <Link to="/login" className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors">{t('header.login')}</Link>
+            <Link to="/signup" className="px-4 py-1.5 text-sm font-semibold text-background bg-accent rounded-md">{t('header.getStarted')}</Link>
           </div>
         </div>
       </div>

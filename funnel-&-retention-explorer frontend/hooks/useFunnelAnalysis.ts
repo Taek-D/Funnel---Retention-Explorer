@@ -5,6 +5,7 @@ import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { trackEvent } from '../lib/analytics';
+import i18n from '../lib/i18n';
 
 export function useFunnelAnalysis() {
   const { state, dispatch } = useAppContext();
@@ -27,7 +28,7 @@ export function useFunnelAnalysis() {
 
   const runFunnelAnalysis = useCallback(() => {
     if (state.funnelSteps.length < 2) {
-      toast('warning', '최소 2개 이상의 퍼널 단계를 선택해주세요');
+      toast('warning', i18n.t('analysis.minFunnelSteps'));
       return;
     }
 
@@ -49,7 +50,7 @@ export function useFunnelAnalysis() {
     const conversion = results.length > 1
       ? ((results[results.length - 1].users / results[0].users) * 100).toFixed(1)
       : null;
-    addNotification('analysis', '퍼널 분석 완료', `${results.length}단계, 전환율 ${conversion || 'N/A'}%`);
+    addNotification('analysis', i18n.t('analysis.funnelComplete'), i18n.t('analysis.funnelCompleteDesc', { steps: results.length, conversion: conversion || 'N/A' }));
   }, [state, dispatch, toast, addNotification]);
 
   return {

@@ -1,5 +1,6 @@
 import type { ProcessedEvent, SegmentResult, SegmentFunnelStep } from '../types';
 import { getUsersByEvent, getUsersByEventFuzzy } from './eventUtils';
+import i18n from './i18n';
 
 export function compareSegments(
   processedData: ProcessedEvent[],
@@ -30,7 +31,7 @@ export function compareSegments(
     );
 
     segments.push({
-      name: `플랫폼: ${platform}`,
+      name: `${i18n.t('segment.platformPrefix')}: ${platform}`,
       type: 'platform',
       population: segmentFunnel[0].userCount,
       conversion,
@@ -58,7 +59,7 @@ export function compareSegments(
     );
 
     segments.push({
-      name: `채널: ${channel}`,
+      name: `${i18n.t('segment.channelPrefix')}: ${channel}`,
       type: 'channel',
       population: segmentFunnel[0].userCount,
       conversion,

@@ -1,10 +1,12 @@
+import i18n from './i18n';
+
 export function formatTime(minutes: number): string {
   if (minutes < 60) {
-    return `${Math.round(minutes)}분`;
+    return i18n.t('time.minutes', { count: Math.round(minutes) });
   } else if (minutes < 1440) {
-    return `${(minutes / 60).toFixed(1)}시간`;
+    return i18n.t('time.hours', { count: (minutes / 60).toFixed(1) });
   } else {
-    return `${(minutes / 1440).toFixed(1)}일`;
+    return i18n.t('time.days', { count: (minutes / 1440).toFixed(1) });
   }
 }
 
@@ -24,7 +26,8 @@ export function formatCurrency(n: number | null | undefined): string {
 }
 
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString('ko-KR', {
+  const locale = i18n.language?.startsWith('ko') ? 'ko-KR' : 'en-US';
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -32,8 +35,9 @@ export function formatDate(date: Date): string {
 }
 
 export function formatDateTime(dateStr: string): string {
+  const locale = i18n.language?.startsWith('ko') ? 'ko-KR' : 'en-US';
   const date = new Date(dateStr);
-  return date.toLocaleString('ko-KR', {
+  return date.toLocaleString(locale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

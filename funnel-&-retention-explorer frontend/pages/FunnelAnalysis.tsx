@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
@@ -7,6 +8,7 @@ import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 
 export const FunnelAnalysis: React.FC = () => {
+  const { t } = useTranslation('pages');
   const {
     funnelSteps, funnelResults, uniqueEvents, detectedType, hasData,
     setFunnelSteps, applyTemplate, runFunnelAnalysis
@@ -18,8 +20,8 @@ export const FunnelAnalysis: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Users size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
-        <p className="text-slate-400">퍼널 분석을 시작하려면 데이터 가져오기 탭에서 CSV 파일을 업로드하세요.</p>
+        <h2 className="text-xl font-bold text-white mb-2">{t('funnel.noData')}</h2>
+        <p className="text-slate-400">{t('funnel.noDataDesc')}</p>
       </div>
     );
   }
@@ -52,9 +54,9 @@ export const FunnelAnalysis: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-white/10 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">퍼널 분석</h1>
+          <h1 className="text-2xl font-bold text-white">{t('funnel.title')}</h1>
           <p className="text-slate-400 text-sm mt-1">
-            {detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독' : '커스텀'} 퍼널 시각화 및 이탈 분석
+            {detectedType === 'ecommerce' ? t('funnel.ecommerce') : detectedType === 'subscription' ? t('funnel.subscription') : t('funnel.custom')} {t('funnel.desc')}
           </p>
         </div>
       </div>
@@ -68,11 +70,11 @@ export const FunnelAnalysis: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="p-2 bg-accent/10 rounded-lg text-accent"><Zap size={20} /></div>
             <div className="text-left">
-              <p className="text-white font-bold text-sm">퍼널 설정</p>
+              <p className="text-white font-bold text-sm">{t('funnel.settings')}</p>
               <p className="text-slate-400 text-xs">
                 {hasResults
-                  ? `${funnelSteps.filter(Boolean).length}단계 설정됨 · 클릭하여 ${editorCollapsed ? '펼치기' : '접기'}`
-                  : '템플릿을 선택하거나 직접 퍼널 단계를 구성하세요'}
+                  ? `${t('funnel.stepsConfigured', { count: funnelSteps.filter(Boolean).length })} ${editorCollapsed ? t('funnel.expand') : t('funnel.collapse')}`
+                  : t('funnel.settingsHint')}
               </p>
             </div>
           </div>
@@ -85,18 +87,18 @@ export const FunnelAnalysis: React.FC = () => {
           <div className="px-4 pb-4 space-y-4 border-t border-white/[0.06]">
             {/* Template Selector */}
             <div className="flex flex-wrap items-center gap-3 pt-4">
-              <span className="text-slate-400 text-sm font-medium">템플릿:</span>
+              <span className="text-slate-400 text-sm font-medium">{t('funnel.template')}</span>
               <button
                 onClick={() => applyTemplate('ecommerce')}
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${detectedType === 'ecommerce' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white border border-white/10'}`}
               >
-                이커머스
+                {t('funnel.ecommerce')}
               </button>
               <button
                 onClick={() => applyTemplate('subscription')}
                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${detectedType === 'subscription' ? 'bg-accent text-white' : 'text-slate-400 hover:text-white border border-white/10'}`}
               >
-                구독
+                {t('funnel.subscription')}
               </button>
               {detectedType === 'subscription' && (
                 <button
@@ -111,7 +113,7 @@ export const FunnelAnalysis: React.FC = () => {
             {/* Funnel Steps */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between mb-1">
-                <h4 className="text-white text-xs font-bold uppercase tracking-wider">퍼널 단계</h4>
+                <h4 className="text-white text-xs font-bold uppercase tracking-wider">{t('funnel.funnelSteps')}</h4>
                 <span className="text-[10px] text-slate-600 font-mono">{funnelSteps.length} steps</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -123,7 +125,7 @@ export const FunnelAnalysis: React.FC = () => {
                       value={step}
                       onChange={(e) => updateStep(i, e.target.value)}
                     >
-                      <option value="" className="bg-surface">이벤트 선택...</option>
+                      <option value="" className="bg-surface">{t('funnel.selectEvent')}</option>
                       {uniqueEvents.map(event => (
                         <option key={event} value={event} className="bg-surface">{event}</option>
                       ))}
@@ -142,13 +144,13 @@ export const FunnelAnalysis: React.FC = () => {
                   onClick={addStep}
                   className="py-2 px-4 rounded-lg border border-dashed border-slate-600 text-slate-400 hover:text-white hover:border-accent hover:bg-accent/5 transition-all text-sm font-medium flex items-center gap-2"
                 >
-                  <Plus size={16} /> 단계 추가
+                  <Plus size={16} /> {t('funnel.addStep')}
                 </button>
                 <button
                   onClick={runFunnelAnalysis}
                   className="py-2 px-6 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
                 >
-                  퍼널 계산
+                  {t('funnel.calculate')}
                 </button>
               </div>
             </div>
@@ -159,7 +161,7 @@ export const FunnelAnalysis: React.FC = () => {
       {/* Calculating placeholder */}
       {!hasResults && funnelSteps.filter(Boolean).length >= 2 && (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">퍼널 결과가 여기에 표시됩니다</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">{t('funnel.emptyHint')}</h3>
           <ChartSkeleton variant="bar" />
         </div>
       )}
@@ -170,10 +172,10 @@ export const FunnelAnalysis: React.FC = () => {
           {/* Metrics Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: '총 유입', value: totalUsers.toLocaleString(), icon: Users },
-              { label: '전체 전환율', value: overallConversion.toFixed(1) + '%', icon: TrendingUp },
-              { label: '최종 단계 사용자', value: funnelResults[funnelResults.length - 1].users.toLocaleString(), icon: Users },
-              { label: '단계 수', value: String(funnelResults.length), icon: Zap },
+              { label: t('funnel.totalEntry'), value: totalUsers.toLocaleString(), icon: Users },
+              { label: t('funnel.overallConversion'), value: overallConversion.toFixed(1) + '%', icon: TrendingUp },
+              { label: t('funnel.finalUsers'), value: funnelResults[funnelResults.length - 1].users.toLocaleString(), icon: Users },
+              { label: t('funnel.stepCount'), value: String(funnelResults.length), icon: Zap },
             ].map((stat, i) => (
               <div key={i} className="bg-surface border border-white/[0.06] rounded-lg p-5 flex flex-col gap-1 hover:border-accent/20 transition-colors group">
                 <div className="flex items-center justify-between mb-2">
@@ -192,12 +194,12 @@ export const FunnelAnalysis: React.FC = () => {
             <div className="bg-surface border border-white/[0.06] rounded-lg p-6 lg:col-span-2 flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">전환 퍼널</h3>
-                  <p className="text-sm text-slate-400">단계별 사용자 여정</p>
+                  <h3 className="text-lg font-semibold text-white">{t('funnel.conversionFunnel')}</h3>
+                  <p className="text-sm text-slate-400">{t('funnel.stepJourney')}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold font-mono text-white">{overallConversion.toFixed(1)}%</div>
-                  <div className="text-accent text-sm font-medium">전체 전환율</div>
+                  <div className="text-accent text-sm font-medium">{t('funnel.overallConversion')}</div>
                 </div>
               </div>
 
@@ -209,7 +211,7 @@ export const FunnelAnalysis: React.FC = () => {
                     <Tooltip
                       cursor={{ fill: CHART_COLORS.cursorFill }}
                       contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                      formatter={(value: number) => [value.toLocaleString(), '사용자']}
+                      formatter={(value: number) => [value.toLocaleString(), t('funnel.users')]}
                     />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {chartData.map((_, index) => (
@@ -225,15 +227,15 @@ export const FunnelAnalysis: React.FC = () => {
             <div className="flex flex-col gap-4">
               <div className="bg-surface border border-white/[0.06] rounded-lg flex-1 flex flex-col overflow-hidden">
                 <div className="p-5 border-b border-white/5">
-                  <h3 className="text-base font-semibold text-white">단계 상세</h3>
+                  <h3 className="text-base font-semibold text-white">{t('funnel.stepDetails')}</h3>
                 </div>
                 <div className="flex-1 overflow-auto">
                   <table className="w-full text-left text-sm text-slate-400">
                     <thead className="bg-white/5 text-xs uppercase font-semibold text-slate-300">
                       <tr>
-                        <th className="px-4 py-3">단계</th>
-                        <th className="px-4 py-3 text-right">사용자</th>
-                        <th className="px-4 py-3 text-right">전환율</th>
+                        <th className="px-4 py-3">{t('funnel.step')}</th>
+                        <th className="px-4 py-3 text-right">{t('funnel.users')}</th>
+                        <th className="px-4 py-3 text-right">{t('funnel.conversion')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -261,7 +263,7 @@ export const FunnelAnalysis: React.FC = () => {
               {/* Median Time */}
               {funnelResults.some(s => s.medianTime) && (
                 <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">단계 간 중간 시간</h3>
+                  <h3 className="text-sm font-semibold text-white mb-3">{t('funnel.medianTime')}</h3>
                   <div className="space-y-2">
                     {funnelResults.slice(1).map((step, i) => (
                       step.medianTime ? (

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
@@ -13,6 +14,7 @@ const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: s
 };
 
 export const Insights: React.FC = () => {
+  const { t } = useTranslation('pages');
   const { state } = useAppContext();
   const { insights, subscriptionKPIs, trialAnalysis, churnAnalysis, detectedType, processedData } = state;
   const hasData = processedData.length > 0;
@@ -23,8 +25,8 @@ export const Insights: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Zap size={48} className="text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">데이터 없음</h2>
-        <p className="text-slate-400">인사이트를 생성하려면 CSV 파일을 업로드하고 매핑을 확인하세요.</p>
+        <h2 className="text-xl font-bold text-white mb-2">{t('insights.noData')}</h2>
+        <p className="text-slate-400">{t('insights.noDataDesc')}</p>
       </div>
     );
   }
@@ -33,9 +35,9 @@ export const Insights: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold text-white">AI 인사이트</h1>
+          <h1 className="text-3xl font-bold text-white">{t('insights.title')}</h1>
           <span className="bg-accent/10 text-accent border border-accent/20 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">
-            {detectedType === 'subscription' ? '구독' : detectedType === 'ecommerce' ? '이커머스' : '일반'}
+            {detectedType === 'subscription' ? t('insights.subscription') : detectedType === 'ecommerce' ? t('insights.ecommerce') : t('insights.general')}
           </span>
         </div>
         <button
@@ -43,7 +45,7 @@ export const Insights: React.FC = () => {
           className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-accent rounded-lg hover:opacity-90 transition-all"
         >
           <Zap size={16} />
-          AI에게 질문
+          {t('insights.askAI')}
         </button>
       </div>
 
@@ -55,7 +57,7 @@ export const Insights: React.FC = () => {
               <Zap size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">AI 분석 요약</h3>
+              <h3 className="text-lg font-bold text-white">{t('insights.aiSummary')}</h3>
               <p className="text-xs text-slate-500">Powered by Gemini 2.0 Flash</p>
             </div>
           </div>
@@ -64,7 +66,7 @@ export const Insights: React.FC = () => {
             disabled={aiLoading}
             className="px-4 py-2 text-sm font-medium text-accent bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded-lg transition-all disabled:opacity-50"
           >
-            {aiLoading ? '분석 중...' : aiSummary ? '다시 생성' : '요약 생성'}
+            {aiLoading ? t('insights.analyzing') : aiSummary ? t('insights.regenerate') : t('insights.generateSummary')}
           </button>
         </div>
 
@@ -77,7 +79,7 @@ export const Insights: React.FC = () => {
         {aiLoading && (
           <div className="flex items-center gap-3 py-4">
             <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-            <span className="text-slate-400 text-sm">AI로 데이터를 분석하는 중...</span>
+            <span className="text-slate-400 text-sm">{t('insights.aiAnalyzing')}</span>
           </div>
         )}
 
@@ -88,7 +90,7 @@ export const Insights: React.FC = () => {
         )}
 
         {!aiSummary && !aiLoading && !aiError && (
-          <p className="text-slate-500 text-sm">"요약 생성"을 클릭하여 AI 기반 데이터 분석을 받아보세요.</p>
+          <p className="text-slate-500 text-sm">{t('insights.aiHint')}</p>
         )}
       </div>
 
@@ -96,10 +98,10 @@ export const Insights: React.FC = () => {
       {subscriptionKPIs && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[
-            { label: '전체 사용자', val: formatNum(subscriptionKPIs.users_total), icon: Users },
-            { label: '유료 사용자', val: formatNum(subscriptionKPIs.paid_user_count), icon: CreditCard },
-            { label: '매출', val: formatCurrency(subscriptionKPIs.gross_revenue), icon: CreditCard },
-            { label: '이탈률', val: formatPct(subscriptionKPIs.cancel_rate_paid), icon: TrendingUp },
+            { label: t('insights.totalUsers'), val: formatNum(subscriptionKPIs.users_total), icon: Users },
+            { label: t('insights.paidUsers'), val: formatNum(subscriptionKPIs.paid_user_count), icon: CreditCard },
+            { label: t('insights.revenue'), val: formatCurrency(subscriptionKPIs.gross_revenue), icon: CreditCard },
+            { label: t('insights.churnRate'), val: formatPct(subscriptionKPIs.cancel_rate_paid), icon: TrendingUp },
           ].map((stat, i) => (
             <div key={i} className="bg-surface border border-white/[0.06] rounded-lg p-5 flex flex-col gap-3">
               <div className="flex justify-between">
@@ -116,17 +118,17 @@ export const Insights: React.FC = () => {
       {trialAnalysis && trialAnalysis.overall.trial_users > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-            <h3 className="text-white font-bold mb-3">트라이얼 전환</h3>
+            <h3 className="text-white font-bold mb-3">{t('insights.trialConversion')}</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-slate-400">트라이얼 사용자</span><p className="text-white font-bold font-mono">{trialAnalysis.overall.trial_users.toLocaleString()}</p></div>
-              <div><span className="text-slate-400">전환율</span><p className="text-white font-bold font-mono">{trialAnalysis.overall.conversion_rate.toFixed(1)}%</p></div>
+              <div><span className="text-slate-400">{t('insights.trialUsers')}</span><p className="text-white font-bold font-mono">{trialAnalysis.overall.trial_users.toLocaleString()}</p></div>
+              <div><span className="text-slate-400">{t('insights.trialConversionRate')}</span><p className="text-white font-bold font-mono">{trialAnalysis.overall.conversion_rate.toFixed(1)}%</p></div>
             </div>
             {trialAnalysis.by_trial_days.length > 0 && (
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full text-xs">
-                  <thead className="text-slate-500"><tr><th className="text-left py-1">트라이얼 기간</th><th className="text-right">사용자</th><th className="text-right">전환율</th></tr></thead>
+                  <thead className="text-slate-500"><tr><th className="text-left py-1">{t('insights.trialPeriod')}</th><th className="text-right">{t('insights.users')}</th><th className="text-right">{t('insights.trialConversionRate')}</th></tr></thead>
                   <tbody>{trialAnalysis.by_trial_days.map((row, i) => (
-                    <tr key={i} className="text-slate-300"><td className="py-1">{row.trial_days}일</td><td className="text-right font-mono">{row.trial_users}</td><td className="text-right font-mono">{row.conversion_rate.toFixed(1)}%</td></tr>
+                    <tr key={i} className="text-slate-300"><td className="py-1">{row.trial_days}{t('insights.days')}</td><td className="text-right font-mono">{row.trial_users}</td><td className="text-right font-mono">{row.conversion_rate.toFixed(1)}%</td></tr>
                   ))}</tbody>
                 </table>
               </div>
@@ -134,14 +136,14 @@ export const Insights: React.FC = () => {
           </div>
           {churnAnalysis && churnAnalysis.churn_users > 0 && (
             <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-              <h3 className="text-white font-bold mb-3">이탈 요약</h3>
+              <h3 className="text-white font-bold mb-3">{t('insights.churnSummary')}</h3>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-slate-400">이탈 사용자</span><p className="text-white font-bold font-mono">{churnAnalysis.churn_users.toLocaleString()}</p></div>
-                <div><span className="text-slate-400">이탈률</span><p className="text-white font-bold font-mono">{churnAnalysis.churn_rate_paid.toFixed(1)}%</p></div>
+                <div><span className="text-slate-400">{t('insights.churnedUsers')}</span><p className="text-white font-bold font-mono">{churnAnalysis.churn_users.toLocaleString()}</p></div>
+                <div><span className="text-slate-400">{t('insights.churnRate')}</span><p className="text-white font-bold font-mono">{churnAnalysis.churn_rate_paid.toFixed(1)}%</p></div>
               </div>
               {churnAnalysis.cancel_reason_top.length > 0 && (
                 <div className="mt-3 space-y-1">
-                  <p className="text-xs text-slate-500 uppercase font-bold">상위 해지 사유</p>
+                  <p className="text-xs text-slate-500 uppercase font-bold">{t('insights.topCancelReasons')}</p>
                   {churnAnalysis.cancel_reason_top.slice(0, 3).map((r, i) => (
                     <div key={i} className="flex justify-between text-xs text-slate-300">
                       <span>{r.reason}</span><span className="font-medium font-mono">{r.share.toFixed(0)}%</span>
@@ -156,14 +158,14 @@ export const Insights: React.FC = () => {
 
       {/* Insights Title */}
       <h3 className="text-xl font-bold text-white flex items-center gap-2 mt-4">
-        <Zap size={24} className="text-accent" /> 최신 인사이트
-        <span className="text-sm text-slate-500 font-normal ml-2">{insights.length}개 인사이트</span>
+        <Zap size={24} className="text-accent" /> {t('insights.latestInsights')}
+        <span className="text-sm text-slate-500 font-normal ml-2">{t('insights.insightCount', { count: insights.length })}</span>
       </h3>
 
       {/* Insight Cards */}
       {insights.length === 0 ? (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-8 text-center">
-          <p className="text-slate-400">아직 인사이트가 없습니다. 데이터를 업로드하고 매핑을 확인하면 자동으로 인사이트가 생성됩니다.</p>
+          <p className="text-slate-400">{t('insights.noInsightsHint')}</p>
         </div>
       ) : (
         insights.map((insight, i) => {
@@ -186,7 +188,7 @@ export const Insights: React.FC = () => {
                 {insight.metric && (
                   <div className="inline-flex gap-4 p-4 rounded-lg bg-black/20 border border-white/5 w-fit">
                     <div className="flex flex-col">
-                      <span className="text-slate-400 text-[10px] font-bold uppercase">핵심 지표</span>
+                      <span className="text-slate-400 text-[10px] font-bold uppercase">{t('insights.keyMetrics')}</span>
                       <span className="text-2xl font-bold font-mono text-white">{insight.metric}</span>
                     </div>
                   </div>
@@ -196,7 +198,7 @@ export const Insights: React.FC = () => {
 
                 {insight.recommendations && insight.recommendations.length > 0 && (
                   <div className="mt-2">
-                    <p className="text-xs text-slate-500 uppercase font-bold mb-2">권장 조치</p>
+                    <p className="text-xs text-slate-500 uppercase font-bold mb-2">{t('insights.recommendations')}</p>
                     <ul className="space-y-1">
                       {insight.recommendations.map((rec, j) => (
                         <li key={j} className="text-xs text-slate-400 flex items-start gap-2">

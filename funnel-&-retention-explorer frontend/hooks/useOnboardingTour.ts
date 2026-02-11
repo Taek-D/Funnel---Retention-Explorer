@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import i18n from '../lib/i18n';
 
 const STORAGE_KEY = 'fre_onboarding_completed';
 
@@ -9,26 +10,28 @@ interface TourStep {
   placement: 'top' | 'bottom' | 'left' | 'right';
 }
 
-const TOUR_STEPS: TourStep[] = [
-  {
-    target: '[data-tour="upload"]',
-    title: '데이터 업로드',
-    description: 'CSV 파일을 업로드하거나 샘플 데이터를 로드하세요. 이커머스와 SaaS 샘플이 준비되어 있습니다.',
-    placement: 'bottom',
-  },
-  {
-    target: '[data-tour="analysis"]',
-    title: '분석 시작',
-    description: '퍼널 분석, 리텐션 코호트, 세그먼트 비교 — 사이드바에서 원하는 분석을 선택하세요.',
-    placement: 'right',
-  },
-  {
-    target: '[data-tour="insights"]',
-    title: 'AI 인사이트',
-    description: 'Gemini AI가 데이터를 분석하여 실행 가능한 인사이트를 자동 생성합니다.',
-    placement: 'right',
-  },
-];
+function getTourSteps(): TourStep[] {
+  return [
+    {
+      target: '[data-tour="upload"]',
+      title: i18n.t('onboarding.step1Title'),
+      description: i18n.t('onboarding.step1Desc'),
+      placement: 'bottom',
+    },
+    {
+      target: '[data-tour="analysis"]',
+      title: i18n.t('onboarding.step2Title'),
+      description: i18n.t('onboarding.step2Desc'),
+      placement: 'right',
+    },
+    {
+      target: '[data-tour="insights"]',
+      title: i18n.t('onboarding.step3Title'),
+      description: i18n.t('onboarding.step3Desc'),
+      placement: 'right',
+    },
+  ];
+}
 
 export interface OnboardingTourAPI {
   isActive: boolean;
@@ -66,7 +69,7 @@ export function useOnboardingTour(hasData: boolean): OnboardingTourAPI {
   }, []);
 
   const nextStep = useCallback(() => {
-    if (currentStep >= TOUR_STEPS.length - 1) {
+    if (currentStep >= getTourSteps().length - 1) {
       completeTour();
     } else {
       setCurrentStep(prev => prev + 1);
@@ -80,7 +83,7 @@ export function useOnboardingTour(hasData: boolean): OnboardingTourAPI {
   return {
     isActive,
     currentStep,
-    steps: TOUR_STEPS,
+    steps: getTourSteps(),
     startTour,
     nextStep,
     skipTour,

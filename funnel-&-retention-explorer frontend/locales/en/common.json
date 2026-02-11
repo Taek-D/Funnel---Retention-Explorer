@@ -1,0 +1,241 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "dataImport": "Data Import",
+    "funnel": "Funnel Analysis",
+    "retention": "Retention",
+    "segments": "Segments",
+    "aiInsights": "AI Insights",
+    "subscription": "Subscription",
+    "home": "Go to Home",
+    "startGuide": "Getting Started",
+    "logout": "Log Out",
+    "guest": "Guest",
+    "navMenu": "Navigation Menu"
+  },
+  "search": {
+    "label": "Search",
+    "placeholder": "Search pages, insights, events...",
+    "noResults": "No results for \"{{query}}\"",
+    "categoryPage": "Pages",
+    "categoryInsight": "Insights",
+    "categoryEvent": "Events",
+    "eventType": "Event Type",
+    "move": "Move",
+    "select": "Select",
+    "close": "Close",
+    "shortcut": "Search (Ctrl+K)"
+  },
+  "modal": {
+    "close": "Close"
+  },
+  "toast": {
+    "closeAlert": "Close notification"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please refresh the page or try again.",
+    "retry": "Try Again",
+    "reload": "Refresh Page"
+  },
+  "loading": "Loading...",
+  "plan": {
+    "pro": "Pro",
+    "free": "Free",
+    "upgrade": "Upgrade",
+    "upgradeTitle": "Upgrade to Pro",
+    "recommended": "Recommended",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "discount": "20% off",
+    "perMonth": "/mo",
+    "perYear": "/yr",
+    "processing": "Processing...",
+    "proUpgrade": "Upgrade to Pro",
+    "loginRequired": "Please log in first to upgrade.",
+    "billingCycle": "Select billing cycle:",
+    "csvLimitReason": "You've reached the CSV upload row limit ({{limit}} rows).",
+    "aiLimitReason": "You've reached the daily AI insights limit ({{limit}} calls).",
+    "generalReason": "Upgrade to Pro for more powerful features.",
+    "csvRows": "CSV {{count}} rows",
+    "aiCalls": "AI insights {{count}}/day",
+    "projectOne": "1 project",
+    "projectUnlimited": "Unlimited projects",
+    "funnelRetention": "Funnel & Retention analysis",
+    "segmentCompare": "Segment comparison",
+    "pdfExport": "PDF export",
+    "prioritySupport": "Priority support",
+    "proPlan": "Pro Plan",
+    "freePlan": "Free Plan"
+  },
+  "subscription": {
+    "title": "Subscription Status",
+    "active": "Active",
+    "cancelled": "Cancelled",
+    "pastDue": "Past Due",
+    "none": "None",
+    "currentPlan": "Current Plan",
+    "nextBilling": "Next Billing Date",
+    "billingCycle": "Billing Cycle",
+    "billingAmount": "Billing Amount",
+    "annualSub": "Annual",
+    "monthlySub": "Monthly",
+    "changeBillingKey": "Change Payment Method",
+    "switchToMonthly": "Switch to Monthly",
+    "switchToAnnual": "Switch to Annual",
+    "cancelSubscription": "Cancel Subscription",
+    "cancelling": "Processing...",
+    "gracePeriod": "Pro features available until {{date}}. Will switch to Free plan after.",
+    "cancelledNotice": "Subscription cancelled. Pro features available until {{date}}.",
+    "manage": "Manage Subscription"
+  },
+  "billing": {
+    "history": "Billing History",
+    "empty": "No billing records.",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "orderId": "Order ID",
+    "success": "Success",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "pastDue": {
+    "message": "There's a payment issue. Please check your card details.",
+    "gracePeriod": "Pro features until {{date}}",
+    "action": "Manage Subscription"
+  },
+  "share": {
+    "button": "Share",
+    "linkCopied": "Link Copied",
+    "linkCreated": "Share Link Created",
+    "copiedToClipboard": "Copied to clipboard.",
+    "failed": "Share Failed",
+    "proOnly": "Share report URL is available on Pro plan.",
+    "creating": "Creating...",
+    "copied": "Copied",
+    "copyLink": "Copy Link"
+  },
+  "save": {
+    "button": "Save to Cloud",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "failed": "Save Failed"
+  },
+  "ai": {
+    "askLabel": "Ask AI",
+    "poweredBy": "Powered by Gemini 2.0 Flash",
+    "clearChat": "Clear Chat",
+    "noData": "Upload and process data to start asking questions.",
+    "emptyChat": "Ask anything about your data analysis.",
+    "suggestion1": "What are the main trends in my data?",
+    "suggestion2": "Why is the conversion rate low?",
+    "suggestion3": "How can I improve retention?",
+    "suggestion4": "Which segment performs best?",
+    "placeholder": "Ask about your data...",
+    "placeholderNoData": "Upload data first...",
+    "analysisComplete": "AI Analysis Complete",
+    "analysisCompleteDesc": "Check the AI summary on the dashboard.",
+    "systemLang": "Always respond in English."
+  },
+  "notification": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "emptyDesc": "Activity will appear here",
+    "emailSettings": "Email Settings",
+    "deleteAll": "Delete All",
+    "analysis": "Analysis",
+    "import": "Import",
+    "ai": "AI",
+    "export": "Export",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Done",
+    "step1Title": "Upload Data",
+    "step1Desc": "Upload a CSV file or load sample data. E-commerce and SaaS samples are ready.",
+    "step2Title": "Start Analysis",
+    "step2Desc": "Funnel analysis, retention cohorts, segment comparison — choose from the sidebar.",
+    "step3Title": "AI Insights",
+    "step3Desc": "Gemini AI analyzes your data and automatically generates actionable insights."
+  },
+  "email": {
+    "settingsTitle": "Email Settings",
+    "webhookUrl": "n8n Webhook URL",
+    "webhookHint": "Enter the n8n webhook URL to call on events.",
+    "recipientEmails": "Recipient Emails",
+    "commaHint": "Comma-separated",
+    "autoSend": "Auto-send on analysis",
+    "autoSendDesc": "Send report immediately after data aggregation.",
+    "testConnection": "Test Connection",
+    "testing": "Testing...",
+    "save": "Save",
+    "close": "Close",
+    "webhookRequired": "Please enter a webhook URL",
+    "invalidUrl": "Please enter a valid URL",
+    "settingsSaved": "Settings Saved",
+    "settingsSavedDesc": "Email settings have been saved.",
+    "webhookUrlFirst": "Please enter a webhook URL first",
+    "connectionSuccess": "Connection Successful",
+    "connectionSuccessDesc": "Webhook server responded normally.",
+    "connectionFailed": "Connection Failed",
+    "connectionFailedDesc": "Please check the webhook URL."
+  },
+  "header": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "login": "Log In",
+    "getStarted": "Get Started"
+  },
+  "userMenu": {
+    "label": "User Menu",
+    "login": "Log In",
+    "freePlan": "Free Plan",
+    "logout": "Log Out"
+  },
+  "export": {
+    "noData": "No Data",
+    "noDataDesc": "Upload data first to generate a report.",
+    "pdfProOnly": "PDF report export is available on Pro plan.",
+    "generating": "Generating report...",
+    "generatingDesc": "Downloading {{format}} file.",
+    "complete": "Report Export Complete",
+    "completeDesc": "{{format}} file has been downloaded.",
+    "failed": "Report Generation Failed"
+  },
+  "analysis": {
+    "minFunnelSteps": "Please select at least 2 funnel steps",
+    "funnelComplete": "Funnel Analysis Complete",
+    "funnelCompleteDesc": "{{steps}} steps, conversion rate {{conversion}}%",
+    "selectSegment": "Please select at least 1 segment to compare",
+    "calculateFunnel": "Please calculate the funnel first",
+    "paidNoData": "No Paid Retention Data",
+    "paidNoDataDesc": "A subscribe event is required.",
+    "selectCohort": "Please select a cohort event",
+    "selectActive": "Please select at least 1 active event"
+  },
+  "segment": {
+    "platformPrefix": "Platform",
+    "channelPrefix": "Channel"
+  },
+  "time": {
+    "minutes": "{{count}}m",
+    "hours": "{{count}}h",
+    "days": "{{count}}d"
+  },
+  "saved": {
+    "loadFailed": "Failed to load",
+    "deleteFailed": "Failed to delete"
+  },
+  "language": {
+    "ko": "한국어",
+    "en": "English"
+  },
+  "unknown": "Unknown error"
+}

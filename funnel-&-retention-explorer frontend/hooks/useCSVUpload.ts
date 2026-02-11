@@ -12,6 +12,7 @@ import { usePlanGate } from './usePlanGate';
 import { trackEvent } from '../lib/analytics';
 import type { ColumnMapping } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
+import i18n from '../lib/i18n';
 
 export function useCSVUpload() {
   const { state, dispatch } = useAppContext();
@@ -21,14 +22,14 @@ export function useCSVUpload() {
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file.name.endsWith('.csv')) {
-      toast('warning', 'CSV 파일을 업로드해주세요');
+      toast('warning', i18n.t('insights:toast.csvOnly'));
       return;
     }
 
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: '파일 읽는 중...' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: i18n.t('insights:processing.readingFile') } });
 
     try {
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: 'CSV 파싱 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: i18n.t('insights:processing.parsingCSV') } });
 
       const result = await parseCSV(file);
 
@@ -57,29 +58,29 @@ export function useCSVUpload() {
       });
       dispatch({ type: 'SET_RECENT_FILES', payload: loadRecentFiles() });
 
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 50, message: '컬럼 자동 감지 완료' } });
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 50, message: i18n.t('insights:processing.autoDetectComplete') } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: i18n.t('insights:processing.done') } });
       trackEvent('csv_upload', { file_name: file.name, row_count: result.data.length });
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
-      toast('error', 'CSV 파싱 오류', error instanceof Error ? error.message : '알 수 없는 오류');
+      toast('error', i18n.t('insights:toast.csvParseError'), error instanceof Error ? error.message : i18n.t('insights:toast.unknownError'));
     }
   }, [dispatch, toast]);
 
   const confirmMapping = useCallback(async (mapping: ColumnMapping) => {
     if (!mapping.timestamp || !mapping.userid || !mapping.eventname) {
-      toast('warning', '필수 컬럼 미지정', 'Timestamp, User ID, Event Name 컬럼은 필수입니다.');
+      toast('warning', i18n.t('insights:toast.requiredColumns'), i18n.t('insights:toast.requiredColumnsDesc'));
       return;
     }
 
     dispatch({ type: 'SET_COLUMN_MAPPING', payload: mapping });
     dispatch({ type: 'RESET_ANALYSIS' });
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: '데이터 처리 중...' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: i18n.t('insights:processing.processingData') } });
 
     const processed = processData(state.rawData, mapping);
     dispatch({ type: 'SET_PROCESSED_DATA', payload: processed });
 
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 50, message: '이벤트 감지 중...' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 50, message: i18n.t('insights:processing.detectingEvents') } });
 
     const events = getUniqueEvents(processed);
     dispatch({ type: 'SET_UNIQUE_EVENTS', payload: events });
@@ -87,13 +88,13 @@ export function useCSVUpload() {
     const qualityReport = generateDataQualityReport(state.rawData, processed);
     dispatch({ type: 'SET_DATA_QUALITY', payload: qualityReport });
 
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 70, message: '데이터 유형 감지 중...' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 70, message: i18n.t('insights:processing.detectingType') } });
 
     const detectedType = detectDatasetType(processed);
     dispatch({ type: 'SET_DETECTED_TYPE', payload: detectedType });
 
     if (detectedType === 'subscription') {
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 80, message: '구독 분석 수행 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 80, message: i18n.t('insights:processing.analyzingSubscription') } });
 
       const kpis = calculateSubscriptionKPIs(state.rawData, mapping, state.headers);
       dispatch({ type: 'SET_SUBSCRIPTION_KPIS', payload: kpis });
@@ -107,30 +108,30 @@ export function useCSVUpload() {
       const paidRetention = calculatePaidRetention(state.rawData, mapping);
       dispatch({ type: 'SET_PAID_RETENTION', payload: paidRetention });
 
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: '인사이트 생성 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: i18n.t('insights:processing.generatingInsights') } });
 
       const insights = generateInsights(processed, detectedType, kpis, trialAnalysis, churnAnalysis, paidRetention);
       dispatch({ type: 'SET_INSIGHTS', payload: insights });
     } else {
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: '인사이트 생성 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: i18n.t('insights:processing.generatingInsights') } });
 
       const insights = generateInsights(processed, detectedType, null, null, null, null);
       dispatch({ type: 'SET_INSIGHTS', payload: insights });
     }
 
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: i18n.t('insights:processing.done') } });
 
-    const typeName = detectedType === 'ecommerce' ? '이커머스' : detectedType === 'subscription' ? '구독 서비스' : null;
+    const typeName = detectedType === 'ecommerce' ? i18n.t('insights:dataType.ecommerce') : detectedType === 'subscription' ? i18n.t('insights:dataType.subscription') : null;
     if (typeName) {
-      toast('success', '데이터 처리 완료', `감지된 데이터 유형: ${typeName}`);
+      toast('success', i18n.t('insights:toast.processComplete'), i18n.t('insights:toast.detectedType', { type: typeName }));
     } else {
-      toast('success', '데이터 처리 완료', '다른 화면으로 이동하여 분석하세요.');
+      toast('success', i18n.t('insights:toast.processComplete'), i18n.t('insights:toast.processCompleteDesc'));
     }
-    addNotification('import', '데이터 가져오기 완료', `${processed.length}개 이벤트, ${qualityReport.uniqueUsers}명 사용자`);
+    addNotification('import', i18n.t('insights:toast.importComplete'), i18n.t('insights:toast.importStats', { events: processed.length, users: qualityReport.uniqueUsers }));
   }, [state.rawData, state.headers, dispatch, toast, addNotification]);
 
   const loadSampleData = useCallback(async (type: SampleDataType) => {
-    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: '샘플 데이터 생성 중...' } });
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: i18n.t('insights:processing.generatingSample') } });
 
     try {
       const { generateSampleData } = await import('../lib/sampleData');
@@ -141,26 +142,26 @@ export function useCSVUpload() {
         payload: { rawData: sample.data, headers: sample.headers, fileName: sample.fileName }
       });
       dispatch({ type: 'SET_COLUMN_MAPPING', payload: sample.mapping });
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 40, message: '컬럼 자동 매핑 완료' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 40, message: i18n.t('insights:processing.autoMappingComplete') } });
 
       // Auto-process (same logic as confirmMapping)
       dispatch({ type: 'RESET_ANALYSIS' });
       const processed = processData(sample.data, sample.mapping);
       dispatch({ type: 'SET_PROCESSED_DATA', payload: processed });
 
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 60, message: '이벤트 감지 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 60, message: i18n.t('insights:processing.detectingEvents') } });
       const events = getUniqueEvents(processed);
       dispatch({ type: 'SET_UNIQUE_EVENTS', payload: events });
 
       const qualityReport = generateDataQualityReport(sample.data, processed);
       dispatch({ type: 'SET_DATA_QUALITY', payload: qualityReport });
 
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 75, message: '데이터 유형 감지 중...' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 75, message: i18n.t('insights:processing.detectingType') } });
       const detectedType = detectDatasetType(processed);
       dispatch({ type: 'SET_DETECTED_TYPE', payload: detectedType });
 
       if (detectedType === 'subscription') {
-        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 85, message: '구독 분석 수행 중...' } });
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 85, message: i18n.t('insights:processing.analyzingSubscription') } });
         const kpis = calculateSubscriptionKPIs(sample.data, sample.mapping, sample.headers);
         dispatch({ type: 'SET_SUBSCRIPTION_KPIS', payload: kpis });
         const trialAnalysis = analyzeTrialConversion(sample.data, sample.mapping, sample.headers);
@@ -172,20 +173,20 @@ export function useCSVUpload() {
         const insights = generateInsights(processed, detectedType, kpis, trialAnalysis, churnAnalysis, paidRetention);
         dispatch({ type: 'SET_INSIGHTS', payload: insights });
       } else {
-        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: '인사이트 생성 중...' } });
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 90, message: i18n.t('insights:processing.generatingInsights') } });
         const insights = generateInsights(processed, detectedType, null, null, null, null);
         dispatch({ type: 'SET_INSIGHTS', payload: insights });
       }
 
-      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: '완료!' } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: i18n.t('insights:processing.done') } });
       trackEvent('sample_data_load', { sample_type: type });
 
-      const typeName = type === 'ecommerce' ? '이커머스' : 'SaaS';
-      toast('success', '샘플 데이터 로드 완료', `${typeName} 샘플 데이터가 로드되었습니다.`);
-      addNotification('import', '샘플 데이터 로드 완료', `${processed.length}개 이벤트, ${qualityReport.uniqueUsers}명 사용자`);
+      const typeName = type === 'ecommerce' ? i18n.t('insights:dataType.ecommerce') : i18n.t('insights:dataType.saas');
+      toast('success', i18n.t('insights:toast.sampleLoadComplete'), i18n.t('insights:toast.sampleLoadDesc', { type: typeName }));
+      addNotification('import', i18n.t('insights:toast.sampleLoadComplete'), i18n.t('insights:toast.importStats', { events: processed.length, users: qualityReport.uniqueUsers }));
     } catch (error) {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
-      toast('error', '샘플 데이터 로드 실패', error instanceof Error ? error.message : '알 수 없는 오류');
+      toast('error', i18n.t('insights:toast.sampleLoadFailed'), error instanceof Error ? error.message : i18n.t('insights:toast.unknownError'));
     }
   }, [dispatch, toast, addNotification]);
 

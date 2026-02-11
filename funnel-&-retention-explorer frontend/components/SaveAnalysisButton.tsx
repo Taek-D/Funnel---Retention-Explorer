@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Download, CheckCircle } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { saveSnapshot } from '../lib/supabaseData';
@@ -17,6 +18,7 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
   config,
   results,
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
@@ -36,7 +38,7 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
-      toast('error', '저장 실패', err instanceof Error ? err.message : '알 수 없는 오류');
+      toast('error', t('save.failed'), err instanceof Error ? err.message : t('unknown'));
     } finally {
       setSaving(false);
     }
@@ -55,12 +57,12 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
       {saved ? (
         <>
           <CheckCircle size={16} />
-          저장됨
+          {t('save.saved')}
         </>
       ) : (
         <>
           <Download size={16} />
-          {saving ? '저장 중...' : '클라우드에 저장'}
+          {saving ? t('save.saving') : t('save.button')}
         </>
       )}
     </button>

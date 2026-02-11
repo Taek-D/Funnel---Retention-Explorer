@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from './Icons';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -39,6 +40,7 @@ function calcTimeout(title: string, message?: string): number {
 }
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const startExit = useCallback((id: number) => {
@@ -76,7 +78,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               <button
                 onClick={() => startExit(t.id)}
                 className="text-slate-500 hover:text-white transition-colors shrink-0"
-                aria-label="알림 닫기"
+                aria-label={t('toast.closeAlert')}
               >
                 <X size={14} />
               </button>
