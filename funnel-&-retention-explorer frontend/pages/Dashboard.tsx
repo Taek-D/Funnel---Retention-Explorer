@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, Users, Zap, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2, ChevronRight, BarChart2, Shield, AlertTriangle, Settings, Check, RotateCcw } from '../components/Icons';
+import { Info, Users, Zap, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2, ChevronRight, BarChart2, Shield, AlertTriangle, Settings, Check, RotateCcw, LayoutDashboard, ShoppingBag, Activity, ChevronDown } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
 import { useDataExport } from '../hooks/useDataExport';
@@ -13,7 +13,8 @@ import { useToast } from '../components/Toast';
 import { ShareButton } from '../components/ShareButton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { DashboardWidget } from '../components/DashboardWidget';
-import { CHART_COLORS, DASHBOARD_WIDGETS } from '../lib/constants';
+import { CHART_COLORS, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
+import { useClickOutside } from '../hooks/useClickOutside';
 import type { AppState, WidgetId } from '../types';
 
 export const Dashboard: React.FC = () => {
@@ -24,8 +25,19 @@ export const Dashboard: React.FC = () => {
   const { snapshots, removeSnapshot } = useSavedAnalyses();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { layout, editMode, setEditMode, toggleVisibility, toggleWidth, reorder, resetToDefault } = useDashboardLayout();
+  const { layout, editMode, setEditMode, toggleVisibility, toggleWidth, reorder, resetToDefault, applyPreset } = useDashboardLayout();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
+
+  // Preset dropdown state
+  const [presetOpen, setPresetOpen] = useState(false);
+  const presetRef = useRef<HTMLDivElement>(null);
+  useClickOutside(presetRef, () => setPresetOpen(false));
+
+  const PRESET_ICON_MAP: Record<string, React.FC<{ size?: number; className?: string }>> = {
+    LayoutDashboard,
+    ShoppingBag,
+    Activity,
+  };
 
   // Drag state
   const dragIndexRef = useRef<number | null>(null);
@@ -465,13 +477,45 @@ export const Dashboard: React.FC = () => {
             {editMode ? t('dashboard.editDone') : t('dashboard.editLayout')}
           </button>
           {editMode && (
-            <button
-              onClick={resetToDefault}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-400 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
-            >
-              <RotateCcw size={14} />
-              {t('dashboard.resetLayout')}
-            </button>
+            <>
+              <button
+                onClick={resetToDefault}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-400 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
+              >
+                <RotateCcw size={14} />
+                {t('dashboard.resetLayout')}
+              </button>
+              <div className="relative" ref={presetRef}>
+                <button
+                  onClick={() => setPresetOpen(!presetOpen)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-400 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
+                >
+                  <LayoutDashboard size={14} />
+                  {t('dashboard.presets')}
+                  <ChevronDown size={14} className={`transition-transform ${presetOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {presetOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-64 bg-surface border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden">
+                    {Object.entries(PRESET_TEMPLATES).map(([id, preset]) => {
+                      const IconComp = PRESET_ICON_MAP[preset.icon];
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => { applyPreset(id); setPresetOpen(false); }}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
+                        >
+                          {IconComp && <IconComp size={16} className="text-accent shrink-0" />}
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-white">{t(preset.labelKey)}</div>
+                            <div className="text-xs text-slate-500 truncate">{t(preset.descKey)}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
         <div className="flex gap-2">

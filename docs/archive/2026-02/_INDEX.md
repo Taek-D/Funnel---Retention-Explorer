@@ -407,3 +407,25 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 7 tasks completed (DC-1 ~ DC-7): WidgetId/WidgetWidth/WidgetLayout 타입 + AppState 확장 + SET_DASHBOARD_LAYOUT 리듀서, DASHBOARD_WIDGETS 레지스트리 + DEFAULT_LAYOUT 상수, useDashboardLayout 훅 (show/hide, reorder, resize, resetToDefault + localStorage + Supabase 1s 디바운스 동기화), DashboardWidget 래퍼 컴포넌트 (3 렌더 모드: view/edit/hidden + HTML5 DnD), Dashboard.tsx 동적 레이아웃 리팩토링 (grid-cols-2 + Settings/Check 편집 모드), Supabase migration (dashboard_layout JSONB), i18n 15 키 (ko/en). 11개 파일 변경 (3 신규, 8 수정, ~2,401 lines). 테스트 223/223 통과. 9개 design 초과 개선 (StrictMode 가드, 디바운스 cleanup, localStorage 검증, minWidth UI 제약, onDragEnd 등).
+
+---
+
+## dashboard-presets
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Dashboard Template Presets (Default, E-commerce, SaaS) |
+| **Match Rate** | 100% (59/59) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-12 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Analysis | `dashboard-presets/dashboard-presets.analysis.md` |
+| Report | `dashboard-presets/dashboard-presets.report.md` |
+
+### Summary
+
+3 preset templates (default, ecommerce, saas) providing one-click dashboard layout application. PRESET_TEMPLATES 상수 (constants.ts), applyPreset() 콜백 (useDashboardLayout.ts, resetToDefault 리팩토링), Dashboard 편집 모드 드롭다운 UI (LayoutDashboard/ShoppingBag/Activity 아이콘 + useClickOutside), ko/en i18n 8키. 7개 파일 변경 (5 impl + 2 test, ~120 lines). 테스트 305 → 310 (+5 preset tests). 0 iteration.

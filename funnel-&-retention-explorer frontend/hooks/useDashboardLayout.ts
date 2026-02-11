@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { DEFAULT_LAYOUT, DASHBOARD_WIDGETS } from '../lib/constants';
+import { DEFAULT_LAYOUT, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
 import type { WidgetId, WidgetLayout } from '../types';
 
@@ -120,9 +120,15 @@ export function useDashboardLayout() {
     persist(reordered);
   }, [layout, persist]);
 
-  const resetToDefault = useCallback(() => {
-    persist([...DEFAULT_LAYOUT]);
+  const applyPreset = useCallback((presetId: string) => {
+    const preset = PRESET_TEMPLATES[presetId];
+    if (!preset) return;
+    persist([...preset.layout]);
   }, [persist]);
+
+  const resetToDefault = useCallback(() => {
+    applyPreset('default');
+  }, [applyPreset]);
 
   // Cleanup debounce timer
   useEffect(() => {
@@ -139,5 +145,6 @@ export function useDashboardLayout() {
     toggleWidth,
     reorder,
     resetToDefault,
+    applyPreset,
   };
 }

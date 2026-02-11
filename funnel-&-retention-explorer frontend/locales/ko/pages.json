@@ -164,6 +164,16 @@
       "recentInsights": "최근 인사이트",
       "savedAnalyses": "저장된 분석"
     },
+    "presets": "템플릿",
+    "presetsDesc": "미리 정의된 레이아웃 적용",
+    "preset": {
+      "default": "기본",
+      "defaultDesc": "모든 위젯 표시",
+      "ecommerce": "E-commerce",
+      "ecommerceDesc": "퍼널·세그먼트 중심 레이아웃",
+      "saas": "SaaS",
+      "saasDesc": "리텐션·인사이트 중심 레이아웃"
+    },
     "widgetHidden": "숨겨진 위젯",
     "dragToReorder": "드래그하여 순서 변경",
     "widgetFullWidth": "전체 너비",

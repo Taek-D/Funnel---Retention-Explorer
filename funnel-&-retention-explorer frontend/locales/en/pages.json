@@ -164,6 +164,16 @@
       "recentInsights": "Recent Insights",
       "savedAnalyses": "Saved Analyses"
     },
+    "presets": "Templates",
+    "presetsDesc": "Apply a predefined layout",
+    "preset": {
+      "default": "Default",
+      "defaultDesc": "Show all widgets",
+      "ecommerce": "E-commerce",
+      "ecommerceDesc": "Funnel & segment focused layout",
+      "saas": "SaaS",
+      "saasDesc": "Retention & insights focused layout"
+    },
     "widgetHidden": "Hidden Widgets",
     "dragToReorder": "Drag to reorder",
     "widgetFullWidth": "Full Width",

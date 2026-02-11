@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useDashboardLayout } from '../../hooks/useDashboardLayout';
 import { AppProvider } from '../../context/AppContext';
-import { DEFAULT_LAYOUT } from '../../lib/constants';
+import { DEFAULT_LAYOUT, PRESET_TEMPLATES } from '../../lib/constants';
 import type { WidgetLayout } from '../../types';
 
 // Mock AuthContext
@@ -213,6 +213,84 @@ describe('useDashboardLayout', () => {
     const orders = result.current.layout.map(w => w.order);
     const sorted = [...orders].sort((a, b) => a - b);
     expect(orders).toEqual(sorted);
+  });
+
+  it('applyPreset applies ecommerce layout', async () => {
+    const { result } = renderHook(() => useDashboardLayout(), { wrapper });
+    await act(async () => {});
+
+    act(() => {
+      result.current.applyPreset('ecommerce');
+    });
+
+    const ecomLayout = PRESET_TEMPLATES.ecommerce.layout;
+    expect(result.current.layout.map(w => w.widgetId)).toEqual(
+      [...ecomLayout].sort((a, b) => a.order - b.order).map(w => w.widgetId)
+    );
+    // saved-analyses should be hidden in ecommerce preset
+    expect(result.current.layout.find(w => w.widgetId === 'saved-analyses')!.visible).toBe(false);
+  });
+
+  it('applyPreset applies saas layout', async () => {
+    const { result } = renderHook(() => useDashboardLayout(), { wrapper });
+    await act(async () => {});
+
+    act(() => {
+      result.current.applyPreset('saas');
+    });
+
+    const saasLayout = PRESET_TEMPLATES.saas.layout;
+    expect(result.current.layout.map(w => w.widgetId)).toEqual(
+      [...saasLayout].sort((a, b) => a.order - b.order).map(w => w.widgetId)
+    );
+    // retention-chart should be first content widget (order 1) in saas
+    expect(result.current.layout[1].widgetId).toBe('retention-chart');
+  });
+
+  it('applyPreset with default restores DEFAULT_LAYOUT', async () => {
+    const { result } = renderHook(() => useDashboardLayout(), { wrapper });
+    await act(async () => {});
+
+    // First apply ecommerce
+    act(() => {
+      result.current.applyPreset('ecommerce');
+    });
+
+    // Then apply default
+    act(() => {
+      result.current.applyPreset('default');
+    });
+
+    expect(result.current.layout).toEqual(DEFAULT_LAYOUT);
+  });
+
+  it('applyPreset ignores unknown preset id', async () => {
+    const { result } = renderHook(() => useDashboardLayout(), { wrapper });
+    await act(async () => {});
+
+    const before = result.current.layout.map(w => w.widgetId);
+
+    act(() => {
+      result.current.applyPreset('nonexistent');
+    });
+
+    expect(result.current.layout.map(w => w.widgetId)).toEqual(before);
+  });
+
+  it('applyPreset saves to localStorage', async () => {
+    const { result } = renderHook(() => useDashboardLayout(), { wrapper });
+    await act(async () => {});
+
+    mockLocalStorage.setItem.mockClear();
+
+    act(() => {
+      result.current.applyPreset('saas');
+    });
+
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+      'fre-dashboard-layout',
+      expect.any(String)
+    );
   });
 
   it('debounces Supabase write for logged-in user', async () => {

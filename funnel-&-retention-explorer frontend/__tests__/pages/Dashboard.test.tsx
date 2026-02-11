@@ -33,6 +33,10 @@ vi.mock('../../components/Icons', () => {
     Settings: Icon('Settings'),
     Check: Icon('Check'),
     RotateCcw: Icon('RotateCcw'),
+    LayoutDashboard: Icon('LayoutDashboard'),
+    ShoppingBag: Icon('ShoppingBag'),
+    Activity: Icon('Activity'),
+    ChevronDown: Icon('ChevronDown'),
     // Toast icons
     CheckCircle: Icon('CheckCircle'),
     AlertCircle: Icon('AlertCircle'),
@@ -62,6 +66,7 @@ const mockToggleVisibility = vi.fn();
 const mockToggleWidth = vi.fn();
 const mockReorder = vi.fn();
 const mockResetToDefault = vi.fn();
+const mockApplyPreset = vi.fn();
 const mockSetEditMode = vi.fn();
 let mockEditMode = false;
 let mockLayout = [...DEFAULT_LAYOUT];
@@ -100,6 +105,7 @@ vi.mock('../../hooks/useDashboardLayout', () => ({
     toggleWidth: mockToggleWidth,
     reorder: mockReorder,
     resetToDefault: mockResetToDefault,
+    applyPreset: mockApplyPreset,
   }),
 }));
 
@@ -128,6 +134,11 @@ vi.mock('../../components/DashboardWidget', () => ({
     if (!visible && !editMode) return null;
     return <div data-testid={`widget-${widgetId}`}>{children}</div>;
   },
+}));
+
+// Mock useClickOutside
+vi.mock('../../hooks/useClickOutside', () => ({
+  useClickOutside: vi.fn(),
 }));
 
 // Mock analytics

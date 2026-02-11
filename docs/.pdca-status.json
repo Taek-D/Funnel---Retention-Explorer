@@ -1,9 +1,21 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-11T09:15:00.000Z",
-  "activeFeatures": [],
-  "primaryFeature": null,
+  "lastUpdated": "2026-02-12T03:40:00.000Z",
+  "activeFeatures": [
+    "__tests__",
+    "unit",
+    "funnel-&-retention-explorer frontend"
+  ],
+  "primaryFeature": "__tests__",
   "features": {
+    "dashboard-presets": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-02-12T03:00:00.000Z",
+      "archivedAt": "2026-02-12T03:40:00.000Z",
+      "archivedTo": "docs/archive/2026-02/dashboard-presets/"
+    },
     "dashboard-customization": {
       "phase": "archived",
       "matchRate": 100,
@@ -11,6 +23,45 @@
       "startedAt": "2026-02-11T07:40:00.000Z",
       "archivedAt": "2026-02-11T09:15:00.000Z",
       "archivedTo": "docs/archive/2026-02/dashboard-customization/"
+    },
+    "__tests__": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-11T17:38:19.315Z",
+        "lastUpdated": "2026-02-11T18:16:01.515Z"
+      },
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\pages\\Dashboard.test.tsx"
+    },
+    "unit": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-11T17:48:37.516Z",
+        "lastUpdated": "2026-02-11T17:48:37.516Z"
+      },
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\unit\\excelExport.test.ts"
+    },
+    "funnel-&-retention-explorer frontend": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-11T18:09:45.357Z",
+        "lastUpdated": "2026-02-11T18:10:33.235Z"
+      },
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\Dashboard.tsx"
     }
   },
   "pipeline": {
@@ -21,7 +72,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-11T09:15:00.000Z"
+    "lastActivity": "2026-02-11T18:16:01.515Z"
   },
   "history": [
     {
@@ -61,6 +112,188 @@
       "phase": "archived",
       "action": "archived",
       "archivedTo": "docs/archive/2026-02/dashboard-customization/"
+    },
+    {
+      "timestamp": "2026-02-11T17:38:19.315Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:47:24.430Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:47:56.010Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:48:37.516Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:49:20.777Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:50:06.984Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:50:37.725Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:51:17.092Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:52:00.739Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:52:36.034Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T17:53:25.586Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:09:45.357Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:09:46.641Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:09:57.811Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:02.264Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:06.100Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:09.481Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:15.762Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:22.556Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:33.235Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:37.636Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:10:51.262Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:15:47.942Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:15:52.707Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:15:56.761Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-11T18:16:01.515Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T03:00:00.000Z",
+      "feature": "dashboard-presets",
+      "phase": "plan",
+      "action": "created"
+    },
+    {
+      "timestamp": "2026-02-12T03:20:00.000Z",
+      "feature": "dashboard-presets",
+      "phase": "check",
+      "action": "completed",
+      "matchRate": 100
+    },
+    {
+      "timestamp": "2026-02-12T03:30:00.000Z",
+      "feature": "dashboard-presets",
+      "phase": "report",
+      "action": "completed"
+    },
+    {
+      "timestamp": "2026-02-12T03:40:00.000Z",
+      "feature": "dashboard-presets",
+      "phase": "archived",
+      "action": "archived",
+      "archivedTo": "docs/archive/2026-02/dashboard-presets/"
     }
   ]
 }

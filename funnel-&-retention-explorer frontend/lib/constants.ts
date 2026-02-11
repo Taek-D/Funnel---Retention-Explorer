@@ -72,6 +72,50 @@ export const DEFAULT_LAYOUT: WidgetLayout[] = [
   { widgetId: 'saved-analyses',  visible: true, width: 'full', order: 6 },
 ];
 
+// === Dashboard Preset Templates ===
+
+export const PRESET_TEMPLATES: Record<string, {
+  labelKey: string;
+  descKey: string;
+  icon: string;
+  layout: WidgetLayout[];
+}> = {
+  default: {
+    labelKey: 'dashboard.preset.default',
+    descKey: 'dashboard.preset.defaultDesc',
+    icon: 'LayoutDashboard',
+    layout: DEFAULT_LAYOUT,
+  },
+  ecommerce: {
+    labelKey: 'dashboard.preset.ecommerce',
+    descKey: 'dashboard.preset.ecommerceDesc',
+    icon: 'ShoppingBag',
+    layout: [
+      { widgetId: 'kpi-cards',       visible: true,  width: 'full', order: 0 },
+      { widgetId: 'funnel-chart',    visible: true,  width: 'full', order: 1 },
+      { widgetId: 'quick-actions',   visible: true,  width: 'half', order: 2 },
+      { widgetId: 'data-quality',    visible: true,  width: 'half', order: 3 },
+      { widgetId: 'retention-chart', visible: true,  width: 'half', order: 4 },
+      { widgetId: 'recent-insights', visible: true,  width: 'full', order: 5 },
+      { widgetId: 'saved-analyses',  visible: false, width: 'full', order: 6 },
+    ],
+  },
+  saas: {
+    labelKey: 'dashboard.preset.saas',
+    descKey: 'dashboard.preset.saasDesc',
+    icon: 'Activity',
+    layout: [
+      { widgetId: 'kpi-cards',       visible: true, width: 'full', order: 0 },
+      { widgetId: 'retention-chart', visible: true, width: 'full', order: 1 },
+      { widgetId: 'recent-insights', visible: true, width: 'full', order: 2 },
+      { widgetId: 'funnel-chart',    visible: true, width: 'half', order: 3 },
+      { widgetId: 'data-quality',    visible: true, width: 'half', order: 4 },
+      { widgetId: 'quick-actions',   visible: true, width: 'half', order: 5 },
+      { widgetId: 'saved-analyses',  visible: true, width: 'full', order: 6 },
+    ],
+  },
+};
+
 // === Chart Theme Tokens ===
 export const CHART_COLORS = {
   accent: '#00d4aa',

@@ -4,6 +4,49 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-12] — Dashboard Template Presets (Feature Extension)
+
+### Summary
+Implemented predefined dashboard layout presets (Default, E-commerce, SaaS) extending the dashboard-customization feature. Achieved 100% design match with zero iterations, enabling users to apply optimized widget configurations with one click.
+
+### Added
+- **Preset Constants**: `PRESET_TEMPLATES` with 3 preconfigured layouts
+  - **Default**: All 7 widgets visible (identical to DEFAULT_LAYOUT)
+  - **E-commerce**: Funnel-chart full width, saved-analyses hidden, retention-chart half
+  - **SaaS**: Retention-chart and recent-insights full width, funnel-chart half width
+- **Hook Function**: `applyPreset(presetId)` in `useDashboardLayout` hook
+- **UI Component**: Preset selector dropdown in Dashboard edit mode with LayoutDashboard icon
+- **Translations**: 16 i18n keys (8 Ko + 8 En) for preset names and descriptions
+
+### Changed
+- `lib/constants.ts`: Added PRESET_TEMPLATES export (25 lines)
+- `hooks/useDashboardLayout.ts`: Added applyPreset() callback, refactored resetToDefault() (8 lines)
+- `pages/Dashboard.tsx`: Added PRESET_ICON_MAP, preset selector UI, ChevronDown rotation (35 lines)
+- `locales/ko/pages.json`: Added 8 Korean preset translation keys
+- `locales/en/pages.json`: Added 8 English preset translation keys
+
+### Enhanced
+- **Dynamic Icon Resolution**: PRESET_ICON_MAP pattern enables configuration-driven UI rendering
+- **Visual Feedback**: ChevronDown icon rotates when dropdown is open
+- **Data Safety**: Layout spread copy prevents mutation of PRESET_TEMPLATES source data
+
+### Metrics
+- **Design Match Rate**: 100% (59/59 items PASS)
+- **Files Modified**: 5 implementation + 2 test files
+- **Lines Added**: ~120 implementation + translations
+- **Tests Added**: 5 new preset-specific test cases
+- **Total Tests**: 310 (305 existing + 5 new)
+- **Build Status**: Pass (0 TypeScript errors, 0 ESLint violations)
+- **PDCA Iterations**: 0 (first-pass completion)
+
+### Documentation
+- Plan: User-provided inline specification
+- Design: User-provided inline design spec
+- Analysis: `docs/03-analysis/dashboard-presets.analysis.md`
+- Report: `docs/04-report/dashboard-presets.report.md`
+
+---
+
 ## [2026-02-11] — Phase 9: Internationalization (i18n)
 
 ### Summary
