@@ -10,6 +10,9 @@ import type { BillingCycle } from '../types';
 const monthlyPerMonth = BILLING_PRICES.monthly;
 const annualPerMonth = Math.round(BILLING_PRICES.annual / 12);
 const annualSavings = monthlyPerMonth * 12 - BILLING_PRICES.annual;
+const teamMonthlyPerMonth = BILLING_PRICES.teamMonthly;
+const teamAnnualPerMonth = Math.round(BILLING_PRICES.teamAnnual / 12);
+const teamAnnualSavings = teamMonthlyPerMonth * 12 - BILLING_PRICES.teamAnnual;
 
 export const PricingPage: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -20,15 +23,18 @@ export const PricingPage: React.FC = () => {
   const isAnnual = billingCycle === 'annual';
 
   const comparisonFeatures = [
-    { name: t('pricing.csvRows'), free: `${PLAN_LIMITS.free.csvRows.toLocaleString()}${t('pricing.rows')}`, pro: `${PLAN_LIMITS.pro.csvRows.toLocaleString()}${t('pricing.rows')}` },
-    { name: t('pricing.aiDaily'), free: `${PLAN_LIMITS.free.aiCallsPerDay}${t('pricing.calls')}`, pro: `${PLAN_LIMITS.pro.aiCallsPerDay}${t('pricing.calls')}` },
-    { name: t('pricing.projectCount'), free: `${PLAN_LIMITS.free.projects}${t('pricing.count')}`, pro: t('pricing.unlimited') },
-    { name: t('pricing.savedAnalyses'), free: `${PLAN_LIMITS.free.savedAnalyses}${t('pricing.count')}`, pro: t('pricing.unlimited') },
-    { name: t('pricing.funnelAnalysis'), free: true, pro: true },
-    { name: t('pricing.retentionCohort'), free: true, pro: true },
-    { name: t('pricing.segmentCompare'), free: true, pro: true },
-    { name: t('pricing.pdfExport'), free: false, pro: true },
-    { name: t('pricing.prioritySupport'), free: false, pro: true },
+    { name: t('pricing.csvRows'), free: `${PLAN_LIMITS.free.csvRows.toLocaleString()}${t('pricing.rows')}`, pro: `${PLAN_LIMITS.pro.csvRows.toLocaleString()}${t('pricing.rows')}`, team: `${PLAN_LIMITS.team.csvRows.toLocaleString()}${t('pricing.rows')}` },
+    { name: t('pricing.aiDaily'), free: `${PLAN_LIMITS.free.aiCallsPerDay}${t('pricing.calls')}`, pro: `${PLAN_LIMITS.pro.aiCallsPerDay}${t('pricing.calls')}`, team: `${PLAN_LIMITS.team.aiCallsPerDay}${t('pricing.calls')}` },
+    { name: t('pricing.projectCount'), free: `${PLAN_LIMITS.free.projects}${t('pricing.count')}`, pro: t('pricing.unlimited'), team: t('pricing.unlimited') },
+    { name: t('pricing.savedAnalyses'), free: `${PLAN_LIMITS.free.savedAnalyses}${t('pricing.count')}`, pro: t('pricing.unlimited'), team: t('pricing.unlimited') },
+    { name: t('pricing.teamMembers'), free: `1${t('pricing.people')}`, pro: `1${t('pricing.people')}`, team: `${PLAN_LIMITS.team.teamMembers}${t('pricing.people')}` },
+    { name: t('pricing.funnelAnalysis'), free: true, pro: true, team: true },
+    { name: t('pricing.retentionCohort'), free: true, pro: true, team: true },
+    { name: t('pricing.segmentCompare'), free: true, pro: true, team: true },
+    { name: t('pricing.pdfExport'), free: false, pro: true, team: true },
+    { name: t('pricing.sharedProjects'), free: false, pro: false, team: true },
+    { name: t('pricing.teamAdmin'), free: false, pro: false, team: true },
+    { name: t('pricing.prioritySupport'), free: false, pro: true, team: true },
   ];
 
   const faqs = [
@@ -65,7 +71,7 @@ export const PricingPage: React.FC = () => {
 
       {/* Plan Cards */}
       <section className="pb-16 px-6">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Free */}
           <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col">
             <h3 className="text-2xl font-bold text-white">Free</h3>
@@ -129,20 +135,62 @@ export const PricingPage: React.FC = () => {
               <ArrowRight size={16} />
             </Link>
           </div>
+
+          {/* Team */}
+          <div className="bg-surface border border-violet-500/30 rounded-lg p-8 flex flex-col relative">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider bg-violet-500 text-white rounded-full">
+              {t('pricing.teamPlan')}
+            </span>
+            <h3 className="text-2xl font-bold text-white">Team</h3>
+            <div className="mt-4 mb-6">
+              <span className="text-4xl font-mono font-bold text-white">
+                {'\u20A9'}{(isAnnual ? teamAnnualPerMonth : teamMonthlyPerMonth).toLocaleString()}
+              </span>
+              <span className="text-slate-400 text-sm ml-1">{t('plan.perMonth')}</span>
+              {isAnnual && (
+                <div className="text-slate-500 text-xs mt-1">{'\u20A9'}{BILLING_PRICES.teamAnnual.toLocaleString()} {t('pricing.annualBilling')}</div>
+              )}
+            </div>
+            {isAnnual && (
+              <div className="mb-4 px-3 py-1.5 bg-violet-500/5 border border-violet-500/10 rounded-md text-xs text-violet-400 font-medium text-center">
+                {t('pricing.teamAnnualSaving', { amount: teamAnnualSavings.toLocaleString() })}
+              </div>
+            )}
+            <ul className="space-y-3 mb-8 flex-1">
+              {comparisonFeatures.map((f, i) => (
+                <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
+                  {f.team ? (
+                    <CheckCircle size={16} className="text-violet-400 shrink-0" />
+                  ) : (
+                    <X size={16} className="text-slate-600 shrink-0" />
+                  )}
+                  {f.name}{typeof f.team === 'string' ? `: ${f.team}` : ''}
+                </li>
+              ))}
+            </ul>
+            <Link
+              to={user ? '/app/team' : '/signup'}
+              className="w-full py-3 text-sm font-semibold text-center bg-violet-500 text-white hover:bg-violet-500/90 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              {t('pricing.startTeam')}
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Comparison Table */}
       <section className="pb-16 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold text-white text-center mb-8">{t('pricing.detailComparison')}</h2>
-          <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">
+          <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/[0.06]">
                   <th className="text-left px-6 py-4 text-sm font-medium text-slate-400">{t('pricing.feature')}</th>
                   <th className="text-center px-6 py-4 text-sm font-medium text-slate-400">Free</th>
                   <th className="text-center px-6 py-4 text-sm font-medium text-accent">Pro</th>
+                  <th className="text-center px-6 py-4 text-sm font-medium text-violet-400">Team</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,6 +211,15 @@ export const PricingPage: React.FC = () => {
                         <span className="text-white font-medium">{f.pro}</span>
                       ) : f.pro ? (
                         <CheckCircle size={16} className="text-accent mx-auto" />
+                      ) : (
+                        <X size={16} className="text-slate-600 mx-auto" />
+                      )}
+                    </td>
+                    <td className="px-6 py-3 text-sm text-center">
+                      {typeof f.team === 'string' ? (
+                        <span className="text-violet-300 font-medium">{f.team}</span>
+                      ) : f.team ? (
+                        <CheckCircle size={16} className="text-violet-400 mx-auto" />
                       ) : (
                         <X size={16} className="text-slate-600 mx-auto" />
                       )}

@@ -1,6 +1,6 @@
 // ===== Plan & Subscription =====
 
-export type PlanType = 'free' | 'pro';
+export type PlanType = 'free' | 'pro' | 'team';
 export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
 export type BillingCycle = 'monthly' | 'annual';
 

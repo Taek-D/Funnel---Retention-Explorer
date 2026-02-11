@@ -19,6 +19,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m
 const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
 const BillingSuccessPage = lazy(() => import('./pages/BillingSuccessPage').then(m => ({ default: m.BillingSuccessPage })));
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage').then(m => ({ default: m.SubscriptionPage })));
+const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })));
 const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ default: m.SharedReport })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
           { path: 'retention', element: <Suspense fallback={<PageLoader />}><RetentionAnalysis /></Suspense> },
           { path: 'segments', element: <Suspense fallback={<PageLoader />}><SegmentComparison /></Suspense> },
           { path: 'insights', element: <Suspense fallback={<PageLoader />}><Insights /></Suspense> },
+          { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
           { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
           { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
         ],

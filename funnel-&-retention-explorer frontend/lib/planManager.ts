@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 
 // ===== Plan & Subscription Types =====
 
-export type PlanType = 'free' | 'pro';
+export type PlanType = 'free' | 'pro' | 'team';
 export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
 export type BillingCycle = 'monthly' | 'annual';
 
@@ -30,6 +30,8 @@ export interface UserProfile {
 export const BILLING_PRICES = {
   monthly: 29_000,
   annual: 278_400,
+  teamMonthly: 79_000,
+  teamAnnual: 758_400,
 } as const;
 
 export const BILLING_INTERVALS = {
@@ -40,8 +42,9 @@ export const BILLING_INTERVALS = {
 // ===== Plan Limits =====
 
 export const PLAN_LIMITS = {
-  free: { csvRows: 10_000, aiCallsPerDay: 3, projects: 1, savedAnalyses: 5 },
-  pro: { csvRows: 500_000, aiCallsPerDay: 50, projects: -1, savedAnalyses: -1 },
+  free: { csvRows: 10_000, aiCallsPerDay: 3, projects: 1, savedAnalyses: 5, teamMembers: 1 },
+  pro: { csvRows: 500_000, aiCallsPerDay: 50, projects: -1, savedAnalyses: -1, teamMembers: 1 },
+  team: { csvRows: 1_000_000, aiCallsPerDay: 200, projects: -1, savedAnalyses: -1, teamMembers: 10 },
 } as const;
 
 // ===== Profile Functions =====
