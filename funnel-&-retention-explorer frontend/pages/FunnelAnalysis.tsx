@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp } from '../components/Icons';
+import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -36,6 +36,34 @@ export const FunnelAnalysis: React.FC = () => {
     newSteps[index] = value;
     setFunnelSteps(newSteps);
   };
+  const moveStep = useCallback((from: number, to: number) => {
+    if (to < 0 || to >= funnelSteps.length) return;
+    const newSteps = [...funnelSteps];
+    const [moved] = newSteps.splice(from, 1);
+    newSteps.splice(to, 0, moved);
+    setFunnelSteps(newSteps);
+  }, [funnelSteps, setFunnelSteps]);
+
+  const savedTemplates: { name: string; steps: string[] }[] = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]'); } catch { return []; }
+  }, []);
+
+  const saveTemplate = useCallback(() => {
+    const validSteps = funnelSteps.filter(Boolean);
+    if (validSteps.length < 2) return;
+    const name = prompt(t('funnel.templateName'));
+    if (!name) return;
+    const templates = [...savedTemplates, { name, steps: validSteps }];
+    localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
+    window.location.reload();
+  }, [funnelSteps, savedTemplates, t]);
+
+  const deleteTemplate = useCallback((index: number) => {
+    const templates = [...savedTemplates];
+    templates.splice(index, 1);
+    localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
+    window.location.reload();
+  }, [savedTemplates]);
 
   const hasResults = funnelResults && funnelResults.length > 0;
 
@@ -125,6 +153,30 @@ export const FunnelAnalysis: React.FC = () => {
                   Lifecycle
                 </button>
               )}
+              {savedTemplates.map((tmpl, i) => (
+                <div key={`custom-${i}`} className="flex items-center gap-1">
+                  <button
+                    onClick={() => setFunnelSteps(tmpl.steps)}
+                    className="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white border border-white/10 transition-all"
+                  >
+                    {tmpl.name}
+                  </button>
+                  <button
+                    onClick={() => deleteTemplate(i)}
+                    className="text-slate-600 hover:text-red-400 transition-colors p-1"
+                    title={t('funnel.deleteTemplate')}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={saveTemplate}
+                disabled={funnelSteps.filter(Boolean).length < 2}
+                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-accent border border-dashed border-slate-600 hover:border-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                + {t('funnel.saveTemplate')}
+              </button>
             </div>
 
             {/* Funnel Steps */}
@@ -136,6 +188,22 @@ export const FunnelAnalysis: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {funnelSteps.map((step, i) => (
                   <div key={i} className="group flex items-center gap-2 p-3 rounded-lg border border-white/10 bg-background hover:border-accent/50 transition-colors">
+                    <div className="flex flex-col gap-0.5 shrink-0">
+                      <button
+                        onClick={() => moveStep(i, i - 1)}
+                        disabled={i === 0}
+                        className="text-slate-600 hover:text-accent disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ChevronUp size={12} />
+                      </button>
+                      <button
+                        onClick={() => moveStep(i, i + 1)}
+                        disabled={i === funnelSteps.length - 1}
+                        className="text-slate-600 hover:text-accent disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <ChevronDown size={12} />
+                      </button>
+                    </div>
                     <div className="bg-accent/10 text-accent w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold shrink-0">{i + 1}</div>
                     <select
                       className="flex-1 bg-transparent text-white text-sm border-none outline-none"

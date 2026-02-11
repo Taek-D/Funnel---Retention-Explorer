@@ -214,7 +214,10 @@
     "stepDetails": "Step Details",
     "step": "Step",
     "conversion": "Conversion",
-    "medianTime": "Median time between steps"
+    "medianTime": "Median time between steps",
+    "saveTemplate": "Save Template",
+    "templateName": "Enter template name",
+    "deleteTemplate": "Delete Template"
   },
   "retention": {
     "noData": "No Data",

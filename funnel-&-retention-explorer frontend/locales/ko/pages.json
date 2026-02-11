@@ -214,7 +214,10 @@
     "stepDetails": "단계 상세",
     "step": "단계",
     "conversion": "전환율",
-    "medianTime": "단계 간 중간 시간"
+    "medianTime": "단계 간 중간 시간",
+    "saveTemplate": "템플릿 저장",
+    "templateName": "템플릿 이름을 입력하세요",
+    "deleteTemplate": "템플릿 삭제"
   },
   "retention": {
     "noData": "데이터 없음",
