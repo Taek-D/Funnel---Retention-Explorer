@@ -382,7 +382,11 @@ export async function exportReportAsPNG(state: AppState, isPro = false): Promise
       const dataUrl = canvas.toDataURL('image/png');
       const win = window.open('');
       if (win) {
-        win.document.write(`<img src="${dataUrl}" style="max-width:100%;background:#0a0e27" />`);
+        const img = win.document.createElement('img');
+        img.src = dataUrl;
+        img.style.maxWidth = '100%';
+        img.style.background = '#0a0e27';
+        win.document.body.appendChild(img);
         win.document.title = fileName;
       }
     } else {

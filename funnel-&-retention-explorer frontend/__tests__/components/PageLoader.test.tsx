@@ -10,9 +10,9 @@ describe('PageLoader', () => {
     expect(spinner).toBeInTheDocument();
   });
 
-  it('renders "로딩 중..." text', () => {
+  it('renders loading text', () => {
     render(<PageLoader />);
-    expect(screen.getByText('로딩 중...')).toBeInTheDocument();
+    expect(screen.getByText('loading')).toBeInTheDocument();
   });
 
   it('has correct layout classes', () => {

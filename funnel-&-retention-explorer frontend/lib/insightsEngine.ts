@@ -17,6 +17,7 @@ export function generateInsights(
   paidRetention: RetentionCohort[] | null
 ): Insight[] {
   const insights: Insight[] = [];
+  const t = i18n.t.bind(i18n);
 
   const fullFunnelResults = detectedType ? calculateFullDataFunnel(processedData, detectedType) : null;
   const fullSegmentResults = detectedType ? calculateFullDataSegments(processedData, detectedType) : null;
@@ -28,7 +29,6 @@ export function generateInsights(
       step.conversionRate < min.conversionRate ? step : min
     );
 
-    const t = i18n.t.bind(i18n);
     insights.push({
       type: 'warning',
       icon: '⚠️',

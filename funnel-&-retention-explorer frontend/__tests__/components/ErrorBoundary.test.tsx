@@ -55,17 +55,17 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
     expect(screen.queryByText('Normal content')).not.toBeInTheDocument();
-    expect(screen.getByText('오류가 발생했습니다')).toBeInTheDocument();
+    expect(screen.getByText('error.title')).toBeInTheDocument();
   });
 
-  it('displays "오류가 발생했습니다" heading', () => {
+  it('displays error title heading', () => {
     shouldThrowFlag = true;
     render(
       <ErrorBoundary>
         <ThrowingComponent />
       </ErrorBoundary>
     );
-    expect(screen.getByText('오류가 발생했습니다')).toBeInTheDocument();
+    expect(screen.getByText('error.title')).toBeInTheDocument();
   });
 
   it('shows error message in pre element', () => {
@@ -79,7 +79,7 @@ describe('ErrorBoundary', () => {
     expect(pre.tagName).toBe('PRE');
   });
 
-  it('"다시 시도" button resets error state', () => {
+  it('retry button resets error state', () => {
     shouldThrowFlag = true;
     render(
       <ErrorBoundary>
@@ -87,16 +87,16 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText('오류가 발생했습니다')).toBeInTheDocument();
+    expect(screen.getByText('error.title')).toBeInTheDocument();
 
     // Stop throwing before clicking reset
     shouldThrowFlag = false;
-    fireEvent.click(screen.getByText('다시 시도'));
+    fireEvent.click(screen.getByText('error.retry'));
 
     expect(screen.getByText('Normal content')).toBeInTheDocument();
   });
 
-  it('"페이지 새로고침" button calls location.reload', () => {
+  it('reload button calls location.reload', () => {
     const reloadMock = vi.fn();
     Object.defineProperty(window, 'location', {
       value: { reload: reloadMock },
@@ -110,7 +110,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    fireEvent.click(screen.getByText('페이지 새로고침'));
+    fireEvent.click(screen.getByText('error.reload'));
     expect(reloadMock).toHaveBeenCalledTimes(1);
   });
 });

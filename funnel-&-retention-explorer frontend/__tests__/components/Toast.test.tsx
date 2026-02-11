@@ -119,7 +119,7 @@ describe('Toast', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 
-  it('close button has aria-label="알림 닫기"', () => {
+  it('close button has aria-label for closing toast', () => {
     render(
       <ToastProvider>
         <ToastTrigger type="info" title="Close Test" />
@@ -130,7 +130,7 @@ describe('Toast', () => {
       screen.getByText('Trigger').click();
     });
 
-    expect(screen.getByLabelText('알림 닫기')).toBeInTheDocument();
+    expect(screen.getByLabelText('toast.closeAlert')).toBeInTheDocument();
   });
 
   it('container has role="status" and aria-live="polite"', () => {

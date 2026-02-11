@@ -36,10 +36,10 @@ function createProfile(plan: 'free' | 'pro'): UserProfile {
 }
 
 describe('PlanBadge', () => {
-  it('renders "Pro" text for pro plan user', () => {
+  it('renders pro plan text for pro plan user', () => {
     mockUseAuth.mockReturnValue({ userProfile: createProfile('pro') });
     render(<PlanBadge />);
-    expect(screen.getByText('Pro')).toBeInTheDocument();
+    expect(screen.getByText('plan.pro')).toBeInTheDocument();
   });
 
   it('renders Zap icon for pro plan', () => {
@@ -48,21 +48,21 @@ describe('PlanBadge', () => {
     expect(screen.getByTestId('zap-icon')).toBeInTheDocument();
   });
 
-  it('renders "Free" text for free plan user', () => {
+  it('renders free plan text for free plan user', () => {
     mockUseAuth.mockReturnValue({ userProfile: createProfile('free') });
     render(<PlanBadge />);
-    expect(screen.getByText('Free')).toBeInTheDocument();
+    expect(screen.getByText('plan.free')).toBeInTheDocument();
   });
 
-  it('renders "업그레이드" text for free plan', () => {
+  it('renders upgrade text for free plan', () => {
     mockUseAuth.mockReturnValue({ userProfile: createProfile('free') });
     render(<PlanBadge />);
-    expect(screen.getByText('업그레이드')).toBeInTheDocument();
+    expect(screen.getByText('plan.upgrade')).toBeInTheDocument();
   });
 
-  it('renders "Free" when userProfile is null', () => {
+  it('renders free plan when userProfile is null', () => {
     mockUseAuth.mockReturnValue({ userProfile: null });
     render(<PlanBadge />);
-    expect(screen.getByText('Free')).toBeInTheDocument();
+    expect(screen.getByText('plan.free')).toBeInTheDocument();
   });
 });

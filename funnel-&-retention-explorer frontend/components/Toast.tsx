@@ -44,9 +44,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const startExit = useCallback((id: number) => {
-    setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
+    setToasts(prev => prev.map(item => item.id === id ? { ...item, exiting: true } : item));
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      setToasts(prev => prev.filter(item => item.id !== id));
     }, 200);
   }, []);
 
@@ -61,22 +61,22 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] flex flex-col gap-2 pointer-events-none" role="status" aria-live="polite">
-        {toasts.map(t => {
-          const Icon = icons[t.type];
-          const c = colors[t.type];
+        {toasts.map(toast => {
+          const Icon = icons[toast.type];
+          const c = colors[toast.type];
           return (
             <div
-              key={t.id}
-              className={`pointer-events-auto ${t.exiting ? 'animate-fade-out' : 'animate-fade-up'} ${c.bg} flex items-start gap-3 px-4 py-3 rounded-lg border-l-2 ${c.border} border border-white/[0.06] shadow-xl backdrop-blur-sm min-w-[280px] max-w-[400px]`}
+              key={toast.id}
+              className={`pointer-events-auto ${toast.exiting ? 'animate-fade-out' : 'animate-fade-up'} ${c.bg} flex items-start gap-3 px-4 py-3 rounded-lg border-l-2 ${c.border} border border-white/[0.06] shadow-xl backdrop-blur-sm min-w-[280px] max-w-[400px]`}
               role="alert"
             >
               <Icon size={18} className={`${c.icon} shrink-0 mt-0.5`} />
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium text-white block">{t.title}</span>
-                {t.message && <span className="text-[11px] text-slate-400 block mt-0.5">{t.message}</span>}
+                <span className="text-sm font-medium text-white block">{toast.title}</span>
+                {toast.message && <span className="text-[11px] text-slate-400 block mt-0.5">{toast.message}</span>}
               </div>
               <button
-                onClick={() => startExit(t.id)}
+                onClick={() => startExit(toast.id)}
                 className="text-slate-500 hover:text-white transition-colors shrink-0"
                 aria-label={t('toast.closeAlert')}
               >

@@ -98,13 +98,13 @@ describe('Modal', () => {
     expect(titleEl?.textContent).toBe('Label Test');
   });
 
-  it('close button has aria-label="닫기"', () => {
+  it('close button has aria-label for closing', () => {
     render(
       <Modal isOpen={true} onClose={vi.fn()} title="Close Btn Test">
         <p>Content</p>
       </Modal>
     );
-    const closeBtn = screen.getByLabelText('닫기');
+    const closeBtn = screen.getByLabelText('modal.close');
     expect(closeBtn).toBeInTheDocument();
   });
 });
