@@ -2,21 +2,21 @@ import { describe, it, expect } from 'vitest';
 import { formatTime, formatNum, formatPct, formatCurrency, formatDate, formatDateTime } from '../../lib/formatters';
 
 describe('formatTime', () => {
-  it('formats minutes under 60 as 분', () => {
-    expect(formatTime(30)).toBe('30분');
-    expect(formatTime(0)).toBe('0분');
-    expect(formatTime(59)).toBe('59분');
+  it('formats minutes under 60', () => {
+    expect(formatTime(30)).toBe('30m');
+    expect(formatTime(0)).toBe('0m');
+    expect(formatTime(59)).toBe('59m');
   });
 
-  it('formats minutes 60-1439 as 시간', () => {
-    expect(formatTime(60)).toBe('1.0시간');
-    expect(formatTime(90)).toBe('1.5시간');
-    expect(formatTime(1439)).toBe('24.0시간');
+  it('formats minutes 60-1439 as hours', () => {
+    expect(formatTime(60)).toBe('1.0h');
+    expect(formatTime(90)).toBe('1.5h');
+    expect(formatTime(1439)).toBe('24.0h');
   });
 
-  it('formats minutes >= 1440 as 일', () => {
-    expect(formatTime(1440)).toBe('1.0일');
-    expect(formatTime(2880)).toBe('2.0일');
+  it('formats minutes >= 1440 as days', () => {
+    expect(formatTime(1440)).toBe('1.0d');
+    expect(formatTime(2880)).toBe('2.0d');
   });
 });
 

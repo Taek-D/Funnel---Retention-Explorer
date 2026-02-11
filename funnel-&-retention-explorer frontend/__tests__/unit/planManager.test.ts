@@ -37,12 +37,29 @@ describe('PLAN_LIMITS', () => {
     expect(PLAN_LIMITS.pro.csvRows).toBe(500_000);
   });
 
+  it('team plan has csvRows = 1,000,000', () => {
+    expect(PLAN_LIMITS.team.csvRows).toBe(1_000_000);
+  });
+
   it('free plan has aiCallsPerDay = 3', () => {
     expect(PLAN_LIMITS.free.aiCallsPerDay).toBe(3);
   });
 
   it('pro plan has aiCallsPerDay = 50', () => {
     expect(PLAN_LIMITS.pro.aiCallsPerDay).toBe(50);
+  });
+
+  it('team plan has aiCallsPerDay = 200', () => {
+    expect(PLAN_LIMITS.team.aiCallsPerDay).toBe(200);
+  });
+
+  it('team plan has teamMembers = 10', () => {
+    expect(PLAN_LIMITS.team.teamMembers).toBe(10);
+  });
+
+  it('free and pro plans have teamMembers = 1', () => {
+    expect(PLAN_LIMITS.free.teamMembers).toBe(1);
+    expect(PLAN_LIMITS.pro.teamMembers).toBe(1);
   });
 });
 
@@ -53,6 +70,21 @@ describe('BILLING_PRICES', () => {
 
   it('annual = 278,400', () => {
     expect(BILLING_PRICES.annual).toBe(278_400);
+  });
+
+  it('teamMonthly = 79,000', () => {
+    expect(BILLING_PRICES.teamMonthly).toBe(79_000);
+  });
+
+  it('teamAnnual = 758,400', () => {
+    expect(BILLING_PRICES.teamAnnual).toBe(758_400);
+  });
+
+  it('team annual is ~20% cheaper than monthly * 12', () => {
+    const monthlyTotal = BILLING_PRICES.teamMonthly * 12;
+    const discount = (monthlyTotal - BILLING_PRICES.teamAnnual) / monthlyTotal;
+    expect(discount).toBeGreaterThan(0.19);
+    expect(discount).toBeLessThan(0.21);
   });
 });
 
@@ -73,6 +105,10 @@ describe('getCSVRowLimit', () => {
 
   it('returns 500,000 for pro plan', () => {
     expect(getCSVRowLimit(createProfile({ plan: 'pro' }))).toBe(500_000);
+  });
+
+  it('returns 1,000,000 for team plan', () => {
+    expect(getCSVRowLimit(createProfile({ plan: 'team' }))).toBe(1_000_000);
   });
 });
 
