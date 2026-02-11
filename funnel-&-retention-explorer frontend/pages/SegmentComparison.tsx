@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Users } from '../components/Icons';
 import { useSegmentComparison } from '../hooks/useSegmentComparison';
@@ -26,13 +26,19 @@ export const SegmentComparison: React.FC = () => {
   const togglePlatform = (p: string) => setSelectedPlatforms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
   const toggleChannel = (c: string) => setSelectedChannels(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
 
-  const bestSegment = segmentResults && segmentResults.length > 0
-    ? segmentResults.reduce((best, seg) => seg.conversion > best.conversion ? seg : best)
-    : null;
+  const bestSegment = useMemo(() =>
+    segmentResults && segmentResults.length > 0
+      ? segmentResults.reduce((best, seg) => seg.conversion > best.conversion ? seg : best)
+      : null,
+    [segmentResults]
+  );
 
-  const avgConversion = segmentResults && segmentResults.length > 0
-    ? segmentResults.reduce((sum, seg) => sum + seg.conversion, 0) / segmentResults.length
-    : 0;
+  const avgConversion = useMemo(() =>
+    segmentResults && segmentResults.length > 0
+      ? segmentResults.reduce((sum, seg) => sum + seg.conversion, 0) / segmentResults.length
+      : 0,
+    [segmentResults]
+  );
 
   return (
     <div className="space-y-6">

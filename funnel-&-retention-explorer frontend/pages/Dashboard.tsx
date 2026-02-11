@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
@@ -46,29 +46,30 @@ export const Dashboard: React.FC = () => {
   const uniqueUsers = dataQualityReport?.uniqueUsers || 0;
   const totalEvents = processedData.length;
 
-  // Build funnel chart data
-  const funnelChartData = funnelResults
-    ? funnelResults.map(s => ({ name: s.step, value: s.users }))
-    : [];
+  const funnelChartData = useMemo(() =>
+    funnelResults
+      ? funnelResults.map(s => ({ name: s.step, value: s.users }))
+      : [],
+    [funnelResults]
+  );
 
-  const overallConversion = funnelResults && funnelResults.length > 1
-    ? ((funnelResults[funnelResults.length - 1].users / funnelResults[0].users) * 100)
-    : null;
+  const overallConversion = useMemo(() =>
+    funnelResults && funnelResults.length > 1
+      ? ((funnelResults[funnelResults.length - 1].users / funnelResults[0].users) * 100)
+      : null,
+    [funnelResults]
+  );
 
-  // Build retention curve data
-  const retentionCurveData = retentionResults && retentionResults.length > 0
-    ? (() => {
-        const dayKeys = Object.keys(retentionResults[0].days).sort((a, b) => {
-          const numA = parseInt(a.replace('D', ''));
-          const numB = parseInt(b.replace('D', ''));
-          return numA - numB;
-        });
-        return dayKeys.map(day => {
-          const avg = retentionResults.reduce((sum, r) => sum + (r.days[day] || 0), 0) / retentionResults.length;
-          return { name: day, value: parseFloat(avg.toFixed(1)) };
-        });
-      })()
-    : [];
+  const retentionCurveData = useMemo(() => {
+    if (!retentionResults || retentionResults.length === 0) return [];
+    const dayKeys = Object.keys(retentionResults[0].days).sort((a, b) =>
+      parseInt(a.replace('D', '')) - parseInt(b.replace('D', ''))
+    );
+    return dayKeys.map(day => {
+      const avg = retentionResults.reduce((sum, r) => sum + (r.days[day] || 0), 0) / retentionResults.length;
+      return { name: day, value: parseFloat(avg.toFixed(1)) };
+    });
+  }, [retentionResults]);
 
   // KPI cards
   const kpiCards = subscriptionKPIs

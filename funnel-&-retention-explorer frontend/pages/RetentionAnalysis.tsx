@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -30,25 +30,32 @@ export const RetentionAnalysis: React.FC = () => {
   }
 
   const isPaid = retentionType === 'paid';
-  const dayColumns = isPaid
-    ? ['D0', 'D7', 'D14', 'D30', 'D60', 'D90']
-    : Array.from({ length: 15 }, (_, i) => `D${i}`);
+  const dayColumns = useMemo(() =>
+    isPaid
+      ? ['D0', 'D7', 'D14', 'D30', 'D60', 'D90']
+      : Array.from({ length: 15 }, (_, i) => `D${i}`),
+    [isPaid]
+  );
 
-  // Calculate averages
-  const avgRetention: Record<string, number> = {};
-  if (retentionResults && retentionResults.length > 0) {
-    dayColumns.forEach(day => {
-      avgRetention[day] = retentionResults.reduce((sum, r) => sum + (r.days[day] || 0), 0) / retentionResults.length;
-    });
-  }
+  const avgRetention = useMemo(() => {
+    const avg: Record<string, number> = {};
+    if (retentionResults && retentionResults.length > 0) {
+      dayColumns.forEach(day => {
+        avg[day] = retentionResults.reduce((sum, r) => sum + (r.days[day] || 0), 0) / retentionResults.length;
+      });
+    }
+    return avg;
+  }, [retentionResults, dayColumns]);
 
-  // Curve data for chart
-  const curveData = retentionResults && retentionResults.length > 0
-    ? dayColumns.map((day, i) => ({
-        day: day.replace('D', 'Day '),
-        value: parseFloat(avgRetention[day]?.toFixed(1) || '0')
-      }))
-    : [];
+  const curveData = useMemo(() =>
+    retentionResults && retentionResults.length > 0
+      ? dayColumns.map(day => ({
+          day: day.replace('D', 'Day '),
+          value: parseFloat(avgRetention[day]?.toFixed(1) || '0')
+        }))
+      : [],
+    [retentionResults, dayColumns, avgRetention]
+  );
 
   const handleCalculate = () => {
     runRetentionAnalysis(cohortEvent, selectedActiveEvents);

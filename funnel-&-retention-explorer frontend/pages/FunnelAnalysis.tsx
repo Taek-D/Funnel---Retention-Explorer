@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -39,19 +39,24 @@ export const FunnelAnalysis: React.FC = () => {
 
   const hasResults = funnelResults && funnelResults.length > 0;
 
-  const overallConversion = hasResults && funnelResults.length > 1
-    ? ((funnelResults[funnelResults.length - 1].users / funnelResults[0].users) * 100)
-    : 100;
+  const overallConversion = useMemo(() =>
+    hasResults && funnelResults.length > 1
+      ? ((funnelResults[funnelResults.length - 1].users / funnelResults[0].users) * 100)
+      : 100,
+    [hasResults, funnelResults]
+  );
 
-  const chartData = hasResults
-    ? funnelResults.map(s => ({
-        name: s.step,
-        value: s.users,
-        rate: s.conversionRate
-      }))
-    : [];
+  const chartData = useMemo(() =>
+    hasResults
+      ? funnelResults.map(s => ({ name: s.step, value: s.users, rate: s.conversionRate }))
+      : [],
+    [hasResults, funnelResults]
+  );
 
-  const totalUsers = hasResults ? (funnelResults[0]?.users || 0) : 0;
+  const totalUsers = useMemo(() =>
+    hasResults ? (funnelResults[0]?.users || 0) : 0,
+    [hasResults, funnelResults]
+  );
 
   return (
     <div className="space-y-6">

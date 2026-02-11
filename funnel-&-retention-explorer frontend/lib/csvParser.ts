@@ -10,6 +10,35 @@ export interface ParseResult {
   errors: Papa.ParseError[];
 }
 
+function parseWithWorker(csvText: string): Promise<ParseResult> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(
+      new URL('./csvWorker.ts', import.meta.url),
+      { type: 'module' }
+    );
+
+    worker.onmessage = (e: MessageEvent) => {
+      if (e.data.type === 'complete') {
+        resolve({
+          data: e.data.data,
+          headers: e.data.headers,
+          errors: e.data.errors,
+        });
+      } else if (e.data.type === 'error') {
+        reject(new Error(e.data.message));
+      }
+      worker.terminate();
+    };
+
+    worker.onerror = (err) => {
+      reject(new Error('Worker 오류: ' + err.message));
+      worker.terminate();
+    };
+
+    worker.postMessage({ csvText });
+  });
+}
+
 export function parseCSV(file: File): Promise<ParseResult> {
   return new Promise((resolve, reject) => {
     if (file.size > MAX_FILE_SIZE) {
@@ -20,7 +49,12 @@ export function parseCSV(file: File): Promise<ParseResult> {
     const reader = new FileReader();
     reader.onload = (e) => {
       const csvText = e.target?.result as string;
-      parseCSVText(csvText).then(resolve).catch(reject);
+      parseWithWorker(csvText)
+        .then(resolve)
+        .catch(() => {
+          // Worker fallback: parse on main thread
+          parseCSVText(csvText).then(resolve).catch(reject);
+        });
     };
     reader.onerror = () => reject(new Error('파일 읽기 실패'));
     reader.readAsText(file);
