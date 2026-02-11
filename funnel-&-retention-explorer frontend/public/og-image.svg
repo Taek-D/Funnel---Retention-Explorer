@@ -1,37 +1,14 @@
-<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
   <rect width="1200" height="630" fill="#0c0f14"/>
-  <!-- Subtle grid pattern -->
-  <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
-    <circle cx="12" cy="12" r="0.8" fill="rgba(255,255,255,0.03)"/>
-  </pattern>
-  <rect width="1200" height="630" fill="url(#grid)"/>
-  <!-- Accent glow -->
-  <ellipse cx="600" cy="315" rx="500" ry="300" fill="#00d4aa" opacity="0.06"/>
-  <!-- Logo icon -->
-  <g transform="translate(120, 220)">
-    <rect width="56" height="56" rx="12" fill="#00d4aa" opacity="0.15"/>
-    <polyline points="28,16 12,28 20,28 20,40 28,32 36,40 36,28 44,28" stroke="#00d4aa" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
+  <rect x="40" y="40" width="1120" height="550" rx="20" fill="#14181f" stroke="#1a1f28" stroke-width="2"/>
+  <!-- Funnel shape -->
+  <path d="M340 180h520l-130 220h-260L340 180z" fill="#00d4aa" fill-opacity="0.08" stroke="#00d4aa" stroke-width="2" stroke-linejoin="round"/>
+  <line x1="380" y1="230" x2="820" y2="230" stroke="#00d4aa" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="6 4"/>
+  <line x1="420" y1="290" x2="780" y2="290" stroke="#00d4aa" stroke-opacity="0.15" stroke-width="1" stroke-dasharray="6 4"/>
+  <line x1="450" y1="340" x2="750" y2="340" stroke="#00d4aa" stroke-opacity="0.1" stroke-width="1" stroke-dasharray="6 4"/>
   <!-- Title -->
-  <text x="196" y="248" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="800" fill="#ffffff" letter-spacing="-0.03em">FRE Analytics</text>
-  <!-- Subtitle -->
-  <text x="120" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="400" fill="#94a3b8">퍼널 &amp; 리텐션 탐색기</text>
-  <!-- Tagline -->
-  <text x="120" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="400" fill="#64748b">CSV 데이터로 퍼널 분석, 리텐션 코호트, 세그먼트 비교, AI 인사이트를 한 곳에서</text>
-  <!-- Badge -->
-  <rect x="120" y="390" width="120" height="32" rx="16" fill="#00d4aa" opacity="0.12"/>
-  <text x="142" y="412" font-family="monospace" font-size="12" font-weight="600" fill="#00d4aa" letter-spacing="0.05em">무료로 시작</text>
-  <!-- Chart illustration -->
-  <g transform="translate(750, 140)">
-    <!-- Bar chart bars -->
-    <rect x="0" y="180" width="48" height="220" rx="4" fill="#00d4aa" opacity="0.7"/>
-    <rect x="68" y="100" width="48" height="300" rx="4" fill="#00d4aa" opacity="0.5"/>
-    <rect x="136" y="140" width="48" height="260" rx="4" fill="#00d4aa" opacity="0.6"/>
-    <rect x="204" y="60" width="48" height="340" rx="4" fill="#00d4aa" opacity="0.4"/>
-    <rect x="272" y="200" width="48" height="200" rx="4" fill="#00d4aa" opacity="0.3"/>
-    <!-- Trend line -->
-    <polyline points="24,160 92,80 160,120 228,40 296,180" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-  <!-- Bottom accent line -->
-  <rect x="0" y="620" width="1200" height="10" fill="#00d4aa" opacity="0.3"/>
+  <text x="600" y="490" text-anchor="middle" font-family="system-ui, sans-serif" font-size="48" font-weight="800" fill="white">FRE Analytics</text>
+  <text x="600" y="540" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#94a3b8">Funnel &amp; Retention Explorer</text>
+  <!-- Accent dot -->
+  <circle cx="600" cy="140" r="8" fill="#00d4aa"/>
 </svg>

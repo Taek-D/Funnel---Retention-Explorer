@@ -205,46 +205,50 @@ export const TeamPage: React.FC = () => {
             return (
               <div
                 key={member.id}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/[0.03] transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 rounded-lg hover:bg-white/[0.03] transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-violet-500/10 text-violet-400 flex items-center justify-center text-xs font-mono font-semibold shrink-0">
-                  {member.email.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-white truncate">{member.email}</span>
-                    {isCurrentUser && (
-                      <span className="text-[10px] text-accent font-medium">{t('teamPage.you')}</span>
-                    )}
-                    {member.pending && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-medium">
-                        {t('teamPage.pending')}
-                      </span>
-                    )}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-violet-500/10 text-violet-400 flex items-center justify-center text-xs font-mono font-semibold shrink-0">
+                    {member.email.charAt(0).toUpperCase()}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    {t('teamPage.joined')}: {new Date(member.joinedAt).toLocaleDateString()}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white truncate">{member.email}</span>
+                      {isCurrentUser && (
+                        <span className="text-[10px] text-accent font-medium shrink-0">{t('teamPage.you')}</span>
+                      )}
+                      {member.pending && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-medium shrink-0">
+                          {t('teamPage.pending')}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {t('teamPage.joined')}: {new Date(member.joinedAt).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
-                <select
-                  value={member.role}
-                  onChange={e => handleRoleChange(member.id, e.target.value as TeamRole)}
-                  disabled={isCurrentUser}
-                  className="text-xs bg-white/5 border border-white/10 rounded px-2 py-1 text-slate-300 focus:outline-none disabled:opacity-50"
-                >
-                  <option value="admin">{t('teamPage.roleAdmin')}</option>
-                  <option value="member">{t('teamPage.roleMember')}</option>
-                  <option value="viewer">{t('teamPage.roleViewer')}</option>
-                </select>
-                {!isCurrentUser && (
-                  <button
-                    onClick={() => handleRemove(member.id)}
-                    className="p-1.5 rounded text-slate-500 hover:text-coral hover:bg-coral/10 transition-all shrink-0"
-                    title={t('teamPage.remove')}
+                <div className="flex items-center gap-2 pl-11 sm:pl-0">
+                  <select
+                    value={member.role}
+                    onChange={e => handleRoleChange(member.id, e.target.value as TeamRole)}
+                    disabled={isCurrentUser}
+                    className="text-xs bg-white/5 border border-white/10 rounded px-2 py-1 text-slate-300 focus:outline-none disabled:opacity-50"
                   >
-                    <Trash2 size={14} />
-                  </button>
-                )}
+                    <option value="admin">{t('teamPage.roleAdmin')}</option>
+                    <option value="member">{t('teamPage.roleMember')}</option>
+                    <option value="viewer">{t('teamPage.roleViewer')}</option>
+                  </select>
+                  {!isCurrentUser && (
+                    <button
+                      onClick={() => handleRemove(member.id)}
+                      className="p-1.5 rounded text-slate-500 hover:text-coral hover:bg-coral/10 transition-all shrink-0"
+                      title={t('teamPage.remove')}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}

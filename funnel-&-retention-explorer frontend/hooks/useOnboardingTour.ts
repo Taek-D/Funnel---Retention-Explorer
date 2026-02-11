@@ -25,9 +25,21 @@ function getTourSteps(): TourStep[] {
       placement: 'right',
     },
     {
-      target: '[data-tour="insights"]',
+      target: '[data-tour="retention"]',
       title: i18n.t('onboarding.step3Title'),
       description: i18n.t('onboarding.step3Desc'),
+      placement: 'right',
+    },
+    {
+      target: '[data-tour="insights"]',
+      title: i18n.t('onboarding.step4Title'),
+      description: i18n.t('onboarding.step4Desc'),
+      placement: 'right',
+    },
+    {
+      target: '[data-tour="dashboard"]',
+      title: i18n.t('onboarding.step5Title'),
+      description: i18n.t('onboarding.step5Desc'),
       placement: 'right',
     },
   ];

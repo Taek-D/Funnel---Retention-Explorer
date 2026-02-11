@@ -70,8 +70,8 @@ export const PricingPage: React.FC = () => {
       </section>
 
       {/* Plan Cards */}
-      <section className="pb-16 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="pb-16 px-4 md:px-6">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* Free */}
           <div className="bg-surface border border-white/[0.06] rounded-lg p-8 flex flex-col">
             <h3 className="text-2xl font-bold text-white">Free</h3>
@@ -180,24 +180,24 @@ export const PricingPage: React.FC = () => {
       </section>
 
       {/* Comparison Table */}
-      <section className="pb-16 px-6">
+      <section className="pb-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold text-white text-center mb-8">{t('pricing.detailComparison')}</h2>
           <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[480px]">
               <thead>
                 <tr className="border-b border-white/[0.06]">
-                  <th className="text-left px-6 py-4 text-sm font-medium text-slate-400">{t('pricing.feature')}</th>
-                  <th className="text-center px-6 py-4 text-sm font-medium text-slate-400">Free</th>
-                  <th className="text-center px-6 py-4 text-sm font-medium text-accent">Pro</th>
-                  <th className="text-center px-6 py-4 text-sm font-medium text-violet-400">Team</th>
+                  <th className="text-left px-3 md:px-6 py-4 text-xs md:text-sm font-medium text-slate-400">{t('pricing.feature')}</th>
+                  <th className="text-center px-2 md:px-6 py-4 text-xs md:text-sm font-medium text-slate-400">Free</th>
+                  <th className="text-center px-2 md:px-6 py-4 text-xs md:text-sm font-medium text-accent">Pro</th>
+                  <th className="text-center px-2 md:px-6 py-4 text-xs md:text-sm font-medium text-violet-400">Team</th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonFeatures.map((f, i) => (
                   <tr key={i} className="border-b border-white/[0.04]">
-                    <td className="px-6 py-3 text-sm text-slate-300">{f.name}</td>
-                    <td className="px-6 py-3 text-sm text-center">
+                    <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-slate-300">{f.name}</td>
+                    <td className="px-2 md:px-6 py-3 text-xs md:text-sm text-center">
                       {typeof f.free === 'string' ? (
                         <span className="text-slate-400">{f.free}</span>
                       ) : f.free ? (
@@ -206,7 +206,7 @@ export const PricingPage: React.FC = () => {
                         <X size={16} className="text-slate-600 mx-auto" />
                       )}
                     </td>
-                    <td className="px-6 py-3 text-sm text-center">
+                    <td className="px-2 md:px-6 py-3 text-xs md:text-sm text-center">
                       {typeof f.pro === 'string' ? (
                         <span className="text-white font-medium">{f.pro}</span>
                       ) : f.pro ? (
@@ -215,7 +215,7 @@ export const PricingPage: React.FC = () => {
                         <X size={16} className="text-slate-600 mx-auto" />
                       )}
                     </td>
-                    <td className="px-6 py-3 text-sm text-center">
+                    <td className="px-2 md:px-6 py-3 text-xs md:text-sm text-center">
                       {typeof f.team === 'string' ? (
                         <span className="text-violet-300 font-medium">{f.team}</span>
                       ) : f.team ? (
@@ -233,17 +233,17 @@ export const PricingPage: React.FC = () => {
       </section>
 
       {/* FAQ */}
-      <section className="pb-24 px-6">
+      <section className="pb-24 px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-white text-center mb-8">{t('pricing.faq')}</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <div key={i} className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">
                 <button
-                  className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-white/[0.03] transition-colors"
+                  className="w-full flex items-center justify-between px-4 md:px-6 py-4 md:py-5 text-left hover:bg-white/[0.03] transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  <span className="text-white font-medium pr-4">{faq.q}</span>
+                  <span className="text-sm md:text-base text-white font-medium pr-4">{faq.q}</span>
                   <ChevronDown
                     size={18}
                     className={`text-slate-400 shrink-0 transition-transform duration-300 ${openFaq === i ? 'rotate-180' : ''}`}

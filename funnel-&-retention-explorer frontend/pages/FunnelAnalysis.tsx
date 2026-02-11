@@ -44,9 +44,9 @@ export const FunnelAnalysis: React.FC = () => {
     setFunnelSteps(newSteps);
   }, [funnelSteps, setFunnelSteps]);
 
-  const savedTemplates: { name: string; steps: string[] }[] = useMemo(() => {
+  const [savedTemplates, setSavedTemplates] = useState<{ name: string; steps: string[] }[]>(() => {
     try { return JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]'); } catch { return []; }
-  }, []);
+  });
 
   const saveTemplate = useCallback(() => {
     const validSteps = funnelSteps.filter(Boolean);
@@ -55,14 +55,13 @@ export const FunnelAnalysis: React.FC = () => {
     if (!name) return;
     const templates = [...savedTemplates, { name, steps: validSteps }];
     localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
-    window.location.reload();
+    setSavedTemplates(templates);
   }, [funnelSteps, savedTemplates, t]);
 
   const deleteTemplate = useCallback((index: number) => {
-    const templates = [...savedTemplates];
-    templates.splice(index, 1);
+    const templates = savedTemplates.filter((_, i) => i !== index);
     localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
-    window.location.reload();
+    setSavedTemplates(templates);
   }, [savedTemplates]);
 
   const hasResults = funnelResults && funnelResults.length > 0;

@@ -162,8 +162,12 @@
     "step1Desc": "Upload a CSV file or load sample data. E-commerce and SaaS samples are ready.",
     "step2Title": "Start Analysis",
     "step2Desc": "Funnel analysis, retention cohorts, segment comparison — choose from the sidebar.",
-    "step3Title": "AI Insights",
-    "step3Desc": "Gemini AI analyzes your data and automatically generates actionable insights."
+    "step3Title": "Retention Analysis",
+    "step3Desc": "Cohort-based retention analysis shows when users churn. View D1-D30 retention rates at a glance.",
+    "step4Title": "AI Insights",
+    "step4Desc": "Gemini AI analyzes your data and automatically generates actionable insights.",
+    "step5Title": "Dashboard",
+    "step5Desc": "View all analysis results at a glance. Click KPI cards to jump directly to each analysis page."
   },
   "email": {
     "settingsTitle": "Email Settings",
