@@ -477,3 +477,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (AD-1 ~ AD-5): AD-1 Admin Role 시스템 (UserRole 타입, AdminRoute 가드, router.tsx admin 라우트 3개, Sidebar 조건부 admin 메뉴 + 구분선), AD-2 Admin API 클라이언트 (adminApi.ts — adminFetch 헬퍼 + 6개 API 함수 + 5개 타입), AD-3 Admin Dashboard 페이지 (AdminNav 서브탭 + KPI 카드 4개 + 매출 BarChart + 플랜 PieChart), AD-4 사용자 관리 (AdminUsers 검색/필터/페이지네이션 테이블 + UserDetailModal 조회/수정), AD-5 매출/결제 (AdminBilling 매출 차트 + 결제 내역 테이블 + 상태 필터). i18n 60키 (ko/en). 14개 파일 변경 (7 신규, 7 수정, ~1,200 lines). 테스트 310/310 통과. 0 iteration. 외부 의존: Supabase Edge Function `admin-api` 배포 + DB role 컬럼 마이그레이션.
+
+---
+
+## e2e-testing
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Playwright E2E Testing |
+| **Match Rate** | 98.5% (57 PASS, 8 PARTIAL, 1 FAIL / 66 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `e2e-testing/e2e-testing.plan.md` |
+| Design | `e2e-testing/e2e-testing.design.md` |
+| Analysis | `e2e-testing/e2e-testing.analysis.md` |
+| Report | `e2e-testing/e2e-testing.report.md` |
+
+### Summary
+
+5 scope items completed (E2E-1 ~ E2E-5): E2E-1 Playwright 인프라 (`@playwright/test` v1.58.2, playwright.config.ts Chromium-only + webServer + locale ko-KR, package.json 3 scripts, .gitignore), E2E-2 Landing & Navigation 테스트 (4 tests: hero render, CTA navigation, sidebar 5-route iteration, 404 page), E2E-3 Data Upload 테스트 (3 tests: upload page render, ecommerce sample + KPI, SaaS sample + KPI), E2E-4 Funnel Analysis 테스트 (3 tests: empty state, editor render, ecommerce template → chart + conversion %), E2E-5 Retention Analysis 테스트 (3 tests: empty state, controls render, cohort+active event → Day 0 + retention curve). 공통 헬퍼: skipOnboardingTour (localStorage), loadEcommerceSample/loadSaaSSample (텍스트 기반 대기), navigateViaSidebar (클라이언트 라우팅 보존). 8개 파일 변경 (6 신규, 2 수정). 테스트 310 Vitest + 13 Playwright = 323 total. 0 iteration.
