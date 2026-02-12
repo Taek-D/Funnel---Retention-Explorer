@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-12T15:55:25.931Z",
+  "lastUpdated": "2026-02-12T18:08:34.829Z",
   "activeFeatures": [
     "__tests__",
     "unit",
@@ -64,9 +64,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-11T18:09:45.357Z",
-        "lastUpdated": "2026-02-12T15:43:31.937Z"
+        "lastUpdated": "2026-02-12T18:08:34.829Z"
       },
-      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\playwright.config.ts"
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\Dashboard.tsx"
     },
     "context": {
       "phase": "do",
@@ -119,6 +119,14 @@
       "archivedAt": "2026-02-13T00:00:00.000Z",
       "archivedTo": "docs/archive/2026-02/ci-e2e/"
     },
+    "accessibility-dnd": {
+      "phase": "archived",
+      "matchRate": 97.3,
+      "iterationCount": 0,
+      "startedAt": "2026-02-13T00:00:00.000Z",
+      "archivedAt": "2026-02-13T00:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/accessibility-dnd/"
+    },
     "helpers": {
       "phase": "do",
       "phaseNumber": 3,
@@ -154,7 +162,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-12T15:55:25.931Z"
+    "lastActivity": "2026-02-12T18:08:34.829Z"
   },
   "history": [
     {
@@ -758,6 +766,24 @@
     {
       "timestamp": "2026-02-12T15:55:25.931Z",
       "feature": "e2e",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T18:06:55.720Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T18:08:24.254Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-12T18:08:34.829Z",
+      "feature": "funnel-&-retention-explorer frontend",
       "phase": "do",
       "action": "updated"
     }

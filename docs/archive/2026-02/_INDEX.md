@@ -525,3 +525,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 scope items completed (CI-1 ~ CI-4): CI-1 Playwright 브라우저 캐싱 (actions/cache@v4, package-lock.json hash key), CI-2 Chromium 설치 (`npx playwright install --with-deps chromium`), CI-3 E2E 테스트 실행 (`npx playwright test`, webServer 자동 시작), CI-4 아티팩트 업로드 (actions/upload-artifact@v4, `if: !cancelled()`, 7일 보관). "Run tests" → "Run unit tests" 이름 변경. 1개 파일 변경 (.github/workflows/ci.yml). PR 시 323개 테스트 자동 실행 (310 Vitest + 13 Playwright). 0 iteration.
+
+---
+
+## accessibility-dnd
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Dashboard Widget Keyboard Accessibility (WCAG 2.1 AA) |
+| **Match Rate** | 97.3% (71 PASS, 4 PARTIAL, 0 FAIL / 75 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `accessibility-dnd/accessibility-dnd.plan.md` |
+| Design | `accessibility-dnd/accessibility-dnd.design.md` |
+| Analysis | `accessibility-dnd/accessibility-dnd.analysis.md` |
+| Report | `accessibility-dnd/accessibility-dnd.report.md` |
+
+### Summary
+
+3 scope items completed (A11Y-1 ~ A11Y-3): A11Y-1 DashboardWidget ARIA 속성 (role="listitem", aria-roledescription, aria-label with position info, tabIndex, aria-hidden on decorative icons, aria-label on buttons replacing title), A11Y-2 Dashboard 키보드 리오더링 (handleMoveUp/handleMoveDown useCallback, reorder() + focus management 50ms timeout, role="list" on grid container, aria-live="polite" announcement region, sr-only CSS class), A11Y-3 i18n 키 9개 (ko/en pages namespace: sortableItem, widgetPosition, widgetHiddenLabel, widgetList, movedTo, halfWidth, fullWidth, hideWidget, showWidget). 4개 파일 변경 (0 신규, 4 수정). 테스트 310/310 통과. 4 PARTIAL 항목 모두 positive deviation (widgetHiddenLabel 이름 충돌 회피, pages namespace 일관성). 0 iteration.

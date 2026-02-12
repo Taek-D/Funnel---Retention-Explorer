@@ -177,7 +177,18 @@
     "widgetHidden": "숨겨진 위젯",
     "dragToReorder": "드래그하여 순서 변경",
     "widgetFullWidth": "전체 너비",
-    "widgetHalfWidth": "반 너비"
+    "widgetHalfWidth": "반 너비",
+    "a11y": {
+      "sortableItem": "정렬 가능한 항목",
+      "widgetPosition": "{{name}} 위젯, {{total}}개 중 {{pos}}번째",
+      "widgetHiddenLabel": "{{name}} 위젯 (숨김), {{total}}개 중 {{pos}}번째",
+      "widgetList": "대시보드 위젯 목록",
+      "movedTo": "{{pos}}번째 위치로 이동됨",
+      "halfWidth": "반쪽 너비로 변경",
+      "fullWidth": "전체 너비로 변경",
+      "hideWidget": "위젯 숨기기",
+      "showWidget": "위젯 표시"
+    }
   },
   "dataImport": {
     "title": "데이터 업로드",

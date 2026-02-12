@@ -177,7 +177,18 @@
     "widgetHidden": "Hidden Widgets",
     "dragToReorder": "Drag to reorder",
     "widgetFullWidth": "Full Width",
-    "widgetHalfWidth": "Half Width"
+    "widgetHalfWidth": "Half Width",
+    "a11y": {
+      "sortableItem": "sortable item",
+      "widgetPosition": "{{name}} widget, {{pos}} of {{total}}",
+      "widgetHiddenLabel": "{{name}} widget (hidden), {{pos}} of {{total}}",
+      "widgetList": "Dashboard widget list",
+      "movedTo": "Moved to position {{pos}}",
+      "halfWidth": "Change to half width",
+      "fullWidth": "Change to full width",
+      "hideWidget": "Hide widget",
+      "showWidget": "Show widget"
+    }
   },
   "dataImport": {
     "title": "Data Upload",

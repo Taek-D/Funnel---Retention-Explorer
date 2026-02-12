@@ -41,6 +41,7 @@ export const Dashboard: React.FC = () => {
 
   // Drag state
   const dragIndexRef = useRef<number | null>(null);
+  const [announcement, setAnnouncement] = useState('');
 
   const handleDragStart = useCallback((index: number) => (e: React.DragEvent) => {
     dragIndexRef.current = index;
@@ -64,6 +65,28 @@ export const Dashboard: React.FC = () => {
   const handleDragEnd = useCallback(() => {
     dragIndexRef.current = null;
   }, []);
+
+  const handleMoveUp = useCallback((index: number) => () => {
+    if (index > 0) {
+      reorder(index, index - 1);
+      setAnnouncement(t('dashboard.a11y.movedTo', { pos: index }));
+      setTimeout(() => {
+        const widgets = document.querySelectorAll('[role="listitem"]');
+        (widgets[index - 1] as HTMLElement)?.focus();
+      }, 50);
+    }
+  }, [reorder, t]);
+
+  const handleMoveDown = useCallback((index: number) => () => {
+    if (index < layout.length - 1) {
+      reorder(index, index + 1);
+      setAnnouncement(t('dashboard.a11y.movedTo', { pos: index + 2 }));
+      setTimeout(() => {
+        const widgets = document.querySelectorAll('[role="listitem"]');
+        (widgets[index + 1] as HTMLElement)?.focus();
+      }, 50);
+    }
+  }, [reorder, layout.length, t]);
 
   const restoreSnapshot = useCallback((snap: { snapshot_type: string; results: Record<string, unknown> | null }) => {
     const results = snap.results;
@@ -546,7 +569,11 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Dynamic Widget Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        role={editMode ? 'list' : undefined}
+        aria-label={editMode ? t('dashboard.a11y.widgetList') : undefined}
+      >
         {layout.map((item, index) => {
           const meta = DASHBOARD_WIDGETS[item.widgetId];
           const canResize = meta.minWidth !== 'full';
@@ -558,6 +585,8 @@ export const Dashboard: React.FC = () => {
               editMode={editMode}
               visible={item.visible}
               width={item.width}
+              index={index}
+              totalCount={layout.length}
               onToggleVisibility={() => toggleVisibility(item.widgetId)}
               onToggleWidth={() => toggleWidth(item.widgetId)}
               canResize={canResize}
@@ -565,11 +594,18 @@ export const Dashboard: React.FC = () => {
               onDragOver={handleDragOver}
               onDrop={handleDrop(index)}
               onDragEnd={handleDragEnd}
+              onMoveUp={handleMoveUp(index)}
+              onMoveDown={handleMoveDown(index)}
             >
               {widgetContent[item.widgetId]}
             </DashboardWidget>
           );
         })}
+      </div>
+
+      {/* Screen reader announcement */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
       </div>
     </div>
   );
