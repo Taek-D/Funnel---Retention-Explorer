@@ -453,3 +453,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (NF-1 ~ NF-4): 알림 트리거 통합 (useRetentionAnalysis, useSegmentComparison, useDataExport, SaveAnalysisButton — 4개 hook/컴포넌트에 addNotification 추가), Supabase 영속화 (supabaseData.ts 6개 CRUD 함수 + NotificationContext Supabase 통합 + 게스트 인메모리 폴백 + 옵티미스틱 temp ID), 개별 알림 읽음/삭제 (NotificationPanel click-to-read + X 삭제 + unread dot + ARIA), 알림 설정 패널 (NotificationPreferencesModal 4타입 토글 + localStorage + AppShell 연동). 12개 파일 변경 (1 신규, 11 수정, ~1,200 lines). 테스트 310/310 통과. 0 iteration.
+
+---
+
+## admin-dashboard
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Admin Dashboard (RBAC, KPI, User Management, Billing) |
+| **Match Rate** | 98.5% (81/83, 2 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-12 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `admin-dashboard/admin-dashboard.plan.md` |
+| Design | `admin-dashboard/admin-dashboard.design.md` |
+| Analysis | `admin-dashboard/admin-dashboard.analysis.md` |
+| Report | `admin-dashboard/admin-dashboard.report.md` |
+
+### Summary
+
+5 scope items completed (AD-1 ~ AD-5): AD-1 Admin Role 시스템 (UserRole 타입, AdminRoute 가드, router.tsx admin 라우트 3개, Sidebar 조건부 admin 메뉴 + 구분선), AD-2 Admin API 클라이언트 (adminApi.ts — adminFetch 헬퍼 + 6개 API 함수 + 5개 타입), AD-3 Admin Dashboard 페이지 (AdminNav 서브탭 + KPI 카드 4개 + 매출 BarChart + 플랜 PieChart), AD-4 사용자 관리 (AdminUsers 검색/필터/페이지네이션 테이블 + UserDetailModal 조회/수정), AD-5 매출/결제 (AdminBilling 매출 차트 + 결제 내역 테이블 + 상태 필터). i18n 60키 (ko/en). 14개 파일 변경 (7 신규, 7 수정, ~1,200 lines). 테스트 310/310 통과. 0 iteration. 외부 의존: Supabase Edge Function `admin-api` 배포 + DB role 컬럼 마이그레이션.

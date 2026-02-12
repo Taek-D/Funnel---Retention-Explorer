@@ -1,17 +1,10 @@
 {
-  "sessionCount": 60,
+  "sessionCount": 63,
   "lastSession": {
-    "startedAt": "2026-02-12T12:15:13.888Z",
+    "startedAt": "2026-02-12T13:56:54.423Z",
     "platform": "claude",
-    "level": "Starter"
+    "level": "Dynamic"
   },
   "currentFeature": null,
-  "pdca": {
-    "feature": "notification-system",
-    "phase": "archived",
-    "startedAt": "2026-02-12T12:00:00.000Z",
-    "matchRate": 100,
-    "archivedAt": "2026-02-12T12:30:00.000Z",
-    "archivedTo": "docs/archive/2026-02/notification-system/"
-  }
+  "pdca": null
 }

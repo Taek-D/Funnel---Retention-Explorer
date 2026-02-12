@@ -55,7 +55,8 @@ import {
   Globe,
   RotateCcw,
   Maximize2,
-  Minimize2
+  Minimize2,
+  UserPlus
 } from 'lucide-react';
 
 export {
@@ -115,5 +116,6 @@ export {
   Globe,
   RotateCcw,
   Maximize2,
-  Minimize2
+  Minimize2,
+  UserPlus
 };

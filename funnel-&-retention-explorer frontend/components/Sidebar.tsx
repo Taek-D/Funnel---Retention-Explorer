@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -24,7 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, userProfile, signOut } = useAuth();
 
   const menuItems: MenuItem[] = [
     { path: '/app/dashboard', icon: LayoutDashboard, labelKey: 'nav.dashboard', dataTour: 'dashboard' },
@@ -36,6 +36,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
     { path: '/app/team', icon: Shield, labelKey: 'nav.team' },
     { path: '/app/subscription', icon: CreditCard, labelKey: 'nav.subscription' },
   ];
+
+  const adminItems: MenuItem[] = userProfile?.role === 'admin' ? [
+    { path: '/app/admin', icon: Settings, labelKey: 'nav.admin' },
+  ] : [];
 
   const initial = user?.email ? user.email.charAt(0).toUpperCase() : 'G';
 
@@ -65,7 +69,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
       </div>
 
       <nav className="flex flex-col gap-0.5 w-full items-center">
-        {menuItems.map((item) => {
+        {[...menuItems, ...(adminItems.length > 0 ? [{ path: '__divider__', icon: Settings, labelKey: '' } as MenuItem, ...adminItems] : [])].map((item) => {
+          if (item.path === '__divider__') {
+            return <div key="admin-divider" className="w-6 h-px bg-white/[0.06] my-1" />;
+          }
           const isActive = location.pathname === item.path;
           return (
             <button

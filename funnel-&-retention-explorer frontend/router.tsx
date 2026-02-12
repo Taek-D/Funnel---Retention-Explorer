@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { LandingPage } from './pages/LandingPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
 import { AppShell } from './components/AppShell';
 import { PageLoader } from './components/PageLoader';
 
@@ -22,6 +23,9 @@ const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage').then(m =>
 const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })));
 const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ default: m.SharedReport })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
+const AdminBilling = lazy(() => import('./pages/AdminBilling').then(m => ({ default: m.AdminBilling })));
 
 export const router = createBrowserRouter([
   {
@@ -69,6 +73,15 @@ export const router = createBrowserRouter([
           { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
           { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
           { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
+          {
+            path: 'admin',
+            element: <AdminRoute />,
+            children: [
+              { index: true, element: <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense> },
+              { path: 'users', element: <Suspense fallback={<PageLoader />}><AdminUsers /></Suspense> },
+              { path: 'billing', element: <Suspense fallback={<PageLoader />}><AdminBilling /></Suspense> },
+            ],
+          },
         ],
       },
     ],

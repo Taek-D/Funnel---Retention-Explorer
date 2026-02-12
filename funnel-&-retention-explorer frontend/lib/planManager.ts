@@ -8,6 +8,7 @@ export type BillingCycle = 'monthly' | 'annual';
 
 export interface UserProfile {
   id: string;
+  role: 'user' | 'admin';
   plan: PlanType;
   plan_started_at: string | null;
   toss_customer_key: string | null;
@@ -120,6 +121,10 @@ export function getCSVRowLimit(profile: UserProfile): number {
 
 export function isPro(profile: UserProfile): boolean {
   return profile.plan === 'pro';
+}
+
+export function isAdmin(profile: UserProfile): boolean {
+  return profile.role === 'admin';
 }
 
 // ===== Subscription Management =====

@@ -23,9 +23,11 @@ export interface WidgetLayout {
 export type PlanType = 'free' | 'pro' | 'team';
 export type SubscriptionStatus = 'none' | 'active' | 'cancelled' | 'past_due';
 export type BillingCycle = 'monthly' | 'annual';
+export type UserRole = 'user' | 'admin';
 
 export interface UserProfile {
   id: string;
+  role: UserRole;
   plan: PlanType;
   plan_started_at: string | null;
   toss_customer_key: string | null;
