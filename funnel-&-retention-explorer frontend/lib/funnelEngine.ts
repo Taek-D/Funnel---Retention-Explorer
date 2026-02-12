@@ -1,6 +1,7 @@
 import type { ProcessedEvent, FunnelStep } from '../types';
 import { FUNNEL_TEMPLATES } from './constants';
 import { getUsersByEvent } from './eventUtils';
+import { startSpan } from './sentry';
 
 export function loadFunnelTemplate(type: 'ecommerce' | 'subscription' | 'lifecycle'): string[] {
   return FUNNEL_TEMPLATES[type] || FUNNEL_TEMPLATES.ecommerce;
@@ -8,6 +9,10 @@ export function loadFunnelTemplate(type: 'ecommerce' | 'subscription' | 'lifecyc
 
 export function calculateFunnel(processedData: ProcessedEvent[], steps: string[]): FunnelStep[] {
   if (steps.length < 2) return [];
+  return startSpan('analysis.funnel', 'compute', () => _calculateFunnel(processedData, steps));
+}
+
+function _calculateFunnel(processedData: ProcessedEvent[], steps: string[]): FunnelStep[] {
 
   const funnelData: FunnelStep[] = [];
   const usersByStep: Record<string, Set<string>> = {};

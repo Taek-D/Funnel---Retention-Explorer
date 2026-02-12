@@ -549,3 +549,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 3 scope items completed (A11Y-1 ~ A11Y-3): A11Y-1 DashboardWidget ARIA 속성 (role="listitem", aria-roledescription, aria-label with position info, tabIndex, aria-hidden on decorative icons, aria-label on buttons replacing title), A11Y-2 Dashboard 키보드 리오더링 (handleMoveUp/handleMoveDown useCallback, reorder() + focus management 50ms timeout, role="list" on grid container, aria-live="polite" announcement region, sr-only CSS class), A11Y-3 i18n 키 9개 (ko/en pages namespace: sortableItem, widgetPosition, widgetHiddenLabel, widgetList, movedTo, halfWidth, fullWidth, hideWidget, showWidget). 4개 파일 변경 (0 신규, 4 수정). 테스트 310/310 통과. 4 PARTIAL 항목 모두 positive deviation (widgetHiddenLabel 이름 충돌 회피, pages namespace 일관성). 0 iteration.
+
+---
+
+## sentry-web-vitals
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Sentry Performance Monitoring + Core Web Vitals + Source Maps |
+| **Match Rate** | 95.8% (68 PASS, 3 FAIL CI env vars — fixed post-analysis) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `sentry-web-vitals/sentry-web-vitals.plan.md` |
+| Design | `sentry-web-vitals/sentry-web-vitals.design.md` |
+| Analysis | `sentry-web-vitals/sentry-web-vitals.analysis.md` |
+| Report | `sentry-web-vitals/sentry-web-vitals.report.md` |
+
+### Summary
+
+4 scope items completed (SWV-1 ~ SWV-4): SWV-1 Performance Tracing 활성화 (`browserTracingIntegration()`, `tracesSampleRate: 0.1`, `tracePropagationTargets` Supabase only), SWV-2 Source Maps 업로드 (`@sentry/vite-plugin`, `sourcemap: 'hidden'`, `filesToDeleteAfterUpload`, CI env vars 3개), SWV-3 Custom Performance Spans (`startSpan<T>` + `startSpanAsync<T>` 헬퍼, 5개 lib 모듈 래핑: csvParser, dataProcessor, funnelEngine, retentionEngine, geminiClient), SWV-4 Sentry ErrorBoundary 전환 (class component → `Sentry.ErrorBoundary` + `FallbackUI` 함수 컴포넌트, 기존 UI 100% 유지). 9개 파일 변경 (0 신규, 8 수정 + 1 CI). 신규 devDep: `@sentry/vite-plugin`. 테스트 310/310 통과. 외부 의존: SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT GitHub Secrets 설정. 0 iteration.

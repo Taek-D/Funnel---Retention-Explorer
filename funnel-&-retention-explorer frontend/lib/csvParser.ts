@@ -1,5 +1,6 @@
 import Papa from 'papaparse';
 import type { RawRow } from '../types';
+import { startSpanAsync } from './sentry';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const MAX_ROW_COUNT = 100_000;
@@ -40,7 +41,7 @@ function parseWithWorker(csvText: string): Promise<ParseResult> {
 }
 
 export function parseCSV(file: File): Promise<ParseResult> {
-  return new Promise((resolve, reject) => {
+  return startSpanAsync('csv.parse', 'parse', () => new Promise((resolve, reject) => {
     if (file.size > MAX_FILE_SIZE) {
       reject(new Error(`파일 크기가 너무 큽니다 (${(file.size / 1024 / 1024).toFixed(1)}MB). 최대 50MB까지 지원합니다.`));
       return;
@@ -58,7 +59,7 @@ export function parseCSV(file: File): Promise<ParseResult> {
     };
     reader.onerror = () => reject(new Error('파일 읽기 실패'));
     reader.readAsText(file);
-  });
+  }));
 }
 
 export function parseCSVText(csvText: string): Promise<ParseResult> {

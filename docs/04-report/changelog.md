@@ -4,6 +4,70 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-13] — Sentry Web Vitals (Performance Monitoring Integration)
+
+### Summary
+Completed Sentry Performance Monitoring integration with Core Web Vitals tracking, source map upload pipeline, and custom performance spans. Achieved 95.8% design match with zero iterations (100% after CI configuration). Enables real-time performance monitoring and error source map resolution in production.
+
+### Added
+- **Performance Tracing**: Enabled `browserTracingIntegration` with 0.1 production sample rate
+- **Trace Propagation**: Configured to Supabase API URLs only
+- **Source Maps Upload**: Integrated `@sentry/vite-plugin` for automatic source map upload
+  - Hidden source map generation (`sourcemap: 'hidden'`)
+  - Automatic `.map` file cleanup post-upload
+  - Build-time plugin (dev builds gracefully disabled)
+- **Custom Performance Spans**: Instrumented 5 critical operations
+  - CSV parsing: `csv.parse` operation
+  - Data processing: `data.process` operation
+  - Funnel analysis: `analysis.funnel` operation
+  - Retention analysis: `analysis.retention` operation
+  - AI insights: `ai.insight` operation
+- **Span Helpers**: Exported `startSpan<T>` and `startSpanAsync<T>` utilities
+- **Sentry ErrorBoundary**: Converted `ErrorBoundary` component to `Sentry.ErrorBoundary`
+  - Maintains identical fallback UI (error title, description, retry/reload buttons)
+  - Automatic error capture and reporting
+
+### Changed
+- `lib/sentry.ts`: Added browserTracingIntegration, startSpan helpers, trace propagation targets
+- `vite.config.ts`: Added sentryVitePlugin, enabled hidden source maps, configured file cleanup
+- `components/ErrorBoundary.tsx`: Refactored from class to functional component with Sentry integration
+- `lib/csvParser.ts`: Wrapped `parseCSV` with `startSpanAsync` instrumentation
+- `lib/dataProcessor.ts`: Wrapped `processData` with `startSpan` instrumentation
+- `lib/funnelEngine.ts`: Wrapped `calculateFunnel` with `startSpan` instrumentation
+- `lib/retentionEngine.ts`: Wrapped `calculateActivityRetention` with `startSpan` instrumentation
+- `lib/geminiClient.ts`: Wrapped `generateContent` with `startSpanAsync` instrumentation
+
+### Infrastructure (Pending)
+- **GitHub Actions CI**: Awaits 3 environment variables configuration
+  - `SENTRY_AUTH_TOKEN`: Sentry authentication token for source map upload
+  - `SENTRY_ORG`: Sentry organization slug
+  - `SENTRY_PROJECT`: Sentry project slug
+  - Status: Feature gracefully degrades if secrets not configured (no runtime impact)
+
+### Dependencies
+- **Added**: `@sentry/vite-plugin` (^4.9.1) — Build-time source map upload
+- **Existing**: `@sentry/react` (v10.38.0+) — Already in use for error capture
+
+### Metrics
+- **Design Match Rate**: 95.8% (68/71 items PASS, 3 FAIL items are CI env vars)
+  - After CI configuration: 100%
+- **Code Implementation Match**: 100% (all runtime code verified)
+- **Architecture Compliance**: 100% (span patterns, ErrorBoundary conversion)
+- **Files Modified**: 8 (lib/sentry.ts, vite.config.ts, ErrorBoundary.tsx, 5 instrumented modules)
+- **Lines Added**: ~111 code lines
+- **New Dependencies**: 1 (@sentry/vite-plugin)
+- **Tests Status**: 310/310 passing (0 regressions)
+- **Build Status**: Clean (0 errors, 0 warnings)
+- **PDCA Iterations**: 0 (first-pass completion)
+
+### Documentation
+- Plan: `docs/01-plan/features/sentry-web-vitals.plan.md`
+- Design: `docs/02-design/features/sentry-web-vitals.design.md`
+- Analysis: `docs/03-analysis/sentry-web-vitals.analysis.md` (95.8% match)
+- Report: `docs/04-report/features/sentry-web-vitals.report.md`
+
+---
+
 ## [2026-02-13] — Accessibility DnD (WCAG 2.1 AA Keyboard Navigation)
 
 ### Summary

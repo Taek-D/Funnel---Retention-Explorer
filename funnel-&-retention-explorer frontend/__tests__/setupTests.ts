@@ -60,3 +60,16 @@ vi.stubGlobal('ResizeObserver', class {
   unobserve = vi.fn();
   disconnect = vi.fn();
 });
+
+// Mock Sentry (passthrough spans, no-op capture)
+vi.mock('../lib/sentry', () => ({
+  Sentry: {
+    captureException: vi.fn(),
+    init: vi.fn(),
+    browserTracingIntegration: vi.fn(),
+    ErrorBoundary: ({ children }: { children: React.ReactNode }) => children,
+  },
+  initSentry: vi.fn(),
+  startSpan: vi.fn((_name: string, _op: string, fn: () => unknown) => fn()),
+  startSpanAsync: vi.fn((_name: string, _op: string, fn: () => Promise<unknown>) => fn()),
+}));

@@ -2,8 +2,13 @@ import type { RawRow, ProcessedEvent, ColumnMapping, DatasetType, DataQualityRep
 import { EVENT_PATTERNS, AUTO_COLUMN_MAPPING } from './constants';
 import { detectColumnsByValues } from './columnValueDetector';
 import { sanitizeEventName } from './formatters';
+import { startSpan } from './sentry';
 
 export function processData(rawData: RawRow[], mapping: ColumnMapping): ProcessedEvent[] {
+  return startSpan('data.process', 'process', () => _processData(rawData, mapping));
+}
+
+function _processData(rawData: RawRow[], mapping: ColumnMapping): ProcessedEvent[] {
   const processed = rawData
     .map(row => {
       const event: ProcessedEvent = {

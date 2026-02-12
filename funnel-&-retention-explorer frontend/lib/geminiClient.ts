@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { startSpanAsync } from './sentry';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const AI_PROXY_URL = `${SUPABASE_URL}/functions/v1/ai-proxy`;
@@ -14,6 +15,14 @@ export interface GeminiResponse {
 }
 
 export async function generateContent(
+  prompt: string,
+  systemInstruction?: string,
+  history?: GeminiMessage[]
+): Promise<GeminiResponse> {
+  return startSpanAsync('ai.insight', 'http.client', () => _generateContent(prompt, systemInstruction, history));
+}
+
+async function _generateContent(
   prompt: string,
   systemInstruction?: string,
   history?: GeminiMessage[]

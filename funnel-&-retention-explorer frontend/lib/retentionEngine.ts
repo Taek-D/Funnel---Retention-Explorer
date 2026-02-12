@@ -5,8 +5,17 @@ import {
   PAID_RETENTION_MAX_COHORTS,
   FULL_DATA_RETENTION_MAX_COHORTS
 } from './constants';
+import { startSpan } from './sentry';
 
 export function calculateActivityRetention(
+  processedData: ProcessedEvent[],
+  cohortEvent: string,
+  activeEvents: string[]
+): RetentionCohort[] {
+  return startSpan('analysis.retention', 'compute', () => _calculateActivityRetention(processedData, cohortEvent, activeEvents));
+}
+
+function _calculateActivityRetention(
   processedData: ProcessedEvent[],
   cohortEvent: string,
   activeEvents: string[]

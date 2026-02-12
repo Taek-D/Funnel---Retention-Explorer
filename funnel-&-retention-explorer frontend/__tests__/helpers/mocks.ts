@@ -55,6 +55,8 @@ export function mockSentry() {
       captureException: vi.fn(),
       init: vi.fn(),
     },
+    startSpan: vi.fn((_name: string, _op: string, fn: () => unknown) => fn()),
+    startSpanAsync: vi.fn((_name: string, _op: string, fn: () => Promise<unknown>) => fn()),
   }));
 }
 

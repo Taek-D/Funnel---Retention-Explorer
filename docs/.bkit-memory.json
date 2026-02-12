@@ -5,11 +5,11 @@
     "platform": "claude",
     "level": "Starter"
   },
-  "currentFeature": "accessibility-dnd",
+  "currentFeature": "sentry-web-vitals",
   "pdca": {
-    "feature": "accessibility-dnd",
+    "feature": "sentry-web-vitals",
     "phase": "completed",
-    "matchRate": 97.3,
+    "matchRate": 95.8,
     "startedAt": "2026-02-13T00:00:00.000Z",
     "completedAt": "2026-02-13T00:00:00.000Z"
   }

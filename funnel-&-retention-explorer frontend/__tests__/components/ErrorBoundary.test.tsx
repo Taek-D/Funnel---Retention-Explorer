@@ -8,12 +8,35 @@ vi.mock('../../components/Icons', () => ({
   AlertTriangle: ({ size, ...props }: { size?: number }) => <span data-testid="alert-icon" {...props}>!</span>,
 }));
 
-// Mock Sentry
-vi.mock('../../lib/sentry', () => ({
-  Sentry: {
+// Mock @sentry/react with a real ErrorBoundary implementation
+vi.mock('@sentry/react', () => {
+  const React = require('react');
+  class MockSentryErrorBoundary extends React.Component<{
+    children: React.ReactNode;
+    fallback: (props: { error: Error; resetError: () => void }) => React.ReactNode;
+  }, { hasError: boolean; error: Error | null }> {
+    constructor(props: Record<string, unknown>) {
+      super(props);
+      this.state = { hasError: false, error: null };
+    }
+    static getDerivedStateFromError(error: Error) {
+      return { hasError: true, error };
+    }
+    render() {
+      if (this.state.hasError && this.state.error) {
+        return (this.props as { fallback: (p: { error: Error; resetError: () => void }) => React.ReactNode }).fallback({
+          error: this.state.error,
+          resetError: () => this.setState({ hasError: false, error: null }),
+        });
+      }
+      return this.props.children;
+    }
+  }
+  return {
+    ErrorBoundary: MockSentryErrorBoundary,
     captureException: vi.fn(),
-  },
-}));
+  };
+});
 
 // Controllable throwing component using external flag
 let shouldThrowFlag = false;
