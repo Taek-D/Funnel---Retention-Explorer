@@ -21,7 +21,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
 }) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
-  const { notifications, markAllAsRead, clearAll } = useNotifications();
+  const { notifications, markAsRead, removeNotification, markAllAsRead, clearAll } = useNotifications();
 
   const typeLabels: Record<NotificationType, { label: string; color: string }> = {
     analysis: { label: t('notification.analysis'), color: 'text-accent bg-accent/10' },
@@ -53,16 +53,20 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       <button
         onClick={onToggle}
         className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors relative"
+        aria-label={t('notification.title')}
+        aria-expanded={open}
       >
         <Bell size={16} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 min-w-[14px] h-[14px] bg-coral rounded-full text-[9px] font-bold text-white flex items-center justify-center px-0.5">
+          <span className="absolute top-1 right-1 min-w-[14px] h-[14px] bg-coral rounded-full text-[9px] font-bold text-white flex items-center justify-center px-0.5" aria-label={t('notification.unreadCount', { count: unreadCount })}>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       <div
+        role="region"
+        aria-label={t('notification.title')}
         className={`absolute right-0 top-11 w-80 md:w-96 bg-surface border border-white/[0.06] rounded-lg shadow-xl z-50 overflow-hidden transition-all duration-200 origin-top-right ${
           open ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
@@ -74,7 +78,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             <button
               onClick={onOpenEmailSettings}
               className="p-1.5 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors"
-              title={t('notification.emailSettings')}
+              title={t('notification.settings')}
             >
               <Settings size={14} />
             </button>
@@ -104,18 +108,30 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               return (
                 <div
                   key={n.id}
-                  className={`flex items-start gap-3 px-4 py-3 border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors ${
+                  onClick={() => !n.read && markAsRead(n.id)}
+                  className={`group flex items-start gap-3 px-4 py-3 border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer ${
                     !n.read ? 'bg-white/[0.02]' : ''
                   }`}
                 >
+                  {/* Unread indicator */}
+                  <div className="w-1.5 shrink-0 mt-2">
+                    {!n.read && <div className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                  </div>
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${typeInfo.color} shrink-0 mt-0.5`}>
                     {typeInfo.label}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{n.title}</p>
-                    <p className="text-xs text-slate-400 truncate">{n.message}</p>
+                    <p className={`text-sm font-medium truncate ${n.read ? 'text-slate-400' : 'text-white'}`}>{n.title}</p>
+                    <p className={`text-xs truncate ${n.read ? 'text-slate-600' : 'text-slate-400'}`}>{n.message}</p>
                   </div>
                   <span className="text-[10px] text-slate-600 shrink-0 mt-0.5">{timeAgo(n.createdAt)}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeNotification(n.id); }}
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-600 hover:text-white transition-all shrink-0"
+                    aria-label={t('notification.delete')}
+                  >
+                    <X size={12} />
+                  </button>
                 </div>
               );
             })

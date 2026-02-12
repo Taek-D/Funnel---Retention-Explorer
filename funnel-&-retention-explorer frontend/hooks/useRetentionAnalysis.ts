@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
+import { useNotifications } from '../context/NotificationContext';
 import { trackEvent } from '../lib/analytics';
 import type { RetentionType } from '../types';
 import i18n from '../lib/i18n';
@@ -10,6 +11,7 @@ import i18n from '../lib/i18n';
 export function useRetentionAnalysis() {
   const { state, dispatch } = useAppContext();
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
 
   const setRetentionType = useCallback((type: RetentionType) => {
     dispatch({ type: 'SET_RETENTION_TYPE', payload: type });
@@ -53,6 +55,7 @@ export function useRetentionAnalysis() {
     }
 
     trackEvent('retention_analysis', { retention_type: state.retentionType });
+    addNotification('analysis', i18n.t('analysis.retentionComplete'), i18n.t('analysis.retentionCompleteDesc'));
 
     // Regenerate insights
     const insights = generateInsights(
@@ -64,7 +67,7 @@ export function useRetentionAnalysis() {
       state.paidRetentionResults
     );
     dispatch({ type: 'SET_INSIGHTS', payload: insights });
-  }, [state, dispatch, toast]);
+  }, [state, dispatch, toast, addNotification]);
 
   return {
     retentionResults: state.retentionResults,

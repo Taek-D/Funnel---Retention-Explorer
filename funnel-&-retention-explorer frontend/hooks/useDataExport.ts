@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { usePlanGate } from './usePlanGate';
 import { exportFunnelCSV, exportRetentionCSV, exportSegmentCSV } from '../lib/exportUtils';
 import { useToast } from '../components/Toast';
+import { useNotifications } from '../context/NotificationContext';
 
 type ExportType = 'funnel' | 'retention' | 'segment';
 
@@ -12,6 +13,7 @@ export function useDataExport() {
   const { state } = useAppContext();
   const { isPro, openUpgradeModal } = usePlanGate();
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
   const [exporting, setExporting] = useState(false);
 
   const exportCSV = (type: ExportType) => {
@@ -30,6 +32,7 @@ export function useDataExport() {
         exportSegmentCSV(data);
       }
       toast('success', t('dataExport.complete'));
+      addNotification('export', t('dataExport.complete'), t('dataExport.csvExported'));
     } catch {
       toast('error', t('dataExport.error'));
     }
@@ -66,6 +69,7 @@ export function useDataExport() {
         );
       }
       toast('success', t('dataExport.complete'));
+      addNotification('export', t('dataExport.complete'), t('dataExport.excelExported'));
     } catch {
       toast('error', t('dataExport.error'));
     } finally {

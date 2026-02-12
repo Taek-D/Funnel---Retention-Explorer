@@ -211,3 +211,100 @@ export async function getSharedSnapshot(shareToken: string): Promise<FRESnapshot
   if (error) return null;
   return data;
 }
+
+// ===== Notifications =====
+
+export type NotificationDbType = 'analysis' | 'import' | 'ai' | 'export';
+
+export interface FRENotification {
+  id: string;
+  user_id: string;
+  type: NotificationDbType;
+  title: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
+export async function listNotifications(limit = 50): Promise<FRENotification[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_notifications')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function insertNotification(params: {
+  type: NotificationDbType;
+  title: string;
+  message: string;
+}): Promise<FRENotification> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
+  const { data, error } = await client
+    .from('fre_notifications')
+    .insert({
+      user_id: user.id,
+      type: params.type,
+      title: params.title,
+      message: params.message,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function markNotificationRead(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_notifications')
+    .update({ read: true })
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+
+export async function markAllNotificationsRead(): Promise<void> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) return;
+
+  const { error } = await client
+    .from('fre_notifications')
+    .update({ read: true })
+    .eq('user_id', user.id)
+    .eq('read', false);
+
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteNotificationDb(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_notifications')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+
+export async function clearAllNotifications(): Promise<void> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) return;
+
+  const { error } = await client
+    .from('fre_notifications')
+    .delete()
+    .eq('user_id', user.id);
+
+  if (error) throw new Error(error.message);
+}

@@ -121,6 +121,7 @@
     "button": "Save to Cloud",
     "saving": "Saving...",
     "saved": "Saved",
+    "savedDesc": "Analysis results have been saved to cloud",
     "failed": "Save Failed"
   },
   "ai": {
@@ -152,7 +153,23 @@
     "justNow": "Just now",
     "minutesAgo": "{{count}}m ago",
     "hoursAgo": "{{count}}h ago",
-    "daysAgo": "{{count}}d ago"
+    "daysAgo": "{{count}}d ago",
+    "delete": "Delete notification",
+    "settings": "Notification settings",
+    "unreadCount": "{{count}} unread notifications"
+  },
+  "notifPrefs": {
+    "title": "Notification Settings",
+    "analysisTitle": "Analysis Notifications",
+    "analysisDesc": "Funnel, retention, segment analysis",
+    "importTitle": "Import Notifications",
+    "importDesc": "CSV upload, sample data load",
+    "aiTitle": "AI Insight Notifications",
+    "aiDesc": "AI analysis results",
+    "exportTitle": "Export Notifications",
+    "exportDesc": "CSV, Excel, report export",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "onboarding": {
     "skip": "Skip",
@@ -223,7 +240,11 @@
     "paidNoData": "No Paid Retention Data",
     "paidNoDataDesc": "A subscribe event is required.",
     "selectCohort": "Please select a cohort event",
-    "selectActive": "Please select at least 1 active event"
+    "selectActive": "Please select at least 1 active event",
+    "retentionComplete": "Retention Analysis Complete",
+    "retentionCompleteDesc": "Retention analysis results are ready",
+    "segmentComplete": "Segment Comparison Complete",
+    "segmentCompleteDesc": "Check the segment comparison results"
   },
   "segment": {
     "platformPrefix": "Platform",
@@ -252,6 +273,8 @@
     "complete": "Download complete",
     "noData": "No data to export",
     "error": "Export failed",
+    "csvExported": "CSV file has been downloaded",
+    "excelExported": "Excel file has been downloaded",
     "all": "All data",
     "headers": {
       "step": "Step",

@@ -20,6 +20,19 @@ vi.mock('../../lib/insightsEngine', () => ({
   generateInsights: vi.fn().mockReturnValue([]),
 }));
 
+vi.mock('../../context/NotificationContext', () => ({
+  useNotifications: () => ({
+    addNotification: vi.fn(),
+    notifications: [],
+    unreadCount: 0,
+    loading: false,
+    markAsRead: vi.fn(),
+    removeNotification: vi.fn(),
+    markAllAsRead: vi.fn(),
+    clearAll: vi.fn(),
+  }),
+}));
+
 function wrapper({ children }: { children: React.ReactNode }) {
   return (
     <AppProvider>

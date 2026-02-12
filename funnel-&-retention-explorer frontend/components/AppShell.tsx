@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar';
 import { Modal } from './Modal';
 import { UserMenu } from './UserMenu';
 import { NotificationPanel } from './NotificationPanel';
+import { NotificationPreferencesModal } from './NotificationPreferencesModal';
 import { SearchModal } from './SearchModal';
 import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
@@ -19,6 +20,7 @@ import { useAppContext } from '../context/AppContext';
 export const AppShell: React.FC = () => {
   const { t } = useTranslation();
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [notifPrefsOpen, setNotifPrefsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -117,7 +119,7 @@ export const AppShell: React.FC = () => {
               open={notificationOpen}
               onToggle={() => setNotificationOpen(prev => !prev)}
               onClose={() => setNotificationOpen(false)}
-              onOpenEmailSettings={() => { setNotificationOpen(false); setEmailModalOpen(true); }}
+              onOpenEmailSettings={() => { setNotificationOpen(false); setNotifPrefsOpen(true); }}
               unreadCount={unreadCount}
             />
             <div className="w-px h-5 bg-white/[0.06] mx-1" />
@@ -141,6 +143,9 @@ export const AppShell: React.FC = () => {
 
       {/* Onboarding Tour */}
       <OnboardingTour {...tour} />
+
+      {/* Notification Preferences Modal */}
+      <NotificationPreferencesModal open={notifPrefsOpen} onClose={() => setNotifPrefsOpen(false)} />
 
       {/* Email Settings Modal */}
       <Modal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} title={t('email.settingsTitle')}>

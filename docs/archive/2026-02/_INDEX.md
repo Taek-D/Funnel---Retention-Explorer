@@ -429,3 +429,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 3 preset templates (default, ecommerce, saas) providing one-click dashboard layout application. PRESET_TEMPLATES 상수 (constants.ts), applyPreset() 콜백 (useDashboardLayout.ts, resetToDefault 리팩토링), Dashboard 편집 모드 드롭다운 UI (LayoutDashboard/ShoppingBag/Activity 아이콘 + useClickOutside), ko/en i18n 8키. 7개 파일 변경 (5 impl + 2 test, ~120 lines). 테스트 305 → 310 (+5 preset tests). 0 iteration.
+
+---
+
+## notification-system
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Notification System Enhancement (Triggers, Persistence, Preferences) |
+| **Match Rate** | 100% (38/38) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-12 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `notification-system/notification-system.plan.md` |
+| Design | `notification-system/notification-system.design.md` |
+| Analysis | `notification-system/notification-system.analysis.md` |
+| Report | `notification-system/notification-system.report.md` |
+
+### Summary
+
+4 tasks completed (NF-1 ~ NF-4): 알림 트리거 통합 (useRetentionAnalysis, useSegmentComparison, useDataExport, SaveAnalysisButton — 4개 hook/컴포넌트에 addNotification 추가), Supabase 영속화 (supabaseData.ts 6개 CRUD 함수 + NotificationContext Supabase 통합 + 게스트 인메모리 폴백 + 옵티미스틱 temp ID), 개별 알림 읽음/삭제 (NotificationPanel click-to-read + X 삭제 + unread dot + ARIA), 알림 설정 패널 (NotificationPreferencesModal 4타입 토글 + localStorage + AppShell 연동). 12개 파일 변경 (1 신규, 11 수정, ~1,200 lines). 테스트 310/310 통과. 0 iteration.

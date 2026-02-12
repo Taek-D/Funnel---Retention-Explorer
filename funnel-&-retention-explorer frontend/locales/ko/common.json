@@ -121,6 +121,7 @@
     "button": "클라우드에 저장",
     "saving": "저장 중...",
     "saved": "저장됨",
+    "savedDesc": "분석 결과가 클라우드에 저장되었습니다",
     "failed": "저장 실패"
   },
   "ai": {
@@ -152,7 +153,23 @@
     "justNow": "방금 전",
     "minutesAgo": "{{count}}분 전",
     "hoursAgo": "{{count}}시간 전",
-    "daysAgo": "{{count}}일 전"
+    "daysAgo": "{{count}}일 전",
+    "delete": "알림 삭제",
+    "settings": "알림 설정",
+    "unreadCount": "읽지 않은 알림 {{count}}개"
+  },
+  "notifPrefs": {
+    "title": "알림 설정",
+    "analysisTitle": "분석 완료 알림",
+    "analysisDesc": "퍼널, 리텐션, 세그먼트 분석",
+    "importTitle": "데이터 가져오기 알림",
+    "importDesc": "CSV 업로드, 샘플 데이터 로드",
+    "aiTitle": "AI 인사이트 알림",
+    "aiDesc": "AI 분석 결과",
+    "exportTitle": "내보내기 알림",
+    "exportDesc": "CSV, Excel, 리포트 내보내기",
+    "save": "저장",
+    "cancel": "취소"
   },
   "onboarding": {
     "skip": "건너뛰기",
@@ -223,7 +240,11 @@
     "paidNoData": "Paid Retention 데이터 없음",
     "paidNoDataDesc": "subscribe 이벤트가 필요합니다.",
     "selectCohort": "코호트 이벤트를 선택해주세요",
-    "selectActive": "최소 1개 이상의 활성 이벤트를 선택해주세요"
+    "selectActive": "최소 1개 이상의 활성 이벤트를 선택해주세요",
+    "retentionComplete": "리텐션 분석 완료",
+    "retentionCompleteDesc": "리텐션 분석 결과가 준비되었습니다",
+    "segmentComplete": "세그먼트 비교 완료",
+    "segmentCompleteDesc": "세그먼트 비교 결과를 확인하세요"
   },
   "segment": {
     "platformPrefix": "플랫폼",
@@ -252,6 +273,8 @@
     "complete": "다운로드 완료",
     "noData": "내보낼 데이터가 없습니다",
     "error": "내보내기 실패",
+    "csvExported": "CSV 파일이 다운로드되었습니다",
+    "excelExported": "Excel 파일이 다운로드되었습니다",
     "all": "전체 데이터",
     "headers": {
       "step": "단계",

@@ -28,6 +28,20 @@ vi.mock('../../lib/excelExport', () => ({
   exportAllAsExcel: (...args: unknown[]) => mockExportAllAsExcel(...args),
 }));
 
+// Mock NotificationContext
+vi.mock('../../context/NotificationContext', () => ({
+  useNotifications: () => ({
+    addNotification: vi.fn(),
+    notifications: [],
+    unreadCount: 0,
+    loading: false,
+    markAsRead: vi.fn(),
+    removeNotification: vi.fn(),
+    markAllAsRead: vi.fn(),
+    clearAll: vi.fn(),
+  }),
+}));
+
 // Mock usePlanGate
 const mockOpenUpgradeModal = vi.fn();
 let mockIsPro = false;

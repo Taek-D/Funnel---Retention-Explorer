@@ -4,6 +4,7 @@ import { Download, CheckCircle } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { saveSnapshot } from '../lib/supabaseData';
 import { useToast } from './Toast';
+import { useNotifications } from '../context/NotificationContext';
 
 interface SaveAnalysisButtonProps {
   datasetId: string | null;
@@ -21,6 +22,7 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
   const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -36,6 +38,7 @@ export const SaveAnalysisButton: React.FC<SaveAnalysisButtonProps> = ({
         results,
       });
       setSaved(true);
+      addNotification('analysis', t('save.saved'), t('save.savedDesc'));
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       toast('error', t('save.failed'), err instanceof Error ? err.message : t('unknown'));

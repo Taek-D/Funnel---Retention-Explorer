@@ -4,6 +4,71 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-12] — Notification System Enhancement (Persistent Alerts)
+
+### Summary
+Completed persistent notification system with Supabase integration, individual controls, and user preferences. Achieved 100% design match with zero iterations, enabling users to manage alert preferences and control individual notifications.
+
+### Added
+- **Notification Triggers**: Integrated `addNotification()` calls in 4 hooks/components
+  - `useRetentionAnalysis`: "Retention analysis complete" notification
+  - `useSegmentComparison`: "Segment comparison complete" notification
+  - `useDataExport`: CSV/Excel export completion notifications (2 variants)
+  - `SaveAnalysisButton`: "Analysis saved" notification
+- **Supabase Persistence**: `fre_notifications` table with RLS policies
+  - 6 CRUD functions: listNotifications, insertNotification, markNotificationRead, markAllNotificationsRead, deleteNotification, clearAllNotifications
+  - Automatic DB load on user login via NotificationContext
+  - Temp ID optimization (local-{uuid} → real UUID after insert)
+- **Individual Controls**: Per-notification read/delete operations
+  - Click notification to mark as read (visual: accent dot disappears, text grays)
+  - X button with hover effect to delete individual notifications
+  - Mark all as read / Clear all actions (unchanged)
+- **Preferences Panel**: New NotificationPreferencesModal.tsx component
+  - 4 type toggles: analysis, import, ai, export
+  - localStorage persistence for guest users
+  - Preferences check in addNotification() (respects user settings)
+
+### Changed
+- `hooks/useRetentionAnalysis.ts`: Added `addNotification('analysis', ...)` call
+- `hooks/useSegmentComparison.ts`: Added `addNotification('analysis', ...)` call
+- `hooks/useDataExport.ts`: Added CSV/Excel export notifications
+- `components/SaveAnalysisButton.tsx`: Added save notification trigger
+- `lib/supabaseData.ts`: Added 6 notification CRUD functions (92 lines)
+- `context/NotificationContext.tsx`: Refactored for Supabase + preferences integration (136 lines)
+- `components/NotificationPanel.tsx`: Enhanced with individual read/delete UI (144 lines)
+- `components/AppShell.tsx`: Added NotificationPreferencesModal state + wiring (224 lines)
+- `locales/ko/common.json`: Added 18 i18n keys (NF-1, NF-3, NF-4)
+- `locales/en/common.json`: Added 18 i18n keys (NF-1, NF-3, NF-4)
+
+### Enhanced
+- **Hybrid Persistence**: Supabase for logged-in, localStorage for guests (no auth required)
+- **Graceful Degradation**: Falls back to in-memory if DB unavailable
+- **Type Safety**: NotificationDbType alias distinguishes DB schema from app interface
+- **Accessibility**: ARIA labels (aria-label, aria-expanded), role="region" on dropdown
+- **Visual Indicators**: Unread dot (accent color) + read/unread text color distinction
+
+### Metrics
+- **Design Match Rate**: 100% (38/38 items PASS)
+- **Files Modified**: 11 (4 hooks/components, 1 lib, 1 context, 2 components, 3 locale/types)
+- **Files Created**: 1 (NotificationPreferencesModal.tsx)
+- **Lines Added**: ~1,200 implementation + i18n keys
+- **Tests Status**: 310/310 passing (unchanged)
+- **Build Status**: Pass (clean, no warnings)
+- **PDCA Iterations**: 0 (first-pass completion)
+
+### Pending (External Dependencies)
+- **SQL Migration**: `fre_notifications` table creation (Supabase Dashboard)
+- **Column Addition**: `fre_user_profiles.notification_preferences` JSONB (Supabase Dashboard)
+- **Note**: App falls back to in-memory if tables don't exist (non-blocking)
+
+### Documentation
+- Plan: `docs/01-plan/features/notification-system.plan.md`
+- Design: `docs/02-design/features/notification-system.design.md`
+- Analysis: `docs/03-analysis/notification-system.analysis.md`
+- Report: `docs/04-report/notification-system.report.md`
+
+---
+
 ## [2026-02-12] — Dashboard Template Presets (Feature Extension)
 
 ### Summary
