@@ -22,7 +22,7 @@ interface DashboardWidgetProps {
   children: React.ReactNode;
 }
 
-export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
+export const DashboardWidget: React.FC<DashboardWidgetProps> = React.memo(({
   widgetId,
   editMode,
   visible,
@@ -142,4 +142,4 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       {children}
     </div>
   );
-};
+});

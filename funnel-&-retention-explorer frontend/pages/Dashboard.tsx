@@ -136,8 +136,8 @@ export const Dashboard: React.FC = () => {
     });
   }, [retentionResults]);
 
-  // KPI cards data
-  const kpiCards = subscriptionKPIs
+  // KPI cards data (memoized)
+  const kpiCards = useMemo(() => subscriptionKPIs
     ? [
         { label: t('dashboard.totalUsers'), value: formatNum(subscriptionKPIs.users_total), change: detectedType === 'subscription' ? t('dashboard.subscription') : t('dashboard.ecommerce'), positive: true, link: '/app/upload' },
         { label: t('dashboard.paidUsers'), value: formatNum(subscriptionKPIs.paid_user_count), change: formatPct(subscriptionKPIs.users_total > 0 ? (subscriptionKPIs.paid_user_count / subscriptionKPIs.users_total) * 100 : 0), positive: true, link: '/app/funnels' },
@@ -149,279 +149,287 @@ export const Dashboard: React.FC = () => {
         { label: t('dashboard.totalEvents'), value: formatNum(totalEvents), change: hasData ? `${state.uniqueEvents.length} ${t('dashboard.types')}` : t('dashboard.noData'), positive: hasData, link: '/app/upload' },
         { label: t('dashboard.conversionRate'), value: overallConversion != null ? overallConversion.toFixed(1) + '%' : 'N/A', change: funnelResults ? `${funnelResults.length} ${t('dashboard.steps')}` : t('dashboard.notCalculated'), positive: overallConversion != null && overallConversion > 20, link: '/app/funnels' },
         { label: t('dashboard.dataType'), value: detectedType === 'ecommerce' ? t('dashboard.ecommerce') : detectedType === 'subscription' ? t('dashboard.subscription') : 'N/A', change: hasData ? t('dashboard.detected') : t('dashboard.uploadData'), positive: detectedType !== null, link: '/app/upload' },
-      ];
+      ], [subscriptionKPIs, detectedType, uniqueUsers, totalEvents, state.uniqueEvents.length, overallConversion, funnelResults, hasData, t]);
 
-  // Widget content map
-  const widgetContent: Record<WidgetId, React.ReactNode> = {
-    'kpi-cards': (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiCards.map((kpi, i) => (
+  // Widget content (individually memoized)
+  const kpiWidget = useMemo(() => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {kpiCards.map((kpi, i) => (
+        <div
+          key={i}
+          onClick={() => navigate(kpi.link)}
+          className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group animate-fade-up delay-${(i + 1) * 100}`}
+        >
+          <div className="flex justify-between items-start mb-3">
+            <span className="text-slate-400 text-sm font-medium">{kpi.label}</span>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-accent/10 text-accent' : 'bg-coral/10 text-coral'}`}>
+              {kpi.change}
+            </span>
+          </div>
+          <div className="flex justify-between items-end">
+            <div className="text-2xl font-bold font-mono text-white">{kpi.value}</div>
+            <ChevronRight size={16} className="text-slate-600 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+          </div>
+        </div>
+      ))}
+    </div>
+  ), [kpiCards, navigate]);
+
+  const funnelWidget = useMemo(() => funnelChartData.length > 0 ? (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6 relative overflow-hidden">
+      <div className="flex justify-between items-center mb-8 relative z-10">
+        <div>
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            {t('dashboard.funnelDropoff')}
+            <Info size={16} className="text-slate-500 cursor-help" />
+          </h3>
+          <p className="text-slate-400 text-sm">{t('dashboard.nStepFunnel', { count: funnelResults?.length || 0 })}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
+          <div className="text-accent text-sm font-medium">{t('dashboard.overallConversion')}</div>
+        </div>
+      </div>
+      <div className="h-64 w-full relative z-10">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={funnelChartData} barSize={60}>
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 12 }} dy={10} />
+            <Tooltip
+              cursor={{ fill: CHART_COLORS.cursorFill }}
+              contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
+              formatter={(value: number) => [value.toLocaleString(), t('dashboard.users')]}
+            />
+            <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+              {funnelChartData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={CHART_COLORS.cellOpacity(index)} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 blur-[100px] rounded-full pointer-events-none" />
+    </div>
+  ) : (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
+      <Zap size={32} className="text-slate-600 mb-2" />
+      <p className="text-slate-400 text-sm">{t('dashboard.funnelEmptyHint')}</p>
+    </div>
+  ), [funnelChartData, overallConversion, funnelResults, t]);
+
+  const retentionWidget = useMemo(() => (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-bold text-white">{t('dashboard.retentionCurve')}</h3>
+      </div>
+      {retentionCurveData.length > 0 ? (
+        <div className="h-48 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={retentionCurveData}>
+              <defs>
+                <linearGradient id="colorValueDash" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_COLORS.accent} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={CHART_COLORS.accent} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} stroke={CHART_COLORS.gridLine} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 10 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 10 }} domain={[0, 100]} />
+              <Tooltip
+                contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
+                formatter={(value: number) => [`${value}%`, t('dashboard.retention')]}
+              />
+              <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="h-48 flex items-center justify-center">
+          <p className="text-slate-500 text-sm">{t('dashboard.retentionEmptyHint')}</p>
+        </div>
+      )}
+    </div>
+  ), [retentionCurveData, t]);
+
+  const dataQualityWidget = useMemo(() => dataQualityReport ? (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+      <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+        <Shield size={14} className="text-accent" />
+        {t('dashboard.dataQuality')}
+      </h3>
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <div className="text-xs text-slate-500 mb-1">{t('dashboard.totalRows')}</div>
+          <div className="text-lg font-bold font-mono text-white">{formatNum(dataQualityReport.totalRows)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500 mb-1">{t('dashboard.validRows')}</div>
+          <div className="text-lg font-bold font-mono text-accent">{formatNum(dataQualityReport.validRows)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500 mb-1">{t('dashboard.failedRows')}</div>
+          <div className={`text-lg font-bold font-mono ${dataQualityReport.failedRows > 0 ? 'text-coral' : 'text-white'}`}>{formatNum(dataQualityReport.failedRows)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-slate-500 mb-1">{t('dashboard.dateRange')}</div>
+          <div className="text-sm font-medium text-white">
+            {dataQualityReport.minDate && dataQualityReport.maxDate
+              ? `${new Date(dataQualityReport.minDate).toLocaleDateString()} — ${new Date(dataQualityReport.maxDate).toLocaleDateString()}`
+              : 'N/A'}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="flex justify-between items-center mb-1.5">
+          <span className="text-xs text-slate-500">{t('dashboard.dataHealth')}</span>
+          <span className="text-xs font-bold text-accent font-mono">
+            {dataQualityReport.totalRows > 0
+              ? ((dataQualityReport.validRows / dataQualityReport.totalRows) * 100).toFixed(1)
+              : 0}%
+          </span>
+        </div>
+        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
           <div
-            key={i}
-            onClick={() => navigate(kpi.link)}
-            className={`bg-surface border border-white/[0.06] rounded-lg p-6 hover:bg-white/5 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group animate-fade-up delay-${(i + 1) * 100}`}
+            className="h-full bg-gradient-to-r from-accent to-teal-400 rounded-full transition-all duration-500"
+            style={{ width: `${dataQualityReport.totalRows > 0 ? (dataQualityReport.validRows / dataQualityReport.totalRows) * 100 : 0}%` }}
+          />
+        </div>
+        {(dataQualityReport.platformMissingRate !== '0%' || dataQualityReport.channelMissingRate !== '0%') && (
+          <div className="flex gap-4 mt-3">
+            <span className="text-xs text-slate-500 flex items-center gap-1">
+              <AlertTriangle size={12} className="text-amber-500" />
+              {t('dashboard.platformMissing')}: {dataQualityReport.platformMissingRate}
+            </span>
+            <span className="text-xs text-slate-500 flex items-center gap-1">
+              <AlertTriangle size={12} className="text-amber-500" />
+              {t('dashboard.channelMissing')}: {dataQualityReport.channelMissingRate}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-5 flex items-center justify-center min-h-[120px]">
+      <p className="text-slate-500 text-sm">{t('dashboard.noData')}</p>
+    </div>
+  ), [dataQualityReport, t]);
+
+  const quickActionsWidget = useMemo(() => (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+      <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+        <Zap size={14} className="text-accent" />
+        {t('dashboard.quickActions')}
+      </h3>
+      <div className="space-y-2">
+        {[
+          { label: t('dashboard.goToFunnel'), link: '/app/funnels', icon: Filter, color: 'text-accent' },
+          { label: t('dashboard.goToRetention'), link: '/app/retention', icon: Users, color: 'text-sky-400' },
+          { label: t('dashboard.goToSegments'), link: '/app/segments', icon: BarChart2, color: 'text-violet-400' },
+          { label: t('dashboard.goToInsights'), link: '/app/insights', icon: Sparkles, color: 'text-amber-400' },
+        ].map((action) => (
+          <button
+            key={action.link}
+            onClick={() => navigate(action.link)}
+            className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors group text-left"
           >
-            <div className="flex justify-between items-start mb-3">
-              <span className="text-slate-400 text-sm font-medium">{kpi.label}</span>
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${kpi.positive ? 'bg-accent/10 text-accent' : 'bg-coral/10 text-coral'}`}>
-                {kpi.change}
-              </span>
+            <action.icon size={16} className={action.color} />
+            <span className="text-sm text-slate-300 group-hover:text-white transition-colors flex-1">{action.label}</span>
+            <ChevronRight size={14} className="text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
+          </button>
+        ))}
+      </div>
+    </div>
+  ), [navigate, t]);
+
+  const recentInsightsWidget = useMemo(() => (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="font-bold text-white">{t('dashboard.recentInsights')}</h3>
+        <span className="text-xs text-slate-500">{insights.length} {t('dashboard.total')}</span>
+      </div>
+      <div className="space-y-4">
+        {insights.length === 0 ? (
+          <p className="text-slate-500 text-sm">{t('dashboard.noInsightsYet')}</p>
+        ) : (
+          insights.slice(0, 4).map((insight, i) => {
+            const colors: Record<string, { text: string; bg: string }> = {
+              danger: { text: 'text-coral', bg: 'bg-coral/10' },
+              warning: { text: 'text-amber', bg: 'bg-amber/10' },
+              success: { text: 'text-accent', bg: 'bg-accent/10' },
+              info: { text: 'text-sky-400', bg: 'bg-sky-400/10' },
+            };
+            const c = colors[insight.type] || colors.info;
+            return (
+              <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors">
+                <div className={`p-2 rounded-lg ${c.bg} ${c.text}`}>
+                  <span className="text-sm">{insight.icon}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-medium text-white truncate">{insight.title}</h4>
+                  <p className="text-xs text-slate-400 truncate">{insight.body}</p>
+                </div>
+                {insight.metric && (
+                  <span className="text-xs text-accent font-bold font-mono shrink-0">{insight.metric}</span>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  ), [insights, t]);
+
+  const savedAnalysesWidget = useMemo(() => snapshots.length > 0 ? (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-white flex items-center gap-2">
+          <Clock size={16} className="text-accent" />
+          {t('dashboard.savedAnalyses')}
+        </h3>
+        <span className="text-xs text-slate-500">{t('dashboard.count', { count: snapshots.length })}</span>
+      </div>
+      <div className="space-y-2 max-h-64 overflow-y-auto">
+        {snapshots.map(snap => (
+          <div
+            key={snap.id}
+            className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
+            onClick={() => restoreSnapshot(snap)}
+          >
+            <div className="min-w-0 flex-1">
+              <div className="text-sm text-white font-medium truncate">
+                {snap.snapshot_type} — {snap.dataset_name || t('dashboard.unknownData')}
+              </div>
+              <div className="text-xs text-slate-500">
+                {new Date(snap.created_at).toLocaleString('ko-KR')}
+              </div>
             </div>
-            <div className="flex justify-between items-end">
-              <div className="text-2xl font-bold font-mono text-white">{kpi.value}</div>
-              <ChevronRight size={16} className="text-slate-600 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+              <ShareButton snapshotId={snap.id} existingToken={snap.share_token} />
+              <button
+                onClick={(e) => { e.stopPropagation(); removeSnapshot(snap.id); }}
+                className="p-1.5 rounded text-slate-500 hover:text-coral hover:bg-coral/10 transition-all"
+              >
+                <Trash2 size={14} />
+              </button>
             </div>
           </div>
         ))}
       </div>
-    ),
+    </div>
+  ) : (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex items-center justify-center min-h-[80px]">
+      <p className="text-slate-500 text-sm">{t('dashboard.savedAnalyses')}: 0</p>
+    </div>
+  ), [snapshots, restoreSnapshot, removeSnapshot, t]);
 
-    'funnel-chart': funnelChartData.length > 0 ? (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6 relative overflow-hidden">
-        <div className="flex justify-between items-center mb-8 relative z-10">
-          <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              {t('dashboard.funnelDropoff')}
-              <Info size={16} className="text-slate-500 cursor-help" />
-            </h3>
-            <p className="text-slate-400 text-sm">{t('dashboard.nStepFunnel', { count: funnelResults?.length || 0 })}</p>
-          </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
-            <div className="text-accent text-sm font-medium">{t('dashboard.overallConversion')}</div>
-          </div>
-        </div>
-        <div className="h-64 w-full relative z-10">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={funnelChartData} barSize={60}>
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 12 }} dy={10} />
-              <Tooltip
-                cursor={{ fill: CHART_COLORS.cursorFill }}
-                contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-                formatter={(value: number) => [value.toLocaleString(), t('dashboard.users')]}
-              />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                {funnelChartData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={CHART_COLORS.cellOpacity(index)} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 blur-[100px] rounded-full pointer-events-none" />
-      </div>
-    ) : (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
-        <Zap size={32} className="text-slate-600 mb-2" />
-        <p className="text-slate-400 text-sm">{t('dashboard.funnelEmptyHint')}</p>
-      </div>
-    ),
-
-    'retention-chart': (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-white">{t('dashboard.retentionCurve')}</h3>
-        </div>
-        {retentionCurveData.length > 0 ? (
-          <div className="h-48 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={retentionCurveData}>
-                <defs>
-                  <linearGradient id="colorValueDash" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.accent} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={CHART_COLORS.accent} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} stroke={CHART_COLORS.gridLine} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 10 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 10 }} domain={[0, 100]} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-                  formatter={(value: number) => [`${value}%`, t('dashboard.retention')]}
-                />
-                <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="h-48 flex items-center justify-center">
-            <p className="text-slate-500 text-sm">{t('dashboard.retentionEmptyHint')}</p>
-          </div>
-        )}
-      </div>
-    ),
-
-    'data-quality': dataQualityReport ? (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-        <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-          <Shield size={14} className="text-accent" />
-          {t('dashboard.dataQuality')}
-        </h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <div className="text-xs text-slate-500 mb-1">{t('dashboard.totalRows')}</div>
-            <div className="text-lg font-bold font-mono text-white">{formatNum(dataQualityReport.totalRows)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 mb-1">{t('dashboard.validRows')}</div>
-            <div className="text-lg font-bold font-mono text-accent">{formatNum(dataQualityReport.validRows)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 mb-1">{t('dashboard.failedRows')}</div>
-            <div className={`text-lg font-bold font-mono ${dataQualityReport.failedRows > 0 ? 'text-coral' : 'text-white'}`}>{formatNum(dataQualityReport.failedRows)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-slate-500 mb-1">{t('dashboard.dateRange')}</div>
-            <div className="text-sm font-medium text-white">
-              {dataQualityReport.minDate && dataQualityReport.maxDate
-                ? `${new Date(dataQualityReport.minDate).toLocaleDateString()} — ${new Date(dataQualityReport.maxDate).toLocaleDateString()}`
-                : 'N/A'}
-            </div>
-          </div>
-        </div>
-        <div>
-          <div className="flex justify-between items-center mb-1.5">
-            <span className="text-xs text-slate-500">{t('dashboard.dataHealth')}</span>
-            <span className="text-xs font-bold text-accent font-mono">
-              {dataQualityReport.totalRows > 0
-                ? ((dataQualityReport.validRows / dataQualityReport.totalRows) * 100).toFixed(1)
-                : 0}%
-            </span>
-          </div>
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-accent to-teal-400 rounded-full transition-all duration-500"
-              style={{ width: `${dataQualityReport.totalRows > 0 ? (dataQualityReport.validRows / dataQualityReport.totalRows) * 100 : 0}%` }}
-            />
-          </div>
-          {(dataQualityReport.platformMissingRate !== '0%' || dataQualityReport.channelMissingRate !== '0%') && (
-            <div className="flex gap-4 mt-3">
-              <span className="text-xs text-slate-500 flex items-center gap-1">
-                <AlertTriangle size={12} className="text-amber-500" />
-                {t('dashboard.platformMissing')}: {dataQualityReport.platformMissingRate}
-              </span>
-              <span className="text-xs text-slate-500 flex items-center gap-1">
-                <AlertTriangle size={12} className="text-amber-500" />
-                {t('dashboard.channelMissing')}: {dataQualityReport.channelMissingRate}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
-    ) : (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-5 flex items-center justify-center min-h-[120px]">
-        <p className="text-slate-500 text-sm">{t('dashboard.noData')}</p>
-      </div>
-    ),
-
-    'quick-actions': (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-        <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-          <Zap size={14} className="text-accent" />
-          {t('dashboard.quickActions')}
-        </h3>
-        <div className="space-y-2">
-          {[
-            { label: t('dashboard.goToFunnel'), link: '/app/funnels', icon: Filter, color: 'text-accent' },
-            { label: t('dashboard.goToRetention'), link: '/app/retention', icon: Users, color: 'text-sky-400' },
-            { label: t('dashboard.goToSegments'), link: '/app/segments', icon: BarChart2, color: 'text-violet-400' },
-            { label: t('dashboard.goToInsights'), link: '/app/insights', icon: Sparkles, color: 'text-amber-400' },
-          ].map((action) => (
-            <button
-              key={action.link}
-              onClick={() => navigate(action.link)}
-              className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors group text-left"
-            >
-              <action.icon size={16} className={action.color} />
-              <span className="text-sm text-slate-300 group-hover:text-white transition-colors flex-1">{action.label}</span>
-              <ChevronRight size={14} className="text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
-            </button>
-          ))}
-        </div>
-      </div>
-    ),
-
-    'recent-insights': (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-white">{t('dashboard.recentInsights')}</h3>
-          <span className="text-xs text-slate-500">{insights.length} {t('dashboard.total')}</span>
-        </div>
-        <div className="space-y-4">
-          {insights.length === 0 ? (
-            <p className="text-slate-500 text-sm">{t('dashboard.noInsightsYet')}</p>
-          ) : (
-            insights.slice(0, 4).map((insight, i) => {
-              const colors: Record<string, { text: string; bg: string }> = {
-                danger: { text: 'text-coral', bg: 'bg-coral/10' },
-                warning: { text: 'text-amber', bg: 'bg-amber/10' },
-                success: { text: 'text-accent', bg: 'bg-accent/10' },
-                info: { text: 'text-sky-400', bg: 'bg-sky-400/10' },
-              };
-              const c = colors[insight.type] || colors.info;
-              return (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors">
-                  <div className={`p-2 rounded-lg ${c.bg} ${c.text}`}>
-                    <span className="text-sm">{insight.icon}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-white truncate">{insight.title}</h4>
-                    <p className="text-xs text-slate-400 truncate">{insight.body}</p>
-                  </div>
-                  {insight.metric && (
-                    <span className="text-xs text-accent font-bold font-mono shrink-0">{insight.metric}</span>
-                  )}
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
-    ),
-
-    'saved-analyses': snapshots.length > 0 ? (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-white flex items-center gap-2">
-            <Clock size={16} className="text-accent" />
-            {t('dashboard.savedAnalyses')}
-          </h3>
-          <span className="text-xs text-slate-500">{t('dashboard.count', { count: snapshots.length })}</span>
-        </div>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
-          {snapshots.map(snap => (
-            <div
-              key={snap.id}
-              className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
-              onClick={() => restoreSnapshot(snap)}
-            >
-              <div className="min-w-0 flex-1">
-                <div className="text-sm text-white font-medium truncate">
-                  {snap.snapshot_type} — {snap.dataset_name || t('dashboard.unknownData')}
-                </div>
-                <div className="text-xs text-slate-500">
-                  {new Date(snap.created_at).toLocaleString('ko-KR')}
-                </div>
-              </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                <ShareButton snapshotId={snap.id} existingToken={snap.share_token} />
-                <button
-                  onClick={(e) => { e.stopPropagation(); removeSnapshot(snap.id); }}
-                  className="p-1.5 rounded text-slate-500 hover:text-coral hover:bg-coral/10 transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    ) : (
-      <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex items-center justify-center min-h-[80px]">
-        <p className="text-slate-500 text-sm">{t('dashboard.savedAnalyses')}: 0</p>
-      </div>
-    ),
-  };
+  const widgetContent: Record<WidgetId, React.ReactNode> = useMemo(() => ({
+    'kpi-cards': kpiWidget,
+    'funnel-chart': funnelWidget,
+    'retention-chart': retentionWidget,
+    'data-quality': dataQualityWidget,
+    'quick-actions': quickActionsWidget,
+    'recent-insights': recentInsightsWidget,
+    'saved-analyses': savedAnalysesWidget,
+  }), [kpiWidget, funnelWidget, retentionWidget, dataQualityWidget, quickActionsWidget, recentInsightsWidget, savedAnalysesWidget]);
 
   // Empty state — show CTA instead of empty charts
   if (!hasData) {

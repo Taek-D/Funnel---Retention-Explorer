@@ -573,3 +573,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 scope items completed (SWV-1 ~ SWV-4): SWV-1 Performance Tracing 활성화 (`browserTracingIntegration()`, `tracesSampleRate: 0.1`, `tracePropagationTargets` Supabase only), SWV-2 Source Maps 업로드 (`@sentry/vite-plugin`, `sourcemap: 'hidden'`, `filesToDeleteAfterUpload`, CI env vars 3개), SWV-3 Custom Performance Spans (`startSpan<T>` + `startSpanAsync<T>` 헬퍼, 5개 lib 모듈 래핑: csvParser, dataProcessor, funnelEngine, retentionEngine, geminiClient), SWV-4 Sentry ErrorBoundary 전환 (class component → `Sentry.ErrorBoundary` + `FallbackUI` 함수 컴포넌트, 기존 UI 100% 유지). 9개 파일 변경 (0 신규, 8 수정 + 1 CI). 신규 devDep: `@sentry/vite-plugin`. 테스트 310/310 통과. 외부 의존: SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT GitHub Secrets 설정. 0 iteration.
+
+---
+
+## perf-optimization
+
+| Item | Detail |
+|------|--------|
+| **Feature** | React Rendering Performance Optimization |
+| **Match Rate** | 100% (15 PASS, 1 PARTIAL / 16 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `perf-optimization/perf-optimization.plan.md` |
+| Design | `perf-optimization/perf-optimization.design.md` |
+| Analysis | `perf-optimization/perf-optimization.analysis.md` |
+| Report | `perf-optimization/perf-optimization.report.md` |
+
+### Summary
+
+3 scope items completed (PERF-1 ~ PERF-3): PERF-1 AppContext Provider value useMemo (dispatch 안정적 참조 활용, state 변경 없을 시 consumer 리렌더 방지), PERF-2 React.memo 5개 컴포넌트 (DashboardWidget, Sidebar, ExportDropdown, PlanBadge, ChartSkeleton — props 동일 시 리렌더 스킵), PERF-3 Dashboard widgetContent 개별 useMemo (kpiCards 메모이제이션 + 7개 위젯 개별 useMemo + 1개 aggregate Record useMemo — 위젯 간 독립적 캐싱으로 DashboardWidget React.memo 효과 극대화). 7개 파일 변경 (0 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: funnelWidget deps에 `funnelResults` 전체 참조 (설계는 `.length` — 안전성 우위 의도적 편차). 0 iteration.

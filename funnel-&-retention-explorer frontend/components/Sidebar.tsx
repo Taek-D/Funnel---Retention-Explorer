@@ -20,7 +20,7 @@ interface SidebarProps {
   onStartTour?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, hasData, onStartTour }) => {
+export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onCloseMobile, hasData, onStartTour }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -151,4 +151,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onCloseMobile, has
       )}
     </>
   );
-};
+});

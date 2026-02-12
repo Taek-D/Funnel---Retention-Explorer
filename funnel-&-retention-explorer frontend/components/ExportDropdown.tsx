@@ -10,7 +10,7 @@ type Props = {
   isPro?: boolean;
 };
 
-export const ExportDropdown: React.FC<Props> = ({ onCSV, onExcel, disabled, exporting, isPro }) => {
+export const ExportDropdown: React.FC<Props> = React.memo(({ onCSV, onExcel, disabled, exporting, isPro }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -56,4 +56,4 @@ export const ExportDropdown: React.FC<Props> = ({ onCSV, onExcel, disabled, expo
       )}
     </div>
   );
-};
+});

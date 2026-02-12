@@ -7,7 +7,7 @@ interface ChartSkeletonProps {
   rows?: number;
 }
 
-export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({ variant = 'bar', rows = 5 }) => {
+export const ChartSkeleton: React.FC<ChartSkeletonProps> = React.memo(({ variant = 'bar', rows = 5 }) => {
   if (variant === 'table') {
     return (
       <div className="animate-pulse space-y-2">
@@ -44,4 +44,4 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({ variant = 'bar', r
       ))}
     </div>
   );
-};
+});

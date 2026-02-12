@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Zap } from './Icons';
 
-export const PlanBadge: React.FC = () => {
+export const PlanBadge: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
   const plan = userProfile?.plan ?? 'free';
@@ -25,4 +25,4 @@ export const PlanBadge: React.FC = () => {
       </span>
     </div>
   );
-};
+});
