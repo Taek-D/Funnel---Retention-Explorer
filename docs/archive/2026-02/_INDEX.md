@@ -501,3 +501,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (E2E-1 ~ E2E-5): E2E-1 Playwright 인프라 (`@playwright/test` v1.58.2, playwright.config.ts Chromium-only + webServer + locale ko-KR, package.json 3 scripts, .gitignore), E2E-2 Landing & Navigation 테스트 (4 tests: hero render, CTA navigation, sidebar 5-route iteration, 404 page), E2E-3 Data Upload 테스트 (3 tests: upload page render, ecommerce sample + KPI, SaaS sample + KPI), E2E-4 Funnel Analysis 테스트 (3 tests: empty state, editor render, ecommerce template → chart + conversion %), E2E-5 Retention Analysis 테스트 (3 tests: empty state, controls render, cohort+active event → Day 0 + retention curve). 공통 헬퍼: skipOnboardingTour (localStorage), loadEcommerceSample/loadSaaSSample (텍스트 기반 대기), navigateViaSidebar (클라이언트 라우팅 보존). 8개 파일 변경 (6 신규, 2 수정). 테스트 310 Vitest + 13 Playwright = 323 total. 0 iteration.
+
+---
+
+## ci-e2e
+
+| Item | Detail |
+|------|--------|
+| **Feature** | CI E2E Integration (GitHub Actions + Playwright) |
+| **Match Rate** | 100% (44/44) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `ci-e2e/ci-e2e.plan.md` |
+| Design | `ci-e2e/ci-e2e.design.md` |
+| Analysis | `ci-e2e/ci-e2e.analysis.md` |
+| Report | `ci-e2e/ci-e2e.report.md` |
+
+### Summary
+
+4 scope items completed (CI-1 ~ CI-4): CI-1 Playwright 브라우저 캐싱 (actions/cache@v4, package-lock.json hash key), CI-2 Chromium 설치 (`npx playwright install --with-deps chromium`), CI-3 E2E 테스트 실행 (`npx playwright test`, webServer 자동 시작), CI-4 아티팩트 업로드 (actions/upload-artifact@v4, `if: !cancelled()`, 7일 보관). "Run tests" → "Run unit tests" 이름 변경. 1개 파일 변경 (.github/workflows/ci.yml). PR 시 323개 테스트 자동 실행 (310 Vitest + 13 Playwright). 0 iteration.
