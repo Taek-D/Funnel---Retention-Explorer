@@ -751,6 +751,25 @@
     "addStep": "Add Step",
     "selectEvent": "Select event"
   },
+  "retentionCompare": {
+    "title": "Retention Comparison",
+    "desc": "Compare retention curves across two periods",
+    "periodA": "Period A",
+    "periodB": "Period B",
+    "start": "Start",
+    "end": "End",
+    "compare": "Compare",
+    "diff": "Diff",
+    "cohortEvent": "Cohort Event",
+    "activeEvents": "Active Events",
+    "selectCohort": "Select cohort event",
+    "selectActive": "Select active event",
+    "cohorts": "Cohorts",
+    "totalUsers": "Total Users",
+    "noData": "Upload data first",
+    "noDataDesc": "Upload a CSV to compare retention",
+    "emptyHint": "Set events and periods, then run comparison"
+  },
   "journey": {
     "title": "User Journey Flow",
     "desc": "Visualize event transition flows as a Sankey diagram",

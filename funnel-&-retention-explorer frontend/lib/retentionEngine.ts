@@ -207,3 +207,62 @@ export function calculateFullDataRetention(processedData: ProcessedEvent[]): Ret
 
   return retentionData.length > 0 ? retentionData : null;
 }
+
+export type RetentionComparisonDay = {
+  day: string;
+  rateA: number;
+  rateB: number;
+  diff: number;
+  direction: 'up' | 'down' | 'same';
+};
+
+export type RetentionComparisonResult = {
+  days: RetentionComparisonDay[];
+  cohortsA: number;
+  cohortsB: number;
+  totalUsersA: number;
+  totalUsersB: number;
+};
+
+export function compareRetention(
+  resultA: RetentionCohort[],
+  resultB: RetentionCohort[]
+): RetentionComparisonResult {
+  const dayKeys = new Set<string>();
+  [...resultA, ...resultB].forEach(c => {
+    Object.keys(c.days).forEach(k => dayKeys.add(k));
+  });
+
+  const sortedDays = [...dayKeys].sort((a, b) => {
+    const numA = parseInt(a.replace('D', ''), 10);
+    const numB = parseInt(b.replace('D', ''), 10);
+    return numA - numB;
+  });
+
+  const avgRate = (cohorts: RetentionCohort[], day: string): number => {
+    const vals = cohorts.map(c => c.days[day]).filter(v => v !== undefined);
+    if (vals.length === 0) return 0;
+    return vals.reduce((s, v) => s + v, 0) / vals.length;
+  };
+
+  const days: RetentionComparisonDay[] = sortedDays.map(day => {
+    const rateA = avgRate(resultA, day);
+    const rateB = avgRate(resultB, day);
+    const diff = rateB - rateA;
+    return {
+      day,
+      rateA,
+      rateB,
+      diff,
+      direction: diff > 0.5 ? 'up' : diff < -0.5 ? 'down' : 'same',
+    };
+  });
+
+  return {
+    days,
+    cohortsA: resultA.length,
+    cohortsB: resultB.length,
+    totalUsersA: resultA.reduce((s, c) => s + c.cohortSize, 0),
+    totalUsersB: resultB.reduce((s, c) => s + c.cohortSize, 0),
+  };
+}

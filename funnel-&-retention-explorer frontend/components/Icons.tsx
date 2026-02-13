@@ -73,7 +73,8 @@ import {
   Save,
   Camera,
   LoaderCircle,
-  GitCompareArrows
+  GitCompareArrows,
+  Diff
 } from 'lucide-react';
 
 export {
@@ -151,5 +152,6 @@ export {
   Save,
   Camera,
   LoaderCircle,
-  GitCompareArrows
+  GitCompareArrows,
+  Diff
 };

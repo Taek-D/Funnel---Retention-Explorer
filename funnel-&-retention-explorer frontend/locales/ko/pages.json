@@ -751,6 +751,25 @@
     "addStep": "스텝 추가",
     "selectEvent": "이벤트 선택"
   },
+  "retentionCompare": {
+    "title": "리텐션 비교 분석",
+    "desc": "두 기간의 리텐션 곡선을 비교합니다",
+    "periodA": "기간 A",
+    "periodB": "기간 B",
+    "start": "시작일",
+    "end": "종료일",
+    "compare": "비교 실행",
+    "diff": "차이",
+    "cohortEvent": "코호트 이벤트",
+    "activeEvents": "활성 이벤트",
+    "selectCohort": "코호트 이벤트 선택",
+    "selectActive": "활성 이벤트 선택",
+    "cohorts": "코호트 수",
+    "totalUsers": "전체 사용자",
+    "noData": "데이터를 먼저 업로드하세요",
+    "noDataDesc": "CSV를 업로드하면 리텐션을 비교할 수 있습니다",
+    "emptyHint": "이벤트와 기간을 설정하고 비교를 실행하세요"
+  },
   "journey": {
     "title": "사용자 여정 흐름",
     "desc": "이벤트 간 전환 흐름을 Sankey 다이어그램으로 시각화합니다",

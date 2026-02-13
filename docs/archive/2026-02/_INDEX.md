@@ -951,3 +951,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (FC-1 ~ FC-4): FC-1 compareFunnels 엔진 (FunnelComparisonStep/FunnelComparisonResult 타입, resultA/B zip + diff=rateB-rateA + direction 0.5pp 임계값), FC-2 FunnelComparison 페이지 (Period A/B 날짜 입력, select 기반 스텝 선택기 + Plus/X 추가/제거, 비교 실행 버튼, 요약 KPI 2개, 비교 테이블 TrendingUp/Down/same, Grouped BarChart CHART_COLORS.palette, ChartDownloadButton, 빈 상태 GitCompareArrows), FC-3 GitCompareArrows Icons.tsx + /app/funnel-compare lazy route + Sidebar 메뉴, FC-4 i18n 17키 funnelCompare.* + nav.funnelCompare ko/en. 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (9.06 KB chunk). 0 iteration.
+
+---
+
+## retention-comparison
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Retention Comparison (Period A vs B Retention Curve Diff) |
+| **Match Rate** | 100% (25/25) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `retention-comparison/retention-comparison.plan.md` |
+| Design | `retention-comparison/retention-comparison.design.md` |
+| Analysis | `retention-comparison/retention-comparison.analysis.md` |
+| Report | `retention-comparison/retention-comparison.report.md` |
+
+### Summary
+
+4 tasks completed (RC-1 ~ RC-4): RC-1 compareRetention 엔진 (RetentionComparisonDay/RetentionComparisonResult 타입, 코호트별 평균 리텐션율 + diff=rateB-rateA + direction 0.5pp 임계값), RC-2 RetentionComparison 페이지 (코호트/활성 이벤트 선택기, Period A/B 날짜 입력, 비교 실행 버튼, 요약 KPI 4개 cohortsA/B totalUsersA/B, 비교 테이블 TrendingUp/Down/same, LineChart 리텐션 곡선, ChartDownloadButton, 빈 상태 Diff 아이콘), RC-3 Diff Icons.tsx + /app/retention-compare lazy route + Sidebar 메뉴, RC-4 i18n 17키 retentionCompare.* + nav.retentionCompare ko/en. 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (10.07 KB chunk). 0 iteration.
