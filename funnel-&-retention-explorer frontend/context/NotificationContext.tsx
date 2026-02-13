@@ -9,6 +9,7 @@ import {
   clearAllNotifications,
 } from '../lib/supabaseData';
 import { loadNotificationPreferences } from '../components/NotificationPreferencesModal';
+import { dispatchWebhooks } from '../lib/webhookDispatcher';
 
 export type NotificationType = 'analysis' | 'import' | 'ai' | 'export';
 
@@ -83,6 +84,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           setNotifications(prev => prev.map(n => n.id === tempId ? { ...n, id: row.id } : n));
         })
         .catch(() => { /* keep local version */ });
+
+      // Webhook dispatch (fire and forget)
+      dispatchWebhooks(type, title, message).catch(() => {});
     }
   }, [user]);
 

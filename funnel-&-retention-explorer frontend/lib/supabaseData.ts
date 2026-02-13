@@ -310,6 +310,69 @@ export async function clearAllNotifications(): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+// ===== Webhooks =====
+
+import type { WebhookConfig, WebhookLog, WebhookEventType, WebhookFormat } from '../types';
+
+export async function listWebhooks(): Promise<WebhookConfig[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_webhooks')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function createWebhook(params: {
+  name: string; url: string; events: WebhookEventType[]; format: WebhookFormat;
+}): Promise<WebhookConfig> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const secret = crypto.randomUUID();
+  const { data, error } = await client
+    .from('fre_webhooks')
+    .insert({ user_id: user.id, ...params, secret })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateWebhook(id: string, params: Partial<{
+  name: string; url: string; events: WebhookEventType[]; format: WebhookFormat; active: boolean;
+}>): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_webhooks')
+    .update({ ...params, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteWebhook(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_webhooks')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function listWebhookLogs(webhookId: string, limit = 20): Promise<WebhookLog[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_webhook_logs')
+    .select('*')
+    .eq('webhook_id', webhookId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
 // ===== Teams =====
 
 export async function createTeam(name: string): Promise<Team> {

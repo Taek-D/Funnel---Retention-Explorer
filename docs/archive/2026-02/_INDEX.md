@@ -669,3 +669,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 scope items completed (DC-1 ~ DC-6): DC-1 Types + Registry (ConnectorType 6종, ExportFormat, ConnectorConfig 인터페이스 + CONNECTORS 레지스트리), DC-2 JSON Connector (parseJSON + 1-level flatten + data/rows/events 래퍼 지원), DC-3 Google Sheets Connector (extractSheetId URL 파싱 + fetchGoogleSheet Supabase Edge Function 프록시), DC-4 Analytics Export Presets (FORMAT_SIGNATURES 3종 + PRESET_MAPPINGS + detectExportFormat 헤더 패턴 매칭 + normalizeTimestamps GA4 μs/Mixpanel unix), DC-5 useCSVUpload 확장 (CSV+JSON 파일 지원 + 포맷 자동 감지 + handleURLImport) + DataImport 소스 선택 UI (6-card selector + Google Sheets URL 입력), DC-6 i18n 17 키 (ko/en). 10개 파일 변경 (4 신규, 6 수정). 테스트 310/310 통과. 3 PARTIAL: Sheets URL edge case, 통합 normalize 함수 (개선), urlRequired key 미사용. 0 iteration.
+
+---
+
+## webhook
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Webhook Integration (Slack, Discord, Custom JSON) |
+| **Match Rate** | 100% (115 PASS, 1 PARTIAL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `webhook/webhook.plan.md` |
+| Design | `webhook/webhook.design.md` |
+| Analysis | `webhook/webhook.analysis.md` |
+| Report | `webhook/webhook.report.md` |
+
+### Summary
+
+6 scope items completed (WH-1 ~ WH-6): WH-1 Types + DB Schema (WebhookConfig, WebhookLog, WebhookFormat, WebhookEventType 타입 + fre_webhooks/fre_webhook_logs SQL migration + RLS + CRUD 5 함수), WH-2 Webhook Dispatcher (dispatchWebhooks fire-and-forget + 1분 캐시 + invalidateWebhookCache), WH-3 NotificationContext Integration (addNotification → dispatchWebhooks 연결, 실패 격리), WH-4 WebhookSettings 페이지 (CRUD 폼 + active 토글 + 테스트 전송 + 로그 뷰어 + /app/webhooks 라우트 + Sidebar 링크), WH-5 Format Presets (detectWebhookFormat URL 패턴 자동 감지 + formatPayload Slack blocks/Discord embeds/JSON), WH-6 i18n 36 키 (ko/en). 12개 파일 변경 (5 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: events 라벨 UX 개선. 0 iteration.

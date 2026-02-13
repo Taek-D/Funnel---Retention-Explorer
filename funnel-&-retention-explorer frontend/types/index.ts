@@ -13,6 +13,35 @@ export interface ConnectorConfig {
   acceptedFormats?: string;
 }
 
+// ===== Webhooks =====
+
+export type WebhookFormat = 'json' | 'slack' | 'discord';
+
+export type WebhookEventType = 'analysis' | 'import' | 'ai' | 'export';
+
+export interface WebhookConfig {
+  id: string;
+  user_id: string;
+  name: string;
+  url: string;
+  events: WebhookEventType[];
+  format: WebhookFormat;
+  secret: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WebhookLog {
+  id: string;
+  webhook_id: string;
+  event_type: WebhookEventType;
+  status: 'success' | 'failed';
+  response_code: number | null;
+  error_message: string | null;
+  created_at: string;
+}
+
 // ===== Filters =====
 
 export interface DateRange {

@@ -22,6 +22,7 @@ const BillingSuccessPage = lazy(() => import('./pages/BillingSuccessPage').then(
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage').then(m => ({ default: m.SubscriptionPage })));
 const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })));
 const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ default: m.SharedReport })));
+const WebhookSettings = lazy(() => import('./pages/WebhookSettings').then(m => ({ default: m.WebhookSettings })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([
           { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
           { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
           { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
+          { path: 'webhooks', element: <Suspense fallback={<PageLoader />}><WebhookSettings /></Suspense> },
           {
             path: 'admin',
             element: <AdminRoute />,

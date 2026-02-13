@@ -59,7 +59,11 @@ import {
   UserPlus,
   Braces,
   Table,
-  Link
+  Link,
+  Webhook,
+  Send,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 
 export {
@@ -123,5 +127,9 @@ export {
   UserPlus,
   Braces,
   Table,
-  Link
+  Link,
+  Webhook,
+  Send,
+  ToggleLeft,
+  ToggleRight
 };
