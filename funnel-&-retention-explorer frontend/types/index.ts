@@ -42,6 +42,26 @@ export interface WebhookLog {
   created_at: string;
 }
 
+// ===== Scheduled Reports =====
+
+export type ReportFrequency = 'daily' | 'weekly' | 'monthly';
+
+export interface ScheduledReport {
+  id: string;
+  user_id: string;
+  project_id: string | null;
+  name: string;
+  frequency: ReportFrequency;
+  day_of_week: number | null;
+  day_of_month: number | null;
+  hour_utc: number;
+  webhook_ids: string[];
+  active: boolean;
+  last_run_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // ===== Filters =====
 
 export interface DateRange {

@@ -717,3 +717,25 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (PWA-1 ~ PWA-5): PWA-1 Web App Manifest + SVG 아이콘 (192/512/512-maskable + favicon 폴백) + index.html apple meta 태그, PWA-2 vite-plugin-pwa 설정 (GenerateSW + registerType: prompt + runtimeCaching 4규칙: API NetworkFirst/Supabase NetworkFirst/CDN StaleWhileRevalidate/이미지 CacheFirst), PWA-3 useOnlineStatus 훅 (navigator.onLine + online/offline 이벤트) + OfflineBanner 컴포넌트 (AppShell 통합), PWA-4 useInstallPrompt 훅 (beforeinstallprompt + display-mode 감지) + Sidebar 설치 버튼 + UpdatePrompt 컴포넌트 (useRegisterSW 기반), PWA-5 i18n 6 키 (ko/en). 14개 파일 변경 (7 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: globPatterns에서 png/woff2 제외 (실질적 영향 없음). 0 iteration.
+
+## scheduled-reports
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Scheduled Reports (자동 리포트 생성 + Webhook 전송) |
+| **Match Rate** | 100% (22 PASS, 0 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `scheduled-reports/scheduled-reports.plan.md` |
+| Design | `scheduled-reports/scheduled-reports.design.md` |
+| Analysis | `scheduled-reports/scheduled-reports.analysis.md` |
+| Report | `scheduled-reports/scheduled-reports.report.md` |
+
+### Summary
+
+6 scope items completed (SR-1 ~ SR-6): SR-1 ScheduledReport + ReportFrequency 타입 + fre_scheduled_reports 테이블 (RLS 6정책, frequency/day_of_week/day_of_month/hour_utc/webhook_ids), SR-2 CRUD 4함수 (list/create/update/delete), SR-3 scheduledReportBuilder.ts (buildScheduledPayload + formatSummaryText — 서버 호환 페이로드 빌더), SR-4 Edge Function scheduled-report (pg_cron 시간별 실행, active 스케줄 쿼리, 빈도+요일 필터, 데이터셋 조회 → webhook-dispatch 호출), SR-5 ScheduledReports 페이지 (CRUD 폼, 빈도 의존 필드, active 토글, 삭제 확인, webhook 멀티셀렉트, Pro 전용 gating, 로그인 가드) + router.tsx 라우트 + Sidebar Clock 아이콘, SR-6 i18n 26키 (ko/en). 13개 파일 변경 (4 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.

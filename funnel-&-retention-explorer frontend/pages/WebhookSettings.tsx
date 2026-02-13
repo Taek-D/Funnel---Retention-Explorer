@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Webhook, Plus, Trash2, Send, ChevronDown, ChevronUp, Copy, Check, AlertCircle, CheckCircle } from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../components/Toast';
 import { listWebhooks, createWebhook, updateWebhook, deleteWebhook, listWebhookLogs } from '../lib/supabaseData';
 import { detectWebhookFormat } from '../lib/webhookFormatters';
 import { invalidateWebhookCache } from '../lib/webhookDispatcher';

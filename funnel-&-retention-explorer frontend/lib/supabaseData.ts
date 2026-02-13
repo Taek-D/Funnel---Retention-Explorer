@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Team, TeamMember, TeamRole } from '../types';
+import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency } from '../types';
 
 function getSupabase() {
   if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
@@ -371,6 +371,60 @@ export async function listWebhookLogs(webhookId: string, limit = 20): Promise<We
     .limit(limit);
   if (error) throw new Error(error.message);
   return data || [];
+}
+
+// ===== Scheduled Reports =====
+
+export async function listScheduledReports(): Promise<ScheduledReport[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_scheduled_reports')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function createScheduledReport(params: {
+  name: string;
+  frequency: ReportFrequency;
+  day_of_week?: number | null;
+  day_of_month?: number | null;
+  hour_utc: number;
+  webhook_ids: string[];
+  project_id?: string | null;
+}): Promise<ScheduledReport> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('로그인이 필요합니다');
+  const { data, error } = await client
+    .from('fre_scheduled_reports')
+    .insert({ ...params, user_id: user.id })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateScheduledReport(
+  id: string,
+  params: Partial<Pick<ScheduledReport, 'name' | 'frequency' | 'day_of_week' | 'day_of_month' | 'hour_utc' | 'webhook_ids' | 'active'>>
+): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_scheduled_reports')
+    .update({ ...params, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteScheduledReport(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_scheduled_reports')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
 }
 
 // ===== Teams =====

@@ -596,5 +596,31 @@
     "failed": "Failed",
     "noLogs": "No delivery logs yet",
     "formatAutoDetected": "{{format}} format auto-detected from URL"
+  },
+  "scheduledReport": {
+    "title": "Scheduled Reports",
+    "description": "Automatically generate analysis reports on a schedule and send them via Webhook.",
+    "create": "Add Schedule",
+    "edit": "Edit Schedule",
+    "name": "Report Name",
+    "namePlaceholder": "Weekly Funnel Report",
+    "frequency": "Frequency",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "dayOfWeek": "Day of Week",
+    "dayOfMonth": "Day of Month",
+    "hourUtc": "Run Time (UTC)",
+    "localTimeHint": "Local time: {{time}}",
+    "targetWebhooks": "Target Webhooks",
+    "noWebhooks": "No webhooks registered. Please set up a webhook first.",
+    "lastRun": "Last Run",
+    "neverRun": "Never run",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deleteConfirm": "Delete this schedule?",
+    "proOnly": "Scheduled reports are available on the Pro plan.",
+    "saved": "Schedule saved.",
+    "deleted": "Schedule deleted."
   }
 }

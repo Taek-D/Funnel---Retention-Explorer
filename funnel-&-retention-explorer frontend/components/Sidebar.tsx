@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download, Clock } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -36,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
     { path: '/app/insights', icon: BarChart2, labelKey: 'nav.aiInsights', dataTour: 'insights' },
     { path: '/app/team', icon: Shield, labelKey: 'nav.team' },
     { path: '/app/webhooks', icon: Webhook, labelKey: 'nav.webhooks' },
+    { path: '/app/scheduled-reports', icon: Clock, labelKey: 'nav.scheduledReports' },
     { path: '/app/subscription', icon: CreditCard, labelKey: 'nav.subscription' },
   ];
 

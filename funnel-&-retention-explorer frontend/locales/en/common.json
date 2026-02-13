@@ -9,6 +9,7 @@
     "subscription": "Subscription",
     "team": "Team",
     "webhooks": "Webhooks",
+    "scheduledReports": "Scheduled Reports",
     "admin": "Admin",
     "home": "Go to Home",
     "startGuide": "Getting Started",

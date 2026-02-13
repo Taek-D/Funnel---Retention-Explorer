@@ -596,5 +596,31 @@
     "failed": "실패",
     "noLogs": "전송 로그가 없습니다",
     "formatAutoDetected": "URL에서 {{format}} 형식이 자동 감지되었습니다"
+  },
+  "scheduledReport": {
+    "title": "예약 리포트",
+    "description": "자동 분석 리포트를 주기적으로 생성하여 Webhook으로 전송합니다.",
+    "create": "스케줄 추가",
+    "edit": "스케줄 수정",
+    "name": "리포트 이름",
+    "namePlaceholder": "주간 퍼널 리포트",
+    "frequency": "빈도",
+    "daily": "매일",
+    "weekly": "매주",
+    "monthly": "매월",
+    "dayOfWeek": "요일",
+    "dayOfMonth": "날짜",
+    "hourUtc": "실행 시각 (UTC)",
+    "localTimeHint": "현지 시각: {{time}}",
+    "targetWebhooks": "대상 Webhook",
+    "noWebhooks": "등록된 Webhook이 없습니다. Webhook을 먼저 설정해주세요.",
+    "lastRun": "마지막 실행",
+    "neverRun": "아직 실행되지 않음",
+    "active": "활성",
+    "inactive": "비활성",
+    "deleteConfirm": "이 스케줄을 삭제하시겠습니까?",
+    "proOnly": "예약 리포트는 Pro 플랜에서 이용 가능합니다.",
+    "saved": "스케줄이 저장되었습니다.",
+    "deleted": "스케줄이 삭제되었습니다."
   }
 }
