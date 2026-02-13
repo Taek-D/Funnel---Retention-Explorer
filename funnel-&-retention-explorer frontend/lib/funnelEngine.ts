@@ -1,4 +1,4 @@
-import type { ProcessedEvent, FunnelStep } from '../types';
+import type { ProcessedEvent, FunnelStep, FunnelTimeStats } from '../types';
 import { FUNNEL_TEMPLATES } from './constants';
 import { getUsersByEvent } from './eventUtils';
 import { startSpan } from './sentry';
@@ -55,20 +55,22 @@ function _calculateFunnel(processedData: ProcessedEvent[], steps: string[]): Fun
   // Calculate time between steps
   funnelData.forEach((stepData, index) => {
     if (index > 0) {
-      const times = calculateMedianTimeBetweenSteps(
+      const stats = calculateTimeBetweenSteps(
         processedData, steps[index - 1], steps[index], usersByStep[steps[index]]
       );
-      stepData.medianTime = times.median;
+      stepData.medianTime = stats.median;
+      stepData.timeStats = stats;
     }
   });
 
   return funnelData;
 }
 
-function calculateMedianTimeBetweenSteps(
+function calculateTimeBetweenSteps(
   processedData: ProcessedEvent[], step1: string, step2: string, userSet: Set<string>
-): { median: number } {
-  if (userSet.size === 0) return { median: 0 };
+): FunnelTimeStats {
+  const zero: FunnelTimeStats = { median: 0, p10: 0, p90: 0, mean: 0, count: 0 };
+  if (userSet.size === 0) return zero;
 
   const times: number[] = [];
 
@@ -88,12 +90,15 @@ function calculateMedianTimeBetweenSteps(
     }
   });
 
-  if (times.length === 0) return { median: 0 };
+  if (times.length === 0) return zero;
 
   times.sort((a, b) => a - b);
   const median = times[Math.floor(times.length / 2)];
+  const p10 = times[Math.floor(times.length * 0.1)];
+  const p90 = times[Math.floor(times.length * 0.9)];
+  const mean = times.reduce((sum, t) => sum + t, 0) / times.length;
 
-  return { median };
+  return { median, p10, p90, mean, count: times.length };
 }
 
 // Calculate funnel using full dataset with fuzzy event matching

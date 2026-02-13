@@ -5,11 +5,11 @@
     "platform": "claude",
     "level": "Starter"
   },
-  "currentFeature": "user-journey-flow",
+  "currentFeature": "funnel-time-analysis",
   "pdca": {
-    "feature": "user-journey-flow",
+    "feature": "funnel-time-analysis",
     "phase": "completed",
-    "startedAt": "2026-02-13T17:00:00.000Z",
+    "startedAt": "2026-02-13T18:00:00.000Z",
     "matchRate": 100,
     "iterationCount": 0
   }

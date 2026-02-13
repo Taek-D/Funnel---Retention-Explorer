@@ -240,6 +240,14 @@ export interface DataQualityReport {
 
 // ===== Funnel =====
 
+export interface FunnelTimeStats {
+  median: number;
+  p10: number;
+  p90: number;
+  mean: number;
+  count: number;
+}
+
 export interface FunnelStep {
   step: string;
   stepNumber: number;
@@ -247,6 +255,7 @@ export interface FunnelStep {
   conversionRate: number;
   dropOff: number;
   medianTime?: number;
+  timeStats?: FunnelTimeStats;
 }
 
 export interface FunnelTemplates {

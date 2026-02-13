@@ -903,3 +903,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (UJ-1 ~ UJ-4): UJ-1 journeyEngine.ts (buildJourneyFlow — userId별 이벤트 시퀀스 추출, 타임스탬프 정렬, maxSteps 제한, step-prefixed 노드명 "Step N: eventName", 전환 카운트 집계, minFlowPct 임계값 필터, { nodes, links, totalUsers, totalTransitions } 반환), UJ-2 UserJourneyFlow 페이지 (Recharts Sankey 다이어그램, CustomNode step별 팔레트 색상 + 라벨, CustomLink 소스 step 색상, maxSteps 3-8 range + minFlowPct 0-10% 0.5 step, 분석 실행 버튼, Stats 카드 2개, FilterPanel 통합, ChartDownloadButton, ChartSkeleton placeholder, 빈 상태/노 데이터/노 결과 3개 상태), UJ-3 router.tsx lazy import + /app/journey 라우트 + Sidebar ArrowRightLeft 아이콘 메뉴, UJ-4 i18n 12키 journey.* ko/en pages.json + nav.journey ko/en common.json. 8개 파일 변경 (2 신규, 6 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.
+
+---
+
+## funnel-time-analysis
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Funnel Conversion Time Analysis (P10/Median/P90 + Bottleneck) |
+| **Match Rate** | 100% (19/19) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `funnel-time-analysis/funnel-time-analysis.plan.md` |
+| Design | `funnel-time-analysis/funnel-time-analysis.design.md` |
+| Analysis | `funnel-time-analysis/funnel-time-analysis.analysis.md` |
+| Report | `funnel-time-analysis/funnel-time-analysis.report.md` |
+
+### Summary
+
+5 tasks completed (FT-1 ~ FT-4): FT-1 FunnelTimeStats 타입 (median/p10/p90/mean/count) + FunnelStep.timeStats 필드 + calculateTimeBetweenSteps 확장 (기존 calculateMedianTimeBetweenSteps 교체, percentile 계산 추가), FT-2 시간 분포 가로 BarChart (Recharts layout="vertical", P90 투명 바 + Median 실바, 병목 구간 #ef4444 빨간색 자동 하이라이트, AlertTriangle + bottleneckHint 인사이트 텍스트, Custom Tooltip p10/median/p90/mean/count 전체 표시), FT-3 timeChartRef + ChartDownloadButton "funnel-time-analysis", FT-4 i18n 8키 ko/en (timeAnalysis/timeP10/timeP90/timeMean/timeMedian/timeCount/bottleneckHint/noTimeData). 4개 파일 변경 (0 신규, 4 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.

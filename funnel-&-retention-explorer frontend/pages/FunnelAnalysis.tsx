@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical, Save } from '../components/Icons';
+import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical, Save, AlertTriangle } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -35,6 +35,7 @@ export const FunnelAnalysis: React.FC = () => {
   // Chart refs for image download
   const funnelChartRef = useRef<HTMLDivElement>(null);
   const dropoffChartRef = useRef<HTMLDivElement>(null);
+  const timeChartRef = useRef<HTMLDivElement>(null);
 
   // Drop-off chart state
   const [showDropoff, setShowDropoff] = useState(false);
@@ -522,22 +523,86 @@ export const FunnelAnalysis: React.FC = () => {
                 </div>
               </div>
 
-              {/* Median Time */}
-              {funnelResults.some(s => s.medianTime) && (
-                <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3">{t('funnel.medianTime')}</h3>
-                  <div className="space-y-2">
-                    {funnelResults.slice(1).map((step, i) => (
-                      step.medianTime ? (
-                        <div key={i} className="flex items-center justify-between text-xs">
-                          <span className="text-slate-400">{funnelResults[i].step} <ArrowRight size={10} className="inline" /> {step.step}</span>
-                          <span className="text-white font-medium font-mono">{formatTime(step.medianTime)}</span>
-                        </div>
-                      ) : null
-                    ))}
+              {/* Time Distribution Chart */}
+              {funnelResults.some(s => s.timeStats && s.timeStats.count > 0) && (() => {
+                const timeChartData = funnelResults.slice(1)
+                  .filter(s => s.timeStats && s.timeStats.count > 0)
+                  .map((step, i) => ({
+                    label: `${funnelResults[i].step} → ${step.step}`,
+                    p10: Math.round(step.timeStats!.p10 * 10) / 10,
+                    median: Math.round(step.timeStats!.median * 10) / 10,
+                    p90: Math.round(step.timeStats!.p90 * 10) / 10,
+                    mean: Math.round(step.timeStats!.mean * 10) / 10,
+                    count: step.timeStats!.count,
+                    isBottleneck: false,
+                  }));
+                const maxMedian = Math.max(...timeChartData.map(d => d.median));
+                timeChartData.forEach(d => { d.isBottleneck = d.median === maxMedian && maxMedian > 0 && timeChartData.length > 1; });
+                const bottleneck = timeChartData.find(d => d.isBottleneck);
+
+                return (
+                  <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-semibold text-white">{t('funnel.timeAnalysis')}</h3>
+                      <ChartDownloadButton targetRef={timeChartRef} filename="funnel-time-analysis" />
+                    </div>
+                    <div ref={timeChartRef} className="w-full" style={{ height: Math.max(180, timeChartData.length * 60) }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart layout="vertical" data={timeChartData} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
+                          <XAxis
+                            type="number"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }}
+                            tickFormatter={(v: number) => formatTime(v)}
+                          />
+                          <YAxis
+                            type="category"
+                            dataKey="label"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }}
+                            width={160}
+                          />
+                          <Tooltip
+                            cursor={{ fill: CHART_COLORS.cursorFill }}
+                            content={({ active, payload }) => {
+                              if (!active || !payload?.[0]) return null;
+                              const d = payload[0].payload;
+                              return (
+                                <div className="bg-elevated border border-white/[0.06] rounded-md p-3 text-xs space-y-1">
+                                  <p className="font-semibold text-white text-sm">{d.label}</p>
+                                  <p className="text-slate-300">{t('funnel.timeP10')}: <span className="text-white font-mono">{formatTime(d.p10)}</span></p>
+                                  <p className="text-slate-300">{t('funnel.timeMedian')}: <span className="text-white font-mono">{formatTime(d.median)}</span></p>
+                                  <p className="text-slate-300">{t('funnel.timeP90')}: <span className="text-white font-mono">{formatTime(d.p90)}</span></p>
+                                  <p className="text-slate-300">{t('funnel.timeMean')}: <span className="text-white font-mono">{formatTime(d.mean)}</span></p>
+                                  <p className="text-slate-300">{t('funnel.timeCount')}: <span className="text-white font-mono">{d.count}</span></p>
+                                </div>
+                              );
+                            }}
+                          />
+                          <Bar dataKey="p90" name="P90" radius={[0, 4, 4, 0]} opacity={0.2}>
+                            {timeChartData.map((entry, index) => (
+                              <Cell key={index} fill={entry.isBottleneck ? '#ef4444' : CHART_COLORS.accent} />
+                            ))}
+                          </Bar>
+                          <Bar dataKey="median" name="Median" radius={[0, 4, 4, 0]}>
+                            {timeChartData.map((entry, index) => (
+                              <Cell key={index} fill={entry.isBottleneck ? '#ef4444' : CHART_COLORS.accent} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    {bottleneck && (
+                      <div className="flex items-center gap-2 mt-3 text-xs text-amber-400">
+                        <AlertTriangle size={14} />
+                        <span>{t('funnel.bottleneckHint', { step: bottleneck.label, time: formatTime(bottleneck.median) })}</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </div>
           {/* Drop-off Chart Toggle + Chart */}
