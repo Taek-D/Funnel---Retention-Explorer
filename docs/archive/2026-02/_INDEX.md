@@ -999,3 +999,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 tasks completed (CG-1 ~ CG-6): CG-1 CohortGrouping 타입 + WEEKLY_RETENTION_MAX_PERIODS(12)/MONTHLY_RETENTION_MAX_PERIODS(6) 상수, CG-2 groupDateKey (YYYY-MM-DD/YYYY-W##/YYYY-MM) + advancePeriodKey 캘린더 연산 + calculateActivityRetention 4번째 grouping 파라미터, CG-3 useRetentionAnalysis cohortGrouping 상태 + setter, CG-4 RetentionAnalysis 3-버튼 토글 (Daily/Weekly/Monthly) + dayColumns 적응 (D0-D14/W0-W12/M0-M6), CG-5 RetentionComparison 그룹핑 토글 + engine 전달, CG-6 i18n 8키 ko/en. 8개 파일 변경 (0 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (retentionEngine +0.39 KB). 추가 버그 수정: compareRetention 정렬 regex, useCallback deps, ChartDownloadButton prop명. 0 iteration.
+
+---
+
+## stickiness
+
+| Item | Detail |
+|------|--------|
+| **Feature** | DAU/MAU Stickiness Analysis |
+| **Match Rate** | 100% (22/22) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `stickiness/stickiness.plan.md` |
+| Design | `stickiness/stickiness.design.md` |
+| Analysis | `stickiness/stickiness.analysis.md` |
+| Report | `stickiness/stickiness.report.md` |
+
+### Summary
+
+5 tasks completed (ST-1 ~ ST-5): ST-1 stickinessEngine.ts (calculateStickiness sliding window DAU/MAU, StickinessDay/StickinessSummary/StickinessResult 타입, Sentry tracing), ST-2 StickinessPage (KPI 카드 3개 avg/peak/low + AreaChart 일별 추이 + 50행 테이블 color-coded ratio + ChartDownloadButton + 빈 상태), ST-3 /app/stickiness lazy route + Sidebar Activity 아이콘 메뉴, ST-4 Dashboard 위젯 (stickiness-chart WidgetId + DASHBOARD_WIDGETS + DEFAULT_LAYOUT visible:false order:7 + PRESET_TEMPLATES saas visible:true + mini AreaChart), ST-5 i18n 12키 stickiness.* + nav.stickiness + dashboard.widgets.stickinessChart ko/en. 10개 파일 변경 (2 신규, 8 수정) + 1 테스트 수정 (Dashboard.test.tsx visible 필터). 테스트 310/310 통과. 빌드 정상 (5.19s). 0 iteration.

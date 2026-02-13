@@ -107,7 +107,8 @@ export type WidgetId =
   | 'data-quality'
   | 'quick-actions'
   | 'recent-insights'
-  | 'saved-analyses';
+  | 'saved-analyses'
+  | 'stickiness-chart';
 
 export type WidgetWidth = 'full' | 'half';
 

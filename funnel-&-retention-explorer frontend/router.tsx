@@ -30,6 +30,7 @@ const ABTestPage = lazy(() => import('./pages/ABTestPage'));
 const UserJourneyFlow = lazy(() => import('./pages/UserJourneyFlow').then(m => ({ default: m.UserJourneyFlow })));
 const FunnelComparison = lazy(() => import('./pages/FunnelComparison').then(m => ({ default: m.FunnelComparison })));
 const RetentionComparison = lazy(() => import('./pages/RetentionComparison').then(m => ({ default: m.RetentionComparison })));
+const StickinessPage = lazy(() => import('./pages/StickinessPage').then(m => ({ default: m.StickinessPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
@@ -89,6 +90,7 @@ export const router = createBrowserRouter([
           { path: 'journey', element: <Suspense fallback={<PageLoader />}><UserJourneyFlow /></Suspense> },
           { path: 'funnel-compare', element: <Suspense fallback={<PageLoader />}><FunnelComparison /></Suspense> },
           { path: 'retention-compare', element: <Suspense fallback={<PageLoader />}><RetentionComparison /></Suspense> },
+          { path: 'stickiness', element: <Suspense fallback={<PageLoader />}><StickinessPage /></Suspense> },
           {
             path: 'admin',
             element: <AdminRoute />,

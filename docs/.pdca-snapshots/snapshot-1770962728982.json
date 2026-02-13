@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-13T04:22:42.379Z",
+  "timestamp": "2026-02-13T06:05:28.981Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-02-13T04:22:36.984Z",
+    "lastUpdated": "2026-02-13T06:05:28.805Z",
     "activeFeatures": [
       "__tests__",
       "unit",
@@ -43,9 +43,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-11T17:38:19.315Z",
-          "lastUpdated": "2026-02-13T03:07:20.278Z"
+          "lastUpdated": "2026-02-13T04:42:39.181Z"
         },
-        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\hooks\\useRetentionAnalysis.test.tsx"
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\pages\\Dashboard.test.tsx"
       },
       "unit": {
         "phase": "do",
@@ -69,9 +69,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-11T18:09:45.357Z",
-          "lastUpdated": "2026-02-13T04:22:36.984Z"
+          "lastUpdated": "2026-02-13T06:05:28.805Z"
         },
-        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\FunnelAnalysis.tsx"
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\Sidebar.tsx"
       },
       "context": {
         "phase": "do",
@@ -201,7 +201,7 @@
     "session": {
       "startedAt": "2026-02-11T03:00:00.000Z",
       "onboardingCompleted": true,
-      "lastActivity": "2026-02-13T04:22:36.984Z"
+      "lastActivity": "2026-02-13T06:05:28.805Z"
     },
     "history": [
       {
@@ -1878,6 +1878,354 @@
       },
       {
         "timestamp": "2026-02-13T04:22:36.984Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:24:46.353Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:24:53.272Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:25:10.599Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:25:18.155Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:25:27.225Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:25:35.943Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:38:08.918Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:39:41.264Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:39:51.296Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:23.397Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:25.124Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:29.818Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:40.002Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:45.332Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:49.609Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:51.514Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:40:56.077Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:02.943Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:10.684Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:14.715Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:18.885Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:20.697Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:25.019Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:30.066Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:35.574Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:40.950Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:48.390Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:41:54.637Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T04:42:39.181Z",
+        "feature": "__tests__",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:17:10.895Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:17:51.063Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:19:53.995Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:19:55.788Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:19:58.452Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:20:00.274Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:31:08.904Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:31:17.377Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:31:20.394Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:31:27.930Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:31:59.681Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:32:04.283Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:32:26.874Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:49:05.828Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:49:07.714Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:49:11.392Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:49:54.260Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:50:00.112Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:50:02.122Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:50:05.271Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T05:50:10.249Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:04:22.883Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:11.573Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:17.273Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:18.351Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:20.583Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:22.675Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:26.116Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-13T06:05:28.805Z",
         "feature": "funnel-&-retention-explorer frontend",
         "phase": "do",
         "action": "updated"

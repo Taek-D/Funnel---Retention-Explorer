@@ -15,6 +15,7 @@ import { ExportDropdown } from '../components/ExportDropdown';
 import { DashboardWidget } from '../components/DashboardWidget';
 import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { CHART_COLORS, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
+import { calculateStickiness } from '../lib/stickinessEngine';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
@@ -393,6 +394,41 @@ export const Dashboard: React.FC = () => {
     </div>
   ), [insights, t]);
 
+  const stickinessData = useMemo(() => {
+    if (!hasData) return null;
+    return calculateStickiness(processedData);
+  }, [processedData, hasData]);
+
+  const stickinessWidget = useMemo(() => stickinessData ? (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+          <Activity size={14} className="text-accent" />
+          {t('dashboard.widgets.stickinessChart')}
+        </h3>
+        <span className="text-xs text-accent font-bold font-mono">{stickinessData.summary.avgRatio.toFixed(1)}%</span>
+      </div>
+      <div className="h-[200px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={stickinessData.daily}>
+            <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+            <YAxis domain={[0, 100]} unit="%" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+            <Tooltip
+              contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, fontSize: 12 }}
+              itemStyle={{ color: '#e2e8f0' }}
+              formatter={(value: number) => [`${value.toFixed(1)}%`, 'DAU/MAU']}
+            />
+            <Area type="monotone" dataKey="ratio" stroke={CHART_COLORS.palette[0]} fill={CHART_COLORS.palette[0]} fillOpacity={0.2} strokeWidth={2} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  ) : (
+    <div className="bg-surface border border-white/[0.06] rounded-lg p-5 flex items-center justify-center min-h-[120px]">
+      <p className="text-slate-500 text-sm">{t('dashboard.noData')}</p>
+    </div>
+  ), [stickinessData, t]);
+
   const savedAnalysesWidget = useMemo(() => snapshots.length > 0 ? (
     <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
       <div className="flex justify-between items-center mb-4">
@@ -444,7 +480,8 @@ export const Dashboard: React.FC = () => {
     'quick-actions': quickActionsWidget,
     'recent-insights': recentInsightsWidget,
     'saved-analyses': savedAnalysesWidget,
-  }), [kpiWidget, funnelWidget, retentionWidget, dataQualityWidget, quickActionsWidget, recentInsightsWidget, savedAnalysesWidget]);
+    'stickiness-chart': stickinessWidget,
+  }), [kpiWidget, funnelWidget, retentionWidget, dataQualityWidget, quickActionsWidget, recentInsightsWidget, savedAnalysesWidget, stickinessWidget]);
 
   // Empty state — show CTA instead of empty charts
   if (!hasData) {

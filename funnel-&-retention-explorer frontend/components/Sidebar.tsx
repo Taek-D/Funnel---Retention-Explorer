@@ -39,6 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
     { path: '/app/journey', icon: ArrowRightLeft, labelKey: 'nav.journey' },
     { path: '/app/funnel-compare', icon: GitCompareArrows, labelKey: 'nav.funnelCompare' },
     { path: '/app/retention-compare', icon: Diff, labelKey: 'nav.retentionCompare' },
+    { path: '/app/stickiness', icon: Activity, labelKey: 'nav.stickiness' },
     { path: '/app/notifications', icon: Bell, labelKey: 'nav.notifications' },
     { path: '/app/team', icon: Shield, labelKey: 'nav.team' },
     { path: '/app/webhooks', icon: Webhook, labelKey: 'nav.webhooks' },

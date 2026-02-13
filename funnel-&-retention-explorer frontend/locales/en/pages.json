@@ -184,7 +184,8 @@
       "dataQuality": "Data Quality",
       "quickActions": "Quick Analysis",
       "recentInsights": "Recent Insights",
-      "savedAnalyses": "Saved Analyses"
+      "savedAnalyses": "Saved Analyses",
+      "stickinessChart": "Stickiness"
     },
     "presets": "Templates",
     "presetsDesc": "Apply a predefined layout",
@@ -777,6 +778,20 @@
     "daily": "Daily",
     "weekly": "Weekly",
     "monthly": "Monthly"
+  },
+  "stickiness": {
+    "title": "Stickiness Analysis",
+    "desc": "Measure product engagement with DAU/MAU ratio",
+    "noData": "Upload data first",
+    "noDataDesc": "Upload a CSV file to start stickiness analysis",
+    "avgRatio": "Avg DAU/MAU",
+    "peakRatio": "Peak DAU/MAU",
+    "lowRatio": "Low DAU/MAU",
+    "trendTitle": "Daily Stickiness Trend",
+    "date": "Date",
+    "dau": "DAU",
+    "mau": "MAU",
+    "ratio": "DAU/MAU"
   },
   "journey": {
     "title": "User Journey Flow",

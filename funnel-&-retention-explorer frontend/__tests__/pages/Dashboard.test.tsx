@@ -315,7 +315,7 @@ describe('Dashboard', () => {
       renderDashboardWithData();
       // Wait for data injection
       await screen.findByText('dashboard.editLayout');
-      for (const item of DEFAULT_LAYOUT) {
+      for (const item of DEFAULT_LAYOUT.filter(i => i.visible)) {
         expect(screen.getByTestId(`widget-${item.widgetId}`)).toBeInTheDocument();
       }
     });
