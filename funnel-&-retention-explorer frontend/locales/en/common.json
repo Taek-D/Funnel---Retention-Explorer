@@ -11,6 +11,7 @@
     "webhooks": "Webhooks",
     "scheduledReports": "Scheduled Reports",
     "events": "Custom Events",
+    "abTest": "A/B Test",
     "notifications": "Notifications",
     "admin": "Admin",
     "home": "Go to Home",

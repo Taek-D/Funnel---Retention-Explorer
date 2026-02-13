@@ -68,7 +68,8 @@ import {
   Tag,
   Pencil,
   Layers,
-  ArrowRightLeft
+  ArrowRightLeft,
+  FlaskConical
 } from 'lucide-react';
 
 export {
@@ -141,5 +142,6 @@ export {
   Tag,
   Pencil,
   Layers,
-  ArrowRightLeft
+  ArrowRightLeft,
+  FlaskConical
 };

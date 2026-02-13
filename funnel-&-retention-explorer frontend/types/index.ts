@@ -283,6 +283,40 @@ export interface SegmentFunnelStep {
   dropOff: number;
 }
 
+// ===== A/B Test =====
+
+export type ABSegmentFilter = 'platform' | 'channel' | 'custom';
+
+export interface ABTestSegment {
+  filter: ABSegmentFilter;
+  value: string;
+  label: string;
+}
+
+export interface ABTestStepResult {
+  step: string;
+  usersA: number;
+  usersB: number;
+  rateA: number;
+  rateB: number;
+  diff: number;
+  pValue: number;
+  ci95: [number, number];
+  significant: boolean;
+}
+
+export interface ABTestResult {
+  segmentA: ABTestSegment;
+  segmentB: ABTestSegment;
+  steps: ABTestStepResult[];
+  overallPValue: number;
+  overallSignificant: boolean;
+  sampleSizeA: number;
+  sampleSizeB: number;
+  winner: 'A' | 'B' | 'none';
+  recommendedSampleSize: number;
+}
+
 // ===== Insights =====
 
 export interface Insight {

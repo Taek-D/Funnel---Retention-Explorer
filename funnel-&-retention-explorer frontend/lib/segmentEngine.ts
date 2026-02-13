@@ -187,7 +187,7 @@ function erf(x: number): number {
   return x >= 0 ? 1 - tau : tau - 1;
 }
 
-function calculatePValue(count1: number, total1: number, count2: number, total2: number): number {
+export function calculatePValue(count1: number, total1: number, count2: number, total2: number): number {
   if (total1 === 0 || total2 === 0) return 1.0;
   const p1 = count1 / total1;
   const p2 = count2 / total2;

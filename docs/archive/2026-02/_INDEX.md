@@ -785,3 +785,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (CE-1 ~ CE-5): CE-1 Types + DB CRUD (CustomEventType/CustomEventCondition/CustomEventDefinition 타입, fre_custom_events 테이블 + RLS 4정책, supabaseData.ts CRUD 4함수 + JSONB definition 매핑), CE-2 Event Resolver (eventResolver.ts — resolveCustomEvent/resolveCustomEventRows/resolveStepsWithCustomEvents/isCustomEventRef/getCustomEventId, alias/group/conditional 3타입 해석 + __custom__ 가상 이벤트 주입), CE-3 CustomEventsPage (CRUD 폼 + 타입별 동적 UI: alias=소스 드롭다운, group=멀티셀렉트, conditional=조건 빌더 + 삭제 확인 + Pro gate Free max 5 + localStorage 게스트 폴백), CE-4 Analysis Integration (FunnelAnalysis/RetentionAnalysis optgroup 드롭다운 + useFunnelAnalysis/useRetentionAnalysis custom: 접두사 해석), CE-5 Route/Sidebar/i18n (/app/events lazy route + Tag 아이콘 + 31키 ko/en). 16개 파일 변경 (3 신규, 13 수정). 테스트 310/310 통과. 빌드 정상. 1 PARTIAL: getMergedEventList 인라인화 (의도적 개선). 0 iteration.
+
+---
+
+## funnel-ab-test
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Funnel A/B Test (Segment Comparison + Statistical Significance) |
+| **Match Rate** | 97.6% (19 PASS, 2 PARTIAL, 0 FAIL / 21 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `funnel-ab-test/funnel-ab-test.plan.md` |
+| Design | `funnel-ab-test/funnel-ab-test.design.md` |
+| Analysis | `funnel-ab-test/funnel-ab-test.analysis.md` |
+| Report | `funnel-ab-test/funnel-ab-test.report.md` |
+
+### Summary
+
+4 scope items completed (AB-1 ~ AB-4): AB-1 Types + A/B Test Engine (ABSegmentFilter/ABTestSegment/ABTestStepResult/ABTestResult 타입, abTestEngine.ts — runABTest/filterBySegment/calculateConfidenceInterval/calculateRequiredSampleSize, 2-proportion z-test + 95% CI + 80% power analysis), AB-2 ABTestPage (~395 lines, 세그먼트 A/B 선택기 + 스텝 빌더 max 8 + 요약 카드 3개 winner/confidence/sampleSize + Recharts GroupedBarChart + 스텝별 비교 테이블 significance 배지 + CI footer + 부족 샘플 경고 + empty state), AB-3 calculatePValue segmentEngine.ts에서 export, AB-4 /app/ab-test lazy route + Sidebar FlaskConical 아이콘 + i18n 35키 ko/en. 10개 파일 변경 (2 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (11.51 KB chunk). 2 PARTIAL: custom 필터 no-op (P2), 2-proportion CI (의도적 개선). 0 iteration.
