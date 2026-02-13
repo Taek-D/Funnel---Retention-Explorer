@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency, CustomEventDefinition } from '../types';
+import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency, CustomEventDefinition, SavedFunnel } from '../types';
 
 function getSupabase() {
   if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
@@ -400,6 +400,52 @@ export async function deleteCustomEvent(id: string): Promise<void> {
   const db = getSupabase();
   const { error } = await db.from('fre_custom_events').delete().eq('id', id);
   if (error) console.error('deleteCustomEvent error:', error);
+}
+
+// ===== Saved Funnels =====
+
+export async function listSavedFunnels(userId: string): Promise<SavedFunnel[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_saved_funnels')
+    .select('*')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function createSavedFunnel(params: {
+  userId: string; name: string; steps: string[];
+}): Promise<SavedFunnel> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_saved_funnels')
+    .insert({ user_id: params.userId, name: params.name, steps: params.steps })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateSavedFunnel(id: string, params: {
+  name?: string; steps?: string[];
+}): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_saved_funnels')
+    .update({ ...params, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteSavedFunnel(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_saved_funnels')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
 }
 
 // ===== Webhooks =====

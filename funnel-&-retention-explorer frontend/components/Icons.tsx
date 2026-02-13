@@ -69,7 +69,8 @@ import {
   Pencil,
   Layers,
   ArrowRightLeft,
-  FlaskConical
+  FlaskConical,
+  Save
 } from 'lucide-react';
 
 export {
@@ -143,5 +144,6 @@ export {
   Pencil,
   Layers,
   ArrowRightLeft,
-  FlaskConical
+  FlaskConical,
+  Save
 };

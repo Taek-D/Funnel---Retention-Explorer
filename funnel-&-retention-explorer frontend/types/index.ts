@@ -317,6 +317,17 @@ export interface ABTestResult {
   recommendedSampleSize: number;
 }
 
+// ===== Saved Funnels =====
+
+export interface SavedFunnel {
+  id: string;
+  user_id: string;
+  name: string;
+  steps: string[];
+  created_at: string;
+  updated_at: string;
+}
+
 // ===== Insights =====
 
 export interface Insight {

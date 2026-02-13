@@ -286,7 +286,17 @@
     "medianTime": "Median time between steps",
     "saveTemplate": "Save Template",
     "templateName": "Enter template name",
-    "deleteTemplate": "Delete Template"
+    "deleteTemplate": "Delete Template",
+    "saveFunnel": "Save Funnel",
+    "loadFunnel": "Saved Funnels",
+    "funnelNamePlaceholder": "Enter funnel name",
+    "deleteFunnelConfirm": "Delete funnel \"{{name}}\"?",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "overwrite": "Overwrite",
+    "overwriteConfirm": "Overwrite funnel \"{{name}}\"?",
+    "dragToReorder": "Drag to reorder"
   },
   "retention": {
     "noData": "No Data",

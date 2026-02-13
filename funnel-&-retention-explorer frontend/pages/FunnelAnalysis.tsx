@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical } from '../components/Icons';
+import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical, Save } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -11,8 +11,8 @@ import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
 import { useAuth } from '../context/AuthContext';
-import { listCustomEvents } from '../lib/supabaseData';
-import type { CustomEventDefinition } from '../types';
+import { listCustomEvents, listSavedFunnels, createSavedFunnel, updateSavedFunnel, deleteSavedFunnel } from '../lib/supabaseData';
+import type { CustomEventDefinition, SavedFunnel } from '../types';
 
 export const FunnelAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -27,11 +27,35 @@ export const FunnelAnalysis: React.FC = () => {
   const [editorCollapsed, setEditorCollapsed] = useState(false);
   const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
 
+  // DnD state
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Saved funnels state
+  const [savedFunnels, setSavedFunnels] = useState<SavedFunnel[]>([]);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveName, setSaveName] = useState('');
+
   useEffect(() => {
     if (user) {
       listCustomEvents(user.id).then(setCustomEvents);
     } else {
       try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+    }
+  }, [user]);
+
+  // Load saved funnels
+  useEffect(() => {
+    if (user) {
+      listSavedFunnels(user.id).then(setSavedFunnels);
+    } else {
+      try {
+        const raw = JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]') as { name: string; steps: string[] }[];
+        setSavedFunnels(raw.map((tmpl, i) => ({
+          id: `local-${i}`, user_id: '', name: tmpl.name, steps: tmpl.steps,
+          created_at: '', updated_at: ''
+        })));
+      } catch { /* empty */ }
     }
   }, [user]);
 
@@ -60,25 +84,82 @@ export const FunnelAnalysis: React.FC = () => {
     setFunnelSteps(newSteps);
   }, [funnelSteps, setFunnelSteps]);
 
-  const [savedTemplates, setSavedTemplates] = useState<{ name: string; steps: string[] }[]>(() => {
-    try { return JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]'); } catch { return []; }
-  });
+  // DnD handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+    setDragIndex(index);
+  };
 
-  const saveTemplate = useCallback(() => {
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    const fromIndex = Number(e.dataTransfer.getData('text/plain'));
+    if (fromIndex !== toIndex) moveStep(fromIndex, toIndex);
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // Save funnel
+  const handleSaveFunnel = async () => {
     const validSteps = funnelSteps.filter(Boolean);
-    if (validSteps.length < 2) return;
-    const name = prompt(t('funnel.templateName'));
-    if (!name) return;
-    const templates = [...savedTemplates, { name, steps: validSteps }];
-    localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
-    setSavedTemplates(templates);
-  }, [funnelSteps, savedTemplates, t]);
+    if (validSteps.length < 2 || !saveName.trim()) return;
+    const trimmedName = saveName.trim();
 
-  const deleteTemplate = useCallback((index: number) => {
-    const templates = savedTemplates.filter((_, i) => i !== index);
-    localStorage.setItem('fre-funnel-templates', JSON.stringify(templates));
-    setSavedTemplates(templates);
-  }, [savedTemplates]);
+    if (user) {
+      const existing = savedFunnels.find(f => f.name === trimmedName);
+      if (existing) {
+        if (!window.confirm(t('funnel.overwriteConfirm', { name: trimmedName }))) return;
+        await updateSavedFunnel(existing.id, { steps: validSteps });
+        setSavedFunnels(prev => prev.map(f => f.id === existing.id ? { ...f, steps: validSteps } : f));
+      } else {
+        const created = await createSavedFunnel({ userId: user.id, name: trimmedName, steps: validSteps });
+        setSavedFunnels(prev => [created, ...prev]);
+      }
+    } else {
+      const localFunnels = savedFunnels.map(f => ({ name: f.name, steps: f.steps }));
+      const existingIdx = localFunnels.findIndex(f => f.name === trimmedName);
+      if (existingIdx >= 0) {
+        if (!window.confirm(t('funnel.overwriteConfirm', { name: trimmedName }))) return;
+        localFunnels[existingIdx].steps = validSteps;
+      } else {
+        localFunnels.push({ name: trimmedName, steps: validSteps });
+      }
+      localStorage.setItem('fre-funnel-templates', JSON.stringify(localFunnels));
+      setSavedFunnels(localFunnels.map((tmpl, i) => ({
+        id: `local-${i}`, user_id: '', name: tmpl.name, steps: tmpl.steps,
+        created_at: '', updated_at: ''
+      })));
+    }
+
+    setShowSaveModal(false);
+    setSaveName('');
+  };
+
+  // Delete funnel
+  const handleDeleteFunnel = async (funnel: SavedFunnel) => {
+    if (!window.confirm(t('funnel.deleteFunnelConfirm', { name: funnel.name }))) return;
+    if (user) {
+      await deleteSavedFunnel(funnel.id);
+      setSavedFunnels(prev => prev.filter(f => f.id !== funnel.id));
+    } else {
+      const updated = savedFunnels.filter(f => f.id !== funnel.id);
+      localStorage.setItem('fre-funnel-templates', JSON.stringify(
+        updated.map(f => ({ name: f.name, steps: f.steps }))
+      ));
+      setSavedFunnels(updated);
+    }
+  };
 
   const hasResults = funnelResults && funnelResults.length > 0;
 
@@ -170,31 +251,31 @@ export const FunnelAnalysis: React.FC = () => {
                   Lifecycle
                 </button>
               )}
-              {savedTemplates.map((tmpl, i) => (
-                <div key={`custom-${i}`} className="flex items-center gap-1">
-                  <button
-                    onClick={() => setFunnelSteps(tmpl.steps)}
-                    className="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white border border-white/10 transition-all"
-                  >
-                    {tmpl.name}
-                  </button>
-                  <button
-                    onClick={() => deleteTemplate(i)}
-                    className="text-slate-600 hover:text-red-400 transition-colors p-1"
-                    title={t('funnel.deleteTemplate')}
-                  >
-                    <X size={12} />
-                  </button>
-                </div>
-              ))}
-              <button
-                onClick={saveTemplate}
-                disabled={funnelSteps.filter(Boolean).length < 2}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-accent border border-dashed border-slate-600 hover:border-accent transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                + {t('funnel.saveTemplate')}
-              </button>
             </div>
+
+            {/* Saved Funnels */}
+            {savedFunnels.length > 0 && (
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-slate-400 text-sm font-medium">{t('funnel.loadFunnel')}</span>
+                {savedFunnels.map((funnel) => (
+                  <div key={funnel.id} className="flex items-center gap-1">
+                    <button
+                      onClick={() => setFunnelSteps(funnel.steps)}
+                      className="px-4 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-white border border-white/10 transition-all"
+                    >
+                      {funnel.name}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteFunnel(funnel)}
+                      className="text-slate-600 hover:text-red-400 transition-colors p-1"
+                      title={t('funnel.deleteTemplate')}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Funnel Steps */}
             <div className="flex flex-col gap-2">
@@ -204,7 +285,16 @@ export const FunnelAnalysis: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {funnelSteps.map((step, i) => (
-                  <div key={i} className="group flex items-center gap-2 p-3 rounded-lg border border-white/10 bg-background hover:border-accent/50 transition-colors">
+                  <div
+                    key={i}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, i)}
+                    onDragOver={(e) => handleDragOver(e, i)}
+                    onDrop={(e) => handleDrop(e, i)}
+                    onDragEnd={handleDragEnd}
+                    className={`group flex items-center gap-2 p-3 rounded-lg border bg-background hover:border-accent/50 transition-colors ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'border-accent' : 'border-white/10'}`}
+                  >
+                    <GripVertical size={14} className="text-slate-600 cursor-grab shrink-0" />
                     <div className="flex flex-col gap-0.5 shrink-0">
                       <button
                         onClick={() => moveStep(i, i - 1)}
@@ -258,6 +348,16 @@ export const FunnelAnalysis: React.FC = () => {
                   <Plus size={16} /> {t('funnel.addStep')}
                 </button>
                 <button
+                  onClick={() => {
+                    setSaveName('');
+                    setShowSaveModal(true);
+                  }}
+                  disabled={funnelSteps.filter(Boolean).length < 2}
+                  className="py-2 px-4 rounded-lg border border-dashed border-slate-600 text-slate-500 hover:text-accent hover:border-accent transition-all text-sm font-medium flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <Save size={16} /> {t('funnel.saveFunnel')}
+                </button>
+                <button
                   onClick={() => runFunnelAnalysis(filterCount > 0 ? filteredData : undefined)}
                   className="py-2 px-6 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
                 >
@@ -268,6 +368,35 @@ export const FunnelAnalysis: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Save Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowSaveModal(false)}>
+          <div className="bg-surface border border-white/10 rounded-lg p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-white font-bold mb-4">{t('funnel.saveFunnel')}</h3>
+            <input
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+              placeholder={t('funnel.funnelNamePlaceholder')}
+              className="w-full bg-background border border-white/10 rounded-lg px-3 py-2 text-white text-sm mb-4 outline-none focus:border-accent"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter' && saveName.trim()) handleSaveFunnel(); }}
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowSaveModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors">
+                {t('funnel.cancel')}
+              </button>
+              <button
+                onClick={handleSaveFunnel}
+                disabled={!saveName.trim()}
+                className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-bold disabled:opacity-40 transition-colors"
+              >
+                {t('funnel.save')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Calculating placeholder */}
       {!hasResults && funnelSteps.filter(Boolean).length >= 2 && (

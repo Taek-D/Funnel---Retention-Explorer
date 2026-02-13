@@ -286,7 +286,17 @@
     "medianTime": "단계 간 중간 시간",
     "saveTemplate": "템플릿 저장",
     "templateName": "템플릿 이름을 입력하세요",
-    "deleteTemplate": "템플릿 삭제"
+    "deleteTemplate": "템플릿 삭제",
+    "saveFunnel": "퍼널 저장",
+    "loadFunnel": "저장된 퍼널",
+    "funnelNamePlaceholder": "퍼널 이름 입력",
+    "deleteFunnelConfirm": "\"{{name}}\" 퍼널을 삭제하시겠습니까?",
+    "cancel": "취소",
+    "save": "저장",
+    "saved": "저장됨",
+    "overwrite": "덮어쓰기",
+    "overwriteConfirm": "\"{{name}}\" 퍼널을 덮어쓰시겠습니까?",
+    "dragToReorder": "드래그하여 순서 변경"
   },
   "retention": {
     "noData": "데이터 없음",

@@ -809,3 +809,25 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 scope items completed (AB-1 ~ AB-4): AB-1 Types + A/B Test Engine (ABSegmentFilter/ABTestSegment/ABTestStepResult/ABTestResult 타입, abTestEngine.ts — runABTest/filterBySegment/calculateConfidenceInterval/calculateRequiredSampleSize, 2-proportion z-test + 95% CI + 80% power analysis), AB-2 ABTestPage (~395 lines, 세그먼트 A/B 선택기 + 스텝 빌더 max 8 + 요약 카드 3개 winner/confidence/sampleSize + Recharts GroupedBarChart + 스텝별 비교 테이블 significance 배지 + CI footer + 부족 샘플 경고 + empty state), AB-3 calculatePValue segmentEngine.ts에서 export, AB-4 /app/ab-test lazy route + Sidebar FlaskConical 아이콘 + i18n 35키 ko/en. 10개 파일 변경 (2 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (11.51 KB chunk). 2 PARTIAL: custom 필터 no-op (P2), 2-proportion CI (의도적 개선). 0 iteration.
+
+## funnel-editor-enhancement
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Funnel Editor Enhancement (DnD Reorder + Saved Funnels) |
+| **Match Rate** | 100% (23 PASS, 0 PARTIAL, 0 FAIL / 23 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `funnel-editor-enhancement/funnel-editor-enhancement.plan.md` |
+| Design | `funnel-editor-enhancement/funnel-editor-enhancement.design.md` |
+| Analysis | `funnel-editor-enhancement/funnel-editor-enhancement.analysis.md` |
+| Report | `funnel-editor-enhancement/funnel-editor-enhancement.report.md` |
+
+### Summary
+
+4 scope items completed (FE-1 ~ FE-4): FE-1 HTML5 DnD 스텝 순서 변경 (GripVertical 핸들, dragIndex/dragOverIndex 상태, 4개 핸들러 handleDragStart/Over/Drop/End, opacity-40 + border-accent 시각적 피드백, ChevronUp/Down 접근성 대안 유지), FE-2 SavedFunnel 타입 + Supabase CRUD 4함수 (listSavedFunnels/createSavedFunnel/updateSavedFunnel/deleteSavedFunnel), FE-3 Save/Load UI (저장 모달 + 이름 입력 + 생성/덮어쓰기 + 로드 버튼 목록 + X 삭제 + window.confirm + 게스트 localStorage 폴백), FE-4 i18n 10키 ko/en. 6개 파일 변경. 테스트 310/310 통과. 빌드 정상 (17.78 KB chunk). 0 iteration.
