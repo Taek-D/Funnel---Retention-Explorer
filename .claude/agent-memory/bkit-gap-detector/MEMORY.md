@@ -31,6 +31,7 @@
 | 23 | perf-optimization | 02-13 | 100% | 15/16 P, 1 PARTIAL |
 | 24 | team-collaboration | 02-13 | 98.9% | 87/89 P, 2 PARTIAL |
 | 25 | advanced-filter | 02-13 | 99.2% | 119/121 P, 1 PARTIAL, 1 FAIL |
+| 26 | data-connector | 02-13 | 97.3% | 52/55 P, 3 PARTIAL |
 
 ### Key Project Patterns
 
@@ -86,3 +87,4 @@
 - **Sentry Performance**: lib/sentry.ts has initSentry() + startSpan/startSpanAsync helpers; browserTracingIntegration + tracesSampleRate 0.1; 5 lib modules wrapped (csvParser, dataProcessor, funnelEngine, retentionEngine, geminiClient); sentryVitePlugin in vite.config.ts with sourcemap:'hidden'; Sentry.ErrorBoundary in ErrorBoundary.tsx replaces class component
 - **Team collaboration**: fre_teams + fre_team_members tables; Team/TeamMember/TeamRole types in types/index.ts; 6 CRUD functions in supabaseData.ts; TeamPage.tsx fully Supabase-backed (no localStorage); fre_projects.team_id for team-scoped sharing; RLS uses subquery `(SELECT email FROM auth.users WHERE id = auth.uid())` instead of `auth.email()`
 - **Advanced filter**: DateRange/ActiveFilters in types/index.ts; 4 actions (SET_DATE_RANGE/SET_PLATFORM_FILTER/SET_CHANNEL_FILTER/CLEAR_FILTERS); useFilteredData hook (useMemo filtering); FilterPanel self-contained (derives platforms/channels from state, not props); 5 pages integrate FilterPanel; Insights has local typeFilter/searchQuery; filter.noFilters i18n key designed but unused
+- **Data connectors**: ConnectorType/ExportFormat/ConnectorConfig in types/index.ts; CONNECTORS registry in lib/connectors/index.ts (6 entries); jsonConnector.ts (parseJSON with 1-level flatten); googleSheetsConnector.ts (extractSheetId + fetchGoogleSheet via sheets-proxy Edge Function); presetTransformers.ts (FORMAT_SIGNATURES + PRESET_MAPPINGS + unified normalizeTimestamps); useCSVUpload extended with handleURLImport + JSON support; DataImport.tsx has 6-card source selector; CONNECTOR_ICONS map for dynamic icon rendering; urlRequired i18n key designed but unused (button disabled handles UX)

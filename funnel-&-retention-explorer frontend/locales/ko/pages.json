@@ -534,5 +534,29 @@
     "description": "요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.",
     "goHome": "홈으로 이동",
     "goBack": "뒤로 가기"
+  },
+  "connector": {
+    "selectSource": "데이터 소스 선택",
+    "selectSourceDesc": "분석할 데이터의 소스를 선택하세요",
+    "csv": "CSV 파일",
+    "csvDesc": "CSV 형식의 이벤트 데이터를 업로드합니다",
+    "json": "JSON 파일",
+    "jsonDesc": "JSON 배열 형식의 이벤트 데이터를 업로드합니다",
+    "googleSheets": "Google Sheets",
+    "googleSheetsDesc": "공개된 Google Sheets URL에서 데이터를 가져옵니다",
+    "ga4": "GA4 Export",
+    "ga4Desc": "Google Analytics 4에서 내보낸 데이터를 분석합니다",
+    "mixpanel": "Mixpanel Export",
+    "mixpanelDesc": "Mixpanel에서 내보낸 이벤트 데이터를 분석합니다",
+    "amplitude": "Amplitude Export",
+    "amplitudeDesc": "Amplitude에서 내보낸 이벤트 데이터를 분석합니다",
+    "sheetsUrl": "Google Sheets URL",
+    "sheetsUrlPlaceholder": "https://docs.google.com/spreadsheets/d/...",
+    "sheetsUrlHint": "공개 또는 '링크가 있는 모든 사용자' 설정이 필요합니다",
+    "fetchSheet": "데이터 가져오기",
+    "fetchingSheet": "가져오는 중...",
+    "detectedFormat": "{{format}} 형식이 감지되었습니다",
+    "supportedFormats": "CSV 또는 JSON 파일만 지원됩니다",
+    "invalidSheetsUrl": "유효한 Google Sheets URL이 아닙니다"
   }
 }

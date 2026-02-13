@@ -21,8 +21,9 @@ export function useCSVUpload() {
   const planGate = usePlanGate();
 
   const handleFileUpload = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.csv')) {
-      toast('warning', i18n.t('insights:toast.csvOnly'));
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'csv' && ext !== 'json') {
+      toast('warning', i18n.t('pages:connector.supportedFormats'));
       return;
     }
 
@@ -31,7 +32,15 @@ export function useCSVUpload() {
     try {
       dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: i18n.t('insights:processing.parsingCSV') } });
 
-      const result = await parseCSV(file);
+      let result: { data: import('../types').RawRow[]; headers: string[] };
+
+      if (ext === 'json') {
+        const text = await file.text();
+        const { parseJSON } = await import('../lib/connectors/jsonConnector');
+        result = parseJSON(text);
+      } else {
+        result = await parseCSV(file);
+      }
 
       // PI-9: CSV row limit enforcement
       if (result.data.length > planGate.csvRowLimit) {
@@ -45,8 +54,18 @@ export function useCSVUpload() {
         payload: { rawData: result.data, headers: result.headers, fileName: file.name }
       });
 
-      // Auto-detect column mapping (Phase 1: name-based, Phase 2: value-based fallback)
-      const autoMapping = autoDetectColumns(result.headers, result.data);
+      // Detect export format and apply preset mapping if recognized
+      const { detectExportFormat, getPresetMapping, normalizeTimestamps } = await import('../lib/connectors/presetTransformers');
+      const format = detectExportFormat(result.headers);
+      let autoMapping;
+      if (format !== 'unknown') {
+        const normalized = normalizeTimestamps(result.data, format);
+        dispatch({ type: 'SET_RAW_DATA', payload: { rawData: normalized, headers: result.headers, fileName: file.name } });
+        autoMapping = getPresetMapping(format)!;
+        toast('info', i18n.t('pages:connector.detectedFormat', { format: format.toUpperCase() }));
+      } else {
+        autoMapping = autoDetectColumns(result.headers, result.data);
+      }
       dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
 
       // Save metadata only (no CSV data in localStorage)
@@ -190,8 +209,47 @@ export function useCSVUpload() {
     }
   }, [dispatch, toast, addNotification]);
 
+  const handleURLImport = useCallback(async (url: string) => {
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: i18n.t('pages:connector.fetchingSheet') } });
+
+    try {
+      const { extractSheetId, fetchGoogleSheet } = await import('../lib/connectors/googleSheetsConnector');
+      const sheetId = extractSheetId(url);
+      if (!sheetId) {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+        toast('warning', i18n.t('pages:connector.invalidSheetsUrl'));
+        return;
+      }
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 40, message: i18n.t('pages:connector.fetchingSheet') } });
+      const result = await fetchGoogleSheet(sheetId);
+
+      if (result.data.length > planGate.csvRowLimit) {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+        planGate.openUpgradeModal('csv_limit');
+        return;
+      }
+
+      dispatch({
+        type: 'SET_RAW_DATA',
+        payload: { rawData: result.data, headers: result.headers, fileName: `Google Sheets (${sheetId.slice(0, 8)}...)` }
+      });
+
+      const autoMapping = autoDetectColumns(result.headers, result.data);
+      dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 70, message: i18n.t('insights:processing.autoDetectComplete') } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: i18n.t('insights:processing.done') } });
+      trackEvent('csv_upload', { file_name: 'google-sheets', row_count: result.data.length });
+    } catch (error) {
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+      toast('error', i18n.t('insights:toast.csvParseError'), error instanceof Error ? error.message : i18n.t('insights:toast.unknownError'));
+    }
+  }, [dispatch, toast]);
+
   return {
     handleFileUpload,
+    handleURLImport,
     confirmMapping,
     loadSampleData,
     isProcessing: state.isProcessing,

@@ -1,3 +1,18 @@
+// ===== Data Connectors =====
+
+export type ConnectorType = 'csv' | 'json' | 'google-sheets' | 'ga4-export' | 'mixpanel-export' | 'amplitude-export';
+
+export type ExportFormat = 'ga4' | 'mixpanel' | 'amplitude' | 'unknown';
+
+export interface ConnectorConfig {
+  type: ConnectorType;
+  labelKey: string;
+  descKey: string;
+  iconName: string;
+  inputType: 'file' | 'url';
+  acceptedFormats?: string;
+}
+
 // ===== Filters =====
 
 export interface DateRange {

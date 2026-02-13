@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles } from '../components/Icons';
+import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles, Braces, Table, BarChart2, Activity, TrendingUp, Link } from '../components/Icons';
 import { useCSVUpload } from '../hooks/useCSVUpload';
 import { useColumnMapping } from '../hooks/useColumnMapping';
 import { useAppContext } from '../context/AppContext';
 import { loadRecentFiles, removeRecentFile } from '../lib/recentFiles';
 import { formatDateTime } from '../lib/formatters';
-import type { ColumnMapping } from '../types';
+import type { ColumnMapping, ConnectorType } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
+
+const CONNECTOR_ICONS: Record<string, React.ElementType> = {
+  FileText, Braces, Table, BarChart2, Activity, TrendingUp,
+};
 
 const MAPPING_FIELDS: { key: keyof ColumnMapping; labelKey: string; required: boolean }[] = [
   { key: 'timestamp', labelKey: 'dataImport.colTimestamp', required: true },
@@ -27,12 +31,14 @@ const SAMPLE_OPTIONS: { type: SampleDataType; icon: React.ElementType; labelKey:
 export const DataImport: React.FC = () => {
   const { t } = useTranslation('pages');
   const { state, dispatch } = useAppContext();
-  const { handleFileUpload, confirmMapping, loadSampleData, isProcessing, processingProgress, processingMessage } = useCSVUpload();
+  const { handleFileUpload, handleURLImport, confirmMapping, loadSampleData, isProcessing, processingProgress, processingMessage } = useCSVUpload();
   const { mapping, updateMapping, headers } = useColumnMapping();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [recentFiles, setRecentFiles] = useState(loadRecentFiles());
   const [searchParams, setSearchParams] = useSearchParams();
   const sampleLoadedRef = useRef(false);
+  const [selectedConnector, setSelectedConnector] = useState<ConnectorType>('csv');
+  const [sheetsUrl, setSheetsUrl] = useState('');
 
   useEffect(() => {
     setRecentFiles(loadRecentFiles());
@@ -101,7 +107,7 @@ export const DataImport: React.FC = () => {
               onDragOver={(e) => { e.preventDefault(); }}
               onDrop={onDrop}
             >
-              <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={onFileSelect} />
+              <input ref={fileInputRef} type="file" accept={selectedConnector === 'json' ? '.json' : selectedConnector === 'ga4-export' || selectedConnector === 'mixpanel-export' || selectedConnector === 'amplitude-export' ? '.csv,.json' : '.csv'} className="hidden" onChange={onFileSelect} />
 
               {hasData && (
                 <div className="absolute top-4 left-4 text-accent flex items-center gap-1.5 bg-accent/10 px-2 py-1 rounded border border-accent/20">
@@ -143,6 +149,68 @@ export const DataImport: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Data Source Selector — visible only at Step 1 */}
+          {currentStep === 1 && (
+            <div className="bg-surface border border-white/[0.06] rounded-lg p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <Link size={18} className="text-accent" />
+                <h3 className="text-white font-bold">{t('connector.selectSource')}</h3>
+              </div>
+              <p className="text-slate-400 text-sm">{t('connector.selectSourceDesc')}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {([
+                  { type: 'csv' as ConnectorType, icon: 'FileText', label: t('connector.csv') },
+                  { type: 'json' as ConnectorType, icon: 'Braces', label: t('connector.json') },
+                  { type: 'google-sheets' as ConnectorType, icon: 'Table', label: t('connector.googleSheets') },
+                  { type: 'ga4-export' as ConnectorType, icon: 'BarChart2', label: t('connector.ga4') },
+                  { type: 'mixpanel-export' as ConnectorType, icon: 'Activity', label: t('connector.mixpanel') },
+                  { type: 'amplitude-export' as ConnectorType, icon: 'TrendingUp', label: t('connector.amplitude') },
+                ]).map(({ type, icon, label }) => {
+                  const Icon = CONNECTOR_ICONS[icon];
+                  const isSelected = selectedConnector === type;
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => setSelectedConnector(type)}
+                      className={`flex items-center gap-2 p-3 rounded-lg text-sm font-medium transition-all border ${
+                        isSelected
+                          ? 'bg-accent/10 border-accent/30 text-accent'
+                          : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      {Icon && <Icon size={16} />}
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Google Sheets URL Input */}
+              {selectedConnector === 'google-sheets' && (
+                <div className="flex flex-col gap-2 mt-2">
+                  <input
+                    type="url"
+                    value={sheetsUrl}
+                    onChange={e => setSheetsUrl(e.target.value)}
+                    placeholder={t('connector.sheetsUrlPlaceholder')}
+                    className="w-full bg-background border border-white/10 text-white text-sm rounded-lg p-3 placeholder:text-slate-500 focus:border-accent/50 focus:outline-none"
+                  />
+                  <p className="text-xs text-slate-500">{t('connector.sheetsUrlHint')}</p>
+                  <button
+                    onClick={() => {
+                      if (!sheetsUrl.trim()) return;
+                      handleURLImport(sheetsUrl);
+                    }}
+                    disabled={isProcessing || !sheetsUrl.trim()}
+                    className="self-start px-5 py-2 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-medium transition-all disabled:opacity-50"
+                  >
+                    {isProcessing ? t('connector.fetchingSheet') : t('connector.fetchSheet')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Sample Data Section — visible only at Step 1 */}
           {currentStep === 1 && (

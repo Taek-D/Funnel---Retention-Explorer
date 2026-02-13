@@ -56,7 +56,10 @@ import {
   RotateCcw,
   Maximize2,
   Minimize2,
-  UserPlus
+  UserPlus,
+  Braces,
+  Table,
+  Link
 } from 'lucide-react';
 
 export {
@@ -117,5 +120,8 @@ export {
   RotateCcw,
   Maximize2,
   Minimize2,
-  UserPlus
+  UserPlus,
+  Braces,
+  Table,
+  Link
 };

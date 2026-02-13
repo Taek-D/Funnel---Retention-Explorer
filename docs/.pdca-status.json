@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-13T00:40:43.376Z",
+  "lastUpdated": "2026-02-13T01:29:12.708Z",
   "activeFeatures": [
     "__tests__",
     "unit",
@@ -9,7 +9,8 @@
     "notification-system",
     "admin-dashboard",
     "helpers",
-    "e2e"
+    "e2e",
+    "connectors"
   ],
   "primaryFeature": "__tests__",
   "features": {
@@ -64,9 +65,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-11T18:09:45.357Z",
-        "lastUpdated": "2026-02-13T00:38:45.861Z"
+        "lastUpdated": "2026-02-13T01:29:12.708Z"
       },
-      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\Insights.tsx"
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\DataImport.tsx"
     },
     "context": {
       "phase": "do",
@@ -160,6 +161,19 @@
         "lastUpdated": "2026-02-12T15:55:25.931Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\e2e\\retention.spec.ts"
+    },
+    "connectors": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T01:26:52.397Z",
+        "lastUpdated": "2026-02-13T01:27:25.937Z"
+      },
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\lib\\connectors\\presetTransformers.ts"
     }
   },
   "pipeline": {
@@ -170,7 +184,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-13T00:40:43.376Z"
+    "lastActivity": "2026-02-13T01:29:12.708Z"
   },
   "history": [
     {
@@ -1200,6 +1214,84 @@
     {
       "timestamp": "2026-02-13T00:40:43.376Z",
       "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:26:40.396Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:26:52.397Z",
+      "feature": "connectors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:26:59.453Z",
+      "feature": "connectors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:27:13.467Z",
+      "feature": "connectors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:27:25.937Z",
+      "feature": "connectors",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:27:48.569Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:05.688Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:24.116Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:27.767Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:43.130Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:49.732Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:28:55.090Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T01:29:12.708Z",
+      "feature": "funnel-&-retention-explorer frontend",
       "phase": "do",
       "action": "updated"
     }

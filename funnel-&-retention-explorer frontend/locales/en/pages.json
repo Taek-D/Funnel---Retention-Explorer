@@ -534,5 +534,29 @@
     "description": "The page you requested doesn't exist or has been moved.",
     "goHome": "Go Home",
     "goBack": "Go Back"
+  },
+  "connector": {
+    "selectSource": "Select Data Source",
+    "selectSourceDesc": "Choose the source of data to analyze",
+    "csv": "CSV File",
+    "csvDesc": "Upload event data in CSV format",
+    "json": "JSON File",
+    "jsonDesc": "Upload event data in JSON array format",
+    "googleSheets": "Google Sheets",
+    "googleSheetsDesc": "Import data from a public Google Sheets URL",
+    "ga4": "GA4 Export",
+    "ga4Desc": "Analyze data exported from Google Analytics 4",
+    "mixpanel": "Mixpanel Export",
+    "mixpanelDesc": "Analyze event data exported from Mixpanel",
+    "amplitude": "Amplitude Export",
+    "amplitudeDesc": "Analyze event data exported from Amplitude",
+    "sheetsUrl": "Google Sheets URL",
+    "sheetsUrlPlaceholder": "https://docs.google.com/spreadsheets/d/...",
+    "sheetsUrlHint": "The sheet must be set to 'Anyone with the link' access",
+    "fetchSheet": "Fetch Data",
+    "fetchingSheet": "Fetching...",
+    "detectedFormat": "{{format}} format detected",
+    "supportedFormats": "Only CSV or JSON files are supported",
+    "invalidSheetsUrl": "Invalid Google Sheets URL"
   }
 }

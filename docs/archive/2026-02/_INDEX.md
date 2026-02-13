@@ -645,3 +645,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 scope items completed (AF-1 ~ AF-6): AF-1 Filter Types & State (DateRange, ActiveFilters 인터페이스 + 4 actions + 4 reducer cases + initialState), AF-2 useFilteredData Hook (useMemo 날짜/플랫폼/채널 필터링 + filterCount + setter/clear dispatch), AF-3 FilterPanel Component (collapsible UI + date inputs + 7d/30d/90d/All presets + platform/channel checkboxes + clear button), AF-4 Page Integration (Dashboard/FunnelAnalysis/RetentionAnalysis/SegmentComparison/Insights 5개 페이지 FilterPanel + filteredData 사용), AF-5 Insights Filter (type toggle 4종 + search input — local state), AF-6 i18n Keys (17 filter keys ko/en). 14개 파일 변경 (2 신규, 12 수정). 테스트 310/310 통과. 2 minor gaps (unused noFilters key, shortened clearAll label). 0 iteration.
+
+---
+
+## data-connector
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Data Connector (JSON, Google Sheets, GA4/Mixpanel/Amplitude Export Presets) |
+| **Match Rate** | 97.3% (52 PASS, 3 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `data-connector/data-connector.plan.md` |
+| Design | `data-connector/data-connector.design.md` |
+| Analysis | `data-connector/data-connector.analysis.md` |
+| Report | `data-connector/data-connector.report.md` |
+
+### Summary
+
+6 scope items completed (DC-1 ~ DC-6): DC-1 Types + Registry (ConnectorType 6종, ExportFormat, ConnectorConfig 인터페이스 + CONNECTORS 레지스트리), DC-2 JSON Connector (parseJSON + 1-level flatten + data/rows/events 래퍼 지원), DC-3 Google Sheets Connector (extractSheetId URL 파싱 + fetchGoogleSheet Supabase Edge Function 프록시), DC-4 Analytics Export Presets (FORMAT_SIGNATURES 3종 + PRESET_MAPPINGS + detectExportFormat 헤더 패턴 매칭 + normalizeTimestamps GA4 μs/Mixpanel unix), DC-5 useCSVUpload 확장 (CSV+JSON 파일 지원 + 포맷 자동 감지 + handleURLImport) + DataImport 소스 선택 UI (6-card selector + Google Sheets URL 입력), DC-6 i18n 17 키 (ko/en). 10개 파일 변경 (4 신규, 6 수정). 테스트 310/310 통과. 3 PARTIAL: Sheets URL edge case, 통합 normalize 함수 (개선), urlRequired key 미사용. 0 iteration.
