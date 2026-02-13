@@ -2,6 +2,24 @@
   "meta": {
     "title": "FRE Analytics \u2014 \ud37c\ub110 & \ub9ac\ud150\uc158 \ud0d0\uc0c9\uae30"
   },
+  "filter": {
+    "title": "필터",
+    "dateRange": "날짜 범위",
+    "startDate": "시작일",
+    "endDate": "종료일",
+    "preset7d": "7일",
+    "preset30d": "30일",
+    "preset90d": "90일",
+    "presetAll": "전체",
+    "platform": "플랫폼",
+    "channel": "채널",
+    "clearAll": "초기화",
+    "activeFilters": "활성 필터 {{count}}개",
+    "searchInsights": "인사이트 검색...",
+    "filterByType": "유형별 필터",
+    "allTypes": "전체",
+    "filtered": "필터 적용됨"
+  },
   "landing": {
     "badge": "소개",
     "openPlatform": "오픈 분석 플랫폼",

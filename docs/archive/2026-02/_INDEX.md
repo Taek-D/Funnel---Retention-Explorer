@@ -621,3 +621,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (TC-1 ~ TC-5): TC-1 DB Schema (fre_teams + fre_team_members 테이블, RLS 4개 정책, updated_at 트리거, 4개 인덱스), TC-2 TypeScript Types (TeamRole, TeamMemberStatus, TeamMember, Team — types/index.ts로 이동, TeamPage 로컬 타입 제거), TC-3 CRUD Functions (createTeam, getMyTeam, updateTeamName, inviteTeamMember, removeTeamMember, updateMemberRole — supabaseData.ts), TC-4 TeamPage Supabase Integration (localStorage 완전 제거, loading/error/creation 3개 상태 추가, useCallback 전체 적용), TC-5 Team-scoped Project Sharing (fre_projects.team_id 컬럼 + RLS + createProject teamId 파라미터). 6개 파일 변경 (1 신규 migration, 5 수정). i18n 12개 키 추가 (ko/en). 테스트 310/310 통과. 2 PARTIAL: RLS email 비교 시 auth.email() 대신 subquery 사용 (의도적 호환성 개선). 0 iteration.
+
+---
+
+## advanced-filter
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Advanced Filter/Search (Date Range, Platform, Channel, Insight Type/Search) |
+| **Match Rate** | 99.2% (119/121) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `advanced-filter/advanced-filter.plan.md` |
+| Design | `advanced-filter/advanced-filter.design.md` |
+| Analysis | `advanced-filter/advanced-filter.analysis.md` |
+| Report | `advanced-filter/advanced-filter.report.md` |
+
+### Summary
+
+6 scope items completed (AF-1 ~ AF-6): AF-1 Filter Types & State (DateRange, ActiveFilters 인터페이스 + 4 actions + 4 reducer cases + initialState), AF-2 useFilteredData Hook (useMemo 날짜/플랫폼/채널 필터링 + filterCount + setter/clear dispatch), AF-3 FilterPanel Component (collapsible UI + date inputs + 7d/30d/90d/All presets + platform/channel checkboxes + clear button), AF-4 Page Integration (Dashboard/FunnelAnalysis/RetentionAnalysis/SegmentComparison/Insights 5개 페이지 FilterPanel + filteredData 사용), AF-5 Insights Filter (type toggle 4종 + search input — local state), AF-6 i18n Keys (17 filter keys ko/en). 14개 파일 변경 (2 신규, 12 수정). 테스트 310/310 통과. 2 minor gaps (unused noFilters key, shortened clearAll label). 0 iteration.

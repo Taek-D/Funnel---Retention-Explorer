@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-12T18:29:43.369Z",
+  "timestamp": "2026-02-13T00:03:57.651Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-02-12T18:21:01.601Z",
+    "lastUpdated": "2026-02-12T18:45:00.155Z",
     "activeFeatures": [
       "__tests__",
       "unit",
@@ -67,9 +67,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-11T18:09:45.357Z",
-          "lastUpdated": "2026-02-12T18:20:10.786Z"
+          "lastUpdated": "2026-02-12T18:45:00.155Z"
         },
-        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\lib\\geminiClient.ts"
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\ChartSkeleton.tsx"
       },
       "context": {
         "phase": "do",
@@ -80,9 +80,9 @@
         "documents": {},
         "timestamps": {
           "started": "2026-02-12T04:05:08.196Z",
-          "lastUpdated": "2026-02-12T04:06:33.339Z"
+          "lastUpdated": "2026-02-12T18:34:48.576Z"
         },
-        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\context\\NotificationContext.tsx"
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\context\\AppContext.tsx"
       },
       "notification-system": {
         "phase": "act",
@@ -173,7 +173,7 @@
     "session": {
       "startedAt": "2026-02-11T03:00:00.000Z",
       "onboardingCompleted": true,
-      "lastActivity": "2026-02-12T18:21:01.601Z"
+      "lastActivity": "2026-02-12T18:45:00.155Z"
     },
     "history": [
       {
@@ -903,6 +903,84 @@
       {
         "timestamp": "2026-02-12T18:21:01.601Z",
         "feature": "__tests__",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:34:48.576Z",
+        "feature": "context",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:01.724Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:10.023Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:28.640Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:30.060Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:31.086Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:35:32.615Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:41:25.680Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:44:13.879Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:44:50.007Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:44:50.988Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:44:52.127Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-12T18:45:00.155Z",
+        "feature": "funnel-&-retention-explorer frontend",
         "phase": "do",
         "action": "updated"
       }

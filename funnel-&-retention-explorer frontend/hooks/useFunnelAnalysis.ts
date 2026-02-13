@@ -26,19 +26,20 @@ export function useFunnelAnalysis() {
     dispatch({ type: 'SET_FUNNEL_STEPS', payload: validSteps.length > 0 ? validSteps : steps });
   }, [state.uniqueEvents, dispatch]);
 
-  const runFunnelAnalysis = useCallback(() => {
+  const runFunnelAnalysis = useCallback((dataOverride?: typeof state.processedData) => {
     if (state.funnelSteps.length < 2) {
       toast('warning', i18n.t('analysis.minFunnelSteps'));
       return;
     }
 
-    const results = calculateFunnel(state.processedData, state.funnelSteps);
+    const data = dataOverride ?? state.processedData;
+    const results = calculateFunnel(data, state.funnelSteps);
     dispatch({ type: 'SET_FUNNEL_RESULTS', payload: results });
     trackEvent('funnel_analysis', { step_count: state.funnelSteps.length });
 
     // Regenerate insights
     const insights = generateInsights(
-      state.processedData,
+      data,
       state.detectedType,
       state.subscriptionKPIs,
       state.trialAnalysis,

@@ -8,6 +8,8 @@ import { formatTime } from '../lib/formatters';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
+import { FilterPanel } from '../components/FilterPanel';
+import { useFilteredData } from '../hooks/useFilteredData';
 
 export const FunnelAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -16,6 +18,7 @@ export const FunnelAnalysis: React.FC = () => {
     setFunnelSteps, applyTemplate, runFunnelAnalysis
   } = useFunnelAnalysis();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
+  const { filteredData, filterCount } = useFilteredData();
 
   const [editorCollapsed, setEditorCollapsed] = useState(false);
 
@@ -104,6 +107,8 @@ export const FunnelAnalysis: React.FC = () => {
           />
         )}
       </div>
+
+      <FilterPanel />
 
       {/* Editor Section (collapsible when results exist) */}
       <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">
@@ -231,7 +236,7 @@ export const FunnelAnalysis: React.FC = () => {
                   <Plus size={16} /> {t('funnel.addStep')}
                 </button>
                 <button
-                  onClick={runFunnelAnalysis}
+                  onClick={() => runFunnelAnalysis(filterCount > 0 ? filteredData : undefined)}
                   className="py-2 px-6 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
                 >
                   {t('funnel.calculate')}

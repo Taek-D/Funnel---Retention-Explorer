@@ -7,6 +7,8 @@ import { useDataExport } from '../hooks/useDataExport';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
+import { FilterPanel } from '../components/FilterPanel';
+import { useFilteredData } from '../hooks/useFilteredData';
 
 export const RetentionAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -15,6 +17,7 @@ export const RetentionAnalysis: React.FC = () => {
     setRetentionType, runRetentionAnalysis
   } = useRetentionAnalysis();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
+  const { filteredData, filterCount } = useFilteredData();
 
   const [cohortEvent, setCohortEvent] = useState('');
   const [selectedActiveEvents, setSelectedActiveEvents] = useState<string[]>([]);
@@ -58,7 +61,7 @@ export const RetentionAnalysis: React.FC = () => {
   );
 
   const handleCalculate = () => {
-    runRetentionAnalysis(cohortEvent, selectedActiveEvents);
+    runRetentionAnalysis(cohortEvent, selectedActiveEvents, filterCount > 0 ? filteredData : undefined);
   };
 
   const toggleActiveEvent = (event: string) => {
@@ -89,6 +92,8 @@ export const RetentionAnalysis: React.FC = () => {
           />
         )}
       </div>
+
+      <FilterPanel />
 
       {/* Retention Type Toggle (for subscription data) */}
       {detectedType === 'subscription' && (
@@ -152,7 +157,7 @@ export const RetentionAnalysis: React.FC = () => {
       {/* Paid Retention: Just a button */}
       {isPaid && !retentionResults && (
         <button
-          onClick={() => runRetentionAnalysis('', [])}
+          onClick={() => runRetentionAnalysis('', [], filterCount > 0 ? filteredData : undefined)}
           className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white text-sm font-bold transition-all"
         >
           {t('retention.calculatePaid')}

@@ -5,6 +5,7 @@ import { useSegmentComparison } from '../hooks/useSegmentComparison';
 import { useDataExport } from '../hooks/useDataExport';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
+import { FilterPanel } from '../components/FilterPanel';
 
 export const SegmentComparison: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -56,6 +57,8 @@ export const SegmentComparison: React.FC = () => {
           />
         )}
       </div>
+
+      <FilterPanel showPlatform={false} showChannel={false} />
 
       {/* Controls */}
       <div className="bg-surface border border-white/[0.06] rounded-lg p-6 space-y-4">

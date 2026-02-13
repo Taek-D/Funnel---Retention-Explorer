@@ -15,6 +15,8 @@ import { ExportDropdown } from '../components/ExportDropdown';
 import { DashboardWidget } from '../components/DashboardWidget';
 import { CHART_COLORS, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
 import { useClickOutside } from '../hooks/useClickOutside';
+import { FilterPanel } from '../components/FilterPanel';
+import { useFilteredData } from '../hooks/useFilteredData';
 import type { AppState, WidgetId } from '../types';
 
 export const Dashboard: React.FC = () => {
@@ -27,6 +29,7 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { layout, editMode, setEditMode, toggleVisibility, toggleWidth, reorder, resetToDefault, applyPreset } = useDashboardLayout();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
+  const { filteredData, filterCount } = useFilteredData();
 
   // Preset dropdown state
   const [presetOpen, setPresetOpen] = useState(false);
@@ -107,9 +110,12 @@ export const Dashboard: React.FC = () => {
 
   const hasData = processedData.length > 0;
 
-  // KPIs
-  const uniqueUsers = dataQualityReport?.uniqueUsers || 0;
-  const totalEvents = processedData.length;
+  // KPIs (use filteredData when filters are active)
+  const displayData = filterCount > 0 ? filteredData : processedData;
+  const uniqueUsers = filterCount > 0
+    ? new Set(displayData.map(e => e.userId)).size
+    : (dataQualityReport?.uniqueUsers || 0);
+  const totalEvents = displayData.length;
 
   const funnelChartData = useMemo(() =>
     funnelResults
@@ -493,6 +499,8 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <FilterPanel />
+
       {/* Header: Export buttons + Edit layout toggle */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">

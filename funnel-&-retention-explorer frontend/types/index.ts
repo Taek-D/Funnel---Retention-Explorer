@@ -1,3 +1,15 @@
+// ===== Filters =====
+
+export interface DateRange {
+  start: string | null;
+  end: string | null;
+}
+
+export interface ActiveFilters {
+  platforms: string[];
+  channels: string[];
+}
+
 // ===== Dashboard Layout =====
 
 export type WidgetId =
@@ -281,4 +293,6 @@ export interface AppState {
   uniqueEvents: string[];
   aiSummary: string;
   dashboardLayout: WidgetLayout[];
+  dateRange: DateRange;
+  activeFilters: ActiveFilters;
 }

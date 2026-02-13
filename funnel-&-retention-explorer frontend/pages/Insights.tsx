@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
 import { AskAIPanel } from '../components/AskAIPanel';
+import { FilterPanel } from '../components/FilterPanel';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
+import type { InsightType } from '../types';
 
 const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: string; badge: string; badgeBg: string }> = {
   danger: { border: 'border-l-coral', iconBg: 'bg-coral/10', iconColor: 'text-coral', badge: 'text-coral', badgeBg: 'bg-coral/10 border-coral/20' },
@@ -20,6 +22,28 @@ export const Insights: React.FC = () => {
   const hasData = processedData.length > 0;
   const { aiSummary, aiLoading, aiError, generateSummary } = useAIInsights();
   const [askAIOpen, setAskAIOpen] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<InsightType[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredInsights = useMemo(() => {
+    let result = insights;
+    if (typeFilter.length > 0) {
+      result = result.filter(i => typeFilter.includes(i.type));
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(i =>
+        i.title.toLowerCase().includes(q) || i.body.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [insights, typeFilter, searchQuery]);
+
+  const toggleType = (type: InsightType) => {
+    setTypeFilter(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
 
   if (!hasData) {
     return (
@@ -30,6 +54,8 @@ export const Insights: React.FC = () => {
       </div>
     );
   }
+
+  const insightTypes: InsightType[] = ['success', 'warning', 'danger', 'info'];
 
   return (
     <div className="space-y-6">
@@ -156,19 +182,49 @@ export const Insights: React.FC = () => {
         </div>
       )}
 
-      {/* Insights Title */}
-      <h3 className="text-xl font-bold text-white flex items-center gap-2 mt-4">
-        <Zap size={24} className="text-accent" /> {t('insights.latestInsights')}
-        <span className="text-sm text-slate-500 font-normal ml-2">{t('insights.insightCount', { count: insights.length })}</span>
-      </h3>
+      <FilterPanel />
+
+      {/* Insights Title + Filters */}
+      <div className="space-y-3">
+        <h3 className="text-xl font-bold text-white flex items-center gap-2 mt-4">
+          <Zap size={24} className="text-accent" /> {t('insights.latestInsights')}
+          <span className="text-sm text-slate-500 font-normal ml-2">{t('insights.insightCount', { count: filteredInsights.length })}</span>
+        </h3>
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder={t('filter.searchInsights')}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-accent/50 w-48"
+          />
+          {insightTypes.map(type => {
+            const active = typeFilter.includes(type);
+            const style = TYPE_STYLES[type];
+            return (
+              <button
+                key={type}
+                onClick={() => toggleType(type)}
+                className={`px-2.5 py-1 text-[11px] font-medium rounded border transition-colors ${
+                  active
+                    ? `${style.badgeBg} ${style.badge}`
+                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                }`}
+              >
+                {type}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Insight Cards */}
-      {insights.length === 0 ? (
+      {filteredInsights.length === 0 ? (
         <div className="bg-surface border border-white/[0.06] rounded-lg p-8 text-center">
           <p className="text-slate-400">{t('insights.noInsightsHint')}</p>
         </div>
       ) : (
-        insights.map((insight, i) => {
+        filteredInsights.map((insight, i) => {
           const style = TYPE_STYLES[insight.type] || TYPE_STYLES.info;
           return (
             <div key={i} className={`bg-surface border border-white/[0.06] rounded-lg p-6 border-l-2 ${style.border} flex flex-col lg:flex-row gap-6`}>

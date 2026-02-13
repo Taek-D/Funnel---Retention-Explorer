@@ -2,7 +2,8 @@ import type {
   RawRow, ProcessedEvent, ColumnMapping, DatasetType,
   FunnelStep, RetentionCohort, SegmentResult, Insight,
   SubscriptionKPIs, TrialAnalysis, ChurnAnalysis,
-  DataQualityReport, RecentFile, RetentionType, WidgetLayout
+  DataQualityReport, RecentFile, RetentionType, WidgetLayout,
+  DateRange
 } from '../types';
 
 export type AppAction =
@@ -26,4 +27,8 @@ export type AppAction =
   | { type: 'SET_RECENT_FILES'; payload: RecentFile[] }
   | { type: 'SET_AI_SUMMARY'; payload: string }
   | { type: 'SET_DASHBOARD_LAYOUT'; payload: WidgetLayout[] }
+  | { type: 'SET_DATE_RANGE'; payload: DateRange }
+  | { type: 'SET_PLATFORM_FILTER'; payload: string[] }
+  | { type: 'SET_CHANNEL_FILTER'; payload: string[] }
+  | { type: 'CLEAR_FILTERS' }
   | { type: 'RESET_ANALYSIS' };

@@ -17,7 +17,7 @@ export function useRetentionAnalysis() {
     dispatch({ type: 'SET_RETENTION_TYPE', payload: type });
   }, [dispatch]);
 
-  const runRetentionAnalysis = useCallback((cohortEvent: string, activeEvents: string[]) => {
+  const runRetentionAnalysis = useCallback((cohortEvent: string, activeEvents: string[], dataOverride?: typeof state.processedData) => {
     if (state.retentionType === 'paid' && state.detectedType === 'subscription') {
       const paidRetention = state.paidRetentionResults || calculatePaidRetention(state.rawData, state.columnMapping);
       if (!paidRetention || paidRetention.length === 0) {
@@ -50,7 +50,8 @@ export function useRetentionAnalysis() {
         return;
       }
 
-      const results = calculateActivityRetention(state.processedData, cohortEvent, activeEvents);
+      const data = dataOverride ?? state.processedData;
+      const results = calculateActivityRetention(data, cohortEvent, activeEvents);
       dispatch({ type: 'SET_RETENTION_RESULTS', payload: results });
     }
 
@@ -58,8 +59,9 @@ export function useRetentionAnalysis() {
     addNotification('analysis', i18n.t('analysis.retentionComplete'), i18n.t('analysis.retentionCompleteDesc'));
 
     // Regenerate insights
+    const insightsData = dataOverride ?? state.processedData;
     const insights = generateInsights(
-      state.processedData,
+      insightsData,
       state.detectedType,
       state.subscriptionKPIs,
       state.trialAnalysis,

@@ -2,6 +2,24 @@
   "meta": {
     "title": "FRE Analytics \u2014 Funnel & Retention Explorer"
   },
+  "filter": {
+    "title": "Filters",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "preset7d": "7d",
+    "preset30d": "30d",
+    "preset90d": "90d",
+    "presetAll": "All",
+    "platform": "Platform",
+    "channel": "Channel",
+    "clearAll": "Clear",
+    "activeFilters": "{{count}} active filters",
+    "searchInsights": "Search insights...",
+    "filterByType": "Filter by type",
+    "allTypes": "All",
+    "filtered": "Filtered"
+  },
   "landing": {
     "badge": "Introducing",
     "openPlatform": "Open Analytics Platform",

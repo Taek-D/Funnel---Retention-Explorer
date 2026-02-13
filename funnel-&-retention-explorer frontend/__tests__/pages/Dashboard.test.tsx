@@ -37,6 +37,8 @@ vi.mock('../../components/Icons', () => {
     ShoppingBag: Icon('ShoppingBag'),
     Activity: Icon('Activity'),
     ChevronDown: Icon('ChevronDown'),
+    ChevronUp: Icon('ChevronUp'),
+    Calendar: Icon('Calendar'),
     // Toast icons
     CheckCircle: Icon('CheckCircle'),
     AlertCircle: Icon('AlertCircle'),

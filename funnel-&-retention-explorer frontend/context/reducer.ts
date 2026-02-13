@@ -25,7 +25,9 @@ export const initialState: AppState = {
   recentFiles: [],
   uniqueEvents: [],
   aiSummary: '',
-  dashboardLayout: []
+  dashboardLayout: [],
+  dateRange: { start: null, end: null },
+  activeFilters: { platforms: [], channels: [] },
 };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -99,6 +101,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'SET_DASHBOARD_LAYOUT':
       return { ...state, dashboardLayout: action.payload };
+
+    case 'SET_DATE_RANGE':
+      return { ...state, dateRange: action.payload };
+
+    case 'SET_PLATFORM_FILTER':
+      return { ...state, activeFilters: { ...state.activeFilters, platforms: action.payload } };
+
+    case 'SET_CHANNEL_FILTER':
+      return { ...state, activeFilters: { ...state.activeFilters, channels: action.payload } };
+
+    case 'CLEAR_FILTERS':
+      return { ...state, dateRange: { start: null, end: null }, activeFilters: { platforms: [], channels: [] } };
 
     case 'RESET_ANALYSIS':
       return {

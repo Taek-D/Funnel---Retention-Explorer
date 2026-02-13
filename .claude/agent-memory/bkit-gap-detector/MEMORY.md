@@ -29,6 +29,8 @@
 | 21 | accessibility-dnd | 02-13 | 97.3% | 71/75 P, 4 PARTIAL |
 | 22 | sentry-web-vitals | 02-13 | 95.8% | 68/71 P, 3 FAIL |
 | 23 | perf-optimization | 02-13 | 100% | 15/16 P, 1 PARTIAL |
+| 24 | team-collaboration | 02-13 | 98.9% | 87/89 P, 2 PARTIAL |
+| 25 | advanced-filter | 02-13 | 99.2% | 119/121 P, 1 PARTIAL, 1 FAIL |
 
 ### Key Project Patterns
 
@@ -82,3 +84,5 @@
 - **E2E testing**: Playwright in e2e/ dir; helpers/ has skipOnboardingTour + loadEcommerceSample + loadSaaSSample + navigateViaSidebar; npm scripts omit `npx` (resolved via node_modules/.bin); .gitignore missing `e2e/.auth/` from design
 - **Dashboard a11y DnD**: Keyboard reordering via ArrowUp/Down + aria-live announcements; i18n keys in pages namespace (not common); `widgetHiddenLabel` key avoids collision with existing `widgetHidden`
 - **Sentry Performance**: lib/sentry.ts has initSentry() + startSpan/startSpanAsync helpers; browserTracingIntegration + tracesSampleRate 0.1; 5 lib modules wrapped (csvParser, dataProcessor, funnelEngine, retentionEngine, geminiClient); sentryVitePlugin in vite.config.ts with sourcemap:'hidden'; Sentry.ErrorBoundary in ErrorBoundary.tsx replaces class component
+- **Team collaboration**: fre_teams + fre_team_members tables; Team/TeamMember/TeamRole types in types/index.ts; 6 CRUD functions in supabaseData.ts; TeamPage.tsx fully Supabase-backed (no localStorage); fre_projects.team_id for team-scoped sharing; RLS uses subquery `(SELECT email FROM auth.users WHERE id = auth.uid())` instead of `auth.email()`
+- **Advanced filter**: DateRange/ActiveFilters in types/index.ts; 4 actions (SET_DATE_RANGE/SET_PLATFORM_FILTER/SET_CHANNEL_FILTER/CLEAR_FILTERS); useFilteredData hook (useMemo filtering); FilterPanel self-contained (derives platforms/channels from state, not props); 5 pages integrate FilterPanel; Insights has local typeFilter/searchQuery; filter.noFilters i18n key designed but unused
