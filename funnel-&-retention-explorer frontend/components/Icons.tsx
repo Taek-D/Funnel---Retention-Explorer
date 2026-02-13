@@ -63,7 +63,8 @@ import {
   Webhook,
   Send,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  WifiOff
 } from 'lucide-react';
 
 export {
@@ -131,5 +132,6 @@ export {
   Webhook,
   Send,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  WifiOff
 };

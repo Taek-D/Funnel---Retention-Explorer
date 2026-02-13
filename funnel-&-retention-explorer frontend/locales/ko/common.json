@@ -323,5 +323,13 @@
       "uplift": "리프트",
       "pValue": "p-value"
     }
+  },
+  "pwa": {
+    "installApp": "앱 설치",
+    "installHint": "홈 화면에 추가하여 빠르게 접근하세요",
+    "offlineMode": "오프라인 모드 — 일부 기능이 제한됩니다",
+    "updateAvailable": "새 버전이 있습니다",
+    "updateNow": "업데이트",
+    "installed": "앱이 설치되었습니다"
   }
 }

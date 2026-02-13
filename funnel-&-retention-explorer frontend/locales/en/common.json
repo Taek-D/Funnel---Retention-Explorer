@@ -323,5 +323,13 @@
       "uplift": "Uplift",
       "pValue": "p-value"
     }
+  },
+  "pwa": {
+    "installApp": "Install App",
+    "installHint": "Add to home screen for quick access",
+    "offlineMode": "Offline mode — some features are limited",
+    "updateAvailable": "A new version is available",
+    "updateNow": "Update",
+    "installed": "App installed"
   }
 }

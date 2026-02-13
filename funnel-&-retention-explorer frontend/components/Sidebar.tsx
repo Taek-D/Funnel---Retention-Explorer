@@ -1,10 +1,11 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
 interface MenuItem {
   path: string;
@@ -43,6 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
   ] : [];
 
   const initial = user?.email ? user.email.charAt(0).toUpperCase() : 'G';
+  const { canInstall, install } = useInstallPrompt();
 
   const handleNav = (path: string) => {
     navigate(path);
@@ -112,6 +114,16 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
             title={t('nav.startGuide')}
           >
             <HelpCircle size={18} />
+          </button>
+        )}
+        {canInstall && (
+          <button
+            onClick={install}
+            className="w-10 h-10 flex items-center justify-center rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors"
+            aria-label={t('pwa.installApp')}
+            title={t('pwa.installApp')}
+          >
+            <Download size={18} />
           </button>
         )}
         <PlanBadge />

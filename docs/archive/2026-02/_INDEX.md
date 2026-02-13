@@ -693,3 +693,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 scope items completed (WH-1 ~ WH-6): WH-1 Types + DB Schema (WebhookConfig, WebhookLog, WebhookFormat, WebhookEventType 타입 + fre_webhooks/fre_webhook_logs SQL migration + RLS + CRUD 5 함수), WH-2 Webhook Dispatcher (dispatchWebhooks fire-and-forget + 1분 캐시 + invalidateWebhookCache), WH-3 NotificationContext Integration (addNotification → dispatchWebhooks 연결, 실패 격리), WH-4 WebhookSettings 페이지 (CRUD 폼 + active 토글 + 테스트 전송 + 로그 뷰어 + /app/webhooks 라우트 + Sidebar 링크), WH-5 Format Presets (detectWebhookFormat URL 패턴 자동 감지 + formatPayload Slack blocks/Discord embeds/JSON), WH-6 i18n 36 키 (ko/en). 12개 파일 변경 (5 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: events 라벨 UX 개선. 0 iteration.
+
+---
+
+## pwa-offline
+
+| Item | Detail |
+|------|--------|
+| **Feature** | PWA + Offline (Service Worker, Install Prompt, Offline Banner) |
+| **Match Rate** | 98.6% (71 PASS, 1 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `pwa-offline/pwa-offline.plan.md` |
+| Design | `pwa-offline/pwa-offline.design.md` |
+| Analysis | `pwa-offline/pwa-offline.analysis.md` |
+| Report | `pwa-offline/pwa-offline.report.md` |
+
+### Summary
+
+5 scope items completed (PWA-1 ~ PWA-5): PWA-1 Web App Manifest + SVG 아이콘 (192/512/512-maskable + favicon 폴백) + index.html apple meta 태그, PWA-2 vite-plugin-pwa 설정 (GenerateSW + registerType: prompt + runtimeCaching 4규칙: API NetworkFirst/Supabase NetworkFirst/CDN StaleWhileRevalidate/이미지 CacheFirst), PWA-3 useOnlineStatus 훅 (navigator.onLine + online/offline 이벤트) + OfflineBanner 컴포넌트 (AppShell 통합), PWA-4 useInstallPrompt 훅 (beforeinstallprompt + display-mode 감지) + Sidebar 설치 버튼 + UpdatePrompt 컴포넌트 (useRegisterSW 기반), PWA-5 i18n 6 키 (ko/en). 14개 파일 변경 (7 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: globPatterns에서 png/woff2 제외 (실질적 영향 없음). 0 iteration.

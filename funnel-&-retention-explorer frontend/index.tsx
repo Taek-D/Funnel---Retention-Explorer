@@ -15,6 +15,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { router } from './router';
+import { UpdatePrompt } from './components/UpdatePrompt';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -30,6 +31,7 @@ root.render(
           <ToastProvider>
             <NotificationProvider>
               <RouterProvider router={router} />
+              <UpdatePrompt />
               <Analytics />
               <SpeedInsights />
             </NotificationProvider>

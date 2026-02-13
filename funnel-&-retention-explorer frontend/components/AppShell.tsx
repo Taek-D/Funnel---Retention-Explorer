@@ -10,6 +10,7 @@ import { SearchModal } from './SearchModal';
 import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
 import { PastDueBanner } from './PastDueBanner';
+import { OfflineBanner } from './OfflineBanner';
 import { trackPageView } from '../lib/analytics';
 import { useToast } from './Toast';
 import { useNotifications } from '../context/NotificationContext';
@@ -126,6 +127,9 @@ export const AppShell: React.FC = () => {
             <UserMenu />
           </div>
         </header>
+
+        {/* Offline Banner */}
+        <OfflineBanner />
 
         {/* Past Due Banner */}
         <PastDueBanner />
