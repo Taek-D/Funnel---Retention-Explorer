@@ -1023,3 +1023,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 tasks completed (ST-1 ~ ST-5): ST-1 stickinessEngine.ts (calculateStickiness sliding window DAU/MAU, StickinessDay/StickinessSummary/StickinessResult 타입, Sentry tracing), ST-2 StickinessPage (KPI 카드 3개 avg/peak/low + AreaChart 일별 추이 + 50행 테이블 color-coded ratio + ChartDownloadButton + 빈 상태), ST-3 /app/stickiness lazy route + Sidebar Activity 아이콘 메뉴, ST-4 Dashboard 위젯 (stickiness-chart WidgetId + DASHBOARD_WIDGETS + DEFAULT_LAYOUT visible:false order:7 + PRESET_TEMPLATES saas visible:true + mini AreaChart), ST-5 i18n 12키 stickiness.* + nav.stickiness + dashboard.widgets.stickinessChart ko/en. 10개 파일 변경 (2 신규, 8 수정) + 1 테스트 수정 (Dashboard.test.tsx visible 필터). 테스트 310/310 통과. 빌드 정상 (5.19s). 0 iteration.
+
+---
+
+## monetization-conversion
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Monetization Conversion Optimization (Trial System + Usage Widget + Upgrade Banner) |
+| **Match Rate** | 100% (28/28) |
+| **Iterations** | 1 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `monetization-conversion/monetization-conversion.plan.md` |
+| Design | `monetization-conversion/monetization-conversion.design.md` |
+| Analysis | `monetization-conversion/monetization-conversion.analysis.md` |
+| Report | `monetization-conversion/monetization-conversion.report.md` |
+
+### Summary
+
+5 scope items completed (MC-1 ~ MC-5): MC-1 Trial System (UserProfile trial_end 필드, isTrialing/getTrialDaysRemaining/startTrial/hasUsedTrial planManager.ts 함수, start-trial Edge Function, fre_user_profiles trial_end 컬럼 migration), MC-2 UsageIndicator 컴포넌트 (AI 호출 progress bar, 80% 넛지, Pro 숨김, Sidebar 배치), MC-3 UpgradeBanner 컴포넌트 (4개 분석 페이지 배치: Dashboard/FunnelAnalysis/RetentionAnalysis/Insights, trackEvent analytics, 페이지별 컨텍스트 메시지), MC-4 Trial UI (PricingPage 14일 무료 체험 CTA, UpgradeModal Trial 섹션, PlanBadge Trial D-N 배지, AppShell Trial 만료 3일전 알림), MC-5 i18n 20+ 키 ko/en (trial/usage/upgradeBanner). 12개 파일 변경 (3 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 1 iteration (Trial 만료 알림 + i18n 누락 키 보완).

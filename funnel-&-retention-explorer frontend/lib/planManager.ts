@@ -22,6 +22,7 @@ export interface UserProfile {
   retry_count: number;
   grace_period_end: string | null;
   cancelled_at: string | null;
+  trial_end: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -125,6 +126,52 @@ export function isPro(profile: UserProfile): boolean {
 
 export function isAdmin(profile: UserProfile): boolean {
   return profile.role === 'admin';
+}
+
+export function isTrialing(profile: UserProfile): boolean {
+  if (profile.plan !== 'pro' || !profile.trial_end) return false;
+  return new Date(profile.trial_end) > new Date();
+}
+
+export function getTrialDaysRemaining(profile: UserProfile): number {
+  if (!profile.trial_end) return 0;
+  const diff = new Date(profile.trial_end).getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+export function hasUsedTrial(profile: UserProfile): boolean {
+  return profile.trial_end != null;
+}
+
+export function getAIUsagePercent(profile: UserProfile): number {
+  const today = new Date().toISOString().slice(0, 10);
+  const resetDate = profile.ai_calls_reset_at?.slice(0, 10);
+  const limit = PLAN_LIMITS[profile.plan].aiCallsPerDay;
+  if (resetDate !== today) return 0;
+  return Math.min(100, Math.round((profile.ai_calls_today / limit) * 100));
+}
+
+export async function startTrial(accessToken: string): Promise<{
+  success: boolean;
+  message: string;
+  trial_end?: string;
+}> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return { success: false, message: '서비스가 설정되지 않았습니다.' };
+  }
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/start-trial`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return await res.json();
+  } catch {
+    return { success: false, message: '네트워크 오류가 발생했습니다.' };
+  }
 }
 
 // ===== Subscription Management =====

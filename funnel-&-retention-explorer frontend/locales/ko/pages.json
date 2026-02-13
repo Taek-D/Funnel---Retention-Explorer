@@ -410,6 +410,8 @@
     "annualBilling": "연간 결제",
     "annualSaving": "연 ₩{{amount}} 절약",
     "startPro": "Pro 시작하기",
+    "startTrial": "14일 무료 체험 시작",
+    "trialHint": "14일 무료 체험 포함",
     "detailComparison": "상세 비교",
     "feature": "기능",
     "faq": "자주 묻는 질문",
@@ -445,6 +447,14 @@
     "faq4A": "무료 플랜은 CSV {{csvRows}}행, AI 일 {{aiCalls}}회, 프로젝트 {{projects}}개로 제한됩니다.",
     "faq5Q": "기존 데이터는 어떻게 되나요?",
     "faq5A": "플랜을 변경해도 기존 데이터는 유지됩니다. 다운그레이드 시 제한을 초과하는 신규 업로드만 제한됩니다."
+  },
+  "upgradeBanner": {
+    "dashboard": "대시보드 위젯을 커스터마이즈하고 PDF 리포트를 내보내세요. Pro로 업그레이드하면 더 많은 기능을 이용할 수 있습니다.",
+    "funnel": "퍼널 분석 결과를 PDF로 내보내고 팀과 공유하세요. Pro 플랜으로 더 깊은 분석을 시작하세요.",
+    "retention": "리텐션 코호트를 Excel로 내보내고 더 많은 데이터를 분석하세요. Pro에서 50만 행까지 지원합니다.",
+    "insights": "AI 인사이트를 일 50회까지 이용하고 더 깊은 분석을 받아보세요. Pro로 업그레이드하세요.",
+    "cta": "업그레이드",
+    "ctaTrial": "무료 체험"
   },
   "billingSuccess": {
     "processing": "결제 처리 중...",

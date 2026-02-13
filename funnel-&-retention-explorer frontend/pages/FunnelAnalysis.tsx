@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical, Save, AlertTriangle } from '../components/Icons';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useFunnelAnalysis } from '../hooks/useFunnelAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -17,6 +19,7 @@ import type { CustomEventDefinition, SavedFunnel } from '../types';
 
 export const FunnelAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
+  const navigate = useNavigate();
   const {
     funnelSteps, funnelResults, uniqueEvents, detectedType, hasData,
     setFunnelSteps, applyTemplate, runFunnelAnalysis
@@ -605,6 +608,13 @@ export const FunnelAnalysis: React.FC = () => {
               })()}
             </div>
           </div>
+          {/* Upgrade Banner */}
+          <UpgradeBanner
+            messageKey="upgradeBanner.funnel"
+            page="funnel"
+            onUpgrade={() => navigate('/app/subscription')}
+          />
+
           {/* Drop-off Chart Toggle + Chart */}
           {dropoffData.length > 0 && (
             <>

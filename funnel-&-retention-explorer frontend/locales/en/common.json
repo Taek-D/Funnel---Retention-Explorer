@@ -305,6 +305,26 @@
     "next": "Next",
     "page": "Page {{page}}"
   },
+  "trial": {
+    "badge": "Trial D-{{days}}",
+    "modalTitle": "14-Day Free Trial",
+    "modalDesc": "Try Pro features free for 14 days — no credit card required. Automatically switches to Free plan after trial ends.",
+    "starting": "Starting...",
+    "startCta": "Start 14-Day Free Trial",
+    "orSubscribe": "Or subscribe now",
+    "expired": "Trial expired",
+    "alreadyUsed": "Trial already used",
+    "expiresIn": "Trial expires in {{days}} days",
+    "expiredMessage": "Trial expired. Upgrade to Pro",
+    "tryFree": "Try 14 days free first",
+    "loginRequired": "Login to start trial"
+  },
+  "usage": {
+    "aiCalls": "AI Calls",
+    "csvLimit": "CSV Limit",
+    "rows": "{{count}} rows",
+    "upgradeNudge": "Upgrade"
+  },
   "unknown": "Unknown error",
   "dataExport": {
     "export": "Export",

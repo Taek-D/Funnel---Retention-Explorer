@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LandingHeader } from '../components/LandingHeader';
-import { CheckCircle, X, ArrowRight, ChevronDown } from '../components/Icons';
-import { PLAN_LIMITS, BILLING_PRICES } from '../lib/planManager';
+import { CheckCircle, X, ArrowRight, ChevronDown, Zap } from '../components/Icons';
+import { PLAN_LIMITS, BILLING_PRICES, hasUsedTrial } from '../lib/planManager';
 import { useAuth } from '../context/AuthContext';
 import type { BillingCycle } from '../types';
 
@@ -16,7 +16,8 @@ const teamAnnualSavings = teamMonthlyPerMonth * 12 - BILLING_PRICES.teamAnnual;
 
 export const PricingPage: React.FC = () => {
   const { t } = useTranslation('pages');
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
+  const trialEligible = !user || (userProfile != null && userProfile.plan === 'free' && !hasUsedTrial(userProfile));
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
 
@@ -115,6 +116,12 @@ export const PricingPage: React.FC = () => {
                 {t('pricing.annualSaving', { amount: annualSavings.toLocaleString() })}
               </div>
             )}
+            {trialEligible && (
+              <div className="mb-4 px-3 py-1.5 bg-accent/5 border border-accent/10 rounded-md text-xs text-accent font-medium text-center flex items-center justify-center gap-1.5">
+                <Zap size={12} />
+                {t('pricing.trialHint')}
+              </div>
+            )}
             <ul className="space-y-3 mb-8 flex-1">
               {comparisonFeatures.map((f, i) => (
                 <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
@@ -128,10 +135,10 @@ export const PricingPage: React.FC = () => {
               ))}
             </ul>
             <Link
-              to={user ? `/app/dashboard?billingCycle=${billingCycle}` : '/signup'}
+              to={user ? '/app/subscription' : '/signup'}
               className="w-full py-3 text-sm font-semibold text-center bg-accent text-background hover:bg-accent/90 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              {t('pricing.startPro')}
+              {trialEligible ? t('pricing.startTrial') : t('pricing.startPro')}
               <ArrowRight size={16} />
             </Link>
           </div>

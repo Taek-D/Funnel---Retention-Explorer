@@ -4,6 +4,72 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-13] — Monetization Conversion Optimization (Trial System & Upgrade CTAs)
+
+### Summary
+Completed Free → Pro conversion optimization with 14-day trial system, real-time usage tracking, inline upgrade banners, and comprehensive trial UI. Achieved 100% design match with 1 iteration, enabling users to experience Pro features risk-free and see usage limits proactively.
+
+### Added
+- **MC-1 Trial System**: 14-day Pro trial with automatic downgrade and one-time usage enforcement
+  - `planManager.ts`: isTrialing(), getTrialDaysRemaining(), startTrial(), hasUsedTrial()
+  - Supabase migration: trial_end column on fre_user_profiles
+  - Edge Function integration: start-trial (POST /functions/v1/start-trial)
+- **MC-2 Usage Widget**: Real-time AI call/CSV row limit tracking in Sidebar
+  - `UsageIndicator.tsx`: Progress bar with 80% threshold nudge, color-coded warnings (yellow 80%, red 100%)
+  - Sidebar placement: Below PlanBadge with 76 lines of implementation
+- **MC-3 Inline Upgrade Banner**: Context-aware upgrade CTAs on 4 analysis pages
+  - `UpgradeBanner.tsx`: Page-specific messaging (62 lines) with analytics tracking
+  - Placement: Dashboard, FunnelAnalysis, RetentionAnalysis (enhancement), Insights
+- **MC-4 Trial UI**: Multi-touchpoint trial promotion
+  - PricingPage: "14일 무료 체험 시작" CTA with eligibility badge
+  - UpgradeModal: In-modal trial prompt (conditional on eligibility)
+  - PlanBadge: "Trial D-N" state display with remaining days
+  - AppShell: Trial expiration notifications (3-day warning + expiration alert)
+- **MC-5 i18n**: 44 translation keys (ko/en) for trial/usage/upgrade features
+  - trial.* 12 keys (badge, start, expired, expiresIn, expiredMessage, alreadyUsed, tryFree, loginRequired, etc.)
+  - usage.* 4 keys (aiCalls, upgradeNudge, csvLimit, rows)
+  - upgradeBanner.* 6 keys (dashboard, funnel, retention, insights, cta, ctaTrial)
+
+### Changed
+- `planManager.ts`: isPro() returns true for trial users (plan === 'pro' regardless of trial_end)
+- `Sidebar.tsx`: Replaced standalone PlanBadge with UsageIndicator
+- `PricingPage.tsx`: Pro card now shows trial eligibility badge and dual CTAs
+- `UpgradeModal.tsx`: Added trial section below reason message
+- `AppShell.tsx`: Added trial expiration useEffect for notifications
+
+### Fixed (Iteration 1)
+- Trial expiration notification (item 23): Added AppShell useEffect for 3-day/expiration alerts
+- i18n key completeness (items 25-27): Added 9 missing keys (trial.expired, trial.alreadyUsed, usage.csvLimit, upgradeBanner.ctaTrial, etc.)
+
+### Infrastructure
+- **New Files**: 2 (UsageIndicator.tsx, UpgradeBanner.tsx)
+- **Modified Files**: 11 (planManager, PlanBadge, Sidebar, 4 pages, UpgradeModal, AppShell, 4 locale files)
+- **Lines Added**: ~423 implementation + 44 i18n keys
+
+### Metrics
+- **Design Match Rate**: 100% (28/28 items PASS)
+- **Verification Checklist Items**: 28 (all passed)
+- **PDCA Iterations**: 1 (notification + i18n gaps fixed)
+- **Initial Match**: 89.3% (25/28) → Iteration 1: 100%
+- **Build**: Success (5.50s)
+- **Tests**: 310/310 passing (no regressions)
+- **Bundle Impact**: +5KB (UsageIndicator + UpgradeBanner)
+
+### Key Design Decisions
+1. **One-Time Trial**: hasUsedTrial() checks past trial_end to prevent re-activation
+2. **Color-Coded Usage Bar**: <80% accent, >=80% yellow, 100% red for immediate visual feedback
+3. **Context-Aware Messaging**: 4 unique upgrade messages tailored to page context (dashboard/funnel/retention/insights)
+4. **Session-Scoped Notifications**: sessionStorage prevents trial expiration alert spam
+5. **Conditional Trial CTA**: Trial UI components render conditionally based on eligibility (cleaner than disabled states)
+
+### Related Documents
+- Plan: [docs/01-plan/features/monetization-conversion.plan.md](../01-plan/features/monetization-conversion.plan.md)
+- Design: [docs/02-design/features/monetization-conversion.design.md](../02-design/features/monetization-conversion.design.md)
+- Analysis: [docs/03-analysis/monetization-conversion.analysis.md](../03-analysis/monetization-conversion.analysis.md)
+- Report: [docs/04-report/features/monetization-conversion.report.md](features/monetization-conversion.report.md)
+
+---
+
 ## [2026-02-13] — Cohort Grouping (Weekly/Monthly Retention Analysis)
 
 ### Summary

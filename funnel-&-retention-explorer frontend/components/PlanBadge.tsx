@@ -2,13 +2,25 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Zap } from './Icons';
+import { isTrialing, getTrialDaysRemaining } from '../lib/planManager';
 
 export const PlanBadge: React.FC = React.memo(() => {
   const { t } = useTranslation();
   const { userProfile } = useAuth();
   const plan = userProfile?.plan ?? 'free';
+  const trialing = userProfile ? isTrialing(userProfile) : false;
 
-  if (plan === 'pro') {
+  if (trialing && userProfile) {
+    const days = getTrialDaysRemaining(userProfile);
+    return (
+      <div className="flex items-center gap-1 px-2 py-1 bg-accent/10 border border-accent/20 rounded-md" title={t('trial.badge', { days })}>
+        <Zap size={12} className="text-accent" />
+        <span className="text-[10px] font-mono font-semibold text-accent">{t('trial.badge', { days })}</span>
+      </div>
+    );
+  }
+
+  if (plan === 'pro' || plan === 'team') {
     return (
       <div className="flex items-center gap-1 px-2 py-1 bg-accent/10 border border-accent/20 rounded-md" title={t('plan.proPlan')}>
         <Zap size={12} className="text-accent" />

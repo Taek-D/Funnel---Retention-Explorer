@@ -14,6 +14,7 @@ import { ShareButton } from '../components/ShareButton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { DashboardWidget } from '../components/DashboardWidget';
 import { ChartDownloadButton } from '../components/ChartDownloadButton';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 import { CHART_COLORS, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
 import { calculateStickiness } from '../lib/stickinessEngine';
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -664,6 +665,13 @@ export const Dashboard: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Upgrade Banner */}
+      <UpgradeBanner
+        messageKey="upgradeBanner.dashboard"
+        page="dashboard"
+        onUpgrade={() => navigate('/app/subscription')}
+      />
 
       {/* Screen reader announcement */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">

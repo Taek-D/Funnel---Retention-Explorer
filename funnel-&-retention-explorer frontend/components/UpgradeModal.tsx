@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, CheckCircle, Zap } from './Icons';
 import { trackEvent } from '../lib/analytics';
 import { useAuth } from '../context/AuthContext';
-import { PLAN_LIMITS, BILLING_PRICES } from '../lib/planManager';
+import { PLAN_LIMITS, BILLING_PRICES, hasUsedTrial, startTrial } from '../lib/planManager';
 import type { BillingCycle } from '../types';
 
 declare const TossPayments: (clientKey: string) => {
@@ -26,9 +26,12 @@ const annualPerMonth = Math.round(BILLING_PRICES.annual / 12);
 
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, reason }) => {
   const { t } = useTranslation();
-  const { user, userProfile } = useAuth();
+  const { user, session, userProfile, refreshProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [trialLoading, setTrialLoading] = useState(false);
+  const [trialError, setTrialError] = useState('');
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+  const canTrial = userProfile != null && !hasUsedTrial(userProfile) && userProfile.plan === 'free';
 
   const REASON_MESSAGES: Record<string, string> = {
     csv_limit: t('plan.csvLimitReason', { limit: PLAN_LIMITS.free.csvRows.toLocaleString() }),
@@ -134,6 +137,45 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
               </ul>
             </div>
           </div>
+
+          {/* Trial CTA */}
+          {canTrial && (
+            <div className="mb-4 p-4 bg-accent/5 border border-accent/20 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap size={16} className="text-accent" />
+                <span className="text-sm font-semibold text-white">{t('trial.modalTitle')}</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-3">{t('trial.modalDesc')}</p>
+              {trialError && (
+                <p className="text-xs text-coral mb-2">{trialError}</p>
+              )}
+              <button
+                onClick={async () => {
+                  if (!session?.access_token) return;
+                  setTrialLoading(true);
+                  setTrialError('');
+                  const result = await startTrial(session.access_token);
+                  setTrialLoading(false);
+                  if (result.success) {
+                    trackEvent('trial_started');
+                    await refreshProfile();
+                    onClose();
+                  } else {
+                    setTrialError(result.message);
+                  }
+                }}
+                disabled={trialLoading}
+                className="w-full py-2.5 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {trialLoading ? t('trial.starting') : t('trial.startCta')}
+              </button>
+              <div className="flex items-center gap-2 mt-3">
+                <div className="flex-1 h-px bg-white/[0.06]" />
+                <span className="text-[10px] text-slate-500 uppercase">{t('trial.orSubscribe')}</span>
+                <div className="flex-1 h-px bg-white/[0.06]" />
+              </div>
+            </div>
+          )}
 
           {/* Billing Cycle Selection */}
           <div className="mb-4 space-y-2">

@@ -17,6 +17,8 @@ import { useNotifications } from '../context/NotificationContext';
 import { useEmailSettings } from '../hooks/useEmailSettings';
 import { useOnboardingTour } from '../hooks/useOnboardingTour';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
+import { isTrialing, getTrialDaysRemaining } from '../lib/planManager';
 
 export const AppShell: React.FC = () => {
   const { t } = useTranslation();
@@ -31,11 +33,29 @@ export const AppShell: React.FC = () => {
   const { unreadCount } = useNotifications();
   const { settings, updateSettings, saveSettings, testConnection, testing } = useEmailSettings();
   const { state } = useAppContext();
+  const { userProfile } = useAuth();
   const hasData = state.processedData.length > 0;
   const tour = useOnboardingTour(hasData);
 
   const currentSegment = location.pathname.split('/').pop() || 'dashboard';
   const pageTitle = currentSegment.replace(/-/g, ' ');
+
+  // Trial expiration alert
+  useEffect(() => {
+    if (!userProfile) return;
+    const trialing = isTrialing(userProfile);
+    const days = getTrialDaysRemaining(userProfile);
+    const key = `fre_trial_alert_${userProfile.id}`;
+    const shown = sessionStorage.getItem(key);
+
+    if (trialing && days <= 3 && days > 0 && shown !== 'expiring') {
+      toast('warning', t('trial.expiresIn', { days }));
+      sessionStorage.setItem(key, 'expiring');
+    } else if (!trialing && userProfile.trial_end && new Date(userProfile.trial_end) < new Date() && shown !== 'expired') {
+      toast('info', t('trial.expiredMessage'));
+      sessionStorage.setItem(key, 'expired');
+    }
+  }, [userProfile, toast, t]);
 
   // GA4 page tracking
   useEffect(() => {

@@ -305,6 +305,26 @@
     "next": "다음",
     "page": "{{page}} 페이지"
   },
+  "trial": {
+    "badge": "Trial D-{{days}}",
+    "modalTitle": "14일 무료 체험",
+    "modalDesc": "카드 등록 없이 Pro 기능을 14일간 무료로 이용하세요. 체험 종료 후 자동으로 Free 플랜으로 전환됩니다.",
+    "starting": "시작 중...",
+    "startCta": "14일 무료 체험 시작",
+    "orSubscribe": "또는 바로 구독",
+    "expired": "체험 만료",
+    "alreadyUsed": "이미 체험을 사용했습니다",
+    "expiresIn": "체험이 {{days}}일 후 만료됩니다",
+    "expiredMessage": "체험이 만료되었습니다. Pro로 업그레이드하세요",
+    "tryFree": "먼저 14일 무료로 체험해 보세요",
+    "loginRequired": "체험하려면 로그인하세요"
+  },
+  "usage": {
+    "aiCalls": "AI 호출",
+    "csvLimit": "CSV 한도",
+    "rows": "{{count}}행",
+    "upgradeNudge": "업그레이드"
+  },
   "unknown": "알 수 없는 오류",
   "dataExport": {
     "export": "내보내기",

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download, Clock, Bell, Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
+import { UsageIndicator } from './UsageIndicator';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
@@ -135,6 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
           </button>
         )}
         <PlanBadge />
+        <UsageIndicator />
         <LanguageSwitcher />
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"

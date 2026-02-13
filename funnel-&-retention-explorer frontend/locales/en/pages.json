@@ -410,6 +410,8 @@
     "annualBilling": "Annual billing",
     "annualSaving": "Save ₩{{amount}}/year",
     "startPro": "Start Pro",
+    "startTrial": "Start 14-Day Free Trial",
+    "trialHint": "Includes 14-day free trial",
     "detailComparison": "Detailed Comparison",
     "feature": "Feature",
     "faq": "FAQ",
@@ -445,6 +447,14 @@
     "faq4A": "Free plan is limited to CSV {{csvRows}} rows, AI {{aiCalls}} calls/day, and {{projects}} projects.",
     "faq5Q": "What happens to my existing data?",
     "faq5A": "Existing data is preserved when changing plans. Only new uploads exceeding limits are restricted on downgrade."
+  },
+  "upgradeBanner": {
+    "dashboard": "Customize dashboard widgets and export PDF reports. Upgrade to Pro for more features.",
+    "funnel": "Export funnel analysis as PDF and share with your team. Start deeper analysis with Pro.",
+    "retention": "Export retention cohorts to Excel and analyze more data. Pro supports up to 500K rows.",
+    "insights": "Get up to 50 AI insights per day with deeper analysis. Upgrade to Pro.",
+    "cta": "Upgrade",
+    "ctaTrial": "Free Trial"
   },
   "billingSuccess": {
     "processing": "Processing Payment...",

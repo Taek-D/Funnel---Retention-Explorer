@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -16,6 +18,7 @@ import type { CustomEventDefinition } from '../types';
 
 export const RetentionAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
+  const navigate = useNavigate();
   const {
     retentionResults, retentionType, uniqueEvents, detectedType, hasData,
     cohortGrouping, setRetentionType, setCohortGrouping, runRetentionAnalysis
@@ -359,6 +362,14 @@ export const RetentionAnalysis: React.FC = () => {
           </div>
         </>
       )}
+
+      {/* Upgrade Banner */}
+      <UpgradeBanner
+        messageKey="upgradeBanner.retention"
+        page="retention"
+        onUpgrade={() => navigate('/app/subscription')}
+      />
     </div>
   );
 };
+

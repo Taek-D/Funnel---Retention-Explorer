@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
+import { UpgradeBanner } from '../components/UpgradeBanner';
 import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
 import { AskAIPanel } from '../components/AskAIPanel';
@@ -17,6 +19,7 @@ const TYPE_STYLES: Record<string, { border: string; iconBg: string; iconColor: s
 
 export const Insights: React.FC = () => {
   const { t } = useTranslation('pages');
+  const navigate = useNavigate();
   const { state } = useAppContext();
   const { insights, subscriptionKPIs, trialAnalysis, churnAnalysis, detectedType, processedData } = state;
   const hasData = processedData.length > 0;
@@ -270,6 +273,13 @@ export const Insights: React.FC = () => {
           );
         })
       )}
+
+      {/* Upgrade Banner */}
+      <UpgradeBanner
+        messageKey="upgradeBanner.insights"
+        page="insights"
+        onUpgrade={() => navigate('/app/subscription')}
+      />
 
       {/* Ask AI Panel */}
       <AskAIPanel isOpen={askAIOpen} onClose={() => setAskAIOpen(false)} />

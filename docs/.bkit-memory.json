@@ -1,16 +1,18 @@
 {
-  "sessionCount": 104,
+  "sessionCount": 112,
   "lastSession": {
-    "startedAt": "2026-02-13T07:06:37.139Z",
+    "startedAt": "2026-02-13T13:35:26.491Z",
     "platform": "claude",
     "level": "Starter"
   },
   "currentFeature": null,
   "pdca": {
-    "feature": "stickiness",
-    "phase": "completed",
-    "startedAt": "2026-02-13T07:06:37.139Z",
+    "feature": "monetization-conversion",
+    "phase": "archived",
+    "startedAt": "2026-02-13T09:42:12.986Z",
     "matchRate": 100,
-    "iterationCount": 0
+    "iterationCount": 1,
+    "archivedAt": "2026-02-13T14:00:00.000Z",
+    "archivedTo": "docs/archive/2026-02/monetization-conversion/"
   }
 }
