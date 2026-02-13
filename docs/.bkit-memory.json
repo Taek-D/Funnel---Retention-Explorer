@@ -5,12 +5,14 @@
     "platform": "claude",
     "level": "Starter"
   },
-  "currentFeature": "data-connector-pro",
+  "currentFeature": null,
   "pdca": {
     "feature": "data-connector-pro",
-    "phase": "completed",
+    "phase": "archived",
     "startedAt": "2026-02-14T00:00:00.000Z",
     "matchRate": 96.2,
-    "iterationCount": 1
+    "iterationCount": 1,
+    "archivedAt": "2026-02-14T00:00:00.000Z",
+    "archivedTo": "docs/archive/2026-02/data-connector-pro/"
   }
 }

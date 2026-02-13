@@ -1047,3 +1047,49 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (MC-1 ~ MC-5): MC-1 Trial System (UserProfile trial_end 필드, isTrialing/getTrialDaysRemaining/startTrial/hasUsedTrial planManager.ts 함수, start-trial Edge Function, fre_user_profiles trial_end 컬럼 migration), MC-2 UsageIndicator 컴포넌트 (AI 호출 progress bar, 80% 넛지, Pro 숨김, Sidebar 배치), MC-3 UpgradeBanner 컴포넌트 (4개 분석 페이지 배치: Dashboard/FunnelAnalysis/RetentionAnalysis/Insights, trackEvent analytics, 페이지별 컨텍스트 메시지), MC-4 Trial UI (PricingPage 14일 무료 체험 CTA, UpgradeModal Trial 섹션, PlanBadge Trial D-N 배지, AppShell Trial 만료 3일전 알림), MC-5 i18n 20+ 키 ko/en (trial/usage/upgradeBanner). 12개 파일 변경 (3 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 1 iteration (Trial 만료 알림 + i18n 누락 키 보완).
+
+---
+
+## typescript-strict-mode
+
+| Item | Detail |
+|------|--------|
+| **Feature** | TypeScript Strict Mode Migration |
+| **Match Rate** | 100% |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-14 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | (inline plan — no separate document) |
+
+### Summary
+
+TypeScript strict mode 활성화: `@types/react` `@types/react-dom` 설치 (4,461 에러 해소), tsconfig.json `strict: true` + `vite/client` + `vitest/globals` types + `supabase/functions` exclude, vite-env.d.ts 생성, ~65개 소스 파일 implicit any 타입 어노테이션 추가, ~10개 테스트 파일 mock 데이터 수정. 최종 tsc --noEmit 0 errors, 310/310 테스트 통과, 빌드 정상.
+
+---
+
+## data-connector-pro
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Data Connector Pro (OAuth API, DB Connectors, Auto-Sync, Plan Gating) |
+| **Match Rate** | 96.2% (25/26) |
+| **Iterations** | 1 |
+| **Completed** | 2026-02-14 |
+| **Commit** | `a88d337 feat: Add data connector pro (OAuth API, DB connectors, auto-sync, plan gating)` |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `data-connector-pro/data-connector-pro.plan.md` |
+| Design | `data-connector-pro/data-connector-pro.design.md` |
+| Analysis | `data-connector-pro/data-connector-pro.analysis.md` |
+| Report | `data-connector-pro/data-connector-pro.report.md` |
+
+### Summary
+
+6 scope items completed (DCP-1 ~ DCP-6): DCP-1 OAuth API 커넥터 (GA4 Data API OAuth 2.0 + Mixpanel Export API, connector-proxy/connector-oauth Edge Functions), DCP-2 DB 커넥터 (PostgreSQL + MySQL, 자격증명 서버사이드 암호화), DCP-3 커넥터 설정 저장 (fre_connectors + fre_sync_logs 테이블, 7개 CRUD 함수, RLS), DCP-4 자동 동기화 (connector-sync Edge Function, hourly/daily/weekly 스케줄), DCP-5 커넥터 관리 UI (ConnectorsPage + ConnectorCard/Modal/Forms + SyncStatusBadge + Dashboard widget + Sidebar 메뉴, /app/connectors 라우트), DCP-6 i18n + 테스트 (64 keys/lang ko/en, 41개 신규 테스트). Plan gating: Free(0) → Pro(3/daily) → Team(unlimited/hourly). 17개 신규 파일 + 14개 수정 파일. 테스트 351/351 통과. 빌드 정상. 1 iteration (Dashboard 위젯 + useConnectors 테스트 추가).
