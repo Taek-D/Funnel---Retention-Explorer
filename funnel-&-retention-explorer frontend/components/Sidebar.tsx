@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download, Clock, Bell, Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download, Clock, Bell, Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff, Plug } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import { PlanBadge } from './PlanBadge';
 import { UsageIndicator } from './UsageIndicator';
@@ -31,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
   const menuItems: MenuItem[] = [
     { path: '/app/dashboard', icon: LayoutDashboard, labelKey: 'nav.dashboard', dataTour: 'dashboard' },
     { path: '/app/upload', icon: UploadCloud, labelKey: 'nav.dataImport' },
+    { path: '/app/connectors', icon: Plug, labelKey: 'nav.connectors' },
     { path: '/app/funnels', icon: Filter, labelKey: 'nav.funnel', dataTour: 'analysis' },
     { path: '/app/retention', icon: Users, labelKey: 'nav.retention', dataTour: 'retention' },
     { path: '/app/segments', icon: PieChart, labelKey: 'nav.segments' },

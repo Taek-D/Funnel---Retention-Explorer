@@ -1,16 +1,91 @@
 // ===== Data Connectors =====
 
-export type ConnectorType = 'csv' | 'json' | 'google-sheets' | 'ga4-export' | 'mixpanel-export' | 'amplitude-export';
+export type ConnectorType =
+  | 'csv' | 'json' | 'google-sheets'
+  | 'ga4-export' | 'mixpanel-export' | 'amplitude-export'
+  | 'ga4-api' | 'mixpanel-api' | 'postgresql' | 'mysql';
+
+export type ProConnectorType = 'ga4-api' | 'mixpanel-api';
+export type EnterpriseConnectorType = 'postgresql' | 'mysql';
 
 export type ExportFormat = 'ga4' | 'mixpanel' | 'amplitude' | 'unknown';
+
+export type SyncSchedule = 'hourly' | 'daily' | 'weekly' | null;
+export type SyncStatus = 'idle' | 'running' | 'success' | 'error';
 
 export interface ConnectorConfig {
   type: ConnectorType;
   labelKey: string;
   descKey: string;
   iconName: string;
-  inputType: 'file' | 'url';
+  inputType: 'file' | 'url' | 'oauth' | 'credentials';
   acceptedFormats?: string;
+  planGate?: 'pro' | 'enterprise';
+}
+
+// Connector Instance (stored in Supabase)
+export interface ConnectorInstance {
+  id: string;
+  user_id: string;
+  project_id: string | null;
+  type: ConnectorType;
+  name: string;
+  config: ConnectorConfigData;
+  sync_schedule: SyncSchedule;
+  last_synced_at: string | null;
+  sync_status: SyncStatus;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ConnectorConfigData =
+  | GA4ApiConfig
+  | MixpanelApiConfig
+  | PostgreSQLConfig
+  | MySQLConfig;
+
+export interface GA4ApiConfig {
+  type: 'ga4-api';
+  propertyId: string;
+  isConnected: boolean;
+}
+
+export interface MixpanelApiConfig {
+  type: 'mixpanel-api';
+  projectId: string;
+  apiSecret: string;
+}
+
+export interface PostgreSQLConfig {
+  type: 'postgresql';
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+  ssl: boolean;
+  query: string;
+}
+
+export interface MySQLConfig {
+  type: 'mysql';
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+  query: string;
+}
+
+export interface SyncLog {
+  id: string;
+  connector_id: string;
+  status: 'success' | 'error' | 'timeout';
+  rows_fetched: number;
+  duration_ms: number;
+  error_message: string | null;
+  created_at: string;
 }
 
 // ===== Webhooks =====
@@ -108,7 +183,8 @@ export type WidgetId =
   | 'quick-actions'
   | 'recent-insights'
   | 'saved-analyses'
-  | 'stickiness-chart';
+  | 'stickiness-chart'
+  | 'connectors';
 
 export type WidgetWidth = 'full' | 'half';
 

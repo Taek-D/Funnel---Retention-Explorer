@@ -185,7 +185,8 @@
       "quickActions": "빠른 분석",
       "recentInsights": "최근 인사이트",
       "savedAnalyses": "저장된 분석",
-      "stickinessChart": "스티키니스"
+      "stickinessChart": "스티키니스",
+      "connectors": "데이터 커넥터"
     },
     "presets": "템플릿",
     "presetsDesc": "미리 정의된 레이아웃 적용",
@@ -211,7 +212,12 @@
       "fullWidth": "전체 너비로 변경",
       "hideWidget": "위젯 숨기기",
       "showWidget": "위젯 표시"
-    }
+    },
+    "manage": "관리",
+    "activeConnectors": "활성 커넥터",
+    "lastSync": "마지막 동기화",
+    "noConnectors": "설정된 커넥터가 없습니다",
+    "setupConnector": "커넥터 설정하기"
   },
   "dataImport": {
     "title": "데이터 업로드",
@@ -600,7 +606,87 @@
     "fetchingSheet": "가져오는 중...",
     "detectedFormat": "{{format}} 형식이 감지되었습니다",
     "supportedFormats": "CSV 또는 JSON 파일만 지원됩니다",
-    "invalidSheetsUrl": "유효한 Google Sheets URL이 아닙니다"
+    "invalidSheetsUrl": "유효한 Google Sheets URL이 아닙니다",
+    "ga4Api": "GA4 API",
+    "ga4ApiDesc": "Google Analytics 4 API로 실시간 데이터를 연동합니다",
+    "mixpanelApi": "Mixpanel API",
+    "mixpanelApiDesc": "Mixpanel API로 이벤트 데이터를 자동 동기화합니다",
+    "postgresql": "PostgreSQL",
+    "postgresqlDesc": "PostgreSQL 데이터베이스에서 직접 데이터를 조회합니다",
+    "mysql": "MySQL",
+    "mysqlDesc": "MySQL 데이터베이스에서 직접 데이터를 조회합니다",
+    "title": "데이터 커넥터",
+    "subtitle": "외부 데이터 소스를 연결하고 자동 동기화하세요",
+    "addNew": "새 커넥터",
+    "addTitle": "커넥터 추가",
+    "editTitle": "커넥터 수정",
+    "configureTitle": "커넥터 설정",
+    "name": "커넥터 이름",
+    "syncSchedule": "동기화 주기",
+    "syncNow": "지금 동기화",
+    "edit": "편집",
+    "save": "저장",
+    "back": "뒤로",
+    "testConnection": "테스트 연결",
+    "lastSync": "마지막 동기화",
+    "neverSynced": "동기화 없음",
+    "schedule": "동기화",
+    "syncHistory": "동기화 이력",
+    "logTime": "시간",
+    "logConnector": "커넥터",
+    "logStatus": "상태",
+    "logRows": "행수",
+    "logDuration": "소요시간",
+    "empty": "등록된 커넥터가 없습니다",
+    "addFirst": "첫 커넥터를 추가해보세요",
+    "deleted": "커넥터가 삭제되었습니다",
+    "syncSuccess": "동기화 완료",
+    "syncFailed": "동기화 실패",
+    "syncRowCount": "{{count}}개 행을 가져왔습니다",
+    "fetchingData": "데이터를 가져오는 중...",
+    "connectingSource": "소스에 연결하는 중...",
+    "oauthSuccess": "Google 계정 연결 완료",
+    "oauthError": "Google 계정 연결 실패",
+    "upgradeTitle": "Pro 플랜에서 사용 가능",
+    "upgradeDesc": "GA4, Mixpanel API 실시간 연동과 자동 동기화로 데이터를 자동으로 최신 상태로 유지하세요.",
+    "upgradeCta": "Pro 업그레이드",
+    "scheduleLabel": {
+      "none": "수동 동기화",
+      "hourly": "매시간",
+      "daily": "매일",
+      "weekly": "매주"
+    },
+    "status": {
+      "idle": "대기",
+      "running": "동기화 중",
+      "success": "성공",
+      "error": "오류"
+    },
+    "ga4": {
+      "connected": "Google 계정 연결됨",
+      "connectGoogle": "Google 계정으로 연결",
+      "propertyId": "GA4 Property ID",
+      "propertyIdHint": "GA4 관리 → 속성 설정에서 확인할 수 있습니다"
+    },
+    "mixpanel": {
+      "projectId": "프로젝트 ID",
+      "apiSecret": "API Secret",
+      "secretHint": "Mixpanel 프로젝트 설정 → API Secret에서 확인하세요"
+    },
+    "db": {
+      "host": "호스트",
+      "port": "포트",
+      "database": "데이터베이스",
+      "username": "사용자명",
+      "password": "비밀번호",
+      "ssl": "SSL 사용",
+      "query": "SQL 쿼리"
+    },
+    "error": {
+      "authFailed": "인증에 실패했습니다",
+      "timeout": "연결 시간이 초과되었습니다",
+      "rateLimit": "요청이 너무 많습니다. 잠시 후 다시 시도하세요"
+    }
   },
   "webhook": {
     "title": "Webhook 설정",

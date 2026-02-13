@@ -63,6 +63,30 @@ describe('PLAN_LIMITS', () => {
     expect(PLAN_LIMITS.free.teamMembers).toBe(1);
     expect(PLAN_LIMITS.pro.teamMembers).toBe(1);
   });
+
+  it('free plan has connectors = 0', () => {
+    expect(PLAN_LIMITS.free.connectors).toBe(0);
+  });
+
+  it('pro plan has connectors = 3', () => {
+    expect(PLAN_LIMITS.pro.connectors).toBe(3);
+  });
+
+  it('team plan has connectors = -1 (unlimited)', () => {
+    expect(PLAN_LIMITS.team.connectors).toBe(-1);
+  });
+
+  it('free plan has syncSchedule = null', () => {
+    expect(PLAN_LIMITS.free.syncSchedule).toBeNull();
+  });
+
+  it('pro plan has syncSchedule = daily', () => {
+    expect(PLAN_LIMITS.pro.syncSchedule).toBe('daily');
+  });
+
+  it('team plan has syncSchedule = hourly', () => {
+    expect(PLAN_LIMITS.team.syncSchedule).toBe('hourly');
+  });
 });
 
 describe('BILLING_PRICES', () => {

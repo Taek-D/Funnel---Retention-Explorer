@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency, CustomEventDefinition, SavedFunnel } from '../types';
+import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency, CustomEventDefinition, SavedFunnel, ConnectorInstance, SyncLog, ConnectorConfigData } from '../types';
 
 function getSupabase() {
   if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
@@ -687,4 +687,136 @@ export async function updateMemberRole(
     .eq('id', memberId)
     .eq('team_id', teamId);
   if (error) throw new Error(error.message);
+}
+
+// ===== Connectors =====
+
+export async function listConnectors(): Promise<ConnectorInstance[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_connectors')
+    .select('*')
+    .order('updated_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data || []) as ConnectorInstance[];
+}
+
+export async function saveConnector(params: {
+  type: string;
+  name: string;
+  config: ConnectorConfigData;
+  projectId?: string;
+  syncSchedule?: string | null;
+}): Promise<ConnectorInstance> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_connectors')
+    .insert({
+      type: params.type,
+      name: params.name,
+      config: params.config,
+      project_id: params.projectId || null,
+      sync_schedule: params.syncSchedule || null,
+    })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as ConnectorInstance;
+}
+
+export async function updateConnector(
+  id: string,
+  params: Partial<{
+    name: string;
+    config: ConnectorConfigData;
+    syncSchedule: string | null;
+    isActive: boolean;
+  }>
+): Promise<void> {
+  const client = getSupabase();
+  const update: Record<string, unknown> = {};
+  if (params.name !== undefined) update.name = params.name;
+  if (params.config !== undefined) update.config = params.config;
+  if (params.syncSchedule !== undefined) update.sync_schedule = params.syncSchedule;
+  if (params.isActive !== undefined) update.is_active = params.isActive;
+
+  const { error } = await client
+    .from('fre_connectors')
+    .update(update)
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteConnector(id: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_connectors')
+    .delete()
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+export async function listSyncLogs(connectorId: string, limit = 20): Promise<SyncLog[]> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_sync_logs')
+    .select('*')
+    .eq('connector_id', connectorId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(error.message);
+  return (data || []) as SyncLog[];
+}
+
+export async function triggerSync(connectorId: string): Promise<{ data: Record<string, string>[]; headers: string[]; totalRows: number }> {
+  const client = getSupabase();
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/connector-proxy`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ action: 'fetch', connectorId }),
+    }
+  );
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Sync failed (${response.status})`);
+  }
+
+  return response.json();
+}
+
+export async function testConnectorConnection(
+  type: string,
+  config: ConnectorConfigData
+): Promise<{ success: boolean; message: string }> {
+  const client = getSupabase();
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/connector-proxy`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ action: 'test', type, config }),
+    }
+  );
+
+  if (!response.ok) {
+    const text = await response.text();
+    return { success: false, message: text || `Connection failed (${response.status})` };
+  }
+
+  return response.json();
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { Info, Users, Zap, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2, ChevronRight, BarChart2, Shield, AlertTriangle, Settings, Check, RotateCcw, LayoutDashboard, ShoppingBag, Activity, ChevronDown } from '../components/Icons';
+import { Info, Users, Zap, Download, UploadCloud, Sparkles, Filter, ArrowRight, Clock, Trash2, ChevronRight, BarChart2, Shield, AlertTriangle, Settings, Check, RotateCcw, LayoutDashboard, ShoppingBag, Activity, ChevronDown, Plug } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { useExportReport } from '../hooks/useExportReport';
 import { useDataExport } from '../hooks/useDataExport';
@@ -20,6 +20,7 @@ import { calculateStickiness } from '../lib/stickinessEngine';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
+import { useConnectors } from '../hooks/useConnectors';
 import type { AppState, WidgetId } from '../types';
 
 export const Dashboard: React.FC = () => {
@@ -33,6 +34,7 @@ export const Dashboard: React.FC = () => {
   const { layout, editMode, setEditMode, toggleVisibility, toggleWidth, reorder, resetToDefault, applyPreset } = useDashboardLayout();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
   const { filteredData, filterCount } = useFilteredData();
+  const { connectors, syncLogs } = useConnectors();
 
   // Chart download refs
   const dashFunnelRef = useRef<HTMLDivElement>(null);
@@ -473,6 +475,50 @@ export const Dashboard: React.FC = () => {
     </div>
   ), [snapshots, restoreSnapshot, removeSnapshot, t]);
 
+  const connectorsWidget = useMemo(() => {
+    const activeCount = connectors.filter(c => c.is_active).length;
+    const lastSync = syncLogs.length > 0 ? syncLogs[0] : null;
+    return (
+      <div className="bg-surface border border-white/[0.06] rounded-lg p-5">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <Plug size={14} className="text-accent" />
+            {t('dashboard.widgets.connectors')}
+          </h3>
+          <button onClick={() => navigate('/app/connectors')} className="text-xs text-accent hover:underline">
+            {t('dashboard.manage')}
+          </button>
+        </div>
+        {activeCount > 0 ? (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-500">{t('dashboard.activeConnectors')}</span>
+              <span className="text-lg font-bold font-mono text-white">{activeCount}</span>
+            </div>
+            {lastSync && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-500">{t('dashboard.lastSync')}</span>
+                <span className={`text-xs font-medium ${lastSync.status === 'success' ? 'text-emerald-400' : lastSync.status === 'error' ? 'text-red-400' : 'text-amber-400'}`}>
+                  {new Date(lastSync.created_at).toLocaleString()}
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-xs text-slate-500 mb-2">{t('dashboard.noConnectors')}</p>
+            <button
+              onClick={() => navigate('/app/connectors')}
+              className="text-xs text-accent hover:underline"
+            >
+              {t('dashboard.setupConnector')}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }, [connectors, syncLogs, navigate, t]);
+
   const widgetContent: Record<WidgetId, React.ReactNode> = useMemo(() => ({
     'kpi-cards': kpiWidget,
     'funnel-chart': funnelWidget,
@@ -482,7 +528,8 @@ export const Dashboard: React.FC = () => {
     'recent-insights': recentInsightsWidget,
     'saved-analyses': savedAnalysesWidget,
     'stickiness-chart': stickinessWidget,
-  }), [kpiWidget, funnelWidget, retentionWidget, dataQualityWidget, quickActionsWidget, recentInsightsWidget, savedAnalysesWidget, stickinessWidget]);
+    'connectors': connectorsWidget,
+  }), [kpiWidget, funnelWidget, retentionWidget, dataQualityWidget, quickActionsWidget, recentInsightsWidget, savedAnalysesWidget, stickinessWidget, connectorsWidget]);
 
   // Empty state — show CTA instead of empty charts
   if (!hasData) {

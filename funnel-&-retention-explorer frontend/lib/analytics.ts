@@ -11,6 +11,7 @@ type GTagEvent = {
   signup_complete: Record<string, never>;
   upgrade_banner_click: { page: string };
   trial_started: Record<string, never>;
+  api_import: { connector_id: string; row_count: number };
 };
 
 declare global {

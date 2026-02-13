@@ -63,6 +63,7 @@ export const DASHBOARD_WIDGETS: Record<WidgetId, {
   'recent-insights':  { labelKey: 'dashboard.widgets.recentInsights', icon: 'Sparkles',   defaultWidth: 'full', minWidth: 'half' },
   'saved-analyses':   { labelKey: 'dashboard.widgets.savedAnalyses',  icon: 'Download',   defaultWidth: 'full', minWidth: 'half' },
   'stickiness-chart': { labelKey: 'dashboard.widgets.stickinessChart', icon: 'Activity', defaultWidth: 'half', minWidth: 'half' },
+  'connectors':       { labelKey: 'dashboard.widgets.connectors',      icon: 'Plug',     defaultWidth: 'half', minWidth: 'half' },
 };
 
 export const DEFAULT_LAYOUT: WidgetLayout[] = [
@@ -74,6 +75,7 @@ export const DEFAULT_LAYOUT: WidgetLayout[] = [
   { widgetId: 'recent-insights', visible: true, width: 'full', order: 5 },
   { widgetId: 'saved-analyses',  visible: true, width: 'full', order: 6 },
   { widgetId: 'stickiness-chart', visible: false, width: 'half', order: 7 },
+  { widgetId: 'connectors',       visible: false, width: 'half', order: 8 },
 ];
 
 // === Dashboard Preset Templates ===
@@ -103,6 +105,7 @@ export const PRESET_TEMPLATES: Record<string, {
       { widgetId: 'recent-insights', visible: true,  width: 'full', order: 5 },
       { widgetId: 'saved-analyses',  visible: false, width: 'full', order: 6 },
       { widgetId: 'stickiness-chart', visible: false, width: 'half', order: 7 },
+      { widgetId: 'connectors',       visible: false, width: 'half', order: 8 },
     ],
   },
   saas: {
@@ -118,6 +121,7 @@ export const PRESET_TEMPLATES: Record<string, {
       { widgetId: 'quick-actions',   visible: true, width: 'half', order: 5 },
       { widgetId: 'saved-analyses',  visible: true, width: 'full', order: 6 },
       { widgetId: 'stickiness-chart', visible: true, width: 'half', order: 7 },
+      { widgetId: 'connectors',       visible: false, width: 'half', order: 8 },
     ],
   },
 };

@@ -48,4 +48,40 @@ export const CONNECTORS: Record<ConnectorType, ConnectorConfig> = {
     inputType: 'file',
     acceptedFormats: '.csv,.json',
   },
+  'ga4-api': {
+    type: 'ga4-api',
+    labelKey: 'connector.ga4Api',
+    descKey: 'connector.ga4ApiDesc',
+    iconName: 'BarChart2',
+    inputType: 'oauth',
+    planGate: 'pro',
+  },
+  'mixpanel-api': {
+    type: 'mixpanel-api',
+    labelKey: 'connector.mixpanelApi',
+    descKey: 'connector.mixpanelApiDesc',
+    iconName: 'Activity',
+    inputType: 'credentials',
+    planGate: 'pro',
+  },
+  postgresql: {
+    type: 'postgresql',
+    labelKey: 'connector.postgresql',
+    descKey: 'connector.postgresqlDesc',
+    iconName: 'Database',
+    inputType: 'credentials',
+    planGate: 'enterprise',
+  },
+  mysql: {
+    type: 'mysql',
+    labelKey: 'connector.mysql',
+    descKey: 'connector.mysqlDesc',
+    iconName: 'Database',
+    inputType: 'credentials',
+    planGate: 'enterprise',
+  },
 };
+
+/** Pro/Enterprise connector types that require plan gating */
+export const PRO_CONNECTOR_TYPES: ConnectorType[] = ['ga4-api', 'mixpanel-api'];
+export const ENTERPRISE_CONNECTOR_TYPES: ConnectorType[] = ['postgresql', 'mysql'];

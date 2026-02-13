@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { SyncSchedule } from '../types';
 
 // ===== Plan & Subscription Types =====
 
@@ -44,9 +45,9 @@ export const BILLING_INTERVALS = {
 // ===== Plan Limits =====
 
 export const PLAN_LIMITS = {
-  free: { csvRows: 10_000, aiCallsPerDay: 3, projects: 1, savedAnalyses: 5, teamMembers: 1 },
-  pro: { csvRows: 500_000, aiCallsPerDay: 50, projects: -1, savedAnalyses: -1, teamMembers: 1 },
-  team: { csvRows: 1_000_000, aiCallsPerDay: 200, projects: -1, savedAnalyses: -1, teamMembers: 10 },
+  free: { csvRows: 10_000, aiCallsPerDay: 3, projects: 1, savedAnalyses: 5, teamMembers: 1, connectors: 0, syncSchedule: null as SyncSchedule },
+  pro: { csvRows: 500_000, aiCallsPerDay: 50, projects: -1, savedAnalyses: -1, teamMembers: 1, connectors: 3, syncSchedule: 'daily' as SyncSchedule },
+  team: { csvRows: 1_000_000, aiCallsPerDay: 200, projects: -1, savedAnalyses: -1, teamMembers: 10, connectors: -1, syncSchedule: 'hourly' as SyncSchedule },
 } as const;
 
 // ===== Profile Functions =====

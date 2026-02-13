@@ -45,6 +45,7 @@ vi.mock('../../components/Icons', () => {
     CheckCircle: Icon('CheckCircle'),
     AlertCircle: Icon('AlertCircle'),
     X: Icon('X'),
+    Plug: Icon('Plug'),
   };
 });
 
@@ -143,6 +144,23 @@ vi.mock('../../components/DashboardWidget', () => ({
 // Mock useClickOutside
 vi.mock('../../hooks/useClickOutside', () => ({
   useClickOutside: vi.fn(),
+}));
+
+// Mock useConnectors
+vi.mock('../../hooks/useConnectors', () => ({
+  useConnectors: () => ({
+    connectors: [],
+    syncLogs: [],
+    loading: false,
+    syncing: null,
+    testing: null,
+    addConnector: vi.fn(),
+    editConnector: vi.fn(),
+    removeConnector: vi.fn(),
+    syncConnector: vi.fn(),
+    testConnection: vi.fn(),
+    refresh: vi.fn(),
+  }),
 }));
 
 // Mock analytics

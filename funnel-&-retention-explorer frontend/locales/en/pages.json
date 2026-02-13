@@ -185,7 +185,8 @@
       "quickActions": "Quick Analysis",
       "recentInsights": "Recent Insights",
       "savedAnalyses": "Saved Analyses",
-      "stickinessChart": "Stickiness"
+      "stickinessChart": "Stickiness",
+      "connectors": "Data Connectors"
     },
     "presets": "Templates",
     "presetsDesc": "Apply a predefined layout",
@@ -211,7 +212,12 @@
       "fullWidth": "Change to full width",
       "hideWidget": "Hide widget",
       "showWidget": "Show widget"
-    }
+    },
+    "manage": "Manage",
+    "activeConnectors": "Active Connectors",
+    "lastSync": "Last Sync",
+    "noConnectors": "No connectors configured",
+    "setupConnector": "Set up a connector"
   },
   "dataImport": {
     "title": "Data Upload",
@@ -600,7 +606,87 @@
     "fetchingSheet": "Fetching...",
     "detectedFormat": "{{format}} format detected",
     "supportedFormats": "Only CSV or JSON files are supported",
-    "invalidSheetsUrl": "Invalid Google Sheets URL"
+    "invalidSheetsUrl": "Invalid Google Sheets URL",
+    "ga4Api": "GA4 API",
+    "ga4ApiDesc": "Connect to Google Analytics 4 API for real-time data",
+    "mixpanelApi": "Mixpanel API",
+    "mixpanelApiDesc": "Auto-sync event data via Mixpanel API",
+    "postgresql": "PostgreSQL",
+    "postgresqlDesc": "Query data directly from PostgreSQL databases",
+    "mysql": "MySQL",
+    "mysqlDesc": "Query data directly from MySQL databases",
+    "title": "Data Connectors",
+    "subtitle": "Connect external data sources and enable auto-sync",
+    "addNew": "New Connector",
+    "addTitle": "Add Connector",
+    "editTitle": "Edit Connector",
+    "configureTitle": "Configure Connector",
+    "name": "Connector Name",
+    "syncSchedule": "Sync Schedule",
+    "syncNow": "Sync Now",
+    "edit": "Edit",
+    "save": "Save",
+    "back": "Back",
+    "testConnection": "Test Connection",
+    "lastSync": "Last Sync",
+    "neverSynced": "Never synced",
+    "schedule": "Sync",
+    "syncHistory": "Sync History",
+    "logTime": "Time",
+    "logConnector": "Connector",
+    "logStatus": "Status",
+    "logRows": "Rows",
+    "logDuration": "Duration",
+    "empty": "No connectors configured",
+    "addFirst": "Add your first connector",
+    "deleted": "Connector deleted",
+    "syncSuccess": "Sync completed",
+    "syncFailed": "Sync failed",
+    "syncRowCount": "Fetched {{count}} rows",
+    "fetchingData": "Fetching data...",
+    "connectingSource": "Connecting to source...",
+    "oauthSuccess": "Google account connected",
+    "oauthError": "Google account connection failed",
+    "upgradeTitle": "Available with Pro Plan",
+    "upgradeDesc": "Keep your data automatically up-to-date with GA4 and Mixpanel API real-time sync.",
+    "upgradeCta": "Upgrade to Pro",
+    "scheduleLabel": {
+      "none": "Manual sync",
+      "hourly": "Hourly",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "status": {
+      "idle": "Idle",
+      "running": "Syncing",
+      "success": "Success",
+      "error": "Error"
+    },
+    "ga4": {
+      "connected": "Google account connected",
+      "connectGoogle": "Connect with Google",
+      "propertyId": "GA4 Property ID",
+      "propertyIdHint": "Found in GA4 Admin → Property Settings"
+    },
+    "mixpanel": {
+      "projectId": "Project ID",
+      "apiSecret": "API Secret",
+      "secretHint": "Found in Mixpanel Project Settings → API Secret"
+    },
+    "db": {
+      "host": "Host",
+      "port": "Port",
+      "database": "Database",
+      "username": "Username",
+      "password": "Password",
+      "ssl": "Use SSL",
+      "query": "SQL Query"
+    },
+    "error": {
+      "authFailed": "Authentication failed",
+      "timeout": "Connection timed out",
+      "rateLimit": "Too many requests. Please try again later"
+    }
   },
   "webhook": {
     "title": "Webhook Settings",

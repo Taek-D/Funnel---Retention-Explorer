@@ -10,8 +10,9 @@ import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
 import { trackEvent } from '../lib/analytics';
-import type { ColumnMapping } from '../types';
+import type { ColumnMapping, RawRow } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
+import { triggerSync } from '../lib/supabaseData';
 import i18n from '../lib/i18n';
 
 export function useCSVUpload() {
@@ -247,9 +248,45 @@ export function useCSVUpload() {
     }
   }, [dispatch, toast]);
 
+  const handleAPIImport = useCallback(async (connectorId: string) => {
+    dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 10, message: i18n.t('pages:connector.fetchingData') } });
+
+    try {
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 30, message: i18n.t('pages:connector.connectingSource') } });
+      const result = await triggerSync(connectorId);
+
+      const rows: RawRow[] = result.data;
+      const headers: string[] = result.headers ?? (rows.length > 0 ? Object.keys(rows[0]) : []);
+
+      if (rows.length > planGate.csvRowLimit) {
+        dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+        planGate.openUpgradeModal('csv_limit');
+        return;
+      }
+
+      dispatch({
+        type: 'SET_RAW_DATA',
+        payload: { rawData: rows, headers, fileName: `Connector (${connectorId.slice(0, 8)}...)` }
+      });
+
+      const autoMapping = autoDetectColumns(headers, rows);
+      dispatch({ type: 'SET_COLUMN_MAPPING', payload: autoMapping });
+
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: true, progress: 70, message: i18n.t('insights:processing.autoDetectComplete') } });
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 100, message: i18n.t('insights:processing.done') } });
+
+      toast('success', i18n.t('pages:connector.syncSuccess'), i18n.t('pages:connector.syncRowCount', { count: rows.length }));
+      trackEvent('api_import', { connector_id: connectorId, row_count: rows.length });
+    } catch (error) {
+      dispatch({ type: 'SET_PROCESSING', payload: { isProcessing: false, progress: 0, message: '' } });
+      toast('error', i18n.t('pages:connector.syncFailed'), error instanceof Error ? error.message : i18n.t('insights:toast.unknownError'));
+    }
+  }, [dispatch, toast, planGate]);
+
   return {
     handleFileUpload,
     handleURLImport,
+    handleAPIImport,
     confirmMapping,
     loadSampleData,
     isProcessing: state.isProcessing,
