@@ -458,7 +458,18 @@
     "upgradeDesc": "Upgrade to Team plan to use team features. Share projects with up to 10 team members.",
     "upgradeCTA": "View Team Plan",
     "sharedProjects": "Shared Projects",
-    "noSharedProjects": "No shared projects yet."
+    "noSharedProjects": "No shared projects yet.",
+    "loading": "Loading team...",
+    "loadError": "Failed to load team",
+    "createTitle": "Create a Team",
+    "createDesc": "Create a team and invite members to share analysis results.",
+    "create": "Create",
+    "createError": "Failed to create team",
+    "inviteError": "Failed to invite member",
+    "removeError": "Failed to remove member",
+    "roleError": "Failed to change role",
+    "saveError": "Failed to save",
+    "retry": "Retry"
   },
   "sharedReport": {
     "notFound": "Report Not Found",

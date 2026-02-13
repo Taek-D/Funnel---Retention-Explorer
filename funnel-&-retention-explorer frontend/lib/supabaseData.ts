@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { Team, TeamMember, TeamRole } from '../types';
 
 function getSupabase() {
   if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
@@ -27,14 +28,14 @@ export async function listProjects(): Promise<FREProject[]> {
   return data || [];
 }
 
-export async function createProject(name: string, description?: string): Promise<FREProject> {
+export async function createProject(name: string, description?: string, teamId?: string): Promise<FREProject> {
   const client = getSupabase();
   const { data: { user } } = await client.auth.getUser();
   if (!user) throw new Error('인증되지 않았습니다');
 
   const { data, error } = await client
     .from('fre_projects')
-    .insert({ name, description: description || null, user_id: user.id })
+    .insert({ name, description: description || null, user_id: user.id, team_id: teamId || null })
     .select()
     .single();
 
@@ -306,5 +307,129 @@ export async function clearAllNotifications(): Promise<void> {
     .delete()
     .eq('user_id', user.id);
 
+  if (error) throw new Error(error.message);
+}
+
+// ===== Teams =====
+
+export async function createTeam(name: string): Promise<Team> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
+  const { data: team, error: teamErr } = await client
+    .from('fre_teams')
+    .insert({ name, owner_id: user.id })
+    .select()
+    .single();
+  if (teamErr) throw new Error(teamErr.message);
+
+  const { error: memberErr } = await client
+    .from('fre_team_members')
+    .insert({
+      team_id: team.id,
+      user_id: user.id,
+      email: user.email!,
+      role: 'admin',
+      status: 'active',
+      joined_at: new Date().toISOString(),
+    });
+  if (memberErr) throw new Error(memberErr.message);
+
+  return team;
+}
+
+export async function getMyTeam(): Promise<{ team: Team; members: TeamMember[] } | null> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) return null;
+
+  // Check as owner first
+  const { data: ownedTeam } = await client
+    .from('fre_teams')
+    .select('*')
+    .eq('owner_id', user.id)
+    .single();
+
+  let team = ownedTeam;
+  if (!team) {
+    // Check as member
+    const { data: membership } = await client
+      .from('fre_team_members')
+      .select('team_id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
+
+    if (!membership) return null;
+
+    const { data: memberTeam } = await client
+      .from('fre_teams')
+      .select('*')
+      .eq('id', membership.team_id)
+      .single();
+
+    team = memberTeam;
+  }
+
+  if (!team) return null;
+
+  const { data: members, error: membersErr } = await client
+    .from('fre_team_members')
+    .select('*')
+    .eq('team_id', team.id)
+    .in('status', ['pending', 'active'])
+    .order('invited_at', { ascending: true });
+
+  if (membersErr) throw new Error(membersErr.message);
+
+  return { team, members: members || [] };
+}
+
+export async function updateTeamName(teamId: string, name: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_teams')
+    .update({ name })
+    .eq('id', teamId);
+  if (error) throw new Error(error.message);
+}
+
+export async function inviteTeamMember(
+  teamId: string,
+  email: string,
+  role: TeamRole = 'member'
+): Promise<TeamMember> {
+  const client = getSupabase();
+  const { data, error } = await client
+    .from('fre_team_members')
+    .insert({ team_id: teamId, email, role, status: 'pending' })
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function removeTeamMember(teamId: string, memberId: string): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_team_members')
+    .update({ status: 'removed' })
+    .eq('id', memberId)
+    .eq('team_id', teamId);
+  if (error) throw new Error(error.message);
+}
+
+export async function updateMemberRole(
+  teamId: string,
+  memberId: string,
+  role: TeamRole
+): Promise<void> {
+  const client = getSupabase();
+  const { error } = await client
+    .from('fre_team_members')
+    .update({ role })
+    .eq('id', memberId)
+    .eq('team_id', teamId);
   if (error) throw new Error(error.message);
 }

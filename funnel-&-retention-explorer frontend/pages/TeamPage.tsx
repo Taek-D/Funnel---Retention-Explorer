@@ -1,37 +1,17 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Shield, Users, Plus, Trash2, ArrowRight, Mail } from '../components/Icons';
+import { Shield, Users, Plus, Trash2, ArrowRight, Mail, Loader2, AlertCircle, RefreshCw } from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
-
-type TeamRole = 'admin' | 'member' | 'viewer';
-
-type TeamMember = {
-  id: string;
-  email: string;
-  role: TeamRole;
-  joinedAt: string;
-  pending: boolean;
-};
-
-type TeamData = {
-  name: string;
-  members: TeamMember[];
-};
-
-const STORAGE_KEY = 'fre_team_data';
-
-function loadTeamData(userId: string): TeamData {
-  try {
-    const raw = localStorage.getItem(`${STORAGE_KEY}_${userId}`);
-    if (raw) return JSON.parse(raw);
-  } catch { /* ignore */ }
-  return { name: '', members: [] };
-}
-
-function saveTeamData(userId: string, data: TeamData) {
-  localStorage.setItem(`${STORAGE_KEY}_${userId}`, JSON.stringify(data));
-}
+import type { Team, TeamMember, TeamRole } from '../types';
+import {
+  createTeam,
+  getMyTeam,
+  updateTeamName,
+  inviteTeamMember,
+  removeTeamMember,
+  updateMemberRole,
+} from '../lib/supabaseData';
 
 export const TeamPage: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -39,69 +19,111 @@ export const TeamPage: React.FC = () => {
   const navigate = useNavigate();
 
   const isTeamPlan = userProfile?.plan === 'team';
-  const userId = user?.id ?? 'guest';
 
-  const [teamData, setTeamData] = useState<TeamData>(() => loadTeamData(userId));
+  const [team, setTeam] = useState<Team | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [teamName, setTeamName] = useState(teamData.name);
-  const [saved, setSaved] = useState(false);
+  const [teamName, setTeamName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [nameSaved, setNameSaved] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newTeamName, setNewTeamName] = useState('');
 
-  const allMembers = useMemo(() => {
-    const currentUser: TeamMember = {
-      id: userId,
-      email: user?.email ?? 'guest@local',
-      role: 'admin',
-      joinedAt: new Date().toISOString(),
-      pending: false,
-    };
-    return [currentUser, ...teamData.members];
-  }, [teamData.members, userId, user?.email]);
+  const loadTeam = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await getMyTeam();
+      if (result) {
+        setTeam(result.team);
+        setMembers(result.members);
+        setTeamName(result.team.name);
+      } else {
+        setTeam(null);
+        setMembers([]);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.loadError'));
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
 
-  const handleInvite = useCallback(() => {
+  useEffect(() => {
+    if (!isTeamPlan) {
+      setLoading(false);
+      return;
+    }
+    loadTeam();
+  }, [isTeamPlan, loadTeam]);
+
+  const handleCreateTeam = useCallback(async () => {
+    if (!newTeamName.trim()) return;
+    try {
+      setCreating(true);
+      setError(null);
+      await createTeam(newTeamName.trim());
+      setNewTeamName('');
+      await loadTeam();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.createError'));
+    } finally {
+      setCreating(false);
+    }
+  }, [newTeamName, loadTeam, t]);
+
+  const handleInvite = useCallback(async () => {
     const email = inviteEmail.trim();
-    if (!email || !email.includes('@')) return;
-    if (allMembers.some(m => m.email === email)) return;
+    if (!email || !email.includes('@') || !team) return;
+    if (members.some(m => m.email === email)) return;
 
-    const newMember: TeamMember = {
-      id: crypto.randomUUID(),
-      email,
-      role: 'member',
-      joinedAt: new Date().toISOString(),
-      pending: true,
-    };
-    const updated = { ...teamData, members: [...teamData.members, newMember] };
-    setTeamData(updated);
-    saveTeamData(userId, updated);
-    setInviteEmail('');
-  }, [inviteEmail, allMembers, teamData, userId]);
+    try {
+      setSaving(true);
+      await inviteTeamMember(team.id, email);
+      setInviteEmail('');
+      await loadTeam();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.inviteError'));
+    } finally {
+      setSaving(false);
+    }
+  }, [inviteEmail, team, members, loadTeam, t]);
 
-  const handleRemove = useCallback((memberId: string) => {
-    const updated = {
-      ...teamData,
-      members: teamData.members.filter(m => m.id !== memberId),
-    };
-    setTeamData(updated);
-    saveTeamData(userId, updated);
-  }, [teamData, userId]);
+  const handleRemove = useCallback(async (memberId: string) => {
+    if (!team) return;
+    try {
+      await removeTeamMember(team.id, memberId);
+      setMembers(prev => prev.filter(m => m.id !== memberId));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.removeError'));
+    }
+  }, [team, t]);
 
-  const handleRoleChange = useCallback((memberId: string, role: TeamRole) => {
-    const updated = {
-      ...teamData,
-      members: teamData.members.map(m =>
-        m.id === memberId ? { ...m, role } : m
-      ),
-    };
-    setTeamData(updated);
-    saveTeamData(userId, updated);
-  }, [teamData, userId]);
+  const handleRoleChange = useCallback(async (memberId: string, role: TeamRole) => {
+    if (!team) return;
+    try {
+      await updateMemberRole(team.id, memberId, role);
+      setMembers(prev => prev.map(m => m.id === memberId ? { ...m, role } : m));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.roleError'));
+    }
+  }, [team, t]);
 
-  const handleSaveTeamName = useCallback(() => {
-    const updated = { ...teamData, name: teamName };
-    setTeamData(updated);
-    saveTeamData(userId, updated);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }, [teamName, teamData, userId]);
+  const handleSaveTeamName = useCallback(async () => {
+    if (!team) return;
+    try {
+      setSaving(true);
+      await updateTeamName(team.id, teamName);
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('teamPage.saveError'));
+    } finally {
+      setSaving(false);
+    }
+  }, [team, teamName, t]);
 
   // Upgrade CTA for non-team users
   if (!isTeamPlan) {
@@ -130,6 +152,76 @@ export const TeamPage: React.FC = () => {
     );
   }
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto mt-16 flex items-center justify-center gap-3 text-slate-400">
+        <Loader2 size={20} className="animate-spin" />
+        <span className="text-sm">{t('teamPage.loading')}</span>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="max-w-xl mx-auto mt-16">
+        <div className="bg-surface border border-coral/20 rounded-lg p-6 text-center">
+          <AlertCircle size={24} className="text-coral mx-auto mb-3" />
+          <p className="text-sm text-coral mb-4">{error}</p>
+          <button
+            onClick={loadTeam}
+            className="px-4 py-2 text-sm font-semibold text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 mx-auto"
+          >
+            <RefreshCw size={14} />
+            {t('teamPage.retry')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No team yet — creation flow
+  if (!team) {
+    return (
+      <div className="max-w-xl mx-auto mt-16">
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-10 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="relative">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
+              <Users size={32} />
+            </div>
+            <h2 className="text-2xl font-extrabold text-white mb-3">{t('teamPage.createTitle')}</h2>
+            <p className="text-slate-400 text-sm max-w-md mx-auto mb-8">
+              {t('teamPage.createDesc')}
+            </p>
+            <div className="flex gap-3 max-w-sm mx-auto">
+              <input
+                type="text"
+                value={newTeamName}
+                onChange={e => setNewTeamName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleCreateTeam()}
+                placeholder={t('teamPage.teamNamePlaceholder')}
+                className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-accent/50"
+              />
+              <button
+                onClick={handleCreateTeam}
+                disabled={!newTeamName.trim() || creating}
+                className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {creating && <Loader2 size={14} className="animate-spin" />}
+                {t('teamPage.create')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Full team management UI
+  const currentUserId = user?.id;
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
@@ -153,9 +245,10 @@ export const TeamPage: React.FC = () => {
           />
           <button
             onClick={handleSaveTeamName}
-            className="px-4 py-2 text-sm font-semibold text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 rounded-lg transition-colors"
+            disabled={saving}
+            className="px-4 py-2 text-sm font-semibold text-white bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 rounded-lg transition-colors disabled:opacity-40"
           >
-            {saved ? t('teamPage.saved') : t('teamPage.save')}
+            {nameSaved ? t('teamPage.saved') : t('teamPage.save')}
           </button>
         </div>
       </div>
@@ -180,7 +273,7 @@ export const TeamPage: React.FC = () => {
           </div>
           <button
             onClick={handleInvite}
-            disabled={!inviteEmail.trim().includes('@')}
+            disabled={!inviteEmail.trim().includes('@') || saving}
             className="px-4 py-2 text-sm font-semibold text-background bg-accent hover:bg-accent/90 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {t('teamPage.invite')}
@@ -196,12 +289,12 @@ export const TeamPage: React.FC = () => {
             {t('teamPage.members')}
           </h3>
           <span className="text-xs text-slate-500">
-            {t('teamPage.memberCount', { count: allMembers.length })}
+            {t('teamPage.memberCount', { count: members.length })}
           </span>
         </div>
         <div className="space-y-2">
-          {allMembers.map((member, i) => {
-            const isCurrentUser = i === 0;
+          {members.map(member => {
+            const isCurrentUser = member.user_id === currentUserId;
             return (
               <div
                 key={member.id}
@@ -217,14 +310,14 @@ export const TeamPage: React.FC = () => {
                       {isCurrentUser && (
                         <span className="text-[10px] text-accent font-medium shrink-0">{t('teamPage.you')}</span>
                       )}
-                      {member.pending && (
+                      {member.status === 'pending' && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-medium shrink-0">
                           {t('teamPage.pending')}
                         </span>
                       )}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {t('teamPage.joined')}: {new Date(member.joinedAt).toLocaleDateString()}
+                      {t('teamPage.joined')}: {new Date(member.joined_at ?? member.invited_at).toLocaleDateString()}
                     </div>
                   </div>
                 </div>

@@ -18,6 +18,30 @@ export interface WidgetLayout {
   order: number;
 }
 
+// ===== Team =====
+
+export type TeamRole = 'admin' | 'member' | 'viewer';
+export type TeamMemberStatus = 'pending' | 'active' | 'removed';
+
+export interface TeamMember {
+  id: string;
+  team_id: string;
+  user_id: string | null;
+  email: string;
+  role: TeamRole;
+  status: TeamMemberStatus;
+  invited_at: string;
+  joined_at: string | null;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  owner_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ===== Plan & Subscription =====
 
 export type PlanType = 'free' | 'pro' | 'team';

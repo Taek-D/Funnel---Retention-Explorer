@@ -597,3 +597,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 3 scope items completed (PERF-1 ~ PERF-3): PERF-1 AppContext Provider value useMemo (dispatch 안정적 참조 활용, state 변경 없을 시 consumer 리렌더 방지), PERF-2 React.memo 5개 컴포넌트 (DashboardWidget, Sidebar, ExportDropdown, PlanBadge, ChartSkeleton — props 동일 시 리렌더 스킵), PERF-3 Dashboard widgetContent 개별 useMemo (kpiCards 메모이제이션 + 7개 위젯 개별 useMemo + 1개 aggregate Record useMemo — 위젯 간 독립적 캐싱으로 DashboardWidget React.memo 효과 극대화). 7개 파일 변경 (0 신규, 7 수정). 테스트 310/310 통과. 1 PARTIAL: funnelWidget deps에 `funnelResults` 전체 참조 (설계는 `.length` — 안전성 우위 의도적 편차). 0 iteration.
+
+---
+
+## team-collaboration
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Team Collaboration (Supabase Backend) |
+| **Match Rate** | 98.9% (87 PASS, 2 PARTIAL / 89 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `team-collaboration/team-collaboration.plan.md` |
+| Design | `team-collaboration/team-collaboration.design.md` |
+| Analysis | `team-collaboration/team-collaboration.analysis.md` |
+| Report | `team-collaboration/team-collaboration.report.md` |
+
+### Summary
+
+5 scope items completed (TC-1 ~ TC-5): TC-1 DB Schema (fre_teams + fre_team_members 테이블, RLS 4개 정책, updated_at 트리거, 4개 인덱스), TC-2 TypeScript Types (TeamRole, TeamMemberStatus, TeamMember, Team — types/index.ts로 이동, TeamPage 로컬 타입 제거), TC-3 CRUD Functions (createTeam, getMyTeam, updateTeamName, inviteTeamMember, removeTeamMember, updateMemberRole — supabaseData.ts), TC-4 TeamPage Supabase Integration (localStorage 완전 제거, loading/error/creation 3개 상태 추가, useCallback 전체 적용), TC-5 Team-scoped Project Sharing (fre_projects.team_id 컬럼 + RLS + createProject teamId 파라미터). 6개 파일 변경 (1 신규 migration, 5 수정). i18n 12개 키 추가 (ko/en). 테스트 310/310 통과. 2 PARTIAL: RLS email 비교 시 auth.email() 대신 subquery 사용 (의도적 호환성 개선). 0 iteration.
