@@ -62,6 +62,30 @@ export interface ScheduledReport {
   updated_at: string;
 }
 
+// ===== Custom Events =====
+
+export type CustomEventType = 'alias' | 'group' | 'conditional';
+
+export interface CustomEventCondition {
+  field: 'platform' | 'channel';
+  operator: 'eq' | 'neq';
+  value: string;
+}
+
+export interface CustomEventDefinition {
+  id: string;
+  user_id: string;
+  project_id: string | null;
+  name: string;
+  description: string;
+  type: CustomEventType;
+  sourceEvent?: string;
+  sourceEvents?: string[];
+  conditions?: CustomEventCondition[];
+  created_at: string;
+  updated_at: string;
+}
+
 // ===== Filters =====
 
 export interface DateRange {

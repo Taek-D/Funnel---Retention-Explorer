@@ -761,3 +761,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (NC-1 ~ NC-5): NC-1 Supabase Realtime 구독 (postgres_changes INSERT, user_id 필터, 중복 방지, 채널 클린업), NC-2 useDesktopNotification 훅 + showDesktopNotification 스탠드얼론 함수 (Notification API, 포커스 감지, 아이콘 + badge) + 데스크톱 알림 토글, NC-3 NotificationsPage (타입 필터 칩, 읽음/안읽음 토글, 벌크 선택+삭제/읽음, 20개씩 페이지네이션, 로그인 가드) + router.tsx 라우트 + Sidebar Bell 아이콘 + NotificationPanel "전체 보기" 링크, NC-4 fre_user_profiles.notification_preferences JSONB 컬럼 + getNotificationPreferences/updateNotificationPreferences CRUD + Modal DB 동기화, NC-5 i18n 28키 (ko/en). 12개 파일 변경 (3 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.
+
+---
+
+## custom-event-definition
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Custom Event Definition (Alias, Group, Conditional) |
+| **Match Rate** | 99.0% (23 PASS, 1 PARTIAL, 0 FAIL / 24 items) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `custom-event-definition/custom-event-definition.plan.md` |
+| Design | `custom-event-definition/custom-event-definition.design.md` |
+| Analysis | `custom-event-definition/custom-event-definition.analysis.md` |
+| Report | `custom-event-definition/custom-event-definition.report.md` |
+
+### Summary
+
+5 scope items completed (CE-1 ~ CE-5): CE-1 Types + DB CRUD (CustomEventType/CustomEventCondition/CustomEventDefinition 타입, fre_custom_events 테이블 + RLS 4정책, supabaseData.ts CRUD 4함수 + JSONB definition 매핑), CE-2 Event Resolver (eventResolver.ts — resolveCustomEvent/resolveCustomEventRows/resolveStepsWithCustomEvents/isCustomEventRef/getCustomEventId, alias/group/conditional 3타입 해석 + __custom__ 가상 이벤트 주입), CE-3 CustomEventsPage (CRUD 폼 + 타입별 동적 UI: alias=소스 드롭다운, group=멀티셀렉트, conditional=조건 빌더 + 삭제 확인 + Pro gate Free max 5 + localStorage 게스트 폴백), CE-4 Analysis Integration (FunnelAnalysis/RetentionAnalysis optgroup 드롭다운 + useFunnelAnalysis/useRetentionAnalysis custom: 접두사 해석), CE-5 Route/Sidebar/i18n (/app/events lazy route + Tag 아이콘 + 31키 ko/en). 16개 파일 변경 (3 신규, 13 수정). 테스트 310/310 통과. 빌드 정상. 1 PARTIAL: getMergedEventList 인라인화 (의도적 개선). 0 iteration.

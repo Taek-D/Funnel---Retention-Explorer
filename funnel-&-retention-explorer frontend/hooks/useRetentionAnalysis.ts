@@ -1,17 +1,30 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
 import { useToast } from '../components/Toast';
 import { useNotifications } from '../context/NotificationContext';
 import { trackEvent } from '../lib/analytics';
-import type { RetentionType } from '../types';
+import { isCustomEventRef, getCustomEventId, resolveCustomEventRows } from '../lib/eventResolver';
+import { listCustomEvents } from '../lib/supabaseData';
+import { useAuth } from '../context/AuthContext';
+import type { RetentionType, CustomEventDefinition } from '../types';
 import i18n from '../lib/i18n';
 
 export function useRetentionAnalysis() {
   const { state, dispatch } = useAppContext();
   const { toast } = useToast();
   const { addNotification } = useNotifications();
+  const { user } = useAuth();
+  const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      listCustomEvents(user.id).then(setCustomEvents);
+    } else {
+      try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+    }
+  }, [user]);
 
   const setRetentionType = useCallback((type: RetentionType) => {
     dispatch({ type: 'SET_RETENTION_TYPE', payload: type });
@@ -50,8 +63,34 @@ export function useRetentionAnalysis() {
         return;
       }
 
-      const data = dataOverride ?? state.processedData;
-      const results = calculateActivityRetention(data, cohortEvent, activeEvents);
+      const baseData = dataOverride ?? state.processedData;
+      // Resolve custom event references
+      let resolvedCohort = cohortEvent;
+      let data = baseData;
+      const virtualEvents: typeof baseData = [];
+
+      if (isCustomEventRef(cohortEvent)) {
+        const ce = customEvents.find(c => c.id === getCustomEventId(cohortEvent));
+        if (ce) {
+          resolvedCohort = `__custom__${ce.id}`;
+          resolveCustomEventRows(baseData, ce).forEach(row => virtualEvents.push({ ...row, eventName: resolvedCohort }));
+        }
+      }
+
+      const resolvedActive = activeEvents.map(ae => {
+        if (isCustomEventRef(ae)) {
+          const ce = customEvents.find(c => c.id === getCustomEventId(ae));
+          if (ce) {
+            const virtualName = `__custom__${ce.id}`;
+            resolveCustomEventRows(baseData, ce).forEach(row => virtualEvents.push({ ...row, eventName: virtualName }));
+            return virtualName;
+          }
+        }
+        return ae;
+      });
+
+      if (virtualEvents.length > 0) data = [...baseData, ...virtualEvents];
+      const results = calculateActivityRetention(data, resolvedCohort, resolvedActive);
       dispatch({ type: 'SET_RETENTION_RESULTS', payload: results });
     }
 

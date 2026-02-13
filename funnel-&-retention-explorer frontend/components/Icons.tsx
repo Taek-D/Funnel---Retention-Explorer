@@ -64,7 +64,11 @@ import {
   Send,
   ToggleLeft,
   ToggleRight,
-  WifiOff
+  WifiOff,
+  Tag,
+  Pencil,
+  Layers,
+  ArrowRightLeft
 } from 'lucide-react';
 
 export {
@@ -133,5 +137,9 @@ export {
   Send,
   ToggleLeft,
   ToggleRight,
-  WifiOff
+  WifiOff,
+  Tag,
+  Pencil,
+  Layers,
+  ArrowRightLeft
 };

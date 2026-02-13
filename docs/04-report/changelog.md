@@ -4,6 +4,93 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-13] — Custom Event Definition (User-Defined Event Management)
+
+### Summary
+Completed custom event definition feature enabling users to create and use three types of custom events (alias, group, conditional) based on raw CSV data. Achieved 99.0% design match with zero iterations, delivering persistent event management for funnel and retention analyses.
+
+### Added
+- **Custom Event Types (CE-1)**: TypeScript types and database schema
+  - `CustomEventType`: 'alias' | 'group' | 'conditional'
+  - `CustomEventCondition`: Field/operator/value for conditional filtering
+  - `CustomEventDefinition`: Full event definition with metadata
+  - Supabase table `fre_custom_events` with RLS policies
+- **Event Resolver (CE-2)**: lib/eventResolver.ts with 5 functions
+  - `resolveCustomEvent()`: Handles all 3 event types (alias/group/conditional)
+  - `resolveCustomEventRows()`: Returns ProcessedEvent[] for virtual event injection
+  - `resolveStepsWithCustomEvents()`: Full step resolution for analysis engines
+  - `isCustomEventRef()`, `getCustomEventId()`: Helper utilities
+- **CustomEventsPage (CE-3)**: Full CRUD management page at `/app/events`
+  - Event list table with #, Name, Type, Mapping, Actions columns
+  - Create/Edit modal with type-specific forms:
+    - Alias: Source event dropdown
+    - Group: Multi-select toggle buttons
+    - Conditional: Source event + condition builder (max 3 conditions)
+  - Delete with confirmation dialog
+  - Pro gate: Free plan max 5 custom events
+  - Guest mode: localStorage persistence for non-authenticated users
+- **Analysis Integration (CE-4)**: Custom events in funnel/retention dropdowns
+  - FunnelAnalysis.tsx: Optgroup dropdown with customEvents.optgroupCustom label
+  - RetentionAnalysis.tsx: Cohort event + active events with custom event support
+  - useFunnelAnalysis.ts: resolveStepsWithCustomEvents on custom: prefixed steps
+  - useRetentionAnalysis.ts: resolveCustomEventRows for cohort/active event resolution
+- **Navigation & i18n (CE-5)**: Route, sidebar, and translations
+  - Route `/app/events` (lazy loaded via React.lazy + Suspense)
+  - Sidebar nav item with Tag icon + nav.events label
+  - 31 i18n keys (customEvents section: 30 keys + nav.events: 1 key)
+  - Dual-language support: Korean (ko) + English (en)
+
+### Changed
+- `types/index.ts`: Added CustomEventType, CustomEventCondition, CustomEventDefinition types (+21 lines)
+- `lib/supabaseData.ts`: Added 4 CRUD functions (listCustomEvents, createCustomEvent, updateCustomEvent, deleteCustomEvent) (+65 lines)
+- `pages/FunnelAnalysis.tsx`: Added optgroup dropdown pattern for custom events (+12 lines)
+- `pages/RetentionAnalysis.tsx`: Added custom event optgroups for cohort + active events (+35 lines)
+- `hooks/useFunnelAnalysis.ts`: Added resolveStepsWithCustomEvents integration (+4 lines)
+- `hooks/useRetentionAnalysis.ts`: Added resolveCustomEventRows integration (+25 lines)
+- `router.tsx`: Added lazy-loaded `/app/events` route (line 28, 83)
+- `components/Sidebar.tsx`: Added events navigation item with Tag icon (line 37)
+- `components/Icons.tsx`: Added Tag, Pencil, Layers, ArrowRightLeft exports (lines 68-71, 141-144)
+- `locales/ko/pages.json`: Added customEvents section (31 keys, lines 640-671)
+- `locales/en/pages.json`: Added customEvents section (31 keys, lines 640-671)
+- `locales/ko/common.json`: Added nav.events key (line 13)
+- `locales/en/common.json`: Added nav.events key (line 13)
+
+### Infrastructure
+- **New Files**:
+  - `supabase/migrations/20260213_custom_events.sql` (fre_custom_events table + RLS)
+  - `lib/eventResolver.ts` (event resolution logic, ~130 lines)
+  - `pages/CustomEventsPage.tsx` (CRUD component, ~420 lines)
+- **Modified Files**: 13 (types, lib, pages, hooks, routing, components, i18n)
+
+### Metrics
+- **Design Match Rate**: 99.0% (23/24 items PASS, 1 PARTIAL)
+- **Checklist Items Verified**: 24
+- **PDCA Iterations**: 0 (first-pass completion)
+- **Files Created**: 3
+- **Files Modified**: 13
+- **Lines Added**: ~820 implementation + 60 i18n = 880 total
+- **i18n Keys Added**: 31 (customEvents: 30, nav: 1) across ko/en
+- **Database Tables**: 1 new (fre_custom_events)
+- **Bundle Impact**: ~5KB for components + types
+- **Test Status**: 310/310 tests passing (0 regressions)
+- **Build Status**: Clean (production ready)
+
+### Key Design Decisions
+1. **Type Discriminant**: CustomEventType guides resolver logic (eliminates type narrowing uncertainty)
+2. **JSONB Definition Column**: Flexible schema for future field additions without migration
+3. **Virtual Event Injection**: Custom events resolved to ProcessedEvent[] for engine compatibility
+4. **Optgroup Pattern**: Clear visual separation of raw vs custom events in dropdowns
+5. **RLS Per-Operation Policies**: 4 separate policies (SELECT/INSERT/UPDATE/DELETE) for granularity
+6. **localStorage Fallback**: Guest mode event CRUD independent of authentication
+
+### Documentation
+- Plan: `docs/01-plan/features/custom-event-definition.plan.md`
+- Design: `docs/02-design/features/custom-event-definition.design.md`
+- Analysis: `docs/03-analysis/custom-event-definition.analysis.md`
+- Report: `docs/04-report/features/custom-event-definition.report.md`
+
+---
+
 ## [2026-02-13] — Notification Center (Real-time Alerts & Desktop Notifications)
 
 ### Summary

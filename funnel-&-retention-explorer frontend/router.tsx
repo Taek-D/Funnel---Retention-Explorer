@@ -25,6 +25,7 @@ const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ defa
 const WebhookSettings = lazy(() => import('./pages/WebhookSettings').then(m => ({ default: m.WebhookSettings })));
 const ScheduledReports = lazy(() => import('./pages/ScheduledReports').then(m => ({ default: m.ScheduledReports })));
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
+const CustomEventsPage = lazy(() => import('./pages/CustomEventsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
@@ -79,6 +80,7 @@ export const router = createBrowserRouter([
           { path: 'webhooks', element: <Suspense fallback={<PageLoader />}><WebhookSettings /></Suspense> },
           { path: 'scheduled-reports', element: <Suspense fallback={<PageLoader />}><ScheduledReports /></Suspense> },
           { path: 'notifications', element: <Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense> },
+          { path: 'events', element: <Suspense fallback={<PageLoader />}><CustomEventsPage /></Suspense> },
           {
             path: 'admin',
             element: <AdminRoute />,

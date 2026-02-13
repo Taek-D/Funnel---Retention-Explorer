@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -9,6 +9,9 @@ import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
+import { useAuth } from '../context/AuthContext';
+import { listCustomEvents } from '../lib/supabaseData';
+import type { CustomEventDefinition } from '../types';
 
 export const RetentionAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -18,9 +21,19 @@ export const RetentionAnalysis: React.FC = () => {
   } = useRetentionAnalysis();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
   const { filteredData, filterCount } = useFilteredData();
+  const { user } = useAuth();
 
   const [cohortEvent, setCohortEvent] = useState('');
   const [selectedActiveEvents, setSelectedActiveEvents] = useState<string[]>([]);
+  const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      listCustomEvents(user.id).then(setCustomEvents);
+    } else {
+      try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+    }
+  }, [user]);
 
   if (!hasData) {
     return (
@@ -125,7 +138,14 @@ export const RetentionAnalysis: React.FC = () => {
                 onChange={e => setCohortEvent(e.target.value)}
               >
                 <option value="">{t('retention.selectEvent')}</option>
-                {uniqueEvents.map(e => <option key={e} value={e}>{e}</option>)}
+                <optgroup label={t('customEvents.optgroupRaw')}>
+                  {uniqueEvents.map(e => <option key={e} value={e}>{e}</option>)}
+                </optgroup>
+                {customEvents.length > 0 && (
+                  <optgroup label={t('customEvents.optgroupCustom')}>
+                    {customEvents.map(ce => <option key={`custom:${ce.id}`} value={`custom:${ce.id}`}>{ce.name}</option>)}
+                  </optgroup>
+                )}
               </select>
             </div>
             <div>
@@ -140,6 +160,17 @@ export const RetentionAnalysis: React.FC = () => {
                     }`}
                   >
                     {e}
+                  </button>
+                ))}
+                {customEvents.map(ce => (
+                  <button
+                    key={`custom:${ce.id}`}
+                    onClick={() => toggleActiveEvent(`custom:${ce.id}`)}
+                    className={`px-2 py-1 rounded text-xs font-medium transition-all border border-dashed ${
+                      selectedActiveEvents.includes(`custom:${ce.id}`) ? 'bg-accent text-white border-accent' : 'bg-white/5 text-slate-400 hover:text-white border-white/10'
+                    }`}
+                  >
+                    {ce.name}
                   </button>
                 ))}
               </div>

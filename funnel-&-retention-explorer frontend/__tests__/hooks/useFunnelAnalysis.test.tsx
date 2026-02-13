@@ -21,6 +21,14 @@ vi.mock('../../lib/insightsEngine', () => ({
   generateInsights: vi.fn().mockReturnValue([]),
 }));
 
+vi.mock('../../context/AuthContext', () => ({
+  useAuth: () => ({ user: null, userProfile: null, loading: false, signOut: vi.fn() }),
+}));
+
+vi.mock('../../lib/supabaseData', () => ({
+  listCustomEvents: vi.fn().mockResolvedValue([]),
+}));
+
 vi.mock('../../context/NotificationContext', () => ({
   useNotifications: () => ({
     addNotification: vi.fn(),

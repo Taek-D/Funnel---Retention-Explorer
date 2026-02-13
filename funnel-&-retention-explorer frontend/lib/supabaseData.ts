@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency } from '../types';
+import type { Team, TeamMember, TeamRole, ScheduledReport, ReportFrequency, CustomEventDefinition } from '../types';
 
 function getSupabase() {
   if (!supabase) throw new Error('Supabase가 설정되지 않았습니다. 환경 변수를 확인하세요.');
@@ -332,6 +332,74 @@ export async function updateNotificationPreferences(prefs: Record<string, boolea
     .from('fre_user_profiles')
     .update({ notification_preferences: prefs })
     .eq('id', user.id);
+}
+
+// ===== Custom Events =====
+
+export async function listCustomEvents(userId: string): Promise<CustomEventDefinition[]> {
+  const db = getSupabase();
+  const { data, error } = await db
+    .from('fre_custom_events')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true });
+  if (error) { console.error('listCustomEvents error:', error); return []; }
+  return (data || []).map(row => ({
+    id: row.id,
+    user_id: row.user_id,
+    project_id: row.project_id,
+    name: row.name,
+    description: row.description || '',
+    type: row.type,
+    sourceEvent: row.definition?.sourceEvent,
+    sourceEvents: row.definition?.sourceEvents,
+    conditions: row.definition?.conditions,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  }));
+}
+
+export async function createCustomEvent(
+  event: { user_id: string; project_id?: string | null; name: string; description?: string; type: string; sourceEvent?: string; sourceEvents?: string[]; conditions?: { field: string; operator: string; value: string }[] }
+): Promise<CustomEventDefinition | null> {
+  const db = getSupabase();
+  const definition: Record<string, unknown> = {};
+  if (event.sourceEvent) definition.sourceEvent = event.sourceEvent;
+  if (event.sourceEvents) definition.sourceEvents = event.sourceEvents;
+  if (event.conditions) definition.conditions = event.conditions;
+
+  const { data, error } = await db
+    .from('fre_custom_events')
+    .insert({ user_id: event.user_id, project_id: event.project_id || null, name: event.name, description: event.description || '', type: event.type, definition })
+    .select()
+    .single();
+  if (error) { console.error('createCustomEvent error:', error); return null; }
+  return { ...data, sourceEvent: data.definition?.sourceEvent, sourceEvents: data.definition?.sourceEvents, conditions: data.definition?.conditions };
+}
+
+export async function updateCustomEvent(
+  id: string,
+  updates: { name?: string; description?: string; type?: string; sourceEvent?: string; sourceEvents?: string[]; conditions?: { field: string; operator: string; value: string }[] }
+): Promise<void> {
+  const db = getSupabase();
+  const row: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (updates.name !== undefined) row.name = updates.name;
+  if (updates.description !== undefined) row.description = updates.description;
+  if (updates.type !== undefined) row.type = updates.type;
+  const definition: Record<string, unknown> = {};
+  if (updates.sourceEvent !== undefined) definition.sourceEvent = updates.sourceEvent;
+  if (updates.sourceEvents !== undefined) definition.sourceEvents = updates.sourceEvents;
+  if (updates.conditions !== undefined) definition.conditions = updates.conditions;
+  if (Object.keys(definition).length > 0) row.definition = definition;
+
+  const { error } = await db.from('fre_custom_events').update(row).eq('id', id);
+  if (error) console.error('updateCustomEvent error:', error);
+}
+
+export async function deleteCustomEvent(id: string): Promise<void> {
+  const db = getSupabase();
+  const { error } = await db.from('fre_custom_events').delete().eq('id', id);
+  if (error) console.error('deleteCustomEvent error:', error);
 }
 
 // ===== Webhooks =====

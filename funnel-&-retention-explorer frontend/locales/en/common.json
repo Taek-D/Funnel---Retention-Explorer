@@ -10,6 +10,7 @@
     "team": "Team",
     "webhooks": "Webhooks",
     "scheduledReports": "Scheduled Reports",
+    "events": "Custom Events",
     "notifications": "Notifications",
     "admin": "Admin",
     "home": "Go to Home",

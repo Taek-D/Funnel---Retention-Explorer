@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -10,6 +10,9 @@ import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
+import { useAuth } from '../context/AuthContext';
+import { listCustomEvents } from '../lib/supabaseData';
+import type { CustomEventDefinition } from '../types';
 
 export const FunnelAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -19,8 +22,18 @@ export const FunnelAnalysis: React.FC = () => {
   } = useFunnelAnalysis();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
   const { filteredData, filterCount } = useFilteredData();
+  const { user } = useAuth();
 
   const [editorCollapsed, setEditorCollapsed] = useState(false);
+  const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      listCustomEvents(user.id).then(setCustomEvents);
+    } else {
+      try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+    }
+  }, [user]);
 
   if (!hasData) {
     return (
@@ -215,9 +228,18 @@ export const FunnelAnalysis: React.FC = () => {
                       onChange={(e) => updateStep(i, e.target.value)}
                     >
                       <option value="" className="bg-surface">{t('funnel.selectEvent')}</option>
-                      {uniqueEvents.map(event => (
-                        <option key={event} value={event} className="bg-surface">{event}</option>
-                      ))}
+                      <optgroup label={t('customEvents.optgroupRaw')}>
+                        {uniqueEvents.map(event => (
+                          <option key={event} value={event} className="bg-surface">{event}</option>
+                        ))}
+                      </optgroup>
+                      {customEvents.length > 0 && (
+                        <optgroup label={t('customEvents.optgroupCustom')}>
+                          {customEvents.map(ce => (
+                            <option key={`custom:${ce.id}`} value={`custom:${ce.id}`} className="bg-surface">{ce.name}</option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
                     {i > 0 && (
                       <button onClick={() => removeStep(i)} className="text-slate-600 hover:text-red-400 transition-colors">
