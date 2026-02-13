@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-13T14:02:12.590Z",
+  "lastUpdated": "2026-02-13T14:34:06.380Z",
   "activeFeatures": [
     "__tests__",
     "unit",
@@ -15,7 +15,8 @@
     "monetization-conversion",
     "start-trial",
     "webhook-dispatch",
-    "process-billing"
+    "process-billing",
+    "admin-api"
   ],
   "primaryFeature": "__tests__",
   "features": {
@@ -102,12 +103,18 @@
       "autoAdvanced": true
     },
     "admin-dashboard": {
-      "phase": "archived",
+      "phase": "report",
       "matchRate": 98.5,
       "iterationCount": 0,
       "startedAt": "2026-02-12T12:00:00.000Z",
       "archivedAt": "2026-02-12T15:00:00.000Z",
-      "archivedTo": "docs/archive/2026-02/admin-dashboard/"
+      "archivedTo": "docs/archive/2026-02/admin-dashboard/",
+      "phaseNumber": 6,
+      "previousPhase": "check",
+      "autoAdvanced": true,
+      "timestamps": {
+        "lastUpdated": "2026-02-13T14:34:06.379Z"
+      }
     },
     "e2e-testing": {
       "phase": "archived",
@@ -245,6 +252,19 @@
         "lastUpdated": "2026-02-13T14:02:12.590Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\process-billing\\index.ts"
+    },
+    "admin-api": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-13T14:26:06.818Z",
+        "lastUpdated": "2026-02-13T14:26:06.818Z"
+      },
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\admin-api\\index.ts"
     }
   },
   "pipeline": {
@@ -255,7 +275,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-13T14:02:12.590Z"
+    "lastActivity": "2026-02-13T14:34:06.380Z"
   },
   "history": [
     {
@@ -2684,6 +2704,18 @@
       "timestamp": "2026-02-13T14:02:12.590Z",
       "feature": "process-billing",
       "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T14:26:06.818Z",
+      "feature": "admin-api",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T14:34:06.380Z",
+      "feature": "admin-dashboard",
+      "phase": "report",
       "action": "updated"
     }
   ]

@@ -23,7 +23,7 @@
 | 15 | dashboard-customization | 02-11 | 100% | 92/92 |
 | 16 | dashboard-presets | 02-12 | 100% | 59/59 |
 | 17 | notification-system | 02-12 | 100% | 38/38 |
-| 18 | admin-dashboard | 02-12 | 98.5% | 81/83 P, 2 PARTIAL |
+| 18 | admin-dashboard | 02-13 | 98.5% | 81/83 P, 2 PARTIAL (v2: full-stack incl. Edge Function + migration) |
 | 19 | e2e-testing | 02-13 | 98.5% | 57/66 P, 8 PARTIAL, 1 FAIL |
 | 20 | ci-e2e | 02-13 | 100% | 44/44 |
 | 21 | accessibility-dnd | 02-13 | 97.3% | 71/75 P, 4 PARTIAL |
