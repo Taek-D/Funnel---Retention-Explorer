@@ -227,7 +227,30 @@ serve(async (req) => {
     graceExpired++;
   }
 
-  const processed = (dueProfiles?.length ?? 0) + (cancelledProfiles?.length ?? 0) + (graceProfiles?.length ?? 0);
+  // 4. Trial 만료 처리 → Free 다운그레이드
+  let trialExpired = 0;
+
+  const { data: expiredTrials } = await serviceClient
+    .from('fre_user_profiles')
+    .select('id, trial_end')
+    .eq('plan', 'pro')
+    .not('trial_end', 'is', null)
+    .lte('trial_end', new Date().toISOString())
+    .or('subscription_status.eq.none,subscription_status.is.null');
+
+  for (const profile of expiredTrials ?? []) {
+    await serviceClient
+      .from('fre_user_profiles')
+      .update({
+        plan: 'free',
+        csv_row_limit: 10000,
+      })
+      .eq('id', profile.id);
+
+    trialExpired++;
+  }
+
+  const processed = (dueProfiles?.length ?? 0) + (cancelledProfiles?.length ?? 0) + (graceProfiles?.length ?? 0) + (expiredTrials?.length ?? 0);
 
   return new Response(JSON.stringify({
     processed,
@@ -235,6 +258,7 @@ serve(async (req) => {
     failed: failedCount,
     cancelled_downgraded: cancelledDowngraded,
     grace_expired: graceExpired,
+    trial_expired: trialExpired,
   }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
