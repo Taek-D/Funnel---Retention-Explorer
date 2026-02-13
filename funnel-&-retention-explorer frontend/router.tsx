@@ -28,6 +28,7 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage').then(m 
 const CustomEventsPage = lazy(() => import('./pages/CustomEventsPage'));
 const ABTestPage = lazy(() => import('./pages/ABTestPage'));
 const UserJourneyFlow = lazy(() => import('./pages/UserJourneyFlow').then(m => ({ default: m.UserJourneyFlow })));
+const FunnelComparison = lazy(() => import('./pages/FunnelComparison').then(m => ({ default: m.FunnelComparison })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
           { path: 'events', element: <Suspense fallback={<PageLoader />}><CustomEventsPage /></Suspense> },
           { path: 'ab-test', element: <Suspense fallback={<PageLoader />}><ABTestPage /></Suspense> },
           { path: 'journey', element: <Suspense fallback={<PageLoader />}><UserJourneyFlow /></Suspense> },
+          { path: 'funnel-compare', element: <Suspense fallback={<PageLoader />}><FunnelComparison /></Suspense> },
           {
             path: 'admin',
             element: <AdminRoute />,

@@ -72,7 +72,8 @@ import {
   FlaskConical,
   Save,
   Camera,
-  LoaderCircle
+  LoaderCircle,
+  GitCompareArrows
 } from 'lucide-react';
 
 export {
@@ -149,5 +150,6 @@ export {
   FlaskConical,
   Save,
   Camera,
-  LoaderCircle
+  LoaderCircle,
+  GitCompareArrows
 };

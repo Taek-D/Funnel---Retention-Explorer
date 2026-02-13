@@ -927,3 +927,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 tasks completed (FT-1 ~ FT-4): FT-1 FunnelTimeStats 타입 (median/p10/p90/mean/count) + FunnelStep.timeStats 필드 + calculateTimeBetweenSteps 확장 (기존 calculateMedianTimeBetweenSteps 교체, percentile 계산 추가), FT-2 시간 분포 가로 BarChart (Recharts layout="vertical", P90 투명 바 + Median 실바, 병목 구간 #ef4444 빨간색 자동 하이라이트, AlertTriangle + bottleneckHint 인사이트 텍스트, Custom Tooltip p10/median/p90/mean/count 전체 표시), FT-3 timeChartRef + ChartDownloadButton "funnel-time-analysis", FT-4 i18n 8키 ko/en (timeAnalysis/timeP10/timeP90/timeMean/timeMedian/timeCount/bottleneckHint/noTimeData). 4개 파일 변경 (0 신규, 4 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.
+
+---
+
+## funnel-comparison
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Funnel Comparison (Period A vs B Conversion Rate Diff) |
+| **Match Rate** | 100% (24/24) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `funnel-comparison/funnel-comparison.plan.md` |
+| Design | `funnel-comparison/funnel-comparison.design.md` |
+| Analysis | `funnel-comparison/funnel-comparison.analysis.md` |
+| Report | `funnel-comparison/funnel-comparison.report.md` |
+
+### Summary
+
+4 tasks completed (FC-1 ~ FC-4): FC-1 compareFunnels 엔진 (FunnelComparisonStep/FunnelComparisonResult 타입, resultA/B zip + diff=rateB-rateA + direction 0.5pp 임계값), FC-2 FunnelComparison 페이지 (Period A/B 날짜 입력, select 기반 스텝 선택기 + Plus/X 추가/제거, 비교 실행 버튼, 요약 KPI 2개, 비교 테이블 TrendingUp/Down/same, Grouped BarChart CHART_COLORS.palette, ChartDownloadButton, 빈 상태 GitCompareArrows), FC-3 GitCompareArrows Icons.tsx + /app/funnel-compare lazy route + Sidebar 메뉴, FC-4 i18n 17키 funnelCompare.* + nav.funnelCompare ko/en. 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (9.06 KB chunk). 0 iteration.

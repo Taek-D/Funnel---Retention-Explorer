@@ -166,3 +166,53 @@ export function calculateFullDataFunnel(
 
   return funnelData.length > 1 ? funnelData : null;
 }
+
+export type FunnelComparisonStep = {
+  step: string;
+  stepNumber: number;
+  usersA: number;
+  usersB: number;
+  rateA: number;
+  rateB: number;
+  diff: number;
+  direction: 'up' | 'down' | 'same';
+};
+
+export type FunnelComparisonResult = {
+  steps: FunnelComparisonStep[];
+  totalUsersA: number;
+  totalUsersB: number;
+};
+
+export function compareFunnels(
+  resultA: FunnelStep[],
+  resultB: FunnelStep[]
+): FunnelComparisonResult {
+  const maxLen = Math.max(resultA.length, resultB.length);
+  const steps: FunnelComparisonStep[] = [];
+
+  for (let i = 0; i < maxLen; i++) {
+    const a = resultA[i];
+    const b = resultB[i];
+    const rateA = a ? a.conversionRate : 0;
+    const rateB = b ? b.conversionRate : 0;
+    const diff = rateB - rateA;
+
+    steps.push({
+      step: a?.step || b?.step || `Step ${i + 1}`,
+      stepNumber: i + 1,
+      usersA: a?.users || 0,
+      usersB: b?.users || 0,
+      rateA,
+      rateB,
+      diff,
+      direction: diff > 0.5 ? 'up' : diff < -0.5 ? 'down' : 'same',
+    });
+  }
+
+  return {
+    steps,
+    totalUsersA: resultA[0]?.users || 0,
+    totalUsersB: resultB[0]?.users || 0,
+  };
+}

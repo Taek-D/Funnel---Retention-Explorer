@@ -732,6 +732,25 @@
     "insufficientSample": "Insufficient sample size",
     "insufficientSampleDesc": "At least {{count}} per group is recommended for accurate results"
   },
+  "funnelCompare": {
+    "title": "Funnel Comparison",
+    "desc": "Compare funnel conversion rates across two periods",
+    "periodA": "Period A",
+    "periodB": "Period B",
+    "start": "Start",
+    "end": "End",
+    "compare": "Compare",
+    "diff": "Diff",
+    "improved": "Improved",
+    "declined": "Declined",
+    "noChange": "No Change",
+    "totalUsers": "Total Users",
+    "noData": "Upload data first",
+    "noDataDesc": "Upload a CSV to compare funnels",
+    "emptyHint": "Set periods and steps, then run comparison",
+    "addStep": "Add Step",
+    "selectEvent": "Select event"
+  },
   "journey": {
     "title": "User Journey Flow",
     "desc": "Visualize event transition flows as a Sankey diagram",
