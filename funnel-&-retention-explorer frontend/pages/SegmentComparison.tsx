@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ChevronDown, Users } from '../components/Icons';
@@ -6,6 +6,7 @@ import { useSegmentComparison } from '../hooks/useSegmentComparison';
 import { useDataExport } from '../hooks/useDataExport';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
+import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
 
@@ -13,6 +14,7 @@ export const SegmentComparison: React.FC = () => {
   const { t } = useTranslation('pages');
   const { segmentResults, availablePlatforms, availableChannels, hasData, hasFunnel, runComparison } = useSegmentComparison();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
+  const segmentChartRef = useRef<HTMLDivElement>(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
 
@@ -142,8 +144,11 @@ export const SegmentComparison: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Bars */}
           <div className="lg:col-span-2 bg-surface border border-white/[0.06] rounded-lg p-6">
-            <h3 className="text-white font-bold text-lg mb-6">{t('segments.conversionBySegment')}</h3>
-            <div className="h-[300px] w-full">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-lg">{t('segments.conversionBySegment')}</h3>
+              <ChartDownloadButton targetRef={segmentChartRef} filename="segment-chart" />
+            </div>
+            <div ref={segmentChartRef} className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} barSize={40}>
                   <XAxis dataKey="name" tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} axisLine={false} tickLine={false} />

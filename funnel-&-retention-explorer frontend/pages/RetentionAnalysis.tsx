@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -6,6 +6,7 @@ import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
 import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
+import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
@@ -27,6 +28,8 @@ export const RetentionAnalysis: React.FC = () => {
   const [selectedActiveEvents, setSelectedActiveEvents] = useState<string[]>([]);
   const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
   const [hoverCell, setHoverCell] = useState<{ row: number; col: string; x: number; y: number } | null>(null);
+  const cohortTableRef = useRef<HTMLDivElement>(null);
+  const retentionCurveRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -232,7 +235,13 @@ export const RetentionAnalysis: React.FC = () => {
 
           {/* Cohort Table */}
           <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden relative">
-            <div className="overflow-x-auto" style={{ scrollbarGutter: 'stable' }}>
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <span className="text-sm font-semibold text-white">
+                {isPaid ? t('retention.subscriptionDate') : t('retention.cohortDate')}
+              </span>
+              <ChartDownloadButton targetRef={cohortTableRef} filename="cohort-heatmap" />
+            </div>
+            <div ref={cohortTableRef} className="overflow-x-auto" style={{ scrollbarGutter: 'stable' }}>
               <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface to-transparent z-10 md:hidden" />
             <table className="w-full text-sm text-left">
               <thead className="bg-white/5 text-slate-400 font-semibold border-b border-white/5">
@@ -308,9 +317,10 @@ export const RetentionAnalysis: React.FC = () => {
                   <h3 className="text-lg font-bold text-white">{t('retention.avgCurve')}</h3>
                   <p className="text-xs text-slate-400">{t('retention.avgCurveDesc')}</p>
                 </div>
+                <ChartDownloadButton targetRef={retentionCurveRef} filename="retention-curve" />
               </div>
             </div>
-            <div className="h-[300px] w-full">
+            <div ref={retentionCurveRef} className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={curveData}>
                   <defs>

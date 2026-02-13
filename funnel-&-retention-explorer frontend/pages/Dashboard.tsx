@@ -13,6 +13,7 @@ import { useToast } from '../components/Toast';
 import { ShareButton } from '../components/ShareButton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { DashboardWidget } from '../components/DashboardWidget';
+import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { CHART_COLORS, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { FilterPanel } from '../components/FilterPanel';
@@ -30,6 +31,10 @@ export const Dashboard: React.FC = () => {
   const { layout, editMode, setEditMode, toggleVisibility, toggleWidth, reorder, resetToDefault, applyPreset } = useDashboardLayout();
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
   const { filteredData, filterCount } = useFilteredData();
+
+  // Chart download refs
+  const dashFunnelRef = useRef<HTMLDivElement>(null);
+  const dashRetentionRef = useRef<HTMLDivElement>(null);
 
   // Preset dropdown state
   const [presetOpen, setPresetOpen] = useState(false);
@@ -191,12 +196,15 @@ export const Dashboard: React.FC = () => {
           </h3>
           <p className="text-slate-400 text-sm">{t('dashboard.nStepFunnel', { count: funnelResults?.length || 0 })}</p>
         </div>
-        <div className="text-right">
-          <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
-          <div className="text-accent text-sm font-medium">{t('dashboard.overallConversion')}</div>
+        <div className="flex items-center gap-3">
+          <ChartDownloadButton targetRef={dashFunnelRef} filename="dashboard-funnel" />
+          <div className="text-right">
+            <div className="text-3xl font-bold font-mono text-white">{overallConversion?.toFixed(1)}%</div>
+            <div className="text-accent text-sm font-medium">{t('dashboard.overallConversion')}</div>
+          </div>
         </div>
       </div>
-      <div className="h-64 w-full relative z-10">
+      <div ref={dashFunnelRef} className="h-64 w-full relative z-10">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={funnelChartData} barSize={60}>
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 12 }} dy={10} />
@@ -226,9 +234,10 @@ export const Dashboard: React.FC = () => {
     <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-bold text-white">{t('dashboard.retentionCurve')}</h3>
+        <ChartDownloadButton targetRef={dashRetentionRef} filename="dashboard-retention" />
       </div>
       {retentionCurveData.length > 0 ? (
-        <div className="h-48 w-full">
+        <div ref={dashRetentionRef} className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={retentionCurveData}>
               <defs>

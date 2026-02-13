@@ -2,6 +2,10 @@
   "meta": {
     "title": "FRE Analytics \u2014 \ud37c\ub110 & \ub9ac\ud150\uc158 \ud0d0\uc0c9\uae30"
   },
+  "chart": {
+    "downloadPng": "차트 이미지 다운로드",
+    "downloading": "다운로드 중..."
+  },
   "filter": {
     "title": "필터",
     "dateRange": "날짜 범위",

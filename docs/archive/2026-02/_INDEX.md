@@ -855,3 +855,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 5 scope items completed (VZ-1 ~ VZ-5): VZ-1 Funnel Drop-off Chart (showDropoff 토글 + dropoffData useMemo + layout="vertical" BarChart + dropoffColor Cell), VZ-2 Segment Grouped BarChart (CSS 바 → Recharts BarChart 교체 + CHART_COLORS.palette 색상 + Tooltip n= 표기), VZ-3 Retention Heatmap Tooltip (hoverCell 상태 + onMouseEnter/Leave + 절대 사용자 수 + 잔존율 표시), VZ-4 CHART_COLORS palette 8색 + dropoffColor 함수 (rate 기반 4단계 색상), VZ-5 i18n 6키 ko/en (dropoffTitle/dropoffRate/showDropoff/hideDropoff/retained/rate). 6개 파일 변경. 테스트 310/310 통과. 빌드 정상. 0 iteration.
+
+---
+
+## chart-image-download
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Chart Image Download (Individual PNG via html2canvas) |
+| **Match Rate** | 100% (23/23) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `chart-image-download/chart-image-download.plan.md` |
+| Design | `chart-image-download/chart-image-download.design.md` |
+| Analysis | `chart-image-download/chart-image-download.analysis.md` |
+| Report | `chart-image-download/chart-image-download.report.md` |
+
+### Summary
+
+7 tasks completed (CD-1 ~ CD-7): CD-1 ChartDownloadButton 공용 컴포넌트 (targetRef + filename props, html2canvas dynamic import, scale:2 Retina, backgroundColor '#0f1117', Camera/LoaderCircle 아이콘), CD-2 FunnelAnalysis 2개소 (funnelChartRef + dropoffChartRef), CD-3 RetentionAnalysis 2개소 (cohortTableRef + retentionCurveRef), CD-4 SegmentComparison 1개소 (segmentChartRef), CD-5 Dashboard 2개소 (dashFunnelRef + dashRetentionRef), CD-6 Icons.tsx Camera + LoaderCircle 추가, CD-7 i18n 2키 ko/en (chart.downloadPng, chart.downloading). 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (+0 chunks, html2canvas already bundled). 0 iteration.

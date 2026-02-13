@@ -2,6 +2,10 @@
   "meta": {
     "title": "FRE Analytics \u2014 Funnel & Retention Explorer"
   },
+  "chart": {
+    "downloadPng": "Download chart image",
+    "downloading": "Downloading..."
+  },
   "filter": {
     "title": "Filters",
     "dateRange": "Date Range",

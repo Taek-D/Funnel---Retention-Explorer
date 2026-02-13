@@ -70,7 +70,9 @@ import {
   Layers,
   ArrowRightLeft,
   FlaskConical,
-  Save
+  Save,
+  Camera,
+  LoaderCircle
 } from 'lucide-react';
 
 export {
@@ -145,5 +147,7 @@ export {
   Layers,
   ArrowRightLeft,
   FlaskConical,
-  Save
+  Save,
+  Camera,
+  LoaderCircle
 };

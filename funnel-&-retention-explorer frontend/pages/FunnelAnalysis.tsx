@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Users, Zap, ArrowRight, TrendingUp, TrendingDown, Plus, X, ChevronDown, ChevronUp, GripVertical, Save } from '../components/Icons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -9,6 +9,7 @@ import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
+import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { useFilteredData } from '../hooks/useFilteredData';
 import { useAuth } from '../context/AuthContext';
 import { listCustomEvents, listSavedFunnels, createSavedFunnel, updateSavedFunnel, deleteSavedFunnel } from '../lib/supabaseData';
@@ -30,6 +31,10 @@ export const FunnelAnalysis: React.FC = () => {
   // DnD state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Chart refs for image download
+  const funnelChartRef = useRef<HTMLDivElement>(null);
+  const dropoffChartRef = useRef<HTMLDivElement>(null);
 
   // Drop-off chart state
   const [showDropoff, setShowDropoff] = useState(false);
@@ -451,13 +456,16 @@ export const FunnelAnalysis: React.FC = () => {
                   <h3 className="text-lg font-semibold text-white">{t('funnel.conversionFunnel')}</h3>
                   <p className="text-sm text-slate-400">{t('funnel.stepJourney')}</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold font-mono text-white">{overallConversion.toFixed(1)}%</div>
-                  <div className="text-accent text-sm font-medium">{t('funnel.overallConversion')}</div>
+                <div className="flex items-center gap-3">
+                  <ChartDownloadButton targetRef={funnelChartRef} filename="funnel-chart" />
+                  <div className="text-right">
+                    <div className="text-3xl font-bold font-mono text-white">{overallConversion.toFixed(1)}%</div>
+                    <div className="text-accent text-sm font-medium">{t('funnel.overallConversion')}</div>
+                  </div>
                 </div>
               </div>
 
-              <div className="h-[320px] w-full">
+              <div ref={funnelChartRef} className="h-[320px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} barSize={60}>
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 12 }} dy={10} />
@@ -545,8 +553,11 @@ export const FunnelAnalysis: React.FC = () => {
 
               {showDropoff && (
                 <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
-                  <h3 className="text-lg font-bold text-white mb-4">{t('funnel.dropoffTitle')}</h3>
-                  <div className="h-[250px] w-full">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-white">{t('funnel.dropoffTitle')}</h3>
+                    <ChartDownloadButton targetRef={dropoffChartRef} filename="dropoff-chart" />
+                  </div>
+                  <div ref={dropoffChartRef} className="h-[250px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={dropoffData} layout="vertical" barSize={24}>
                         <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} domain={[0, 100]} unit="%" />
