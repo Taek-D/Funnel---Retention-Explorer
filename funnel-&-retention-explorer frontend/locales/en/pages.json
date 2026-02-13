@@ -723,5 +723,18 @@
     "minSteps": "Select at least 2 steps",
     "insufficientSample": "Insufficient sample size",
     "insufficientSampleDesc": "At least {{count}} per group is recommended for accurate results"
+  },
+  "journey": {
+    "title": "User Journey Flow",
+    "desc": "Visualize event transition flows as a Sankey diagram",
+    "maxSteps": "Max Steps",
+    "minFlow": "Min Flow %",
+    "calculate": "Analyze",
+    "totalUsers": "Users Analyzed",
+    "totalTransitions": "Transitions",
+    "noData": "Upload data first",
+    "noDataDesc": "Upload a CSV to analyze user journeys",
+    "emptyHint": "Adjust settings and run analysis",
+    "noResults": "No flows match criteria. Try lowering the min flow %"
   }
 }

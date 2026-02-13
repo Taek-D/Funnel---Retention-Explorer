@@ -879,3 +879,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 7 tasks completed (CD-1 ~ CD-7): CD-1 ChartDownloadButton 공용 컴포넌트 (targetRef + filename props, html2canvas dynamic import, scale:2 Retina, backgroundColor '#0f1117', Camera/LoaderCircle 아이콘), CD-2 FunnelAnalysis 2개소 (funnelChartRef + dropoffChartRef), CD-3 RetentionAnalysis 2개소 (cohortTableRef + retentionCurveRef), CD-4 SegmentComparison 1개소 (segmentChartRef), CD-5 Dashboard 2개소 (dashFunnelRef + dashRetentionRef), CD-6 Icons.tsx Camera + LoaderCircle 추가, CD-7 i18n 2키 ko/en (chart.downloadPng, chart.downloading). 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (+0 chunks, html2canvas already bundled). 0 iteration.
+
+---
+
+## user-journey-flow
+
+| Item | Detail |
+|------|--------|
+| **Feature** | User Journey Flow (Sankey Diagram Visualization) |
+| **Match Rate** | 100% (23/23) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `user-journey-flow/user-journey-flow.plan.md` |
+| Design | `user-journey-flow/user-journey-flow.design.md` |
+| Analysis | `user-journey-flow/user-journey-flow.analysis.md` |
+| Report | `user-journey-flow/user-journey-flow.report.md` |
+
+### Summary
+
+4 tasks completed (UJ-1 ~ UJ-4): UJ-1 journeyEngine.ts (buildJourneyFlow — userId별 이벤트 시퀀스 추출, 타임스탬프 정렬, maxSteps 제한, step-prefixed 노드명 "Step N: eventName", 전환 카운트 집계, minFlowPct 임계값 필터, { nodes, links, totalUsers, totalTransitions } 반환), UJ-2 UserJourneyFlow 페이지 (Recharts Sankey 다이어그램, CustomNode step별 팔레트 색상 + 라벨, CustomLink 소스 step 색상, maxSteps 3-8 range + minFlowPct 0-10% 0.5 step, 분석 실행 버튼, Stats 카드 2개, FilterPanel 통합, ChartDownloadButton, ChartSkeleton placeholder, 빈 상태/노 데이터/노 결과 3개 상태), UJ-3 router.tsx lazy import + /app/journey 라우트 + Sidebar ArrowRightLeft 아이콘 메뉴, UJ-4 i18n 12키 journey.* ko/en pages.json + nav.journey ko/en common.json. 8개 파일 변경 (2 신규, 6 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.
