@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-13T14:34:06.380Z",
+  "lastUpdated": "2026-02-13T15:49:51.477Z",
   "activeFeatures": [
     "__tests__",
     "unit",
@@ -45,7 +45,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-11T17:38:19.315Z",
-        "lastUpdated": "2026-02-13T07:01:40.252Z"
+        "lastUpdated": "2026-02-13T15:48:30.833Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\pages\\Dashboard.test.tsx"
     },
@@ -58,7 +58,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-11T17:48:37.516Z",
-        "lastUpdated": "2026-02-11T17:48:37.516Z"
+        "lastUpdated": "2026-02-13T15:49:51.477Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\unit\\excelExport.test.ts"
     },
@@ -71,9 +71,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-11T18:09:45.357Z",
-        "lastUpdated": "2026-02-13T13:22:28.601Z"
+        "lastUpdated": "2026-02-13T15:44:33.226Z"
       },
-      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\AppShell.tsx"
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\StickinessPage.tsx"
     },
     "context": {
       "phase": "do",
@@ -84,7 +84,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-12T04:05:08.196Z",
-        "lastUpdated": "2026-02-13T02:42:51.202Z"
+        "lastUpdated": "2026-02-13T15:42:51.032Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\context\\NotificationContext.tsx"
     },
@@ -275,7 +275,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-13T14:34:06.380Z"
+    "lastActivity": "2026-02-13T15:49:51.477Z"
   },
   "history": [
     {
@@ -2716,6 +2716,384 @@
       "timestamp": "2026-02-13T14:34:06.380Z",
       "feature": "admin-dashboard",
       "phase": "report",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:34:30.929Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:43.184Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:45.131Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:46.301Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:53.649Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:55.485Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:57.086Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:40:58.812Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:33.238Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:34.790Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:40.142Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:41.486Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:43.055Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:44.590Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:46.284Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:48.155Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:52.468Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:54.452Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:57.180Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:58.443Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:41:59.952Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:01.348Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:06.600Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:51.032Z",
+      "feature": "context",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:53.496Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:54.984Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:42:56.356Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:43:02.748Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:43:16.232Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:43:21.815Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:44:28.420Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:44:30.540Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:44:33.226Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:40.291Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:42.582Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:43.862Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:45.452Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:51.800Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:52.986Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:53.831Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:46:56.102Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:01.257Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:02.409Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:17.570Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:21.845Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:26.084Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:30.126Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:34.435Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:38.539Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:43.072Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:47:50.292Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:01.685Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:06.939Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:08.519Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:10.770Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:12.255Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:13.859Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:15.931Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:48:30.833Z",
+      "feature": "__tests__",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:49:03.270Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:49:07.009Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:49:08.104Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-13T15:49:51.477Z",
+      "feature": "unit",
+      "phase": "do",
       "action": "updated"
     }
   ]

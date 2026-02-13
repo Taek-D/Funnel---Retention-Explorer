@@ -1,101 +1,191 @@
-# Admin Dashboard Plan
+# Admin Dashboard Planning Document
 
-## Overview
-SaaS 운영을 위한 어드민 대시보드. 사용자 관리, 구독/매출 현황, 사용량 통계를 한 곳에서 확인하고 관리할 수 있는 관리자 전용 페이지를 구축합니다.
+> **Summary**: Complete admin dashboard backend (Edge Function + DB migration) to activate existing frontend
+>
+> **Project**: FRE Analytics
+> **Version**: 1.0.0
+> **Author**: AI
+> **Date**: 2026-02-13
+> **Status**: Draft
 
-## Current State (0% Complete)
-- **RBAC**: 없음. UserProfile에 role 필드 없음. ProtectedRoute는 인증만 확인
-- **Admin Route**: 없음. `/app/admin` 경로 없음
-- **Admin Query**: 없음. supabaseData.ts는 현재 사용자 데이터만 조회 (RLS)
-- **데이터 소스**: fre_user_profiles, fre_billing_history, fre_projects, fre_analysis_snapshots, fre_notifications 테이블 존재
-- **기존 인프라**: planManager.ts (플랜/가격 상수), analytics.ts (10개 이벤트 추적)
+---
 
-## Scope
+## 1. Overview
 
-### AD-1: Admin Role 시스템 (LOW effort, CRITICAL)
-fre_user_profiles에 `role` 컬럼 추가하고, 프론트엔드에서 admin 접근 제어.
+### 1.1 Purpose
 
-**구현**:
-- DB: `ALTER TABLE fre_user_profiles ADD COLUMN role TEXT DEFAULT 'user' CHECK (role IN ('user','admin'))`
-- types/index.ts: UserProfile에 `role: 'user' | 'admin'` 추가
-- AuthContext: userProfile에 role 포함
-- AdminRoute 컴포넌트: role === 'admin' 체크 (아니면 /app/dashboard로 리다이렉트)
-- Sidebar: admin일 때만 Admin 메뉴 표시
+The admin dashboard frontend (3 pages, 7 components, API client) is fully implemented but has no backend. This feature creates the `admin-api` Edge Function and applies the `role` column migration to make the admin dashboard functional.
 
-### AD-2: Admin Supabase Edge Function (MEDIUM effort, CRITICAL)
-클라이언트에서 service_role 키를 쓸 수 없으므로, 어드민 전용 Edge Function으로 데이터를 조회.
+### 1.2 Background
 
-**Edge Function**: `admin-api`
-- JWT에서 user_id 추출 → fre_user_profiles.role === 'admin' 확인
-- 엔드포인트:
-  - `GET /stats` — KPI 집계 (총 사용자, Pro 사용자, MRR, 오늘 가입)
-  - `GET /users` — 전체 사용자 목록 (프로필 + auth.users email/last_sign_in)
-  - `GET /users/:id` — 사용자 상세 (프로필 + 결제 내역 + 프로젝트)
-  - `PATCH /users/:id` — 사용자 플랜/역할 수정
-  - `GET /billing` — 전체 결제 내역 (최근 100건)
-  - `GET /revenue` — 월별 매출 집계
+- Admin pages already exist: `AdminDashboard.tsx`, `AdminUsers.tsx`, `AdminBilling.tsx`
+- Route guard exists: `AdminRoute.tsx` checks `userProfile.role === 'admin'`
+- API client exists: `adminApi.ts` calls `/functions/v1/admin-api/*`
+- Sidebar conditionally shows admin link when `role === 'admin'`
+- i18n keys exist in both ko/en (25+ admin keys)
+- **Blocker**: `fre_user_profiles` has no `role` column in production DB
+- **Blocker**: `admin-api` Edge Function does not exist
 
-### AD-3: Admin Dashboard 페이지 (MEDIUM effort, HIGH impact)
-KPI 카드 + 차트로 서비스 현황을 한눈에 파악.
+### 1.3 Related Documents
 
-**KPI 카드 (4개)**:
-| 카드 | 값 | 소스 |
-|------|------|------|
-| 총 사용자 | count | fre_user_profiles |
-| Pro 구독자 | count where plan != 'free' | fre_user_profiles |
-| MRR (월 반복 매출) | SUM 계산 | billing_cycle + plan |
-| 오늘 가입 | count where created_at = today | fre_user_profiles |
+- Existing frontend: `pages/AdminDashboard.tsx`, `pages/AdminUsers.tsx`, `pages/AdminBilling.tsx`
+- API contract: `lib/adminApi.ts`
+- Route definition: `router.tsx` lines 35-37, 95-100
+- Type definitions: `types/index.ts` (UserRole, UserProfile)
 
-**차트 (2개)**:
-- 월별 가입자 추이 (Bar chart, 최근 6개월)
-- 플랜별 분포 (Pie/Donut chart: Free vs Pro vs Team)
+---
 
-### AD-4: 사용자 관리 페이지 (MEDIUM effort, HIGH impact)
-전체 사용자 목록 + 검색 + 상세 보기.
+## 2. Scope
 
-**목록 테이블 컬럼**:
-- 이메일, 플랜, 구독 상태, 가입일, 마지막 로그인, 프로젝트 수
+### 2.1 In Scope
 
-**기능**:
-- 이메일/플랜 검색/필터
-- 사용자 클릭 → 상세 모달 (프로필 + 결제 내역 + 프로젝트 목록)
-- 플랜 수동 변경 (admin override)
-- 페이지네이션 (20명씩)
+- [ ] AD-01: Add `role` column to `fre_user_profiles` (DB migration)
+- [ ] AD-02: Create `admin-api` Edge Function with 6 endpoints
+- [ ] AD-03: Deploy Edge Function to Supabase production
+- [ ] AD-04: Set initial admin user via SQL
+- [ ] AD-05: Verify end-to-end flow (build + tests pass)
 
-### AD-5: 매출/결제 페이지 (LOW effort, MEDIUM impact)
-전체 결제 내역 조회 + 월별 매출 차트.
+### 2.2 Out of Scope
 
-**UI**:
-- 결제 내역 테이블 (날짜, 사용자, 금액, 상태, 주문ID)
-- 월별 매출 Bar chart (최근 12개월)
-- 필터: 기간, 상태 (success/failed/refunded)
+- Admin audit logging (future feature)
+- Admin notification system
+- Bulk user operations
+- Admin analytics export
+- Team plan management in admin panel
 
-## Out of Scope
-- **실시간 모니터링**: 서버 상태, API 레이턴시 (Sentry/Vercel Analytics로 대체)
-- **이메일 발송**: 사용자에게 직접 이메일 전송 기능
-- **A/B 테스트 관리**: 실험 설정/결과 관리
-- **콘텐츠 관리(CMS)**: 랜딩 페이지 수정 등
-- **감사 로그(Audit Log)**: 어드민 행동 추적 (Phase 2로)
-- **사용자 정지/삭제**: 위험한 행동은 Supabase Dashboard에서 직접 처리
+---
 
-## Implementation Order
-1. AD-1 (Role 시스템) → 접근 제어 기반
-2. AD-2 (Edge Function) → 데이터 조회 기반
-3. AD-3 (대시보드 페이지) → KPI 확인
-4. AD-4 (사용자 관리) → 운영 핵심
-5. AD-5 (매출 페이지) → 재무 현황
+## 3. Requirements
 
-## Dependencies
-- Supabase (fre_user_profiles role 컬럼 추가 마이그레이션)
-- Supabase Edge Function 배포 (admin-api)
-- 기존 Recharts, 라우터, i18n 인프라 활용
+### 3.1 Functional Requirements
 
-## Success Criteria
-- [ ] admin role 사용자만 `/app/admin/*` 접근 가능
-- [ ] KPI 카드 4개가 실시간 데이터 표시
-- [ ] 전체 사용자 목록 + 검색/필터 동작
-- [ ] 사용자 플랜 수동 변경 가능
-- [ ] 결제 내역 조회 + 월별 매출 차트 표시
-- [ ] 일반 사용자에게 Admin 메뉴 노출되지 않음
-- [ ] 기존 310개 테스트 통과
-- [ ] ko/en i18n 완전 지원
+| ID | Requirement | Priority | Status |
+|----|-------------|----------|--------|
+| FR-01 | Add `role TEXT DEFAULT 'user' CHECK(role IN ('user','admin'))` to `fre_user_profiles` | High | Pending |
+| FR-02 | `GET /stats` endpoint: totalUsers, proUsers, todaySignups, mrr | High | Pending |
+| FR-03 | `GET /users?page&search&plan` endpoint: paginated user list with auth.users join | High | Pending |
+| FR-04 | `GET /users/:id` endpoint: user detail (profile + billing history + projects) | High | Pending |
+| FR-05 | `PATCH /users/:id` endpoint: update user plan and role | High | Pending |
+| FR-06 | `GET /billing?page&status` endpoint: paginated billing records | High | Pending |
+| FR-07 | `GET /revenue` endpoint: monthly revenue aggregation (last 12 months) | Medium | Pending |
+| FR-08 | Admin role verification on all endpoints (service_role + role check) | High | Pending |
+
+### 3.2 Non-Functional Requirements
+
+| Category | Criteria | Measurement Method |
+|----------|----------|-------------------|
+| Security | Only admin-role users can access endpoints | Role check via JWT + profile lookup |
+| Performance | Response time < 500ms for all endpoints | Manual verification |
+| Data | Pagination with 20 items per page | API response validation |
+
+---
+
+## 4. Success Criteria
+
+### 4.1 Definition of Done
+
+- [ ] DB migration applied to production
+- [ ] Edge Function deployed and responding
+- [ ] All 6 API endpoints return correct data
+- [ ] Admin user can access `/app/admin` pages
+- [ ] Non-admin users are redirected from admin pages
+- [ ] Build succeeds with no errors
+- [ ] Existing tests pass (310/310)
+
+### 4.2 Quality Criteria
+
+- [ ] Zero lint errors
+- [ ] Build succeeds
+- [ ] No regression in existing tests
+
+---
+
+## 5. Risks and Mitigation
+
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|------------|------------|
+| `role` column migration fails | High | Low | Use ALTER TABLE with DEFAULT, no downtime |
+| Admin API exposes sensitive data | High | Medium | service_role auth + role check + RLS |
+| No admin user exists after migration | Medium | High | Run SET role='admin' for specific user |
+| plan CHECK constraint blocks 'team' plan | Medium | Low | Already allows only 'free'/'pro', admin can update via service_role |
+
+---
+
+## 6. Architecture Considerations
+
+### 6.1 Project Level
+
+Dynamic (existing project, Supabase Edge Functions pattern)
+
+### 6.2 Key Architectural Decisions
+
+| Decision | Options | Selected | Rationale |
+|----------|---------|----------|-----------|
+| Edge Function pattern | Single function with path routing / Multiple functions | Single function with path routing | Frontend already calls `/admin-api/*` paths |
+| Auth strategy | JWT only / JWT + role check / service_role | JWT + role check (via service_role) | User authenticates with JWT, server verifies admin role via service_role |
+| User listing | RLS-based / service_role bypass | service_role bypass | Admin needs to see all users, not just own data |
+
+### 6.3 API Endpoints Design
+
+```
+admin-api Edge Function (verify_jwt: true)
+├── GET  /stats          → AdminStats
+├── GET  /users          → { users[], page, total }
+├── GET  /users/:id      → AdminUserDetail
+├── PATCH /users/:id     → { success: boolean }
+├── GET  /billing        → { records[], page, total }
+└── GET  /revenue        → { revenue[] }
+
+Auth flow:
+1. Frontend sends JWT via Authorization header
+2. Edge Function extracts user from JWT
+3. Edge Function uses service_role to check role in fre_user_profiles
+4. If role !== 'admin', return 403
+5. Process request using service_role client (bypass RLS)
+```
+
+---
+
+## 7. Convention Prerequisites
+
+### 7.1 Existing Conventions
+
+- [x] `CLAUDE.md` has coding conventions section
+- [x] TypeScript configuration (`tsconfig.json`)
+- [x] Edge Function pattern established (8 existing functions)
+- [x] DB migration pattern (local SQL files)
+
+### 7.2 Environment Variables Needed
+
+| Variable | Purpose | Scope | Status |
+|----------|---------|-------|:------:|
+| `SUPABASE_URL` | Supabase endpoint | Edge Function (auto) | Exists |
+| `SUPABASE_ANON_KEY` | Anonymous key | Edge Function (auto) | Exists |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key | Edge Function (auto) | Exists |
+
+No new environment variables needed.
+
+---
+
+## 8. Implementation Order
+
+1. **DB Migration**: Add `role` column + set initial admin
+2. **Edge Function**: Create `admin-api/index.ts` with all 6 endpoints
+3. **Deploy**: Deploy Edge Function to Supabase
+4. **Verify**: Build check + test run + manual verification
+
+---
+
+## 9. Next Steps
+
+1. [ ] Write design document (`admin-dashboard.design.md`)
+2. [ ] Review and approve plan
+3. [ ] Start implementation
+
+---
+
+## Version History
+
+| Version | Date | Changes | Author |
+|---------|------|---------|--------|
+| 0.1 | 2026-02-13 | Initial draft | AI |
