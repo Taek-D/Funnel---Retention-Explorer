@@ -39,6 +39,8 @@ export const KNOWN_CHANNELS: string[] = [
 // === Analysis Constants ===
 
 export const ACTIVITY_RETENTION_MAX_DAYS = 14;
+export const WEEKLY_RETENTION_MAX_PERIODS = 12;
+export const MONTHLY_RETENTION_MAX_PERIODS = 6;
 export const PAID_RETENTION_DAYS = [0, 7, 14, 30, 60, 90] as const;
 export const PAID_RETENTION_MAX_COHORTS = 10;
 export const FULL_DATA_RETENTION_MAX_COHORTS = 7;

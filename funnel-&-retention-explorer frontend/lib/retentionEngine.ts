@@ -1,68 +1,113 @@
-import type { ProcessedEvent, RetentionCohort, RawRow, ColumnMapping } from '../types';
+import type { ProcessedEvent, RetentionCohort, RawRow, ColumnMapping, CohortGrouping } from '../types';
 import {
   ACTIVITY_RETENTION_MAX_DAYS,
+  WEEKLY_RETENTION_MAX_PERIODS,
+  MONTHLY_RETENTION_MAX_PERIODS,
   PAID_RETENTION_DAYS,
   PAID_RETENTION_MAX_COHORTS,
   FULL_DATA_RETENTION_MAX_COHORTS
 } from './constants';
 import { startSpan } from './sentry';
 
+export function groupDateKey(date: Date, grouping: CohortGrouping): string {
+  if (grouping === 'weekly') {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+    const week1 = new Date(d.getFullYear(), 0, 4);
+    const weekNum = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+    return `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+  }
+  if (grouping === 'monthly') {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+  return date.toISOString().split('T')[0];
+}
+
+function advancePeriodKey(baseKey: string, n: number, grouping: CohortGrouping): string {
+  if (grouping === 'monthly') {
+    const [y, m] = baseKey.split('-').map(Number);
+    const d = new Date(y, m - 1 + n, 15);
+    return groupDateKey(d, 'monthly');
+  }
+  if (grouping === 'weekly') {
+    const match = baseKey.match(/^(\d{4})-W(\d{2})$/);
+    if (!match) return baseKey;
+    const year = parseInt(match[1]);
+    const week = parseInt(match[2]);
+    const jan4 = new Date(year, 0, 4);
+    const dow = (jan4.getDay() + 6) % 7;
+    const week1Mon = new Date(jan4);
+    week1Mon.setDate(jan4.getDate() - dow);
+    const target = new Date(week1Mon);
+    target.setDate(week1Mon.getDate() + (week - 1 + n) * 7);
+    return groupDateKey(target, 'weekly');
+  }
+  // daily
+  const parts = baseKey.split('-').map(Number);
+  const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + n));
+  return d.toISOString().split('T')[0];
+}
+
 export function calculateActivityRetention(
   processedData: ProcessedEvent[],
   cohortEvent: string,
-  activeEvents: string[]
+  activeEvents: string[],
+  grouping: CohortGrouping = 'daily'
 ): RetentionCohort[] {
-  return startSpan('analysis.retention', 'compute', () => _calculateActivityRetention(processedData, cohortEvent, activeEvents));
+  return startSpan('analysis.retention', 'compute', () => _calculateActivityRetention(processedData, cohortEvent, activeEvents, grouping));
 }
 
 function _calculateActivityRetention(
   processedData: ProcessedEvent[],
   cohortEvent: string,
-  activeEvents: string[]
+  activeEvents: string[],
+  grouping: CohortGrouping = 'daily'
 ): RetentionCohort[] {
   const cohorts: Record<string, Set<string>> = {};
 
   processedData.forEach(event => {
     if (event.eventName === cohortEvent) {
-      const cohortDate = event.timestamp.toISOString().split('T')[0];
-      if (!cohorts[cohortDate]) {
-        cohorts[cohortDate] = new Set();
+      const cohortKey = groupDateKey(event.timestamp, grouping);
+      if (!cohorts[cohortKey]) {
+        cohorts[cohortKey] = new Set();
       }
-      cohorts[cohortDate].add(event.userId);
+      cohorts[cohortKey].add(event.userId);
     }
   });
 
   const activeEventSet = new Set(activeEvents);
-  const eventsByDate = new Map<string, ProcessedEvent[]>();
+  const eventsByPeriod = new Map<string, ProcessedEvent[]>();
   processedData.forEach(e => {
     if (activeEventSet.has(e.eventName)) {
-      const dateKey = e.timestamp.toISOString().split('T')[0];
-      const bucket = eventsByDate.get(dateKey);
+      const periodKey = groupDateKey(e.timestamp, grouping);
+      const bucket = eventsByPeriod.get(periodKey);
       if (bucket) {
         bucket.push(e);
       } else {
-        eventsByDate.set(dateKey, [e]);
+        eventsByPeriod.set(periodKey, [e]);
       }
     }
   });
 
+  const maxPeriods = grouping === 'weekly' ? WEEKLY_RETENTION_MAX_PERIODS
+    : grouping === 'monthly' ? MONTHLY_RETENTION_MAX_PERIODS
+    : ACTIVITY_RETENTION_MAX_DAYS;
+  const prefix = grouping === 'weekly' ? 'W' : grouping === 'monthly' ? 'M' : 'D';
+
   const retentionMatrix: RetentionCohort[] = [];
 
-  Object.entries(cohorts).forEach(([cohortDate, userSet]) => {
-    const cohortStartDate = new Date(cohortDate);
-    const retention: RetentionCohort = { cohortDate, cohortSize: userSet.size, days: {} };
+  Object.entries(cohorts).forEach(([cohortKey, userSet]) => {
+    const retention: RetentionCohort = { cohortDate: cohortKey, cohortSize: userSet.size, days: {} };
 
-    for (let day = 0; day <= ACTIVITY_RETENTION_MAX_DAYS; day++) {
-      const targetDate = new Date(cohortStartDate);
-      targetDate.setDate(targetDate.getDate() + day);
-      const targetDateStr = targetDate.toISOString().split('T')[0];
-
-      const eventsOnDay = eventsByDate.get(targetDateStr) || [];
+    for (let period = 0; period <= maxPeriods; period++) {
+      const targetKey = advancePeriodKey(cohortKey, period, grouping);
+      const eventsInPeriod = eventsByPeriod.get(targetKey) || [];
       const uniqueActive = new Set(
-        eventsOnDay.filter(e => userSet.has(e.userId)).map(e => e.userId)
+        eventsInPeriod.filter(e => userSet.has(e.userId)).map(e => e.userId)
       );
       const retentionRate = userSet.size > 0 ? (uniqueActive.size / userSet.size) * 100 : 0;
-      retention.days[`D${day}`] = retentionRate;
+      retention.days[`${prefix}${period}`] = retentionRate;
     }
 
     retentionMatrix.push(retention);
@@ -234,8 +279,8 @@ export function compareRetention(
   });
 
   const sortedDays = [...dayKeys].sort((a, b) => {
-    const numA = parseInt(a.replace('D', ''), 10);
-    const numB = parseInt(b.replace('D', ''), 10);
+    const numA = parseInt(a.replace(/^[DWM]/, ''), 10);
+    const numB = parseInt(b.replace(/^[DWM]/, ''), 10);
     return numA - numB;
   });
 

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Diff, Plus, X, TrendingUp, TrendingDown } from '../components/Icons';
+import type { CohortGrouping } from '../types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, compareRetention } from '../lib/retentionEngine';
@@ -19,6 +20,7 @@ export const RetentionComparison: React.FC = () => {
   const [cohortEvent, setCohortEvent] = useState('');
   const [activeEvents, setActiveEvents] = useState<string[]>([]);
   const [newActiveEvent, setNewActiveEvent] = useState('');
+  const [cohortGrouping, setCohortGrouping] = useState<CohortGrouping>('daily');
   const [result, setResult] = useState<RetentionComparisonResult | null>(null);
 
   const chartRef = useRef<HTMLDivElement>(null);
@@ -48,11 +50,11 @@ export const RetentionComparison: React.FC = () => {
     const dataA = filterByPeriod(processedData, periodA.start, periodA.end);
     const dataB = filterByPeriod(processedData, periodB.start, periodB.end);
 
-    const resultA = calculateActivityRetention(dataA, cohortEvent, activeEvents);
-    const resultB = calculateActivityRetention(dataB, cohortEvent, activeEvents);
+    const resultA = calculateActivityRetention(dataA, cohortEvent, activeEvents, cohortGrouping);
+    const resultB = calculateActivityRetention(dataB, cohortEvent, activeEvents, cohortGrouping);
 
     setResult(compareRetention(resultA, resultB));
-  }, [processedData, cohortEvent, activeEvents, periodA, periodB]);
+  }, [processedData, cohortEvent, activeEvents, periodA, periodB, cohortGrouping]);
 
   const chartData = useMemo(() => {
     if (!result) return [];
@@ -136,6 +138,24 @@ export const RetentionComparison: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Cohort Grouping */}
+      <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
+        <label className="text-xs text-slate-400 mb-2 block">{t('retentionCompare.grouping')}</label>
+        <div className="flex items-center gap-1 bg-background border border-white/[0.06] p-1 rounded w-fit">
+          {(['daily', 'weekly', 'monthly'] as const).map(g => (
+            <button
+              key={g}
+              onClick={() => setCohortGrouping(g)}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                cohortGrouping === g ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              {t(`retentionCompare.${g}`)}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -258,7 +278,7 @@ export const RetentionComparison: React.FC = () => {
           <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-white">{t('retentionCompare.periodA')} vs {t('retentionCompare.periodB')}</h3>
-              <ChartDownloadButton chartRef={chartRef} filename="retention-comparison" />
+              <ChartDownloadButton targetRef={chartRef} filename="retention-comparison" />
             </div>
             <div ref={chartRef}>
               <ResponsiveContainer width="100%" height={300}>

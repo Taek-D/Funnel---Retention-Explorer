@@ -18,7 +18,7 @@ export const RetentionAnalysis: React.FC = () => {
   const { t } = useTranslation('pages');
   const {
     retentionResults, retentionType, uniqueEvents, detectedType, hasData,
-    setRetentionType, runRetentionAnalysis
+    cohortGrouping, setRetentionType, setCohortGrouping, runRetentionAnalysis
   } = useRetentionAnalysis();
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
   const { filteredData, filterCount } = useFilteredData();
@@ -50,12 +50,12 @@ export const RetentionAnalysis: React.FC = () => {
   }
 
   const isPaid = retentionType === 'paid';
-  const dayColumns = useMemo(() =>
-    isPaid
-      ? ['D0', 'D7', 'D14', 'D30', 'D60', 'D90']
-      : Array.from({ length: 15 }, (_, i) => `D${i}`),
-    [isPaid]
-  );
+  const dayColumns = useMemo(() => {
+    if (isPaid) return ['D0', 'D7', 'D14', 'D30', 'D60', 'D90'];
+    if (cohortGrouping === 'weekly') return Array.from({ length: 13 }, (_, i) => `W${i}`);
+    if (cohortGrouping === 'monthly') return Array.from({ length: 7 }, (_, i) => `M${i}`);
+    return Array.from({ length: 15 }, (_, i) => `D${i}`);
+  }, [isPaid, cohortGrouping]);
 
   const avgRetention = useMemo(() => {
     const avg: Record<string, number> = {};
@@ -178,6 +178,22 @@ export const RetentionAnalysis: React.FC = () => {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-slate-400 uppercase font-bold mb-2 block">{t('retention.grouping')}</label>
+            <div className="flex items-center gap-1 bg-background border border-white/10 p-1 rounded-lg w-fit">
+              {(['daily', 'weekly', 'monthly'] as const).map(g => (
+                <button
+                  key={g}
+                  onClick={() => setCohortGrouping(g)}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-all ${
+                    cohortGrouping === g ? 'bg-accent text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {t(`retention.${g}`)}
+                </button>
+              ))}
             </div>
           </div>
           <button

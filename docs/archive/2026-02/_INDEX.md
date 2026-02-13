@@ -975,3 +975,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 tasks completed (RC-1 ~ RC-4): RC-1 compareRetention 엔진 (RetentionComparisonDay/RetentionComparisonResult 타입, 코호트별 평균 리텐션율 + diff=rateB-rateA + direction 0.5pp 임계값), RC-2 RetentionComparison 페이지 (코호트/활성 이벤트 선택기, Period A/B 날짜 입력, 비교 실행 버튼, 요약 KPI 4개 cohortsA/B totalUsersA/B, 비교 테이블 TrendingUp/Down/same, LineChart 리텐션 곡선, ChartDownloadButton, 빈 상태 Diff 아이콘), RC-3 Diff Icons.tsx + /app/retention-compare lazy route + Sidebar 메뉴, RC-4 i18n 17키 retentionCompare.* + nav.retentionCompare ko/en. 9개 파일 변경 (1 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (10.07 KB chunk). 0 iteration.
+
+---
+
+## cohort-grouping
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Cohort Grouping (Daily/Weekly/Monthly Retention Analysis) |
+| **Match Rate** | 100% (22/22) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `cohort-grouping/cohort-grouping.plan.md` |
+| Design | `cohort-grouping/cohort-grouping.design.md` |
+| Analysis | `cohort-grouping/cohort-grouping.analysis.md` |
+| Report | `cohort-grouping/cohort-grouping.report.md` |
+
+### Summary
+
+6 tasks completed (CG-1 ~ CG-6): CG-1 CohortGrouping 타입 + WEEKLY_RETENTION_MAX_PERIODS(12)/MONTHLY_RETENTION_MAX_PERIODS(6) 상수, CG-2 groupDateKey (YYYY-MM-DD/YYYY-W##/YYYY-MM) + advancePeriodKey 캘린더 연산 + calculateActivityRetention 4번째 grouping 파라미터, CG-3 useRetentionAnalysis cohortGrouping 상태 + setter, CG-4 RetentionAnalysis 3-버튼 토글 (Daily/Weekly/Monthly) + dayColumns 적응 (D0-D14/W0-W12/M0-M6), CG-5 RetentionComparison 그룹핑 토글 + engine 전달, CG-6 i18n 8키 ko/en. 8개 파일 변경 (0 신규, 8 수정). 테스트 310/310 통과. 빌드 정상 (retentionEngine +0.39 KB). 추가 버그 수정: compareRetention 정렬 regex, useCallback deps, ChartDownloadButton prop명. 0 iteration.

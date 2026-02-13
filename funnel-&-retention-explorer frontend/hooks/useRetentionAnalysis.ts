@@ -8,7 +8,7 @@ import { trackEvent } from '../lib/analytics';
 import { isCustomEventRef, getCustomEventId, resolveCustomEventRows } from '../lib/eventResolver';
 import { listCustomEvents } from '../lib/supabaseData';
 import { useAuth } from '../context/AuthContext';
-import type { RetentionType, CustomEventDefinition } from '../types';
+import type { RetentionType, CohortGrouping, CustomEventDefinition } from '../types';
 import i18n from '../lib/i18n';
 
 export function useRetentionAnalysis() {
@@ -17,6 +17,7 @@ export function useRetentionAnalysis() {
   const { addNotification } = useNotifications();
   const { user } = useAuth();
   const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
+  const [cohortGrouping, setCohortGrouping] = useState<CohortGrouping>('daily');
 
   useEffect(() => {
     if (user) {
@@ -90,7 +91,7 @@ export function useRetentionAnalysis() {
       });
 
       if (virtualEvents.length > 0) data = [...baseData, ...virtualEvents];
-      const results = calculateActivityRetention(data, resolvedCohort, resolvedActive);
+      const results = calculateActivityRetention(data, resolvedCohort, resolvedActive, cohortGrouping);
       dispatch({ type: 'SET_RETENTION_RESULTS', payload: results });
     }
 
@@ -116,7 +117,9 @@ export function useRetentionAnalysis() {
     uniqueEvents: state.uniqueEvents,
     detectedType: state.detectedType,
     hasData: state.processedData.length > 0,
+    cohortGrouping,
     setRetentionType,
+    setCohortGrouping,
     runRetentionAnalysis
   };
 }

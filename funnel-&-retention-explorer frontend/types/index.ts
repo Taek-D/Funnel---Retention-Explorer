@@ -198,6 +198,8 @@ export type DatasetType = 'ecommerce' | 'subscription' | null;
 
 export type RetentionType = 'activity' | 'paid';
 
+export type CohortGrouping = 'daily' | 'weekly' | 'monthly';
+
 export type InsightType = 'success' | 'warning' | 'danger' | 'info';
 
 // ===== Raw / Processed Data =====

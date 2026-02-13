@@ -335,7 +335,11 @@
     "avgCurveDesc": "Average retention rate across all cohorts",
     "retentionLabel": "Retention",
     "retained": "Retained",
-    "rate": "Rate"
+    "rate": "Rate",
+    "grouping": "Cohort Grouping",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly"
   },
   "segments": {
     "noData": "No Data",
@@ -768,7 +772,11 @@
     "totalUsers": "Total Users",
     "noData": "Upload data first",
     "noDataDesc": "Upload a CSV to compare retention",
-    "emptyHint": "Set events and periods, then run comparison"
+    "emptyHint": "Set events and periods, then run comparison",
+    "grouping": "Cohort Grouping",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly"
   },
   "journey": {
     "title": "User Journey Flow",
