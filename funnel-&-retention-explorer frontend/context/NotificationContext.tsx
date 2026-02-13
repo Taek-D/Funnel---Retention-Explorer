@@ -10,6 +10,8 @@ import {
 } from '../lib/supabaseData';
 import { loadNotificationPreferences } from '../components/NotificationPreferencesModal';
 import { dispatchWebhooks } from '../lib/webhookDispatcher';
+import { showDesktopNotification } from '../hooks/useDesktopNotification';
+import { supabase } from '../lib/supabase';
 
 export type NotificationType = 'analysis' | 'import' | 'ai' | 'export';
 
@@ -43,7 +45,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [loading, setLoading] = useState(false);
   const loadedRef = useRef(false);
 
-  // Load notifications from Supabase on login
+  // Load notifications from Supabase on login + subscribe to Realtime
   useEffect(() => {
     if (!user) {
       loadedRef.current = false;
@@ -66,6 +68,43 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       })
       .catch(() => { /* fallback: keep empty */ })
       .finally(() => setLoading(false));
+
+    // Supabase Realtime subscription
+    if (!supabase) return;
+
+    const channel = supabase
+      .channel(`notifications-${user.id}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'fre_notifications',
+        filter: `user_id=eq.${user.id}`,
+      }, (payload) => {
+        const row = payload.new as Record<string, unknown>;
+        const newNotif: Notification = {
+          id: row.id as string,
+          type: row.type as NotificationType,
+          title: row.title as string,
+          message: row.message as string,
+          read: row.read as boolean,
+          createdAt: new Date(row.created_at as string),
+        };
+        setNotifications(prev => {
+          // Deduplication: skip if already in list
+          if (prev.some(n => n.id === newNotif.id)) return prev;
+          return [newNotif, ...prev].slice(0, 100);
+        });
+        // Desktop notification
+        const prefs = loadNotificationPreferences();
+        if (prefs.desktop !== false) {
+          showDesktopNotification(newNotif.title, newNotif.message);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   const addNotification = useCallback((type: NotificationType, title: string, message: string) => {

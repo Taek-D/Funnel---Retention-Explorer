@@ -4,6 +4,79 @@ All notable changes to the FRE Analytics project are documented in this file.
 
 ---
 
+## [2026-02-13] — Notification Center (Real-time Alerts & Desktop Notifications)
+
+### Summary
+Completed real-time notification platform with Supabase Realtime subscriptions, browser desktop notifications, full notification history page, and database-synchronized preferences. Achieved 100% design match with zero iterations, enabling users to receive instant notifications across tabs/devices with granular control.
+
+### Added
+- **Supabase Realtime Subscription (NC-1)**: Real-time notification sync via `fre_notifications` INSERT events
+  - User-scoped filtering (`user_id=eq.{user.id}`)
+  - Deduplication check to prevent duplicate displays
+  - Channel cleanup on component unmount
+- **Browser Desktop Notifications (NC-2)**: Native Notification API integration
+  - `useDesktopNotification` hook with `requestPermission()` and `show()` methods
+  - Standalone `showDesktopNotification()` function for NotificationContext integration
+  - Focus-aware gating (skip notification if app is focused)
+  - Desktop notification toggle in preferences modal
+- **Notifications Page (NC-3)**: Full notification history view
+  - Type filter chips (all, analysis, import, ai, export)
+  - Unread-only toggle filter
+  - Bulk select mode with delete and mark-read actions
+  - Load-more pagination (20 items per page)
+  - Login-required guard
+  - Lazy-loaded route with Bell icon in Sidebar
+  - "View All" link from NotificationPanel to full page
+- **Preferences DB Sync (NC-4)**: Persistent notification settings
+  - Migration: `notification_preferences` JSONB column on `fre_user_profiles`
+  - `getNotificationPreferences()` and `updateNotificationPreferences()` CRUD functions
+  - Modal loads from DB on open for logged-in users
+  - localStorage fallback for guest users
+- **i18n Support (NC-5)**: 13 translation keys (Ko + En)
+  - `nav.notifications` in common.json
+  - 12 keys in `notificationPage` section of pages.json
+
+### Changed
+- `context/NotificationContext.tsx`: Added Supabase Realtime channel subscription with dedup logic (+29 lines)
+- `components/NotificationPreferencesModal.tsx`: Added `desktop` preference field and DB sync (+13 lines)
+- `components/NotificationPanel.tsx`: Added "View All" button link to `/app/notifications`
+- `lib/supabaseData.ts`: Added notification preferences CRUD functions (11 lines)
+- `router.tsx`: Lazy-loaded NotificationsPage route at `/app/notifications`
+- `components/Sidebar.tsx`: Added notifications nav item with Bell icon
+- `locales/ko/common.json` + `locales/en/common.json`: Added `nav.notifications` keys
+- `locales/ko/pages.json` + `locales/en/pages.json`: Added `notificationPage` section (12 keys each)
+
+### Infrastructure
+- **New Files**:
+  - `hooks/useDesktopNotification.ts` (62 lines)
+  - `pages/NotificationsPage.tsx` (233 lines)
+  - `supabase/migrations/20260213_notification_preferences.sql`
+- **Modified Files**: 9 (context, components, lib, routing, i18n)
+
+### Metrics
+- **Design Match Rate**: 100% (23/23 items PASS)
+- **Checklist Items Verified**: 23
+- **PDCA Iterations**: 0 (first-pass completion)
+- **Files Created**: 3
+- **Files Modified**: 9
+- **i18n Keys Added**: 13 (across ko/en)
+- **Bundle Impact**: ~2KB (native Notification API, no new dependencies)
+- **Build Status**: Clean (310/310 tests passing)
+
+### Key Design Decisions
+1. **Client-side Deduplication**: Prevents duplicate notifications from multiple tabs/devices
+2. **Focus-Aware Desktop Notifications**: Skips notification if user is already active in the app
+3. **Modal-Delegated DB Load**: DB preferences load in NotificationPreferencesModal.tsx useEffect, preserving backward compatibility for offline/guest scenarios
+4. **Load-More Pagination**: Explicit pagination button for clarity and performance
+
+### Documentation
+- Plan: `docs/01-plan/features/notification-center.plan.md`
+- Design: `docs/02-design/features/notification-center.design.md`
+- Analysis: `docs/03-analysis/notification-center.analysis.md`
+- Report: `docs/04-report/features/notification-center.report.md`
+
+---
+
 ## [2026-02-13] — Advanced Filter (Global Date/Platform/Channel Filtering)
 
 ### Summary

@@ -739,3 +739,25 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 6 scope items completed (SR-1 ~ SR-6): SR-1 ScheduledReport + ReportFrequency 타입 + fre_scheduled_reports 테이블 (RLS 6정책, frequency/day_of_week/day_of_month/hour_utc/webhook_ids), SR-2 CRUD 4함수 (list/create/update/delete), SR-3 scheduledReportBuilder.ts (buildScheduledPayload + formatSummaryText — 서버 호환 페이로드 빌더), SR-4 Edge Function scheduled-report (pg_cron 시간별 실행, active 스케줄 쿼리, 빈도+요일 필터, 데이터셋 조회 → webhook-dispatch 호출), SR-5 ScheduledReports 페이지 (CRUD 폼, 빈도 의존 필드, active 토글, 삭제 확인, webhook 멀티셀렉트, Pro 전용 gating, 로그인 가드) + router.tsx 라우트 + Sidebar Clock 아이콘, SR-6 i18n 26키 (ko/en). 13개 파일 변경 (4 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.
+
+## notification-center
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Notification Center (실시간 알림, 데스크톱 알림, 전체 알림 페이지, DB 설정 동기화) |
+| **Match Rate** | 100% (23 PASS, 0 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `notification-center/notification-center.plan.md` |
+| Design | `notification-center/notification-center.design.md` |
+| Analysis | `notification-center/notification-center.analysis.md` |
+| Report | `notification-center/notification-center.report.md` |
+
+### Summary
+
+5 scope items completed (NC-1 ~ NC-5): NC-1 Supabase Realtime 구독 (postgres_changes INSERT, user_id 필터, 중복 방지, 채널 클린업), NC-2 useDesktopNotification 훅 + showDesktopNotification 스탠드얼론 함수 (Notification API, 포커스 감지, 아이콘 + badge) + 데스크톱 알림 토글, NC-3 NotificationsPage (타입 필터 칩, 읽음/안읽음 토글, 벌크 선택+삭제/읽음, 20개씩 페이지네이션, 로그인 가드) + router.tsx 라우트 + Sidebar Bell 아이콘 + NotificationPanel "전체 보기" 링크, NC-4 fre_user_profiles.notification_preferences JSONB 컬럼 + getNotificationPreferences/updateNotificationPreferences CRUD + Modal DB 동기화, NC-5 i18n 28키 (ko/en). 12개 파일 변경 (3 신규, 9 수정). 테스트 310/310 통과. 빌드 정상. 0 iteration.

@@ -310,6 +310,30 @@ export async function clearAllNotifications(): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+// ===== Notification Preferences =====
+
+export async function getNotificationPreferences(): Promise<Record<string, boolean> | null> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) return null;
+  const { data } = await client
+    .from('fre_user_profiles')
+    .select('notification_preferences')
+    .eq('id', user.id)
+    .single();
+  return data?.notification_preferences ?? null;
+}
+
+export async function updateNotificationPreferences(prefs: Record<string, boolean>): Promise<void> {
+  const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) return;
+  await client
+    .from('fre_user_profiles')
+    .update({ notification_preferences: prefs })
+    .eq('id', user.id);
+}
+
 // ===== Webhooks =====
 
 import type { WebhookConfig, WebhookLog, WebhookEventType, WebhookFormat } from '../types';

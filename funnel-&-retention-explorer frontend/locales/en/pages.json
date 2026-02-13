@@ -622,5 +622,19 @@
     "proOnly": "Scheduled reports are available on the Pro plan.",
     "saved": "Schedule saved.",
     "deleted": "Schedule deleted."
+  },
+  "notificationPage": {
+    "title": "Notification Center",
+    "all": "All",
+    "unreadOnly": "Unread Only",
+    "selectMode": "Select",
+    "deleteSelected": "Delete Selected",
+    "markSelectedRead": "Mark as Read",
+    "loadMore": "Load More",
+    "noNotifications": "No notifications",
+    "desktopNotification": "Desktop Notifications",
+    "desktopNotificationDesc": "Receive new notifications as browser alerts",
+    "permissionDenied": "Browser notification permission is blocked",
+    "viewAll": "View All"
   }
 }

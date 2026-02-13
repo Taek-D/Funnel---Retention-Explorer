@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from './Modal';
 import type { NotificationType } from '../context/NotificationContext';
+import { useAuth } from '../context/AuthContext';
+import { getNotificationPreferences, updateNotificationPreferences } from '../lib/supabaseData';
 
 const STORAGE_KEY = 'fre_notification_prefs';
 
-export type NotificationPreferences = Record<NotificationType, boolean>;
+export type NotificationPreferences = Record<NotificationType | 'desktop', boolean>;
 
 const DEFAULT_PREFERENCES: NotificationPreferences = {
   analysis: true,
   import: true,
   ai: true,
   export: true,
+  desktop: true,
 };
 
 export function loadNotificationPreferences(): NotificationPreferences {
@@ -33,29 +36,49 @@ interface NotificationPreferencesModalProps {
   onClose: () => void;
 }
 
-const TYPE_KEYS: { type: NotificationType; titleKey: string; descKey: string }[] = [
+const TYPE_KEYS: { type: NotificationType | 'desktop'; titleKey: string; descKey: string }[] = [
   { type: 'analysis', titleKey: 'notifPrefs.analysisTitle', descKey: 'notifPrefs.analysisDesc' },
   { type: 'import', titleKey: 'notifPrefs.importTitle', descKey: 'notifPrefs.importDesc' },
   { type: 'ai', titleKey: 'notifPrefs.aiTitle', descKey: 'notifPrefs.aiDesc' },
   { type: 'export', titleKey: 'notifPrefs.exportTitle', descKey: 'notifPrefs.exportDesc' },
+  { type: 'desktop', titleKey: 'pages:notificationPage.desktopNotification', descKey: 'pages:notificationPage.desktopNotificationDesc' },
 ];
 
 export const NotificationPreferencesModal: React.FC<NotificationPreferencesModalProps> = ({ open, onClose }) => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULT_PREFERENCES);
+  const [dbLoaded, setDbLoaded] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      setPrefs(loadNotificationPreferences());
-    }
-  }, [open]);
+    if (!open) return;
+    const local = loadNotificationPreferences();
+    setPrefs(local);
 
-  const handleToggle = (type: NotificationType) => {
+    // Try loading from DB if logged in
+    if (user && !dbLoaded) {
+      getNotificationPreferences()
+        .then(dbPrefs => {
+          if (dbPrefs) {
+            const merged = { ...DEFAULT_PREFERENCES, ...dbPrefs };
+            setPrefs(merged);
+            saveNotificationPreferences(merged);
+          }
+          setDbLoaded(true);
+        })
+        .catch(() => { setDbLoaded(true); });
+    }
+  }, [open, user, dbLoaded]);
+
+  const handleToggle = (type: NotificationType | 'desktop') => {
     setPrefs(prev => ({ ...prev, [type]: !prev[type] }));
   };
 
   const handleSave = () => {
     saveNotificationPreferences(prefs);
+    if (user) {
+      updateNotificationPreferences(prefs).catch(() => {});
+    }
     onClose();
   };
 

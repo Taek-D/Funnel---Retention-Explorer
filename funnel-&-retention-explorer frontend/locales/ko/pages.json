@@ -622,5 +622,19 @@
     "proOnly": "예약 리포트는 Pro 플랜에서 이용 가능합니다.",
     "saved": "스케줄이 저장되었습니다.",
     "deleted": "스케줄이 삭제되었습니다."
+  },
+  "notificationPage": {
+    "title": "알림 센터",
+    "all": "전체",
+    "unreadOnly": "안읽음만",
+    "selectMode": "선택",
+    "deleteSelected": "선택 삭제",
+    "markSelectedRead": "선택 읽음",
+    "loadMore": "더 보기",
+    "noNotifications": "알림이 없습니다",
+    "desktopNotification": "데스크톱 알림",
+    "desktopNotificationDesc": "브라우저 알림으로 새 알림을 받습니다",
+    "permissionDenied": "브라우저 알림 권한이 차단되었습니다",
+    "viewAll": "전체 보기"
   }
 }

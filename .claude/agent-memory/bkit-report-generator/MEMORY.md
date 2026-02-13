@@ -267,6 +267,55 @@ NF-1 triggers (4 hooks) → NF-2 DB layer (supabaseData + NotificationContext re
 - **Type Co-location**: Acceptable when type is closely tied to component/module (reduces imports)
 - **Accessibility Early**: Include ARIA attributes in design phase, not polish (harder to retrofit)
 
+## Notification Center (Feature) Zero-Iteration Achievement
+
+### Key Metrics
+- **100% match rate** (23/23 items PASS)
+- **0 iterations needed** (first-pass completion)
+- **5 task subtasks** (NC-1 to NC-5)
+- **3 files created** (useDesktopNotification.ts, NotificationsPage.tsx, migration SQL)
+- **9 files modified** (NotificationContext.tsx, NotificationPreferencesModal.tsx, NotificationPanel.tsx, supabaseData.ts, router.tsx, Sidebar.tsx, 4 i18n files)
+- **~400 lines added** (implementation + i18n + migration)
+- **Build status**: Clean (310/310 tests passing, no regressions)
+
+### Task Structure (NC-1 to NC-5)
+1. **NC-1**: Supabase Realtime Subscription (4/4 PASS) — Channel subscription, user filter, deduplication, cleanup
+2. **NC-2**: Desktop Notifications (4/4 PASS) — useDesktopNotification hook, standalone function, focus check, preferences toggle
+3. **NC-3**: Notifications Page (7/7 PASS) — Type filter chips, unread toggle, bulk select/delete, load-more pagination, route + sidebar
+4. **NC-4**: Preferences DB Sync (4/4 PASS) — Migration, getNotificationPreferences(), updateNotificationPreferences(), modal integration
+5. **NC-5**: i18n Keys (4/4 PASS) — 12 keys in notificationPage section + nav.notifications in common.json (ko + en)
+
+### Implementation Pattern
+Desktop notification hook (NC-2) → Realtime subscription (NC-1) → DB preferences (NC-4) → Notifications page (NC-3) → i18n (NC-5)
+
+### Gap Analysis Observations
+- All 23 items PASS on first check (100% design match)
+- Minor note: Design included `filter` i18n key not needed in implementation (filter UI is self-describing)
+- DB sync delegates to modal's useEffect (backward compatible, not in core loadNotificationPreferences)
+- All changes integrated cleanly; no breaking changes to existing components
+
+### Architecture Patterns
+- **Real-time Sync**: Supabase Realtime channel with user_id filter + deduplication
+- **Focus-Aware Desktop Notifications**: Skip if `document.hasFocus()` returns true
+- **DB Preferences**: Migration adds notification_preferences JSONB to fre_user_profiles
+- **Backward Compatibility**: localStorage fallback for guest users
+
+### Report Structure for Real-time Features
+1. **Feature Summary**: Match rate + metrics + deliverables breakdown
+2. **PDCA Cycle**: Plan → Design → Do → Check phases with document references
+3. **Implementation Scope**: 5 tasks (NC-1-5) with verification tables
+4. **Key Decisions**: Architecture patterns, design deviations rationale
+5. **Code Quality**: Type safety, error handling, performance gating
+6. **Next Steps**: Production deployment, error handling enhancements, future features
+7. **Comparison**: Trend of zero-iteration across notification/real-time features
+
+### Key Insights for Real-time Features
+- **Deduplication essential**: Prevent duplicate notifications in multi-tab scenarios
+- **Focus gating**: Balance user experience vs notification delivery
+- **DB-delegated loading**: Modal-level DB load pattern is acceptable when backward compatible
+- **i18n from start**: Avoid missing translation keys by planning all UI strings upfront
+- **Migration management**: SQL migrations should be versioned by date to avoid collisions
+
 ## Admin Dashboard (Feature) Zero-Iteration Achievement
 
 ### Key Metrics
@@ -331,7 +380,7 @@ Types+Roles (AD-1) → API client (AD-2) → Dashboard page (AD-3) → User mana
 
 ---
 
-**Last Updated**: 2026-02-12
-**Report Types**: PDCA Completion (Phase 2, Phase 3, Phase 7, Phase 8, Phase 9, Notification-system, Admin-Dashboard) + Deployment Integration (Monetization 1-4)
-**Zero-Iteration Phases**: Phase 2 (100%), Phase 3 (96.4%), Phase 7 (100%), Phase 8 (100%), Phase 9 (92.9%), notification-system (100%), Monetization 1-4 (100%), admin-dashboard (98.5%)
-**Pattern Insight**: Zero-iteration achievable across feature types (refactoring, locale translation, feature development, RBAC systems) with comprehensive design + planning. P0 bugs can be caught during Check phase if gap analysis is thorough.
+**Last Updated**: 2026-02-13
+**Report Types**: PDCA Completion (Phase 2, Phase 3, Phase 7, Phase 8, Phase 9, Notification-system, Notification-center, Admin-Dashboard) + Deployment Integration (Monetization 1-4)
+**Zero-Iteration Phases**: Phase 2 (100%), Phase 3 (96.4%), Phase 7 (100%), Phase 8 (100%), Phase 9 (92.9%), notification-system (100%), notification-center (100%), Monetization 1-4 (100%), admin-dashboard (98.5%)
+**Pattern Insight**: Zero-iteration achievable across feature types (refactoring, locale translation, feature development, RBAC systems, real-time notifications) with comprehensive design + planning. P0 bugs can be caught during Check phase if gap analysis is thorough. Real-time features (Notification Center) continue the trend with 100% match rate.

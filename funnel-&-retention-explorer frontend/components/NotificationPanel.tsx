@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Settings, X } from './Icons';
 import { useNotifications, type NotificationType } from '../context/NotificationContext';
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -20,6 +21,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   unreadCount,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
   const { notifications, markAsRead, removeNotification, markAllAsRead, clearAll } = useNotifications();
 
@@ -137,6 +139,16 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             })
           )}
         </div>
+
+        {/* View All Link */}
+        {notifications.length > 0 && (
+          <button
+            onClick={() => { onClose(); navigate('/app/notifications'); }}
+            className="w-full px-4 py-2.5 text-xs text-accent hover:text-accent/80 font-medium border-t border-white/5 text-center"
+          >
+            {t('pages:notificationPage.viewAll')}
+          </button>
+        )}
       </div>
     </div>
   );
