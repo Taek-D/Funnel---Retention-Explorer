@@ -85,7 +85,7 @@ export function buildAnalysisPrompt(context: {
   retentionDay1?: number | null;
   retentionDay7?: number | null;
   topInsights?: string[];
-  subscriptionKPIs?: Record<string, number | string | null> | null;
+  subscriptionKPIs?: Record<string, number | string | Record<string, number> | null> | null;
 }): string {
   const parts: string[] = [];
 
@@ -119,7 +119,7 @@ export function buildAnalysisPrompt(context: {
   if (context.subscriptionKPIs) {
     const kpis = context.subscriptionKPIs;
     parts.push(`- Paid Users: ${kpis.paid_user_count || 0}`);
-    parts.push(`- Churn Rate: ${kpis.cancel_rate_paid?.toFixed(1) || 0}%`);
+    parts.push(`- Churn Rate: ${Number(kpis.cancel_rate_paid ?? 0).toFixed(1)}%`);
     if (kpis.gross_revenue) parts.push(`- Revenue: $${kpis.gross_revenue.toLocaleString()}`);
   }
   if (context.topInsights && context.topInsights.length > 0) {

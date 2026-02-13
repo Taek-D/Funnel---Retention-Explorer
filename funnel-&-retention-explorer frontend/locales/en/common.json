@@ -68,7 +68,7 @@
     "csvLimitReason": "You've reached the CSV upload row limit ({{limit}} rows).",
     "aiLimitReason": "You've reached the daily AI insights limit ({{limit}} calls).",
     "generalReason": "Upgrade to Pro for more powerful features.",
-    "csvRows": "CSV {{count}} rows",
+    "csvRows": "CSV {{num}} rows",
     "aiCalls": "AI insights {{count}}/day",
     "projectOne": "1 project",
     "projectUnlimited": "Unlimited projects",

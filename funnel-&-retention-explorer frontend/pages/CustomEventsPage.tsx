@@ -159,7 +159,7 @@ export default function CustomEventsPage() {
 
   const updateCondition = (idx: number, key: keyof CustomEventCondition, value: string) => {
     const updated = [...formConditions];
-    (updated[idx] as Record<string, string>)[key] = value;
+    (updated[idx] as unknown as Record<string, string>)[key] = value;
     setFormConditions(updated);
   };
 

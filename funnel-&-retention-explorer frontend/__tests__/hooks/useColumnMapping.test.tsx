@@ -18,23 +18,23 @@ describe('useColumnMapping', () => {
     const { result } = renderHook(() => useColumnMapping(), { wrapper });
 
     act(() => {
-      result.current.updateMapping('userId', 'user_id_col');
+      result.current.updateMapping('userid', 'user_id_col');
     });
 
-    expect(result.current.mapping.userId).toBe('user_id_col');
+    expect(result.current.mapping.userid).toBe('user_id_col');
   });
 
   it('updateMapping with empty string sets undefined', () => {
     const { result } = renderHook(() => useColumnMapping(), { wrapper });
 
     act(() => {
-      result.current.updateMapping('userId', 'some_col');
+      result.current.updateMapping('userid', 'some_col');
     });
     act(() => {
-      result.current.updateMapping('userId', '');
+      result.current.updateMapping('userid', '');
     });
 
-    expect(result.current.mapping.userId).toBeUndefined();
+    expect(result.current.mapping.userid).toBeUndefined();
   });
 
   it('returns headers from state', () => {

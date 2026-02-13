@@ -92,13 +92,13 @@ function StateInjector({
     injectedRef.current = true;
 
     if (overrides.funnelResults) {
-      dispatch({ type: 'SET_FUNNEL_RESULTS', payload: overrides.funnelResults });
+      dispatch({ type: 'SET_FUNNEL_RESULTS', payload: overrides.funnelResults as FunnelStep[] });
     }
     if (overrides.retentionResults) {
-      dispatch({ type: 'SET_RETENTION_RESULTS', payload: overrides.retentionResults });
+      dispatch({ type: 'SET_RETENTION_RESULTS', payload: overrides.retentionResults as RetentionCohort[] });
     }
     if (overrides.segmentResults) {
-      dispatch({ type: 'SET_SEGMENT_RESULTS', payload: overrides.segmentResults });
+      dispatch({ type: 'SET_SEGMENT_RESULTS', payload: overrides.segmentResults as SegmentResult[] });
     }
   }, [dispatch, overrides]);
 

@@ -213,7 +213,7 @@ export const Dashboard: React.FC = () => {
             <Tooltip
               cursor={{ fill: CHART_COLORS.cursorFill }}
               contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-              formatter={(value: number) => [value.toLocaleString(), t('dashboard.users')]}
+              formatter={(value: number | undefined) => [(value ?? 0).toLocaleString(), t('dashboard.users')]}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {funnelChartData.map((_, index) => (
@@ -253,7 +253,7 @@ export const Dashboard: React.FC = () => {
               <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 10 }} domain={[0, 100]} />
               <Tooltip
                 contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff' }}
-                formatter={(value: number) => [`${value}%`, t('dashboard.retention')]}
+                formatter={(value: number | undefined) => [`${value ?? 0}%`, t('dashboard.retention')]}
               />
               <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fillOpacity={1} fill="url(#colorValueDash)" />
             </AreaChart>
@@ -417,7 +417,7 @@ export const Dashboard: React.FC = () => {
             <Tooltip
               contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, fontSize: 12 }}
               itemStyle={{ color: '#e2e8f0' }}
-              formatter={(value: number) => [`${value.toFixed(1)}%`, 'DAU/MAU']}
+              formatter={(value: number | undefined) => [`${(value ?? 0).toFixed(1)}%`, 'DAU/MAU']}
             />
             <Area type="monotone" dataKey="ratio" stroke={CHART_COLORS.palette[0]} fill={CHART_COLORS.palette[0]} fillOpacity={0.2} strokeWidth={2} />
           </AreaChart>

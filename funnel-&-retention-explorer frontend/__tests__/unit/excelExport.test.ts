@@ -14,27 +14,27 @@ const mockAoaToSheet = vi.fn().mockReturnValue({
   A1: { v: 'Step' },
 });
 const mockDecodeRange = vi.fn().mockReturnValue({ s: { r: 0, c: 0 }, e: { r: 2, c: 3 } });
-const mockEncodeCell = vi.fn(({ r, c }: { r: number; c: number }) => `${String.fromCharCode(65 + c)}${r + 1}`);
+const mockEncodeCell = vi.fn((cell: { r: number; c: number }) => `${String.fromCharCode(65 + cell.c)}${cell.r + 1}`);
 
 vi.mock('xlsx', () => ({
   default: {
     utils: {
       book_new: () => mockBookNew(),
-      book_append_sheet: (...args: unknown[]) => mockBookAppendSheet(...args),
-      aoa_to_sheet: (...args: unknown[]) => mockAoaToSheet(...args),
-      decode_range: (...args: unknown[]) => mockDecodeRange(...args),
-      encode_cell: (...args: unknown[]) => mockEncodeCell(...args),
+      book_append_sheet: (...args: unknown[]) => mockBookAppendSheet(...(args as [unknown, unknown, unknown])),
+      aoa_to_sheet: (...args: unknown[]) => mockAoaToSheet(...(args as [unknown])),
+      decode_range: (...args: unknown[]) => mockDecodeRange(...(args as [unknown])),
+      encode_cell: (cell: { r: number; c: number }) => mockEncodeCell(cell),
     },
-    writeFile: (...args: unknown[]) => mockWriteFile(...args),
+    writeFile: (...args: unknown[]) => mockWriteFile(...(args as [unknown, unknown])),
   },
   utils: {
     book_new: () => mockBookNew(),
-    book_append_sheet: (...args: unknown[]) => mockBookAppendSheet(...args),
-    aoa_to_sheet: (...args: unknown[]) => mockAoaToSheet(...args),
-    decode_range: (...args: unknown[]) => mockDecodeRange(...args),
-    encode_cell: (...args: unknown[]) => mockEncodeCell(...args),
+    book_append_sheet: (...args: unknown[]) => mockBookAppendSheet(...(args as [unknown, unknown, unknown])),
+    aoa_to_sheet: (...args: unknown[]) => mockAoaToSheet(...(args as [unknown])),
+    decode_range: (...args: unknown[]) => mockDecodeRange(...(args as [unknown])),
+    encode_cell: (cell: { r: number; c: number }) => mockEncodeCell(cell),
   },
-  writeFile: (...args: unknown[]) => mockWriteFile(...args),
+  writeFile: (...args: unknown[]) => mockWriteFile(...(args as [unknown, unknown])),
 }));
 
 // Fixture data

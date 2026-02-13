@@ -230,7 +230,7 @@ export const FunnelComparison: React.FC = () => {
           <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-white">{t('funnelCompare.periodA')} vs {t('funnelCompare.periodB')}</h3>
-              <ChartDownloadButton chartRef={chartRef} filename="funnel-comparison" />
+              <ChartDownloadButton targetRef={chartRef} filename="funnel-comparison" />
             </div>
             <div ref={chartRef}>
               <ResponsiveContainer width="100%" height={300}>

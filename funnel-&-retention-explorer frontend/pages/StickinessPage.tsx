@@ -73,9 +73,10 @@ export const StickinessPage: React.FC = () => {
               <Tooltip
                 contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, fontSize: 12 }}
                 itemStyle={{ color: '#e2e8f0' }}
-                formatter={(value: number, name: string) => {
-                  if (name === 'ratio') return [`${value.toFixed(1)}%`, 'DAU/MAU'];
-                  return [value.toLocaleString(), name.toUpperCase()];
+                formatter={(value, name) => {
+                  const v = (value ?? 0) as number;
+                  if (name === 'ratio') return [`${v.toFixed(1)}%`, 'DAU/MAU'];
+                  return [v.toLocaleString(), String(name).toUpperCase()];
                 }}
               />
               <Area

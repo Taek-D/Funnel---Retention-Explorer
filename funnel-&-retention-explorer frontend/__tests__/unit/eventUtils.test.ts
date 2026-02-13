@@ -3,11 +3,11 @@ import { getUsersByEvent, getUsersByEventFuzzy } from '../../lib/eventUtils';
 import type { ProcessedEvent } from '../../types';
 
 const mockData: ProcessedEvent[] = [
-  { userId: 'u1', eventName: 'page_view', timestamp: new Date('2025-01-01'), properties: {} },
-  { userId: 'u2', eventName: 'page_view', timestamp: new Date('2025-01-01'), properties: {} },
-  { userId: 'u1', eventName: 'sign_up', timestamp: new Date('2025-01-02'), properties: {} },
-  { userId: 'u3', eventName: 'Sign_Up', timestamp: new Date('2025-01-02'), properties: {} },
-  { userId: 'u2', eventName: 'purchase', timestamp: new Date('2025-01-03'), properties: {} },
+  { userId: 'u1', eventName: 'page_view', timestamp: new Date('2025-01-01') },
+  { userId: 'u2', eventName: 'page_view', timestamp: new Date('2025-01-01') },
+  { userId: 'u1', eventName: 'sign_up', timestamp: new Date('2025-01-02') },
+  { userId: 'u3', eventName: 'Sign_Up', timestamp: new Date('2025-01-02') },
+  { userId: 'u2', eventName: 'purchase', timestamp: new Date('2025-01-03') },
 ];
 
 describe('getUsersByEvent', () => {

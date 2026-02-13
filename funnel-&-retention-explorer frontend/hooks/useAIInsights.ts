@@ -52,7 +52,7 @@ export function useAIInsights() {
       retentionDay1: state.retentionResults?.[0]?.days['D1'] ?? null,
       retentionDay7: state.retentionResults?.[0]?.days['D7'] ?? null,
       topInsights: state.insights.slice(0, 5).map(i => `[${i.type}] ${i.title}: ${i.body}`),
-      subscriptionKPIs: state.subscriptionKPIs,
+      subscriptionKPIs: state.subscriptionKPIs as Record<string, number | string | Record<string, number> | null> | null,
     });
 
     const prompt = `${dataContext}\n\nBased on this data, provide a comprehensive analysis summary with:\n1. Key findings (top 3-5 observations)\n2. Areas of concern\n3. Recommended actions\n4. What additional data would help deepen the analysis`;
@@ -94,7 +94,7 @@ export function useAIInsights() {
       retentionDay1: state.retentionResults?.[0]?.days['D1'] ?? null,
       retentionDay7: state.retentionResults?.[0]?.days['D7'] ?? null,
       topInsights: state.insights.slice(0, 5).map(i => `[${i.type}] ${i.title}: ${i.body}`),
-      subscriptionKPIs: state.subscriptionKPIs,
+      subscriptionKPIs: state.subscriptionKPIs as Record<string, number | string | Record<string, number> | null> | null,
     });
 
     const fullPrompt = `${dataContext}\n\nUser question: ${question}`;

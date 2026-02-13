@@ -78,7 +78,7 @@ export function AdminBilling() {
               <YAxis tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} tickFormatter={(v) => formatCurrency(v)} />
               <Tooltip
                 contentStyle={{ background: CHART_COLORS.tooltipBg, border: `1px solid ${CHART_COLORS.tooltipBorder}`, borderRadius: 8, fontSize: 12 }}
-                formatter={(value: number) => [formatCurrency(value), t('admin.billing')]}
+                formatter={(value: number | undefined) => [formatCurrency(value ?? 0), t('admin.billing')]}
               />
               <Bar dataKey="revenue" fill={CHART_COLORS.accent} radius={[4, 4, 0, 0]} />
             </BarChart>

@@ -236,7 +236,7 @@
     "dateRange": "Date Range",
     "confirmMapping": "Confirm Mapping",
     "processComplete": "Data Processing Complete",
-    "eventsProcessed": "{{count}} events have been processed",
+    "eventsProcessed": "{{num}} events have been processed",
     "analyzeHint": "Start analysis in the Funnel, Retention, or Segments tabs.",
     "recentFiles": "Recent Files",
     "noRecentFiles": "No files opened yet.",
@@ -745,7 +745,7 @@
     "selectSegments": "Select 2 segments to compare",
     "minSteps": "Select at least 2 steps",
     "insufficientSample": "Insufficient sample size",
-    "insufficientSampleDesc": "At least {{count}} per group is recommended for accurate results"
+    "insufficientSampleDesc": "At least {{num}} per group is recommended for accurate results"
   },
   "funnelCompare": {
     "title": "Funnel Comparison",

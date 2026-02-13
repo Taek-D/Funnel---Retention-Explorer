@@ -343,7 +343,7 @@ export const DataImport: React.FC = () => {
                   <div>
                     <h3 className="text-white font-bold text-lg">{t('dataImport.processComplete')}</h3>
                     <p className="text-slate-400 text-sm">
-                      {t('dataImport.eventsProcessed', { count: state.processedData.length.toLocaleString() })}
+                      {t('dataImport.eventsProcessed', { num: state.processedData.length.toLocaleString() })}
                     </p>
                   </div>
                 </div>

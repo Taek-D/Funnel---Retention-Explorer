@@ -196,7 +196,7 @@ function DataInjector({ children }: { children: React.ReactNode }) {
     dispatch({
       type: 'SET_PROCESSED_DATA',
       payload: [
-        { userId: 'u1', event: 'signup', timestamp: new Date('2025-01-01'), platform: 'web', channel: 'organic' },
+        { userId: 'u1', eventName: 'signup', timestamp: new Date('2025-01-01'), platform: 'web', channel: 'organic' },
       ],
     });
     dispatch({ type: 'SET_UNIQUE_EVENTS', payload: ['signup'] });
@@ -207,11 +207,11 @@ function DataInjector({ children }: { children: React.ReactNode }) {
         validRows: 95,
         failedRows: 5,
         uniqueUsers: 80,
-        uniqueEvents: 3,
-        minDate: '2025-01-01',
-        maxDate: '2025-01-31',
+        minDate: new Date('2025-01-01'),
+        maxDate: new Date('2025-01-31'),
         platformMissingRate: '2%',
         channelMissingRate: '1%',
+        topEvents: [],
       },
     });
   }, [dispatch]);

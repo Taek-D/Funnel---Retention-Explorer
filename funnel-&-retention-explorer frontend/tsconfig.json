@@ -9,10 +9,13 @@
       "DOM",
       "DOM.Iterable"
     ],
+    "strict": true,
     "skipLibCheck": true,
     "types": [
       "node",
-      "vite-plugin-pwa/react"
+      "vite-plugin-pwa/react",
+      "vite/client",
+      "vitest/globals"
     ],
     "moduleResolution": "bundler",
     "isolatedModules": true,
@@ -26,5 +29,6 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "exclude": ["supabase/functions"]
 }

@@ -20,14 +20,15 @@ export const BillingSuccessPage: React.FC = () => {
     const mode = searchParams.get('mode');
     const billingCycle = searchParams.get('billingCycle') ?? 'monthly';
 
-    if (!authKey || !user || !supabase) {
+    const sb = supabase;
+    if (!authKey || !user || !sb) {
       setStatus('error');
       setErrorMessage(t('billingSuccess.missingParams'));
       return;
     }
 
     const processBilling = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await sb.auth.getSession();
       if (!session) {
         setStatus('error');
         setErrorMessage(t('billingSuccess.sessionExpired'));

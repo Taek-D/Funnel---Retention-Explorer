@@ -4,9 +4,9 @@ export function formatTime(minutes: number): string {
   if (minutes < 60) {
     return i18n.t('time.minutes', { count: Math.round(minutes) });
   } else if (minutes < 1440) {
-    return i18n.t('time.hours', { count: (minutes / 60).toFixed(1) });
+    return i18n.t('time.hours', { count: Number((minutes / 60).toFixed(1)) });
   } else {
-    return i18n.t('time.days', { count: (minutes / 1440).toFixed(1) });
+    return i18n.t('time.days', { count: Number((minutes / 1440).toFixed(1)) });
   }
 }
 

@@ -353,7 +353,7 @@ export const RetentionAnalysis: React.FC = () => {
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} domain={[0, 100]} />
                   <Tooltip
                     contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                    formatter={(value: number) => [`${value}%`, t('retention.retentionLabel')]}
+                    formatter={(value: number | undefined) => [`${value ?? 0}%`, t('retention.retentionLabel')]}
                   />
                   <Area type="monotone" dataKey="value" stroke={CHART_COLORS.accent} strokeWidth={3} fill="url(#curveGradient)" />
                 </AreaChart>

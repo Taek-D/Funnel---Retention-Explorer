@@ -68,7 +68,7 @@
     "csvLimitReason": "CSV 업로드 행 수 제한({{limit}}행)에 도달했습니다.",
     "aiLimitReason": "AI 인사이트 일일 호출 제한({{limit}}회)에 도달했습니다.",
     "generalReason": "Pro 플랜으로 업그레이드하여 더 강력한 기능을 이용하세요.",
-    "csvRows": "CSV {{count}}행",
+    "csvRows": "CSV {{num}}행",
     "aiCalls": "AI 인사이트 일 {{count}}회",
     "projectOne": "프로젝트 1개",
     "projectUnlimited": "프로젝트 무제한",

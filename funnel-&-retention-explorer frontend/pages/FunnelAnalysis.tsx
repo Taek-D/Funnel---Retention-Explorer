@@ -477,7 +477,7 @@ export const FunnelAnalysis: React.FC = () => {
                     <Tooltip
                       cursor={{ fill: CHART_COLORS.cursorFill }}
                       contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                      formatter={(value: number) => [value.toLocaleString(), t('funnel.users')]}
+                      formatter={(value: number | undefined) => [(value ?? 0).toLocaleString(), t('funnel.users')]}
                     />
                     <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                       {chartData.map((_, index) => (
@@ -640,10 +640,10 @@ export const FunnelAnalysis: React.FC = () => {
                         <Tooltip
                           cursor={{ fill: CHART_COLORS.cursorFill }}
                           contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                          formatter={(value: number, _name: string, props: { payload: { lost: number } }) => [
-                            `${value}% (${props.payload.lost.toLocaleString()} ${t('funnel.dropoffRate')})`,
-                            t('funnel.dropoffTitle')
-                          ]}
+                          formatter={(value, _name, entry) => {
+                            const data = (entry as { payload: { lost: number } }).payload;
+                            return [`${(value ?? 0)}% (${data.lost.toLocaleString()} ${t('funnel.dropoffRate')})`, t('funnel.dropoffTitle')];
+                          }}
                         />
                         <Bar dataKey="dropoff" radius={[0, 4, 4, 0]}>
                           {dropoffData.map((entry, index) => (

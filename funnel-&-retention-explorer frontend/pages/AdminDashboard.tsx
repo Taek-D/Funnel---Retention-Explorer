@@ -100,7 +100,7 @@ export function AdminDashboard() {
                 <YAxis tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} tickFormatter={(v) => formatCurrency(v)} />
                 <Tooltip
                   contentStyle={{ background: CHART_COLORS.tooltipBg, border: `1px solid ${CHART_COLORS.tooltipBorder}`, borderRadius: 8, fontSize: 12 }}
-                  formatter={(value: number) => [formatCurrency(value), t('admin.billing')]}
+                  formatter={(value: number | undefined) => [formatCurrency(value ?? 0), t('admin.billing')]}
                 />
                 <Bar dataKey="revenue" fill={CHART_COLORS.accent} radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -118,7 +118,7 @@ export function AdminDashboard() {
           ) : (
             <ResponsiveContainer width="100%" height={256}>
               <PieChart>
-                <Pie data={planPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                <Pie data={planPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                   {planPieData.map((_, index) => (
                     <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}

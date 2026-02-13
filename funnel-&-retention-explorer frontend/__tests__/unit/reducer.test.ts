@@ -21,13 +21,13 @@ describe('appReducer', () => {
   });
 
   it('SET_COLUMN_MAPPING sets columnMapping', () => {
-    const mapping = { userId: 'user_id', eventName: 'event' };
+    const mapping = { userid: 'user_id', eventname: 'event' };
     const result = appReducer(initialState, { type: 'SET_COLUMN_MAPPING', payload: mapping });
     expect(result.columnMapping).toEqual(mapping);
   });
 
   it('SET_PROCESSED_DATA sets processedData', () => {
-    const events = [{ userId: 'u1', eventName: 'e1', timestamp: new Date(), properties: {} }];
+    const events = [{ userId: 'u1', eventName: 'e1', timestamp: new Date() }];
     const result = appReducer(initialState, { type: 'SET_PROCESSED_DATA', payload: events });
     expect(result.processedData).toEqual(events);
   });
@@ -50,7 +50,7 @@ describe('appReducer', () => {
   });
 
   it('SET_FUNNEL_RESULTS sets funnelResults', () => {
-    const results = [{ name: 'Step 1', users: 100, rate: 100, dropoff: 0 }];
+    const results = [{ step: 'Step 1', stepNumber: 1, users: 100, conversionRate: 100, dropOff: 0 }];
     const result = appReducer(initialState, { type: 'SET_FUNNEL_RESULTS', payload: results });
     expect(result.funnelResults).toEqual(results);
   });
@@ -117,7 +117,7 @@ describe('appReducer', () => {
   });
 
   it('SET_RECENT_FILES sets recentFiles', () => {
-    const files = [{ fileName: 'test.csv', rowCount: 100, uploadedAt: '2025-01-01' }];
+    const files = [{ fileName: 'test.csv', rowCount: 100, columnCount: 5, lastOpened: '2025-01-01' }];
     const result = appReducer(initialState, { type: 'SET_RECENT_FILES', payload: files });
     expect(result.recentFiles).toEqual(files);
   });
@@ -134,10 +134,10 @@ describe('appReducer', () => {
       headers: ['col'],
       currentDataset: 'file.csv',
       funnelSteps: ['a', 'b'],
-      funnelResults: [{ name: 'a', users: 10, rate: 100, dropoff: 0 }],
+      funnelResults: [{ step: 'a', stepNumber: 1, users: 10, conversionRate: 100, dropOff: 0 }],
       retentionResults: [{ cohortDate: '2025-01', cohortSize: 5, days: {} }],
       retentionType: 'paid' as const,
-      insights: [{ type: 'info', title: 't', description: 'd', priority: 1 }],
+      insights: [{ type: 'info' as const, icon: 'i', title: 't', body: 'd' }],
       aiSummary: 'summary',
     };
 

@@ -37,6 +37,6 @@ export function formatPayload(payload: WebhookPayload, format: WebhookFormat): R
         }],
       };
     default:
-      return payload;
+      return { ...payload };
   }
 }

@@ -155,7 +155,10 @@ export const SegmentComparison: React.FC = () => {
                   <YAxis domain={[0, 'auto']} unit="%" tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
-                    formatter={(value: number, _name: string, props: { payload: { population: number } }) => [`${value}% (n=${props.payload.population.toLocaleString()})`, t('segments.conversion')]}
+                    formatter={(value, _name, entry) => {
+                      const data = (entry as { payload: { population: number } }).payload;
+                      return [`${(value ?? 0)}% (n=${data.population.toLocaleString()})`, t('segments.conversion')];
+                    }}
                   />
                   <Bar dataKey="conversion" radius={[4, 4, 0, 0]}>
                     {chartData.map((_entry, index) => (

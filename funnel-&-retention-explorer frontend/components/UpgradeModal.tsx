@@ -40,14 +40,14 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, rea
   };
 
   const FREE_FEATURES = [
-    t('plan.csvRows', { count: PLAN_LIMITS.free.csvRows.toLocaleString() }),
+    t('plan.csvRows', { num: PLAN_LIMITS.free.csvRows.toLocaleString() }),
     t('plan.aiCalls', { count: PLAN_LIMITS.free.aiCallsPerDay }),
     t('plan.projectOne'),
     t('plan.funnelRetention'),
   ];
 
   const PRO_FEATURES = [
-    t('plan.csvRows', { count: PLAN_LIMITS.pro.csvRows.toLocaleString() }),
+    t('plan.csvRows', { num: PLAN_LIMITS.pro.csvRows.toLocaleString() }),
     t('plan.aiCalls', { count: PLAN_LIMITS.pro.aiCallsPerDay }),
     t('plan.projectUnlimited'),
     t('plan.segmentCompare'),

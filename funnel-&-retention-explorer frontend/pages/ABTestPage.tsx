@@ -250,7 +250,7 @@ export default function ABTestPage() {
               <div>
                 <p className="text-yellow-400 font-medium">{t('abTest.insufficientSample')}</p>
                 <p className="text-yellow-500/70 text-sm">
-                  {t('abTest.insufficientSampleDesc', { count: result.recommendedSampleSize.toLocaleString() })}
+                  {t('abTest.insufficientSampleDesc', { num: result.recommendedSampleSize.toLocaleString() })}
                 </p>
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function ABTestPage() {
                     borderRadius: '8px',
                     color: '#fff',
                   }}
-                  formatter={(value: number) => `${value}%`}
+                  formatter={(value: number | undefined) => `${value ?? 0}%`}
                 />
                 <Legend />
                 <Bar

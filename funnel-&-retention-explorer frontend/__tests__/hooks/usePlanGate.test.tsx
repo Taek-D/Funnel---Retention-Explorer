@@ -6,8 +6,10 @@ import type { UserProfile } from '../../lib/planManager';
 function createProfile(overrides: Partial<UserProfile> = {}): UserProfile {
   return {
     id: 'user-1',
+    role: 'user' as const,
     plan: 'free',
     plan_started_at: null,
+    trial_end: null,
     toss_customer_key: null,
     toss_billing_key: null,
     subscription_status: 'none',

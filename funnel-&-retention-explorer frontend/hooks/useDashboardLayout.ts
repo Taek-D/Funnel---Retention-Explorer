@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { DEFAULT_LAYOUT, DASHBOARD_WIDGETS, PRESET_TEMPLATES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
-import type { WidgetId, WidgetLayout } from '../types';
+import type { WidgetId, WidgetLayout, WidgetWidth } from '../types';
 
 const STORAGE_KEY = 'fre-dashboard-layout';
 const SUPABASE_DEBOUNCE_MS = 1000;
@@ -81,9 +81,10 @@ export function useDashboardLayout() {
 
     // Debounced Supabase write
     if (user && supabase) {
+      const sb = supabase;
       if (supabaseTimerRef.current) clearTimeout(supabaseTimerRef.current);
       supabaseTimerRef.current = setTimeout(() => {
-        supabase
+        sb
           .from('fre_user_profiles')
           .update({ dashboard_layout: next })
           .eq('id', user.id)
@@ -104,7 +105,7 @@ export function useDashboardLayout() {
     const next = layout.map(w => {
       if (w.widgetId !== widgetId) return w;
       // Respect minWidth constraint
-      const newWidth = w.width === 'full' ? 'half' : 'full';
+      const newWidth: WidgetWidth = w.width === 'full' ? 'half' : 'full';
       if (meta.minWidth === 'full') return w; // Can't shrink
       return { ...w, width: newWidth };
     });

@@ -23,7 +23,7 @@ describe('loadRecentFiles', () => {
   });
 
   it('returns parsed data from localStorage', () => {
-    const files = [{ fileName: 'test.csv', rowCount: 100, uploadedAt: '2025-01-01' }];
+    const files = [{ fileName: 'test.csv', rowCount: 100, columnCount: 5, lastOpened: '2025-01-01' }];
     store[STORAGE_KEY] = JSON.stringify(files);
     expect(loadRecentFiles()).toEqual(files);
   });
@@ -36,7 +36,7 @@ describe('loadRecentFiles', () => {
 
 describe('saveRecentFile', () => {
   it('adds file to front of list', () => {
-    const file = { fileName: 'new.csv', rowCount: 50, uploadedAt: '2025-01-02' };
+    const file = { fileName: 'new.csv', rowCount: 50, columnCount: 5, lastOpened: '2025-01-02' };
     saveRecentFile(file);
     const saved = JSON.parse(store[STORAGE_KEY]);
     expect(saved[0]).toEqual(file);
@@ -44,12 +44,12 @@ describe('saveRecentFile', () => {
 
   it('removes duplicate fileName before adding', () => {
     const existing = [
-      { fileName: 'a.csv', rowCount: 10, uploadedAt: '2025-01-01' },
-      { fileName: 'b.csv', rowCount: 20, uploadedAt: '2025-01-01' },
+      { fileName: 'a.csv', rowCount: 10, columnCount: 5, lastOpened: '2025-01-01' },
+      { fileName: 'b.csv', rowCount: 20, columnCount: 5, lastOpened: '2025-01-01' },
     ];
     store[STORAGE_KEY] = JSON.stringify(existing);
 
-    saveRecentFile({ fileName: 'a.csv', rowCount: 100, uploadedAt: '2025-01-02' });
+    saveRecentFile({ fileName: 'a.csv', rowCount: 100, columnCount: 5, lastOpened: '2025-01-02' });
     const saved = JSON.parse(store[STORAGE_KEY]);
     expect(saved.length).toBe(2);
     expect(saved[0].fileName).toBe('a.csv');
@@ -59,12 +59,12 @@ describe('saveRecentFile', () => {
   it('limits to RECENT_FILES_MAX_COUNT (5)', () => {
     const files = Array.from({ length: 6 }, (_, i) => ({
       fileName: `file${i}.csv`,
-      rowCount: i * 10,
-      uploadedAt: '2025-01-01',
+      rowCount: i * 10, columnCount: 5,
+      lastOpened: '2025-01-01',
     }));
     store[STORAGE_KEY] = JSON.stringify(files.slice(0, 5));
 
-    saveRecentFile({ fileName: 'new.csv', rowCount: 999, uploadedAt: '2025-01-02' });
+    saveRecentFile({ fileName: 'new.csv', rowCount: 999, columnCount: 5, lastOpened: '2025-01-02' });
     const saved = JSON.parse(store[STORAGE_KEY]);
     expect(saved.length).toBe(5);
     expect(saved[0].fileName).toBe('new.csv');
@@ -74,8 +74,8 @@ describe('saveRecentFile', () => {
 describe('removeRecentFile', () => {
   it('removes file at given index', () => {
     const files = [
-      { fileName: 'a.csv', rowCount: 10, uploadedAt: '2025-01-01' },
-      { fileName: 'b.csv', rowCount: 20, uploadedAt: '2025-01-01' },
+      { fileName: 'a.csv', rowCount: 10, columnCount: 5, lastOpened: '2025-01-01' },
+      { fileName: 'b.csv', rowCount: 20, columnCount: 5, lastOpened: '2025-01-01' },
     ];
     store[STORAGE_KEY] = JSON.stringify(files);
 
@@ -85,7 +85,7 @@ describe('removeRecentFile', () => {
   });
 
   it('updates localStorage', () => {
-    const files = [{ fileName: 'a.csv', rowCount: 10, uploadedAt: '2025-01-01' }];
+    const files = [{ fileName: 'a.csv', rowCount: 10, lastOpened: '2025-01-01' }];
     store[STORAGE_KEY] = JSON.stringify(files);
 
     removeRecentFile(0);
