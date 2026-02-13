@@ -26,6 +26,7 @@ export const RetentionAnalysis: React.FC = () => {
   const [cohortEvent, setCohortEvent] = useState('');
   const [selectedActiveEvents, setSelectedActiveEvents] = useState<string[]>([]);
   const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
+  const [hoverCell, setHoverCell] = useState<{ row: number; col: string; x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -254,7 +255,15 @@ export const RetentionAnalysis: React.FC = () => {
                       const rate = row.days[day] || 0;
                       const opacity = rate / 100;
                       return (
-                        <td key={day} className="px-2 py-2 text-center">
+                        <td
+                          key={day}
+                          className="px-2 py-2 text-center"
+                          onMouseEnter={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setHoverCell({ row: idx, col: day, x: rect.left + rect.width / 2, y: rect.top });
+                          }}
+                          onMouseLeave={() => setHoverCell(null)}
+                        >
                           <div
                             className="rounded py-1.5 text-xs font-medium font-mono w-full border border-white/5"
                             style={{
@@ -272,6 +281,22 @@ export const RetentionAnalysis: React.FC = () => {
               </tbody>
             </table>
             </div>
+            {hoverCell && retentionResults && (
+              <div
+                className="fixed z-50 bg-surface border border-white/10 rounded-lg px-3 py-2 text-xs shadow-lg pointer-events-none"
+                style={{ left: hoverCell.x, top: hoverCell.y - 60, transform: 'translateX(-50%)' }}
+              >
+                <p className="text-white font-bold">{retentionResults[hoverCell.row].cohortDate}</p>
+                <p className="text-slate-400">
+                  {t('retention.retained')}: <span className="text-white font-mono">
+                    {Math.round(retentionResults[hoverCell.row].cohortSize * (retentionResults[hoverCell.row].days[hoverCell.col] || 0) / 100).toLocaleString()}
+                  </span> / {retentionResults[hoverCell.row].cohortSize.toLocaleString()}
+                </p>
+                <p className="text-slate-400">
+                  {t('retention.rate')}: <span className="text-accent font-mono">{(retentionResults[hoverCell.row].days[hoverCell.col] || 0).toFixed(1)}%</span>
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Curve Chart */}

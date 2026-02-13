@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ChevronDown, Users } from '../components/Icons';
 import { useSegmentComparison } from '../hooks/useSegmentComparison';
 import { useDataExport } from '../hooks/useDataExport';
+import { CHART_COLORS } from '../lib/constants';
 import { ChartSkeleton } from '../components/ChartSkeleton';
 import { ExportDropdown } from '../components/ExportDropdown';
 import { FilterPanel } from '../components/FilterPanel';
@@ -38,6 +40,18 @@ export const SegmentComparison: React.FC = () => {
     segmentResults && segmentResults.length > 0
       ? segmentResults.reduce((sum, seg) => sum + seg.conversion, 0) / segmentResults.length
       : 0,
+    [segmentResults]
+  );
+
+  const chartData = useMemo(() =>
+    segmentResults
+      ? segmentResults.map(seg => ({
+          name: seg.name.replace(/^.+?:\s*/, ''),
+          conversion: Number(seg.conversion.toFixed(1)),
+          population: seg.population,
+          fullName: seg.name,
+        }))
+      : [],
     [segmentResults]
   );
 
@@ -129,38 +143,22 @@ export const SegmentComparison: React.FC = () => {
           {/* Bars */}
           <div className="lg:col-span-2 bg-surface border border-white/[0.06] rounded-lg p-6">
             <h3 className="text-white font-bold text-lg mb-6">{t('segments.conversionBySegment')}</h3>
-            <div className="space-y-6">
-              {segmentResults.map((seg, i) => {
-                const maxConversion = Math.max(...segmentResults.map(s => s.conversion));
-                const barWidth = maxConversion > 0 ? (seg.conversion / maxConversion) * 100 : 0;
-                const isTop = seg === bestSegment;
-
-                return (
-                  <div key={i} className="group">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-300 font-medium">{seg.name}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-slate-500 text-xs font-mono">n={seg.population.toLocaleString()}</span>
-                        <span className="text-white font-bold font-mono">{seg.conversion.toFixed(1)}%</span>
-                      </div>
-                    </div>
-                    <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${isTop ? 'bg-accent' : 'bg-slate-600'}`}
-                        style={{ width: `${barWidth}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs mt-1">
-                      <span className={seg.uplift >= 0 ? 'text-accent' : 'text-coral'}>
-                        <span className="font-mono">{seg.uplift >= 0 ? '+' : ''}{seg.uplift.toFixed(1)}%p</span> {t('segments.vsAvg')}
-                      </span>
-                      <span className={seg.pValue < 0.05 ? 'text-accent' : 'text-slate-500'}>
-                        <span className="font-mono">p={seg.pValue.toFixed(4)}</span> {seg.pValue < 0.05 ? `(${t('segments.significant')})` : ''}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} barSize={40}>
+                  <XAxis dataKey="name" tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[0, 'auto']} unit="%" tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
+                    formatter={(value: number, _name: string, props: { payload: { population: number } }) => [`${value}% (n=${props.payload.population.toLocaleString()})`, t('segments.conversion')]}
+                  />
+                  <Bar dataKey="conversion" radius={[4, 4, 0, 0]}>
+                    {chartData.map((_entry, index) => (
+                      <Cell key={index} fill={CHART_COLORS.palette[index % CHART_COLORS.palette.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

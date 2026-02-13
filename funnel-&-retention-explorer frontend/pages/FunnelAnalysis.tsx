@@ -31,6 +31,9 @@ export const FunnelAnalysis: React.FC = () => {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
+  // Drop-off chart state
+  const [showDropoff, setShowDropoff] = useState(false);
+
   // Saved funnels state
   const [savedFunnels, setSavedFunnels] = useState<SavedFunnel[]>([]);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -173,6 +176,17 @@ export const FunnelAnalysis: React.FC = () => {
   const chartData = useMemo(() =>
     hasResults
       ? funnelResults.map(s => ({ name: s.step, value: s.users, rate: s.conversionRate }))
+      : [],
+    [hasResults, funnelResults]
+  );
+
+  const dropoffData = useMemo(() =>
+    hasResults
+      ? funnelResults.slice(1).map((s, i) => ({
+          name: `${funnelResults[i].step} → ${s.step}`,
+          dropoff: Number(s.dropOff.toFixed(1)),
+          lost: funnelResults[i].users - s.users,
+        }))
       : [],
     [hasResults, funnelResults]
   );
@@ -518,6 +532,45 @@ export const FunnelAnalysis: React.FC = () => {
               )}
             </div>
           </div>
+          {/* Drop-off Chart Toggle + Chart */}
+          {dropoffData.length > 0 && (
+            <>
+              <button
+                onClick={() => setShowDropoff(!showDropoff)}
+                className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                {showDropoff ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                {showDropoff ? t('funnel.hideDropoff') : t('funnel.showDropoff')}
+              </button>
+
+              {showDropoff && (
+                <div className="bg-surface border border-white/[0.06] rounded-lg p-6">
+                  <h3 className="text-lg font-bold text-white mb-4">{t('funnel.dropoffTitle')}</h3>
+                  <div className="h-[250px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={dropoffData} layout="vertical" barSize={24}>
+                        <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisTextSecondary, fontSize: 11 }} domain={[0, 100]} unit="%" />
+                        <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.axisText, fontSize: 11 }} width={180} />
+                        <Tooltip
+                          cursor={{ fill: CHART_COLORS.cursorFill }}
+                          contentStyle={{ backgroundColor: CHART_COLORS.tooltipBg, borderColor: CHART_COLORS.tooltipBorder, color: '#fff', borderRadius: '6px' }}
+                          formatter={(value: number, _name: string, props: { payload: { lost: number } }) => [
+                            `${value}% (${props.payload.lost.toLocaleString()} ${t('funnel.dropoffRate')})`,
+                            t('funnel.dropoffTitle')
+                          ]}
+                        />
+                        <Bar dataKey="dropoff" radius={[0, 4, 4, 0]}>
+                          {dropoffData.map((entry, index) => (
+                            <Cell key={index} fill={CHART_COLORS.dropoffColor(entry.dropoff)} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </>
       )}
     </div>

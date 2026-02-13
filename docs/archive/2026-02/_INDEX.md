@@ -831,3 +831,27 @@ Monetization Phase 1~4 전체 인프라 배포: Supabase Migration 3개 적용 (
 ### Summary
 
 4 scope items completed (FE-1 ~ FE-4): FE-1 HTML5 DnD 스텝 순서 변경 (GripVertical 핸들, dragIndex/dragOverIndex 상태, 4개 핸들러 handleDragStart/Over/Drop/End, opacity-40 + border-accent 시각적 피드백, ChevronUp/Down 접근성 대안 유지), FE-2 SavedFunnel 타입 + Supabase CRUD 4함수 (listSavedFunnels/createSavedFunnel/updateSavedFunnel/deleteSavedFunnel), FE-3 Save/Load UI (저장 모달 + 이름 입력 + 생성/덮어쓰기 + 로드 버튼 목록 + X 삭제 + window.confirm + 게스트 localStorage 폴백), FE-4 i18n 10키 ko/en. 6개 파일 변경. 테스트 310/310 통과. 빌드 정상 (17.78 KB chunk). 0 iteration.
+
+---
+
+## data-visualization
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Data Visualization Enhancement (Drop-off Chart, Segment BarChart, Retention Tooltip, Palette) |
+| **Match Rate** | 100% (18/18) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-13 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `data-visualization/data-visualization.plan.md` |
+| Design | `data-visualization/data-visualization.design.md` |
+| Analysis | `data-visualization/data-visualization.analysis.md` |
+| Report | `data-visualization/data-visualization.report.md` |
+
+### Summary
+
+5 scope items completed (VZ-1 ~ VZ-5): VZ-1 Funnel Drop-off Chart (showDropoff 토글 + dropoffData useMemo + layout="vertical" BarChart + dropoffColor Cell), VZ-2 Segment Grouped BarChart (CSS 바 → Recharts BarChart 교체 + CHART_COLORS.palette 색상 + Tooltip n= 표기), VZ-3 Retention Heatmap Tooltip (hoverCell 상태 + onMouseEnter/Leave + 절대 사용자 수 + 잔존율 표시), VZ-4 CHART_COLORS palette 8색 + dropoffColor 함수 (rate 기반 4단계 색상), VZ-5 i18n 6키 ko/en (dropoffTitle/dropoffRate/showDropoff/hideDropoff/retained/rate). 6개 파일 변경. 테스트 310/310 통과. 빌드 정상. 0 iteration.

@@ -296,7 +296,11 @@
     "saved": "저장됨",
     "overwrite": "덮어쓰기",
     "overwriteConfirm": "\"{{name}}\" 퍼널을 덮어쓰시겠습니까?",
-    "dragToReorder": "드래그하여 순서 변경"
+    "dragToReorder": "드래그하여 순서 변경",
+    "dropoffTitle": "스텝 간 이탈률",
+    "dropoffRate": "이탈률",
+    "showDropoff": "이탈률 차트 보기",
+    "hideDropoff": "이탈률 차트 숨기기"
   },
   "retention": {
     "noData": "데이터 없음",
@@ -317,7 +321,9 @@
     "size": "규모",
     "avgCurve": "평균 리텐션 곡선",
     "avgCurveDesc": "전체 코호트의 평균 리텐션율",
-    "retentionLabel": "리텐션"
+    "retentionLabel": "리텐션",
+    "retained": "잔존",
+    "rate": "잔존율"
   },
   "segments": {
     "noData": "데이터 없음",

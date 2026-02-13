@@ -129,6 +129,16 @@ export const CHART_COLORS = {
   tooltipBorder: 'rgba(255,255,255,0.06)',
   cursorFill: 'rgba(255,255,255,0.05)',
   cellOpacity: (index: number) => `rgba(0, 212, 170, ${Math.max(0.25, 1 - index * 0.15)})`,
+  palette: [
+    '#00d4aa', '#6366f1', '#f59e0b', '#ef4444',
+    '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16',
+  ] as string[],
+  dropoffColor: (rate: number): string => {
+    if (rate >= 50) return '#ef4444';
+    if (rate >= 30) return '#f97316';
+    if (rate >= 15) return '#f59e0b';
+    return '#84cc16';
+  },
 } as const;
 
 export const AUTO_COLUMN_MAPPING: Record<string, string[]> = {

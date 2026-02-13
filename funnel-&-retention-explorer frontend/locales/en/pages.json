@@ -296,7 +296,11 @@
     "saved": "Saved",
     "overwrite": "Overwrite",
     "overwriteConfirm": "Overwrite funnel \"{{name}}\"?",
-    "dragToReorder": "Drag to reorder"
+    "dragToReorder": "Drag to reorder",
+    "dropoffTitle": "Step Drop-off Rate",
+    "dropoffRate": "Drop-off",
+    "showDropoff": "Show drop-off chart",
+    "hideDropoff": "Hide drop-off chart"
   },
   "retention": {
     "noData": "No Data",
@@ -317,7 +321,9 @@
     "size": "Size",
     "avgCurve": "Average Retention Curve",
     "avgCurveDesc": "Average retention rate across all cohorts",
-    "retentionLabel": "Retention"
+    "retentionLabel": "Retention",
+    "retained": "Retained",
+    "rate": "Rate"
   },
   "segments": {
     "noData": "No Data",
