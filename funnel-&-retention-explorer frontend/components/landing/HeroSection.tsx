@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from '../Icons';
+import { isBetaActive } from '../../lib/betaConfig';
 
 const FLOAT_TAGS = [
   { key: 'floatFunnel', top: '18%', left: '8%', delay: '0s' },
@@ -41,6 +42,11 @@ export const HeroSection: React.FC = () => {
       ))}
 
       <div className="relative max-w-4xl mx-auto">
+        {isBetaActive() && (
+          <div className="inline-block px-4 py-1.5 mb-3 text-[11px] font-mono font-bold uppercase tracking-wider text-background bg-accent rounded-full animate-fade-up">
+            {t('landing.betaOpen')}
+          </div>
+        )}
         <div className="inline-block px-4 py-1.5 mb-6 text-[11px] font-mono font-semibold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 rounded-full animate-fade-up">
           {t('landing.heroBadge')}
         </div>

@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { isBetaActive } from './betaConfig';
 import type { SyncSchedule } from '../types';
 
 // ===== Plan & Subscription Types =====
@@ -49,6 +50,17 @@ export const PLAN_LIMITS = {
   pro: { csvRows: 500_000, aiCallsPerDay: 50, projects: -1, savedAnalyses: -1, teamMembers: 1, connectors: 3, syncSchedule: 'daily' as SyncSchedule },
   team: { csvRows: 1_000_000, aiCallsPerDay: 200, projects: -1, savedAnalyses: -1, teamMembers: 10, connectors: -1, syncSchedule: 'hourly' as SyncSchedule },
 } as const;
+
+// ===== Beta Mode Helpers =====
+
+export function getEffectivePlan(profile: UserProfile | null): PlanType {
+  if (isBetaActive()) return 'pro';
+  return profile?.plan ?? 'free';
+}
+
+export function getEffectiveLimits(profile: UserProfile | null) {
+  return PLAN_LIMITS[getEffectivePlan(profile)];
+}
 
 // ===== Profile Functions =====
 

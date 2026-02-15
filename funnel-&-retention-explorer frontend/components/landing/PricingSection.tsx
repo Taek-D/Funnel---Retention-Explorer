@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CheckCircle } from '../Icons';
 import { BILLING_PRICES } from '../../lib/planManager';
+import { isBetaActive } from '../../lib/betaConfig';
 import { useInView } from '../../hooks/useInView';
 
 const FREE_FEATURES = ['pricingFreeFeat1', 'pricingFreeFeat2', 'pricingFreeFeat3', 'pricingFreeFeat4', 'pricingFreeFeat5'] as const;
@@ -17,6 +18,7 @@ export const PricingSection: React.FC = () => {
   const { t } = useTranslation('pages');
   const [annual, setAnnual] = useState(false);
   const { ref, visible } = useInView();
+  const betaMode = isBetaActive();
 
   const proPrice = annual
     ? formatPrice(Math.round(BILLING_PRICES.annual / 12))
@@ -28,31 +30,31 @@ export const PricingSection: React.FC = () => {
   const plans = [
     {
       name: t('landing.pricingFreeName'),
-      price: t('landing.pricingFreePrice'),
-      period: t('landing.pricingFreePeriod'),
+      price: betaMode ? '₩0' : t('landing.pricingFreePrice'),
+      period: betaMode ? t('landing.betaFree') : t('landing.pricingFreePeriod'),
       features: FREE_FEATURES,
-      cta: t('landing.planFreeStart'),
+      cta: betaMode ? t('landing.betaStart') : t('landing.planFreeStart'),
       ctaLink: '/signup',
       highlight: false,
       border: 'border-white/[0.06] hover:border-white/10',
     },
     {
       name: t('landing.pricingProName'),
-      price: proPrice,
-      period: annual ? t('landing.pricingAnnual') : t('landing.pricingMonthly'),
+      price: betaMode ? '₩0' : proPrice,
+      period: betaMode ? t('landing.betaFree') : (annual ? t('landing.pricingAnnual') : t('landing.pricingMonthly')),
       features: PRO_FEATURES,
-      cta: t('landing.planProStart'),
-      ctaLink: '/pricing',
+      cta: betaMode ? t('landing.betaStart') : t('landing.planProStart'),
+      ctaLink: '/signup',
       highlight: true,
       border: 'border-2 border-accent/30',
     },
     {
       name: t('landing.pricingTeamName'),
-      price: teamPrice,
-      period: annual ? t('landing.pricingAnnual') : t('landing.pricingMonthly'),
+      price: betaMode ? '₩0' : teamPrice,
+      period: betaMode ? t('landing.betaFree') : (annual ? t('landing.pricingAnnual') : t('landing.pricingMonthly')),
       features: TEAM_FEATURES,
-      cta: t('landing.planTeamSoon'),
-      ctaLink: '',
+      cta: betaMode ? t('landing.betaStart') : t('landing.planTeamSoon'),
+      ctaLink: betaMode ? '/signup' : '',
       highlight: false,
       border: 'border border-violet-500/30',
     },
@@ -68,8 +70,8 @@ export const PricingSection: React.FC = () => {
           <p className="text-slate-400 text-sm">{t('landing.pricingDesc')}</p>
         </div>
 
-        {/* Toggle */}
-        <div className={`flex items-center justify-center gap-3 mb-12 ${visible ? 'animate-fade-up delay-100' : 'opacity-0'}`}>
+        {/* Toggle — hidden during beta */}
+        <div className={`flex items-center justify-center gap-3 mb-12 ${betaMode ? 'hidden' : ''} ${visible ? 'animate-fade-up delay-100' : 'opacity-0'}`}>
           <span className={`text-sm ${!annual ? 'text-white font-semibold' : 'text-slate-500'}`}>
             {t('landing.pricingMonthly')}
           </span>
@@ -99,7 +101,7 @@ export const PricingSection: React.FC = () => {
             >
               {plan.highlight && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider bg-accent text-background rounded-full">
-                  {t('landing.mostPopular')}
+                  {betaMode ? t('landing.betaBadge') : t('landing.mostPopular')}
                 </span>
               )}
               <h3 className="text-2xl font-bold text-white">{plan.name}</h3>

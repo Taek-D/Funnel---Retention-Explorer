@@ -12,6 +12,9 @@ type GTagEvent = {
   upgrade_banner_click: { page: string };
   trial_started: Record<string, never>;
   api_import: { connector_id: string; row_count: number };
+  beta_signup: Record<string, never>;
+  beta_feature_use: { feature: string };
+  beta_feedback_submit: { rating: number; category: string };
 };
 
 declare global {

@@ -77,7 +77,9 @@ import {
   Diff,
   Plug,
   Database,
-  Sheet
+  Sheet,
+  MessageSquare,
+  Star
 } from 'lucide-react';
 
 export {
@@ -159,5 +161,7 @@ export {
   Diff,
   Plug,
   Database,
-  Sheet
+  Sheet,
+  MessageSquare,
+  Star
 };

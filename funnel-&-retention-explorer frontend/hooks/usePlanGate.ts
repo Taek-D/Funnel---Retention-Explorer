@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { canUseAI as checkCanUseAI, getAICallsRemaining, getCSVRowLimit, isPro as checkIsPro, PLAN_LIMITS } from '../lib/planManager';
+import { canUseAI as checkCanUseAI, getAICallsRemaining, getEffectivePlan, getEffectiveLimits, PLAN_LIMITS } from '../lib/planManager';
+import { isBetaActive } from '../lib/betaConfig';
 import type { ConnectorType, SyncSchedule } from '../types';
 
 const PRO_CONNECTORS: ConnectorType[] = ['ga4-api', 'mixpanel-api'];
@@ -21,34 +22,39 @@ export function usePlanGate() {
     setUpgradeReason('');
   }, []);
 
-  const plan = userProfile?.plan ?? 'free';
+  const betaActive = isBetaActive();
+  const effectivePlan = getEffectivePlan(userProfile);
 
   const canUseConnector = useCallback((type: ConnectorType): boolean => {
-    if (PRO_CONNECTORS.includes(type)) return plan === 'pro' || plan === 'team';
-    if (ENTERPRISE_CONNECTORS.includes(type)) return plan === 'team';
+    if (betaActive) return !ENTERPRISE_CONNECTORS.includes(type);
+    if (PRO_CONNECTORS.includes(type)) return effectivePlan === 'pro' || effectivePlan === 'team';
+    if (ENTERPRISE_CONNECTORS.includes(type)) return effectivePlan === 'team';
     return true;
-  }, [plan]);
+  }, [effectivePlan, betaActive]);
 
   const planInfo = useMemo(() => {
+    const limits = getEffectiveLimits(userProfile);
     if (!userProfile) {
       return {
-        isPro: false,
+        isPro: betaActive,
         canUseAI: true,
-        csvRowLimit: PLAN_LIMITS.free.csvRows,
-        aiCallsRemaining: PLAN_LIMITS.free.aiCallsPerDay,
-        connectorLimit: PLAN_LIMITS.free.connectors,
-        maxSyncSchedule: PLAN_LIMITS.free.syncSchedule as SyncSchedule,
+        csvRowLimit: limits.csvRows,
+        aiCallsRemaining: limits.aiCallsPerDay,
+        connectorLimit: limits.connectors,
+        maxSyncSchedule: limits.syncSchedule as SyncSchedule,
+        isBeta: betaActive,
       };
     }
     return {
-      isPro: checkIsPro(userProfile),
-      canUseAI: checkCanUseAI(userProfile),
-      csvRowLimit: getCSVRowLimit(userProfile),
-      aiCallsRemaining: getAICallsRemaining(userProfile),
-      connectorLimit: PLAN_LIMITS[userProfile.plan].connectors,
-      maxSyncSchedule: PLAN_LIMITS[userProfile.plan].syncSchedule as SyncSchedule,
+      isPro: effectivePlan === 'pro' || effectivePlan === 'team',
+      canUseAI: betaActive || checkCanUseAI(userProfile),
+      csvRowLimit: limits.csvRows,
+      aiCallsRemaining: betaActive ? limits.aiCallsPerDay : getAICallsRemaining(userProfile),
+      connectorLimit: limits.connectors,
+      maxSyncSchedule: limits.syncSchedule as SyncSchedule,
+      isBeta: betaActive,
     };
-  }, [userProfile]);
+  }, [userProfile, betaActive, effectivePlan]);
 
   return {
     ...planInfo,

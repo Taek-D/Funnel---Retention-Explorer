@@ -11,6 +11,8 @@ import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
 import { PastDueBanner } from './PastDueBanner';
 import { OfflineBanner } from './OfflineBanner';
+import { BetaBanner } from './BetaBanner';
+import { FeedbackWidget } from './FeedbackWidget';
 import { SavedViewsDropdown } from './SavedViewsDropdown';
 import { trackPageView } from '../lib/analytics';
 import { useToast } from './Toast';
@@ -150,6 +152,9 @@ export const AppShell: React.FC = () => {
           </div>
         </header>
 
+        {/* Beta Banner */}
+        <BetaBanner />
+
         {/* Offline Banner */}
         <OfflineBanner />
 
@@ -163,6 +168,9 @@ export const AppShell: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Feedback Widget */}
+      <FeedbackWidget />
 
       {/* Search Modal */}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
