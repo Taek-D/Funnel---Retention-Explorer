@@ -13,6 +13,48 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
+// ===== SQL Injection Prevention =====
+const SQL_BLOCKED_KEYWORDS = /\b(DROP|DELETE|INSERT|UPDATE|ALTER|CREATE|TRUNCATE|EXEC|EXECUTE|GRANT|REVOKE|MERGE|REPLACE|CALL|LOAD|COPY|SET|RESET|VACUUM|REINDEX|CLUSTER|COMMENT|LOCK|UNLOCK)\b/i;
+const SQL_COMMENT_PATTERN = /(--|\/\*|\*\/|#)/;
+const SQL_MULTI_STATEMENT = /;[\s]*\S/;
+
+function validateSQLQuery(query: string): { valid: boolean; error?: string } {
+  const trimmed = query.trim();
+
+  if (!trimmed) {
+    return { valid: false, error: 'Query cannot be empty' };
+  }
+
+  // Must start with SELECT or WITH (CTE)
+  if (!/^\s*(SELECT|WITH)\b/i.test(trimmed)) {
+    return { valid: false, error: 'Only SELECT queries are allowed' };
+  }
+
+  // Block SQL comments (potential bypass vectors)
+  if (SQL_COMMENT_PATTERN.test(trimmed)) {
+    return { valid: false, error: 'SQL comments are not allowed' };
+  }
+
+  // Block multi-statement (semicolon followed by non-whitespace)
+  if (SQL_MULTI_STATEMENT.test(trimmed)) {
+    return { valid: false, error: 'Multiple SQL statements are not allowed' };
+  }
+
+  // Block dangerous keywords
+  // Remove string literals first to avoid false positives
+  const withoutStrings = trimmed.replace(/'[^']*'/g, "''").replace(/"[^"]*"/g, '""');
+  if (SQL_BLOCKED_KEYWORDS.test(withoutStrings)) {
+    const match = withoutStrings.match(SQL_BLOCKED_KEYWORDS);
+    return { valid: false, error: `Forbidden SQL keyword: ${match?.[1]?.toUpperCase()}` };
+  }
+
+  return { valid: true };
+}
+
+function validatePropertyId(propertyId: string): boolean {
+  return /^\d{1,20}$/.test(propertyId);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -112,6 +154,9 @@ async function handleGA4(
 ) {
   if (!config.propertyId || !config.accessToken) {
     return jsonResponse({ error: 'GA4 propertyId and accessToken are required' }, 400);
+  }
+  if (!validatePropertyId(config.propertyId)) {
+    return jsonResponse({ error: 'Invalid GA4 propertyId: must be numeric' }, 400);
   }
 
   const from = dateRange?.from ?? new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
@@ -277,6 +322,13 @@ async function handlePostgreSQL(
       return jsonResponse({ success: true, message: 'Connected successfully.', sampleRows: result.rows.length });
     }
 
+    // Validate SQL query to prevent injection
+    const validation = validateSQLQuery(config.query);
+    if (!validation.valid) {
+      await client.end();
+      return jsonResponse({ error: validation.error, code: 'CONN_QUERY_REJECTED' }, 400);
+    }
+
     // Add LIMIT to prevent huge result sets
     const maxRows = limit ?? 100_000;
     const safeQuery = config.query.replace(/;\s*$/, '');
@@ -333,6 +385,13 @@ async function handleMySQL(
       await client.execute('SELECT 1 as ok');
       await client.close();
       return jsonResponse({ success: true, message: 'Connected successfully.', sampleRows: 1 });
+    }
+
+    // Validate SQL query to prevent injection
+    const validation = validateSQLQuery(config.query);
+    if (!validation.valid) {
+      await client.close();
+      return jsonResponse({ error: validation.error, code: 'CONN_QUERY_REJECTED' }, 400);
     }
 
     const maxRows = limit ?? 100_000;

@@ -1,5 +1,6 @@
 import type { WebhookConfig, WebhookEventType } from '../types';
 import { listWebhooks } from './supabaseData';
+import { supabase } from './supabase';
 
 let cachedWebhooks: WebhookConfig[] | null = null;
 let cacheTime = 0;
@@ -35,12 +36,21 @@ export async function dispatchWebhooks(
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   if (!supabaseUrl) return;
 
+  // Get auth token for authenticated webhook dispatch
+  if (!supabase) return;
+  const { data: { session } } = await supabase.auth.getSession();
+  const accessToken = session?.access_token;
+  if (!accessToken) return; // Skip if not authenticated
+
   const payload = { eventType, title, message, timestamp: new Date().toISOString() };
 
   for (const webhook of matching) {
     fetch(`${supabaseUrl}/functions/v1/webhook-dispatch`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
       body: JSON.stringify({
         webhookId: webhook.id,
         url: webhook.url,

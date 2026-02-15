@@ -163,8 +163,8 @@ export const DataImport: React.FC = () => {
                   { type: 'csv' as ConnectorType, icon: 'FileText', label: t('connector.csv') },
                   { type: 'json' as ConnectorType, icon: 'Braces', label: t('connector.json') },
                   { type: 'google-sheets' as ConnectorType, icon: 'Table', label: t('connector.googleSheets') },
-                  { type: 'ga4-export' as ConnectorType, icon: 'BarChart2', label: t('connector.ga4') },
-                  { type: 'mixpanel-export' as ConnectorType, icon: 'Activity', label: t('connector.mixpanel') },
+                  { type: 'ga4-export' as ConnectorType, icon: 'BarChart2', label: t('connector.ga4Export') },
+                  { type: 'mixpanel-export' as ConnectorType, icon: 'Activity', label: t('connector.mixpanelExport') },
                   { type: 'amplitude-export' as ConnectorType, icon: 'TrendingUp', label: t('connector.amplitude') },
                 ]).map(({ type, icon, label }) => {
                   const Icon = CONNECTOR_ICONS[icon];
