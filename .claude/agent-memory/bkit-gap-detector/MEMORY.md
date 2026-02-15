@@ -47,6 +47,7 @@
 | 39 | retention-comparison | 02-13 | 100% | 25/25 P, 2 PARTIAL |
 | 40 | cohort-grouping | 02-13 | 100% | 22/22 |
 | 41 | performance-optimization-v2 | 02-15 | 98.1% | 53/54 P, 1 PARTIAL |
+| 42 | free-beta | 02-15 | 97.8% | 66/69 P, 3 PARTIAL |
 
 ### Key Project Patterns
 
@@ -121,4 +122,5 @@
 - **Virtual scrolling**: @tanstack/react-virtual v3; Insights.tsx useVirtualizer with enabled flag (> 10 items), estimateSize 200, overscan 3; measureElement for dynamic sizing; Dashboard saved analyses NOT virtualized (design gap, low impact)
 - **FilterPanel memo**: React.memo(FilterPanelInner) pattern with displayName; FilterPanelInner named component + memo export
 - **useDebounce**: Generic hook in hooks/useDebounce.ts; useState+useEffect+setTimeout pattern; Insights searchQuery 300ms debounce
+- **Free beta**: VITE_BETA_MODE env var; lib/betaConfig.ts with isBetaMode/isBetaExpired/isBetaActive; getEffectivePlan/getEffectiveLimits in planManager.ts override to 'pro' during beta; usePlanGate returns isBeta field; BetaBanner (dismissible, localStorage fre_beta_banner_dismissed); FeedbackWidget (floating bottom-right, submitFeedback to fre_beta_feedback table or localStorage queue); PricingSection all W0 + toggle hidden; HeroSection beta badge; SignupPage beta branding + trackEvent('beta_signup'); 15 beta.* + 4 landing.beta* i18n keys
 - **Custom events**: CustomEventType/CustomEventCondition/CustomEventDefinition in types/index.ts; fre_custom_events table (definition JSONB) with 4 per-op RLS policies; 4 CRUD in supabaseData.ts (console.error not throw); eventResolver.ts with resolveCustomEvent + resolveCustomEventRows + resolveStepsWithCustomEvents + isCustomEventRef + getCustomEventId (no getMergedEventList -- inline optgroup instead); CustomEventsPage.tsx full CRUD + guest localStorage; FunnelAnalysis/RetentionAnalysis optgroup dropdowns; useFunnelAnalysis/useRetentionAnalysis resolve custom: refs; Tag icon in Sidebar; 30 i18n keys in customEvents + nav.events

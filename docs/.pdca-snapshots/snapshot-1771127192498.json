@@ -1,0 +1,611 @@
+{
+  "timestamp": "2026-02-15T03:46:32.497Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-15T03:46:32.334Z",
+    "activeFeatures": [
+      "__tests__",
+      "funnel-&-retention-explorer frontend",
+      "connectors",
+      "connector-proxy",
+      "webhook-dispatch",
+      "ai-proxy",
+      "admin-api",
+      "cancel-subscription",
+      "change-billing-key",
+      "connector-sync",
+      "connector-oauth",
+      "issue-billing",
+      "process-billing",
+      "scheduled-report",
+      "start-trial",
+      "switch-plan",
+      "toss-webhook"
+    ],
+    "primaryFeature": "__tests__",
+    "features": {
+      "__tests__": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T02:48:48.832Z",
+          "lastUpdated": "2026-02-15T02:48:56.207Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\__tests__\\hooks\\useDebounce.test.tsx"
+      },
+      "funnel-&-retention-explorer frontend": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:05:27.744Z",
+          "lastUpdated": "2026-02-15T03:46:32.334Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\lib\\supabaseData.ts"
+      },
+      "connectors": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:05:42.969Z",
+          "lastUpdated": "2026-02-15T03:05:42.969Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\lib\\connectors\\index.ts"
+      },
+      "connector-proxy": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:25:29.100Z",
+          "lastUpdated": "2026-02-15T03:35:06.881Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\connector-proxy\\index.ts"
+      },
+      "webhook-dispatch": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:26:01.731Z",
+          "lastUpdated": "2026-02-15T03:35:15.734Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\webhook-dispatch\\index.ts"
+      },
+      "ai-proxy": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:34:59.196Z",
+          "lastUpdated": "2026-02-15T03:36:36.996Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\ai-proxy\\index.ts"
+      },
+      "admin-api": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:00.489Z",
+          "lastUpdated": "2026-02-15T03:46:27.562Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\admin-api\\index.ts"
+      },
+      "cancel-subscription": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:01.805Z",
+          "lastUpdated": "2026-02-15T03:35:01.805Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\cancel-subscription\\index.ts"
+      },
+      "change-billing-key": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:03.084Z",
+          "lastUpdated": "2026-02-15T03:35:03.084Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\change-billing-key\\index.ts"
+      },
+      "connector-sync": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:04.369Z",
+          "lastUpdated": "2026-02-15T03:35:04.369Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\connector-sync\\index.ts"
+      },
+      "connector-oauth": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:05.563Z",
+          "lastUpdated": "2026-02-15T03:36:20.259Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\connector-oauth\\index.ts"
+      },
+      "issue-billing": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:08.170Z",
+          "lastUpdated": "2026-02-15T03:35:08.170Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\issue-billing\\index.ts"
+      },
+      "process-billing": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:09.481Z",
+          "lastUpdated": "2026-02-15T03:35:09.481Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\process-billing\\index.ts"
+      },
+      "scheduled-report": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:10.905Z",
+          "lastUpdated": "2026-02-15T03:46:02.884Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\scheduled-report\\index.ts"
+      },
+      "start-trial": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:11.942Z",
+          "lastUpdated": "2026-02-15T03:35:11.942Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\start-trial\\index.ts"
+      },
+      "switch-plan": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:13.228Z",
+          "lastUpdated": "2026-02-15T03:35:13.228Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\switch-plan\\index.ts"
+      },
+      "toss-webhook": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T03:35:14.452Z",
+          "lastUpdated": "2026-02-15T03:45:55.055Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\supabase\\functions\\toss-webhook\\index.ts"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 9,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-02-11T03:00:00.000Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-15T03:46:32.334Z"
+    },
+    "history": [
+      {
+        "timestamp": "2026-02-15T02:48:48.832Z",
+        "feature": "__tests__",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T02:48:56.207Z",
+        "feature": "__tests__",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:05:27.744Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:05:42.969Z",
+        "feature": "connectors",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:25:29.100Z",
+        "feature": "connector-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:25:36.265Z",
+        "feature": "connector-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:25:41.709Z",
+        "feature": "connector-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:25:46.810Z",
+        "feature": "connector-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:26:01.731Z",
+        "feature": "webhook-dispatch",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:26:15.313Z",
+        "feature": "webhook-dispatch",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:26:20.472Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:26:29.170Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:26:55.400Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:27:00.432Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:34:59.196Z",
+        "feature": "ai-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:00.490Z",
+        "feature": "admin-api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:01.805Z",
+        "feature": "cancel-subscription",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:03.084Z",
+        "feature": "change-billing-key",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:04.369Z",
+        "feature": "connector-sync",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:05.563Z",
+        "feature": "connector-oauth",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:06.881Z",
+        "feature": "connector-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:08.170Z",
+        "feature": "issue-billing",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:09.481Z",
+        "feature": "process-billing",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:10.905Z",
+        "feature": "scheduled-report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:11.942Z",
+        "feature": "start-trial",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:13.228Z",
+        "feature": "switch-plan",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:14.452Z",
+        "feature": "toss-webhook",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:15.734Z",
+        "feature": "webhook-dispatch",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:31.489Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:35.724Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:35:50.712Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:01.203Z",
+        "feature": "connector-oauth",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:07.723Z",
+        "feature": "connector-oauth",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:15.740Z",
+        "feature": "connector-oauth",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:20.259Z",
+        "feature": "connector-oauth",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:36.996Z",
+        "feature": "ai-proxy",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:48.057Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:53.479Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:36:58.489Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:03.685Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:08.417Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:14.680Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:19.790Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:26.024Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:30.514Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:38.996Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:45.403Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:51.262Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:37:55.786Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:45:20.616Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:45:49.618Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:45:55.055Z",
+        "feature": "toss-webhook",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:02.884Z",
+        "feature": "scheduled-report",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:10.633Z",
+        "feature": "admin-api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:18.973Z",
+        "feature": "admin-api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:23.341Z",
+        "feature": "admin-api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:27.562Z",
+        "feature": "admin-api",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-15T03:46:32.334Z",
+        "feature": "funnel-&-retention-explorer frontend",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}
