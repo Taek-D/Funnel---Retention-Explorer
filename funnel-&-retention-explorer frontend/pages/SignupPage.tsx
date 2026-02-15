@@ -134,6 +134,8 @@ export const SignupPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
+                  maxLength={254}
                   className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                   placeholder="you@example.com"
                 />
@@ -146,6 +148,8 @@ export const SignupPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="new-password"
+                    maxLength={128}
                     className="w-full bg-transparent border-b border-white/10 px-0 py-2.5 pr-10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent transition-colors"
                     placeholder={t('signup.passwordPlaceholder')}
                   />
@@ -182,6 +186,8 @@ export const SignupPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
+                    autoComplete="new-password"
+                    maxLength={128}
                     className={`w-full bg-transparent border-b px-0 py-2.5 pr-10 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors ${
                       confirmPassword && confirmPassword !== password
                         ? 'border-coral/50 focus:border-coral'

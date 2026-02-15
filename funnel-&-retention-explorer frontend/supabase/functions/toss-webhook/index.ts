@@ -30,7 +30,12 @@ async function verifyWebhookSignature(
   );
   const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(bodyText));
   const computed = btoa(String.fromCharCode(...new Uint8Array(mac)));
-  return computed === signature;
+  if (computed.length !== signature.length) return false;
+  let result = 0;
+  for (let i = 0; i < computed.length; i++) {
+    result |= computed.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return result === 0;
 }
 
 serve(async (req) => {

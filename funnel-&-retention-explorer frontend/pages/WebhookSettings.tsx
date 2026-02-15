@@ -34,7 +34,7 @@ const EMPTY_FORM: WebhookFormData = { name: '', url: '', format: 'json', events:
 
 export const WebhookSettings: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [webhooks, setWebhooks] = useState<WebhookConfig[]>([]);
   const [loading, setLoading] = useState(true);
@@ -153,7 +153,10 @@ export const WebhookSettings: React.FC = () => {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const res = await fetch(`${supabaseUrl}/functions/v1/webhook-dispatch`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
         body: JSON.stringify({
           webhookId: webhook.id,
           url: webhook.url,

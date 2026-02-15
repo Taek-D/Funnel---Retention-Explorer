@@ -33,7 +33,12 @@ async function signState(data: string, secret: string): Promise<string> {
 
 async function verifyState(data: string, signature: string, secret: string): Promise<boolean> {
   const expected = await signState(data, secret);
-  return expected === signature;
+  if (expected.length !== signature.length) return false;
+  let result = 0;
+  for (let i = 0; i < expected.length; i++) {
+    result |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return result === 0;
 }
 
 serve(async (req) => {

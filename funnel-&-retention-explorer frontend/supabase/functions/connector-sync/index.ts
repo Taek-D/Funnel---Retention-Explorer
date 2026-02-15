@@ -21,7 +21,8 @@ serve(async (req) => {
   // Only allow internal (service role) calls
   const authHeader = req.headers.get('Authorization');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-  if (!authHeader?.includes(serviceRoleKey)) {
+  const token = authHeader?.replace('Bearer ', '');
+  if (!token || token !== serviceRoleKey) {
     return jsonResponse({ error: 'Service role key required' }, 403);
   }
 
