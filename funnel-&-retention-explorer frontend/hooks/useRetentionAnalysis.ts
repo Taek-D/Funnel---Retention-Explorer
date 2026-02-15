@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { calculateActivityRetention, calculatePaidRetention } from '../lib/retentionEngine';
 import { generateInsights } from '../lib/insightsEngine';
@@ -111,7 +111,7 @@ export function useRetentionAnalysis() {
     dispatch({ type: 'SET_INSIGHTS', payload: insights });
   }, [state, dispatch, toast, addNotification]);
 
-  return {
+  return useMemo(() => ({
     retentionResults: state.retentionResults,
     retentionType: state.retentionType,
     uniqueEvents: state.uniqueEvents,
@@ -120,6 +120,10 @@ export function useRetentionAnalysis() {
     cohortGrouping,
     setRetentionType,
     setCohortGrouping,
-    runRetentionAnalysis
-  };
+    runRetentionAnalysis,
+  }), [
+    state.retentionResults, state.retentionType, state.uniqueEvents,
+    state.detectedType, state.processedData.length, cohortGrouping,
+    setRetentionType, setCohortGrouping, runRetentionAnalysis,
+  ]);
 }

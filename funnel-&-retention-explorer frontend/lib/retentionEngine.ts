@@ -8,6 +8,10 @@ import {
   FULL_DATA_RETENTION_MAX_COHORTS
 } from './constants';
 import { startSpan } from './sentry';
+import { createEngineCache, getCached, setCached } from './engineCache';
+
+const retentionCache = createEngineCache<RetentionCohort[]>();
+const fullRetentionCache = createEngineCache<RetentionCohort[] | null>();
 
 export function groupDateKey(date: Date, grouping: CohortGrouping): string {
   if (grouping === 'weekly') {
@@ -55,7 +59,12 @@ export function calculateActivityRetention(
   activeEvents: string[],
   grouping: CohortGrouping = 'daily'
 ): RetentionCohort[] {
-  return startSpan('analysis.retention', 'compute', () => _calculateActivityRetention(processedData, cohortEvent, activeEvents, grouping));
+  const key = `${cohortEvent}|${activeEvents.join(',')}|${grouping}`;
+  const cached = getCached(retentionCache, processedData, key);
+  if (cached) return cached;
+  const result = startSpan('analysis.retention', 'compute', () => _calculateActivityRetention(processedData, cohortEvent, activeEvents, grouping));
+  setCached(retentionCache, processedData, key, result);
+  return result;
 }
 
 function _calculateActivityRetention(
@@ -189,6 +198,8 @@ export function calculatePaidRetention(
 
 export function calculateFullDataRetention(processedData: ProcessedEvent[]): RetentionCohort[] | null {
   if (!processedData || processedData.length === 0) return null;
+  const cached = getCached(fullRetentionCache, processedData, 'full');
+  if (cached !== undefined) return cached;
 
   const eventCounts: Record<string, number> = {};
   processedData.forEach(e => {
@@ -250,7 +261,9 @@ export function calculateFullDataRetention(processedData: ProcessedEvent[]): Ret
     retentionData.push(retention);
   });
 
-  return retentionData.length > 0 ? retentionData : null;
+  const result = retentionData.length > 0 ? retentionData : null;
+  setCached(fullRetentionCache, processedData, 'full', result);
+  return result;
 }
 
 export type RetentionComparisonDay = {

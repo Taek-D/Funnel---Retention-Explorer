@@ -6,7 +6,10 @@ import { calculateFullDataFunnel } from './funnelEngine';
 import { calculateFullDataRetention } from './retentionEngine';
 import { calculateFullDataSegments } from './segmentEngine';
 import { INSIGHTS_RETENTION_MAX_DAYS } from './constants';
+import { createEngineCache, getCached, setCached } from './engineCache';
 import i18n from './i18n';
+
+const insightsCache = createEngineCache<Insight[]>();
 
 export function generateInsights(
   processedData: ProcessedEvent[],
@@ -16,6 +19,10 @@ export function generateInsights(
   churnAnalysis: ChurnAnalysis | null,
   paidRetention: RetentionCohort[] | null
 ): Insight[] {
+  const cacheKey = `${detectedType || 'none'}|${subscriptionKPIs?.mrr ?? ''}|${trialAnalysis?.overall?.conversion_rate ?? ''}|${churnAnalysis?.churn_rate_paid ?? ''}|${paidRetention?.length ?? 0}`;
+  const cached = getCached(insightsCache, processedData, cacheKey);
+  if (cached) return cached;
+
   const insights: Insight[] = [];
   const t = i18n.t.bind(i18n);
 
@@ -295,5 +302,6 @@ export function generateInsights(
     }
   }
 
+  setCached(insightsCache, processedData, cacheKey, insights);
   return insights;
 }

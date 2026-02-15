@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { calculateFunnel, loadFunnelTemplate } from '../lib/funnelEngine';
 import { generateInsights } from '../lib/insightsEngine';
@@ -73,7 +73,7 @@ export function useFunnelAnalysis() {
     addNotification('analysis', i18n.t('analysis.funnelComplete'), i18n.t('analysis.funnelCompleteDesc', { steps: results.length, conversion: conversion || 'N/A' }));
   }, [state, dispatch, toast, addNotification]);
 
-  return {
+  return useMemo(() => ({
     funnelSteps: state.funnelSteps,
     funnelResults: state.funnelResults,
     uniqueEvents: state.uniqueEvents,
@@ -81,6 +81,10 @@ export function useFunnelAnalysis() {
     hasData: state.processedData.length > 0,
     setFunnelSteps,
     applyTemplate,
-    runFunnelAnalysis
-  };
+    runFunnelAnalysis,
+  }), [
+    state.funnelSteps, state.funnelResults, state.uniqueEvents,
+    state.detectedType, state.processedData.length,
+    setFunnelSteps, applyTemplate, runFunnelAnalysis,
+  ]);
 }

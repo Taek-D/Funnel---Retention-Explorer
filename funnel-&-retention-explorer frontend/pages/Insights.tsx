@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Zap, AlertTriangle, TrendingUp, CreditCard, Users, ArrowRight } from '../components/Icons';
@@ -7,6 +7,8 @@ import { useAppContext } from '../context/AppContext';
 import { useAIInsights } from '../hooks/useAIInsights';
 import { AskAIPanel } from '../components/AskAIPanel';
 import { FilterPanel } from '../components/FilterPanel';
+import { useDebounce } from '../hooks/useDebounce';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { formatNum, formatPct, formatCurrency } from '../lib/formatters';
 import type { InsightType } from '../types';
 
@@ -27,20 +29,31 @@ export const Insights: React.FC = () => {
   const [askAIOpen, setAskAIOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<InsightType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   const filteredInsights = useMemo(() => {
     let result = insights;
     if (typeFilter.length > 0) {
       result = result.filter(i => typeFilter.includes(i.type));
     }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter(i =>
         i.title.toLowerCase().includes(q) || i.body.toLowerCase().includes(q)
       );
     }
     return result;
-  }, [insights, typeFilter, searchQuery]);
+  }, [insights, typeFilter, debouncedSearch]);
+
+  const insightsListRef = useRef<HTMLDivElement>(null);
+  const useVirtual = filteredInsights.length > 10;
+  const virtualizer = useVirtualizer({
+    count: filteredInsights.length,
+    getScrollElement: () => insightsListRef.current,
+    estimateSize: () => 200,
+    overscan: 3,
+    enabled: useVirtual,
+  });
 
   const toggleType = (type: InsightType) => {
     setTypeFilter(prev =>
@@ -226,6 +239,61 @@ export const Insights: React.FC = () => {
         <div className="bg-surface border border-white/[0.06] rounded-lg p-8 text-center">
           <p className="text-slate-400">{t('insights.noInsightsHint')}</p>
         </div>
+      ) : useVirtual ? (
+        <div ref={insightsListRef} className="max-h-[80vh] overflow-y-auto space-y-4">
+          <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
+            {virtualizer.getVirtualItems().map(virtualItem => {
+              const insight = filteredInsights[virtualItem.index];
+              const style = TYPE_STYLES[insight.type] || TYPE_STYLES.info;
+              return (
+                <div
+                  key={virtualItem.index}
+                  data-index={virtualItem.index}
+                  ref={virtualizer.measureElement}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: `translateY(${virtualItem.start}px)` }}
+                >
+                  <div className={`bg-surface border border-white/[0.06] rounded-lg p-6 border-l-2 ${style.border} flex flex-col lg:flex-row gap-6 mb-4`}>
+                    <div className="hidden sm:flex flex-col items-center pt-1">
+                      <div className={`w-12 h-12 rounded-lg ${style.iconBg} flex items-center justify-center ${style.iconColor} ring-1 ring-white/10`}>
+                        <span className="text-xl">{insight.icon}</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-lg font-bold text-white">{insight.title}</h4>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${style.badgeBg} ${style.badge} border`}>
+                          {insight.type}
+                        </span>
+                      </div>
+                      {insight.metric && (
+                        <div className="inline-flex gap-4 p-4 rounded-lg bg-black/20 border border-white/5 w-fit">
+                          <div className="flex flex-col">
+                            <span className="text-slate-400 text-[10px] font-bold uppercase">{t('insights.keyMetrics')}</span>
+                            <span className="text-2xl font-bold font-mono text-white">{insight.metric}</span>
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-slate-300 text-sm">{insight.body}</p>
+                      {insight.recommendations && insight.recommendations.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-xs text-slate-500 uppercase font-bold mb-2">{t('insights.recommendations')}</p>
+                          <ul className="space-y-1">
+                            {insight.recommendations.map((rec, j) => (
+                              <li key={j} className="text-xs text-slate-400 flex items-start gap-2">
+                                <ArrowRight size={12} className="text-accent mt-0.5 shrink-0" />
+                                {rec}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       ) : (
         filteredInsights.map((insight, i) => {
           const style = TYPE_STYLES[insight.type] || TYPE_STYLES.info;
@@ -243,7 +311,6 @@ export const Insights: React.FC = () => {
                     {insight.type}
                   </span>
                 </div>
-
                 {insight.metric && (
                   <div className="inline-flex gap-4 p-4 rounded-lg bg-black/20 border border-white/5 w-fit">
                     <div className="flex flex-col">
@@ -252,9 +319,7 @@ export const Insights: React.FC = () => {
                     </div>
                   </div>
                 )}
-
                 <p className="text-slate-300 text-sm">{insight.body}</p>
-
                 {insight.recommendations && insight.recommendations.length > 0 && (
                   <div className="mt-2">
                     <p className="text-xs text-slate-500 uppercase font-bold mb-2">{t('insights.recommendations')}</p>

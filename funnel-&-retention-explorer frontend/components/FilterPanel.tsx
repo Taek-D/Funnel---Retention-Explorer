@@ -9,7 +9,7 @@ interface FilterPanelProps {
   showChannel?: boolean;
 }
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({ showPlatform = true, showChannel = true }) => {
+const FilterPanelInner: React.FC<FilterPanelProps> = ({ showPlatform = true, showChannel = true }) => {
   const { t } = useTranslation('pages');
   const { state } = useAppContext();
   const {
@@ -199,3 +199,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ showPlatform = true, s
     </div>
   );
 };
+
+export const FilterPanel = React.memo(FilterPanelInner);
+FilterPanel.displayName = 'FilterPanel';

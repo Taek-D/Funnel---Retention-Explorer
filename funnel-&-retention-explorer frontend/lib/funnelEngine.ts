@@ -2,6 +2,10 @@ import type { ProcessedEvent, FunnelStep, FunnelTimeStats } from '../types';
 import { FUNNEL_TEMPLATES } from './constants';
 import { getUsersByEvent } from './eventUtils';
 import { startSpan } from './sentry';
+import { createEngineCache, getCached, setCached } from './engineCache';
+
+const funnelCache = createEngineCache<FunnelStep[]>();
+const fullFunnelCache = createEngineCache<FunnelStep[] | null>();
 
 export function loadFunnelTemplate(type: 'ecommerce' | 'subscription' | 'lifecycle'): string[] {
   return FUNNEL_TEMPLATES[type] || FUNNEL_TEMPLATES.ecommerce;
@@ -9,7 +13,12 @@ export function loadFunnelTemplate(type: 'ecommerce' | 'subscription' | 'lifecyc
 
 export function calculateFunnel(processedData: ProcessedEvent[], steps: string[]): FunnelStep[] {
   if (steps.length < 2) return [];
-  return startSpan('analysis.funnel', 'compute', () => _calculateFunnel(processedData, steps));
+  const key = steps.join('|');
+  const cached = getCached(funnelCache, processedData, key);
+  if (cached) return cached;
+  const result = startSpan('analysis.funnel', 'compute', () => _calculateFunnel(processedData, steps));
+  setCached(funnelCache, processedData, key, result);
+  return result;
 }
 
 function _calculateFunnel(processedData: ProcessedEvent[], steps: string[]): FunnelStep[] {
@@ -107,6 +116,9 @@ export function calculateFullDataFunnel(
   detectedType: 'ecommerce' | 'subscription'
 ): FunnelStep[] | null {
   if (!processedData || processedData.length === 0) return null;
+  const cacheKey = `full|${detectedType}`;
+  const cached = getCached(fullFunnelCache, processedData, cacheKey);
+  if (cached !== undefined) return cached;
 
   const templates: Record<string, string[]> = {
     ecommerce: ['view_item', 'add_to_cart', 'begin_checkout', 'purchase'],
@@ -164,7 +176,9 @@ export function calculateFullDataFunnel(
     }
   });
 
-  return funnelData.length > 1 ? funnelData : null;
+  const result = funnelData.length > 1 ? funnelData : null;
+  setCached(fullFunnelCache, processedData, cacheKey, result);
+  return result;
 }
 
 export type FunnelComparisonStep = {

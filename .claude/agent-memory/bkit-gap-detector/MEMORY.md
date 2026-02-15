@@ -46,6 +46,7 @@
 | 38 | funnel-comparison | 02-13 | 100% | 24/24 |
 | 39 | retention-comparison | 02-13 | 100% | 25/25 P, 2 PARTIAL |
 | 40 | cohort-grouping | 02-13 | 100% | 22/22 |
+| 41 | performance-optimization-v2 | 02-15 | 98.1% | 53/54 P, 1 PARTIAL |
 
 ### Key Project Patterns
 
@@ -115,4 +116,9 @@
 - **Funnel comparison**: FunnelComparisonStep/FunnelComparisonResult types in funnelEngine.ts (not types/index.ts); compareFunnels zips two FunnelStep[] arrays with 0.5pp direction threshold; FunnelComparison.tsx with period A/B date inputs, select-based step builder, grouped BarChart (palette[0]/[1]), comparison table with pp diff + TrendingUp/Down icons, ChartDownloadButton; GitCompareArrows icon in Sidebar; 17 funnelCompare.* i18n keys + nav.funnelCompare
 - **Retention comparison**: RetentionComparisonDay/RetentionComparisonResult types in retentionEngine.ts; compareRetention averages retention per day across cohorts with 0.5pp direction threshold; RetentionComparison.tsx with cohort/active event selectors + period A/B date inputs + LineChart (palette[0]/[1]) + comparison table + ChartDownloadButton; Diff icon in Sidebar; 17 retentionCompare.* i18n keys + nav.retentionCompare; desc text says "curves" not "rates" (intentional refinement)
 - **Cohort grouping**: CohortGrouping type ('daily'|'weekly'|'monthly') in types/index.ts; WEEKLY_RETENTION_MAX_PERIODS=12, MONTHLY_RETENTION_MAX_PERIODS=6 in constants.ts; groupDateKey + advancePeriodKey helpers in retentionEngine.ts; calculateActivityRetention 4th param with prefix D/W/M; useRetentionAnalysis cohortGrouping state; 3-button toggle in RetentionAnalysis + RetentionComparison; 8 i18n keys (4 retention.* + 4 retentionCompare.*); known issue: compareRetention sort only strips 'D' prefix (not W/M), RetentionComparison uses chartRef prop instead of targetRef
+- **Engine caching**: lib/engineCache.ts with WeakMap<object, Map<string, T>>; createEngineCache/getCached/setCached; applied to funnelEngine (2 caches), retentionEngine (2 caches), insightsEngine (1 cache); cache key = param hash string; WeakMap auto-invalidation on data ref change; inner _function pattern for cached engines
+- **Hook return memoization**: useFunnelAnalysis, useRetentionAnalysis, useAIInsights all wrap return in useMemo; deps include state fields + stable callbacks
+- **Virtual scrolling**: @tanstack/react-virtual v3; Insights.tsx useVirtualizer with enabled flag (> 10 items), estimateSize 200, overscan 3; measureElement for dynamic sizing; Dashboard saved analyses NOT virtualized (design gap, low impact)
+- **FilterPanel memo**: React.memo(FilterPanelInner) pattern with displayName; FilterPanelInner named component + memo export
+- **useDebounce**: Generic hook in hooks/useDebounce.ts; useState+useEffect+setTimeout pattern; Insights searchQuery 300ms debounce
 - **Custom events**: CustomEventType/CustomEventCondition/CustomEventDefinition in types/index.ts; fre_custom_events table (definition JSONB) with 4 per-op RLS policies; 4 CRUD in supabaseData.ts (console.error not throw); eventResolver.ts with resolveCustomEvent + resolveCustomEventRows + resolveStepsWithCustomEvents + isCustomEventRef + getCustomEventId (no getMergedEventList -- inline optgroup instead); CustomEventsPage.tsx full CRUD + guest localStorage; FunnelAnalysis/RetentionAnalysis optgroup dropdowns; useFunnelAnalysis/useRetentionAnalysis resolve custom: refs; Tag icon in Sidebar; 30 i18n keys in customEvents + nav.events

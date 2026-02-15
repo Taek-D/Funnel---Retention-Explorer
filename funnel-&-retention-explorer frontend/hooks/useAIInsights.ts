@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { useNotifications } from '../context/NotificationContext';
 import { usePlanGate } from './usePlanGate';
@@ -118,7 +118,7 @@ export function useAIInsights() {
     setChatHistory([]);
   }, []);
 
-  return {
+  return useMemo(() => ({
     aiSummary,
     aiLoading,
     aiError,
@@ -128,5 +128,9 @@ export function useAIInsights() {
     clearChat,
     hasData: state.processedData.length > 0,
     planGate,
-  };
+  }), [
+    aiSummary, aiLoading, aiError,
+    generateSummary, chatMessages, askQuestion, clearChat,
+    state.processedData.length, planGate,
+  ]);
 }
