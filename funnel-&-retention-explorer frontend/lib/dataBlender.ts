@@ -3,6 +3,12 @@ import type { RawRow } from '../types';
 export type BlendStrategy = 'union' | 'join';
 export type JoinKey = 'userid' | 'date';
 
+const RESERVED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function safeKey(key: string): string {
+  return RESERVED_KEYS.has(key) ? `_${key}` : key;
+}
+
 export interface BlendSource {
   name: string;
   data: RawRow[];
@@ -56,7 +62,8 @@ function blendUnion(
     for (const row of source.data) {
       const merged: RawRow = { _source: source.name };
       for (const h of headers) {
-        merged[h] = row[h] ?? '';
+        const key = safeKey(h);
+        merged[key] = row[h] ?? '';
       }
       data.push(merged);
     }
@@ -92,8 +99,9 @@ function blendJoin(
       if (key && baseMap.has(key)) {
         const existing = baseMap.get(key)!;
         for (const h of src.headers) {
-          if (!(h in existing) || existing[h] === '') {
-            existing[h] = row[h];
+          const safe = safeKey(h);
+          if (!(safe in existing) || existing[safe] === '') {
+            existing[safe] = row[h];
           }
         }
       }

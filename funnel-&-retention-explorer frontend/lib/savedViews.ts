@@ -12,7 +12,17 @@ export interface SavedView {
 export function getSavedViews(): SavedView[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is SavedView =>
+        item &&
+        typeof item.id === 'string' &&
+        typeof item.name === 'string' &&
+        typeof item.path === 'string' &&
+        typeof item.createdAt === 'string',
+    );
   } catch {
     return [];
   }

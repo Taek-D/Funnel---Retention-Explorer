@@ -22,7 +22,18 @@ export const ANNOTATION_COLORS: Record<AnnotationCategory, string> = {
 export function getAnnotations(chartKey: string): ChartAnnotation[] {
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + chartKey);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is ChartAnnotation =>
+        item &&
+        typeof item.id === 'string' &&
+        typeof item.date === 'string' &&
+        typeof item.label === 'string' &&
+        typeof item.color === 'string' &&
+        ANNOTATION_CATEGORIES.includes(item.category),
+    );
   } catch {
     return [];
   }

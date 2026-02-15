@@ -2,9 +2,12 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Plus, Trash2, Layers } from './Icons';
 import { useDataBlend } from '../hooks/useDataBlend';
+import { useToast } from './Toast';
 import type { BlendStrategy, JoinKey } from '../lib/dataBlender';
 import Papa from 'papaparse';
 import type { RawRow } from '../types';
+
+const MAX_BLEND_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 interface DataBlendModalProps {
   isOpen: boolean;
@@ -15,6 +18,7 @@ interface DataBlendModalProps {
 export const DataBlendModal: React.FC<DataBlendModalProps> = ({ isOpen, onClose, onApply }) => {
   const { t } = useTranslation('pages');
   const { sources, result, strategy, joinKey, addSource, removeSource, blend, reset, setStrategy, setJoinKey } = useDataBlend();
+  const { toast } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
@@ -22,6 +26,12 @@ export const DataBlendModal: React.FC<DataBlendModalProps> = ({ isOpen, onClose,
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_BLEND_FILE_SIZE) {
+      toast('error', t('blend.fileTooLarge', 'File too large (max 50MB)'));
+      e.target.value = '';
+      return;
+    }
 
     Papa.parse(file, {
       header: true,
@@ -32,6 +42,9 @@ export const DataBlendModal: React.FC<DataBlendModalProps> = ({ isOpen, onClose,
           data: res.data as RawRow[],
           headers: res.meta.fields || [],
         });
+      },
+      error: (err) => {
+        toast('error', err.message);
       },
     });
 
