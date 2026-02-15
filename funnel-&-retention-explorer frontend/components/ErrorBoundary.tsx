@@ -16,7 +16,7 @@ function FallbackUI({ error, resetError }: { error: Error; resetError: () => voi
         <p className="text-slate-500 text-sm mb-6">
           {i18n.t('error.description')}
         </p>
-        {error && (
+        {error && import.meta.env.DEV && (
           <pre className="text-left text-xs text-slate-600 bg-surface rounded-lg p-3 mb-6 overflow-auto max-h-32">
             {error.message}
           </pre>

@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
     try {
       const { error: authError } = await signIn(email, password);
       if (authError) {
-        setError(authError.message);
+        setError(t('login.invalidCredentials'));
       } else {
         navigate('/app/dashboard');
       }

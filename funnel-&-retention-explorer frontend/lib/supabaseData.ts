@@ -197,7 +197,9 @@ export async function saveSnapshot(params: {
 
 export async function shareSnapshot(snapshotId: string): Promise<string> {
   const client = getSupabase();
-  const shareToken = crypto.randomUUID();
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  const shareToken = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 
   const { error } = await client
     .from('fre_analysis_snapshots')
@@ -355,7 +357,7 @@ export async function listCustomEvents(userId: string): Promise<CustomEventDefin
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: true });
-  if (error) { console.error('listCustomEvents error:', error); return []; }
+  if (error) return [];
   return (data || []).map(row => ({
     id: row.id,
     user_id: row.user_id,
@@ -385,7 +387,7 @@ export async function createCustomEvent(
     .insert({ user_id: event.user_id, project_id: event.project_id || null, name: event.name, description: event.description || '', type: event.type, definition })
     .select()
     .single();
-  if (error) { console.error('createCustomEvent error:', error); return null; }
+  if (error) return null;
   return { ...data, sourceEvent: data.definition?.sourceEvent, sourceEvents: data.definition?.sourceEvents, conditions: data.definition?.conditions };
 }
 
@@ -408,7 +410,7 @@ export async function updateCustomEvent(
   if (!user) throw new Error('인증되지 않았습니다');
 
   const { error } = await db.from('fre_custom_events').update(row).eq('id', id).eq('user_id', user.id);
-  if (error) console.error('updateCustomEvent error:', error);
+  if (error) throw new Error(error.message);
 }
 
 export async function deleteCustomEvent(id: string): Promise<void> {
@@ -417,7 +419,7 @@ export async function deleteCustomEvent(id: string): Promise<void> {
   if (!user) throw new Error('인증되지 않았습니다');
 
   const { error } = await db.from('fre_custom_events').delete().eq('id', id).eq('user_id', user.id);
-  if (error) console.error('deleteCustomEvent error:', error);
+  if (error) throw new Error(error.message);
 }
 
 // ===== Saved Funnels =====
@@ -733,6 +735,19 @@ export async function updateMemberRole(
 
 // ===== Connectors =====
 
+// Sensitive config fields that should be masked on the client
+const SENSITIVE_CONFIG_KEYS = ['password', 'accessToken', 'refreshToken', 'apiSecret'];
+
+function maskSensitiveConfig(config: Record<string, unknown>): Record<string, unknown> {
+  const masked = { ...config };
+  for (const key of SENSITIVE_CONFIG_KEYS) {
+    if (typeof masked[key] === 'string' && (masked[key] as string).length > 0) {
+      masked[key] = '••••••••';
+    }
+  }
+  return masked;
+}
+
 export async function listConnectors(): Promise<ConnectorInstance[]> {
   const client = getSupabase();
   const { data, error } = await client
@@ -740,7 +755,10 @@ export async function listConnectors(): Promise<ConnectorInstance[]> {
     .select('*')
     .order('updated_at', { ascending: false });
   if (error) throw new Error(error.message);
-  return (data || []) as ConnectorInstance[];
+  return ((data || []) as ConnectorInstance[]).map(c => ({
+    ...c,
+    config: maskSensitiveConfig(c.config as Record<string, unknown>) as ConnectorConfigData,
+  }));
 }
 
 export async function saveConnector(params: {

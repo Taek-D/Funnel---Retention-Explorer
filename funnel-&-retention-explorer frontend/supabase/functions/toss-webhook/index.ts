@@ -12,7 +12,10 @@ async function verifyWebhookSignature(
   bodyText: string
 ): Promise<boolean> {
   const secret = Deno.env.get('TOSS_WEBHOOK_SECRET');
-  if (!secret) return true; // 시크릿 미설정 시 검증 건너뜀 (개발 환경)
+  if (!secret) {
+    console.error('TOSS_WEBHOOK_SECRET not configured — rejecting webhook');
+    return false;
+  }
 
   const signature = req.headers.get('TossPayments-Signature');
   if (!signature) return false;

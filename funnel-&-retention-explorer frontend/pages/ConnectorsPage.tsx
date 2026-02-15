@@ -103,7 +103,17 @@ export function ConnectorsPage() {
       .then(r => r.json())
       .then(data => {
         if (data.authUrl) {
-          window.location.href = data.authUrl;
+          try {
+            const parsed = new URL(data.authUrl);
+            const allowedHosts = ['accounts.google.com', 'github.com'];
+            if (!allowedHosts.includes(parsed.hostname)) {
+              toast('error', t('connector.oauthError'));
+              return;
+            }
+            window.location.href = data.authUrl;
+          } catch {
+            toast('error', t('connector.oauthError'));
+          }
         }
       })
       .catch(() => toast('error', t('connector.oauthError')));

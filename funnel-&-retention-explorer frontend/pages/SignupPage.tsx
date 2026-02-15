@@ -52,7 +52,7 @@ export const SignupPage: React.FC = () => {
     try {
       const { error: authError } = await signUp(email, password);
       if (authError) {
-        setError(authError.message);
+        setError(t('signup.genericError'));
       } else {
         setSuccess(t('signup.success'));
       }

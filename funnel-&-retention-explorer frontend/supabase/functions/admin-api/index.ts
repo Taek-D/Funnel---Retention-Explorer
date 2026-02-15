@@ -80,7 +80,8 @@ async function handleUsers(
   });
 
   if (authError) {
-    return jsonResponse({ error: authError.message }, 500);
+    console.error('Admin listUsers error:', authError.message);
+    return jsonResponse({ error: 'Failed to fetch users' }, 500);
   }
 
   const authUsers = authData?.users ?? [];
@@ -208,7 +209,8 @@ async function handleUserUpdate(
     .eq('id', userId);
 
   if (error) {
-    return jsonResponse({ error: error.message }, 500);
+    console.error('Admin user update error:', error.message);
+    return jsonResponse({ error: 'Failed to update user' }, 500);
   }
 
   return jsonResponse({ success: true });
@@ -234,7 +236,8 @@ async function handleBilling(
   const { data, count, error } = await query;
 
   if (error) {
-    return jsonResponse({ error: error.message }, 500);
+    console.error('Admin billing query error:', error.message);
+    return jsonResponse({ error: 'Failed to fetch billing data' }, 500);
   }
 
   return jsonResponse({
@@ -250,7 +253,8 @@ async function handleRevenue(
   const { data, error } = await serviceClient.rpc('admin_monthly_revenue');
 
   if (error) {
-    return jsonResponse({ error: error.message }, 500);
+    console.error('Admin revenue query error:', error.message);
+    return jsonResponse({ error: 'Failed to fetch revenue data' }, 500);
   }
 
   return jsonResponse({ revenue: data ?? [] });

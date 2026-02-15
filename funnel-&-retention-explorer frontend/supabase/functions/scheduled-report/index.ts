@@ -21,6 +21,16 @@ serve(async (req) => {
     });
   }
 
+  // Require service role authentication (only pg_cron/internal calls)
+  const authHeader = req.headers.get('Authorization');
+  const token = authHeader?.replace('Bearer ', '');
+  if (!token || token !== serviceRoleKey) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   const now = new Date();
