@@ -46,6 +46,12 @@ vi.mock('../../components/Icons', () => {
     AlertCircle: Icon('AlertCircle'),
     X: Icon('X'),
     Plug: Icon('Plug'),
+    // QuickShare / PeriodComparison / GoalTracker / AlertWatchlist icons
+    Copy: Icon('Copy'),
+    TrendingUp: Icon('TrendingUp'),
+    TrendingDown: Icon('TrendingDown'),
+    Plus: Icon('Plus'),
+    Bell: Icon('Bell'),
   };
 });
 
@@ -161,6 +167,37 @@ vi.mock('../../hooks/useConnectors', () => ({
     testConnection: vi.fn(),
     refresh: vi.fn(),
   }),
+}));
+
+// Mock new hooks
+vi.mock('../../hooks/usePeriodComparison', () => ({
+  usePeriodComparison: () => null,
+}));
+
+vi.mock('../../hooks/useAlertWatchlist', () => ({
+  useAlertWatchlist: () => ({
+    rules: [],
+    add: vi.fn(),
+    remove: vi.fn(),
+    triggeredCount: 0,
+  }),
+}));
+
+// Mock new components
+vi.mock('../../components/PeriodComparisonCard', () => ({
+  PeriodComparisonCard: () => <div data-testid="period-comparison">PeriodComparison</div>,
+}));
+
+vi.mock('../../components/GoalTrackerPanel', () => ({
+  GoalTrackerPanel: () => <div data-testid="goal-tracker">GoalTracker</div>,
+}));
+
+vi.mock('../../components/AlertWatchlist', () => ({
+  AlertWatchlist: () => <div data-testid="alert-watchlist">AlertWatchlist</div>,
+}));
+
+vi.mock('../../components/QuickShare', () => ({
+  QuickShare: () => <button data-testid="quick-share">Share</button>,
 }));
 
 // Mock analytics

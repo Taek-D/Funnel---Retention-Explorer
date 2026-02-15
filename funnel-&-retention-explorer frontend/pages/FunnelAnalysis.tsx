@@ -15,6 +15,8 @@ import { ChartDownloadButton } from '../components/ChartDownloadButton';
 import { useFilteredData } from '../hooks/useFilteredData';
 import { useAuth } from '../context/AuthContext';
 import { listCustomEvents, listSavedFunnels, createSavedFunnel, updateSavedFunnel, deleteSavedFunnel } from '../lib/supabaseData';
+import { FunnelBreakdownPanel } from '../components/FunnelBreakdownPanel';
+import { useAppContext } from '../context/AppContext';
 import type { CustomEventDefinition, SavedFunnel } from '../types';
 
 export const FunnelAnalysis: React.FC = () => {
@@ -27,6 +29,7 @@ export const FunnelAnalysis: React.FC = () => {
   const { exportCSV, exportExcel, exporting, isPro } = useDataExport();
   const { filteredData, filterCount } = useFilteredData();
   const { user } = useAuth();
+  const { state } = useAppContext();
 
   const [editorCollapsed, setEditorCollapsed] = useState(false);
   const [customEvents, setCustomEvents] = useState<CustomEventDefinition[]>([]);
@@ -610,6 +613,12 @@ export const FunnelAnalysis: React.FC = () => {
               })()}
             </div>
           </div>
+          {/* Funnel Breakdown by Property */}
+          <FunnelBreakdownPanel
+            data={filterCount > 0 ? filteredData : state.processedData}
+            steps={funnelSteps}
+          />
+
           {/* Upgrade Banner */}
           <UpgradeBanner
             messageKey="upgradeBanner.funnel"

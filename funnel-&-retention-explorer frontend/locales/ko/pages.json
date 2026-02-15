@@ -1083,5 +1083,48 @@
     "cancel": "취소",
     "filesLoaded": "{{count}}개 파일 로드됨",
     "totalRows": "총 {{count}}행"
+  },
+  "breakdown": {
+    "title": "속성별 분석",
+    "subtitle": "플랫폼/채널별 퍼널 비교",
+    "property": "분석 기준",
+    "platform": "플랫폼",
+    "channel": "채널",
+    "users": "사용자",
+    "needSteps": "퍼널 스텝을 2개 이상 설정하세요",
+    "noGroups": "해당 속성의 그룹이 없습니다"
+  },
+  "periodComp": {
+    "title": "기간별 비교",
+    "uniqueUsers": "고유 사용자",
+    "totalEvents": "총 이벤트",
+    "avgEvents": "인당 이벤트"
+  },
+  "goals": {
+    "title": "KPI 목표 추적",
+    "add": "추가",
+    "cancel": "취소",
+    "save": "저장",
+    "empty": "설정된 목표가 없습니다",
+    "targetPlaceholder": "목표값",
+    "currentPlaceholder": "현재값"
+  },
+  "alerts": {
+    "title": "알림 감시",
+    "add": "추가",
+    "cancel": "취소",
+    "save": "저장",
+    "empty": "설정된 알림이 없습니다",
+    "below": "미만",
+    "above": "초과",
+    "thresholdPlaceholder": "임계값",
+    "current": "현재"
+  },
+  "quickShare": {
+    "button": "공유",
+    "tooltip": "KPI 요약을 클립보드에 복사",
+    "copied": "마크다운이 클립보드에 복사되었습니다",
+    "copyFailed": "클립보드 복사에 실패했습니다",
+    "generated": "FRE Analytics에서 생성"
   }
 }

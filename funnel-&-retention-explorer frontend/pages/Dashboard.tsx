@@ -21,6 +21,12 @@ import { useClickOutside } from '../hooks/useClickOutside';
 import { FilterPanel } from '../components/FilterPanel';
 import { useFilteredData } from '../hooks/useFilteredData';
 import { useConnectors } from '../hooks/useConnectors';
+import { usePeriodComparison } from '../hooks/usePeriodComparison';
+import { useAlertWatchlist } from '../hooks/useAlertWatchlist';
+import { PeriodComparisonCard } from '../components/PeriodComparisonCard';
+import { GoalTrackerPanel } from '../components/GoalTrackerPanel';
+import { AlertWatchlist } from '../components/AlertWatchlist';
+import { QuickShare } from '../components/QuickShare';
 import type { AppState, WidgetId } from '../types';
 
 export const Dashboard: React.FC = () => {
@@ -35,6 +41,23 @@ export const Dashboard: React.FC = () => {
   const { processedData, funnelResults, retentionResults, insights, subscriptionKPIs, detectedType, dataQualityReport } = state;
   const { filteredData, filterCount } = useFilteredData();
   const { connectors, syncLogs } = useConnectors();
+  const periodComparison = usePeriodComparison(processedData);
+
+  const alertMetrics = useMemo(() => {
+    const m: Record<string, number> = {};
+    if (processedData.length > 0) {
+      m.users = new Set(processedData.map(e => e.userId)).size;
+      m.events = processedData.length;
+    }
+    if (funnelResults && funnelResults.length > 1) {
+      m.conversion = (funnelResults[funnelResults.length - 1].users / funnelResults[0].users) * 100;
+    }
+    if (subscriptionKPIs) {
+      m.churn_rate = subscriptionKPIs.cancel_rate_paid;
+    }
+    return m;
+  }, [processedData, funnelResults, subscriptionKPIs]);
+  const { rules: alertRules, add: addAlert, remove: removeAlert, triggeredCount } = useAlertWatchlist(alertMetrics);
 
   // Chart download refs
   const dashFunnelRef = useRef<HTMLDivElement>(null);
@@ -652,6 +675,13 @@ export const Dashboard: React.FC = () => {
           )}
         </div>
         <div className="flex gap-2">
+          <QuickShare
+            uniqueUsers={uniqueUsers}
+            totalEvents={totalEvents}
+            overallConversion={overallConversion}
+            dataType={detectedType}
+            funnelStepCount={funnelResults?.length || 0}
+          />
           <ExportDropdown
             onCSV={() => { exportCSV('funnel'); exportCSV('retention'); exportCSV('segment'); }}
             onExcel={() => exportExcel('all')}
@@ -712,6 +742,22 @@ export const Dashboard: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Period Comparison + Goals + Alerts */}
+      {hasData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {periodComparison && (
+            <PeriodComparisonCard comparison={periodComparison} />
+          )}
+          <GoalTrackerPanel />
+          <AlertWatchlist
+            rules={alertRules}
+            onAdd={addAlert}
+            onRemove={removeAlert}
+            triggeredCount={triggeredCount}
+          />
+        </div>
+      )}
 
       {/* Upgrade Banner */}
       <UpgradeBanner
