@@ -29,7 +29,9 @@ export const LandingHeader: React.FC = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-[13px] text-slate-500">
+          <a href="#demo" className="hover:text-white transition-colors">{t('header.demo', 'Demo')}</a>
           <a href="#features" className="hover:text-white transition-colors">{t('header.features')}</a>
+          <a href="#how-it-works" className="hover:text-white transition-colors">{t('header.howItWorks', 'How It Works')}</a>
           <a href="#pricing" className="hover:text-white transition-colors">{t('header.pricing')}</a>
           <a href="#faq" className="hover:text-white transition-colors">{t('header.faq')}</a>
         </nav>
@@ -72,7 +74,9 @@ export const LandingHeader: React.FC = () => {
         }`}
       >
         <div className="bg-surface border-t border-white/[0.06] px-6 py-4 space-y-2">
+          <a href="#demo" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.demo', 'Demo')}</a>
           <a href="#features" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.features')}</a>
+          <a href="#how-it-works" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.howItWorks', 'How It Works')}</a>
           <a href="#pricing" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.pricing')}</a>
           <a href="#faq" className="block py-2 text-sm text-slate-400 hover:text-white transition-colors" onClick={() => setMobileOpen(false)}>{t('header.faq')}</a>
           <div className="flex items-center gap-3 pt-3 border-t border-white/[0.06]">
