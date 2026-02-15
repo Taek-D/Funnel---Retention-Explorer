@@ -18,6 +18,8 @@ export function getGoals(): KPIGoal[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
+    const VALID_UNITS = new Set(['%', 'count', 'currency']);
+    const VALID_STATUSES = new Set(['on-track', 'at-risk', 'behind']);
     return parsed.filter(
       (item): item is KPIGoal =>
         item &&
@@ -25,7 +27,9 @@ export function getGoals(): KPIGoal[] {
         typeof item.metric === 'string' &&
         typeof item.target === 'number' &&
         typeof item.current === 'number' &&
-        typeof item.createdAt === 'string',
+        typeof item.createdAt === 'string' &&
+        VALID_UNITS.has(item.unit) &&
+        VALID_STATUSES.has(item.status),
     );
   } catch {
     return [];

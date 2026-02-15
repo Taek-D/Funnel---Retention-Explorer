@@ -1107,7 +1107,19 @@
     "save": "저장",
     "empty": "설정된 목표가 없습니다",
     "targetPlaceholder": "목표값",
-    "currentPlaceholder": "현재값"
+    "currentPlaceholder": "현재값",
+    "metricLabel": "지표 선택",
+    "onTrack": "순조로움",
+    "atRisk": "주의",
+    "behind": "지연",
+    "removeGoal": "{{metric}} 목표 삭제",
+    "metrics": {
+      "conversion": "전환율",
+      "users": "사용자 수",
+      "events": "이벤트 수",
+      "retention": "7일 리텐션",
+      "revenue": "매출"
+    }
   },
   "alerts": {
     "title": "알림 감시",
@@ -1118,7 +1130,18 @@
     "below": "미만",
     "above": "초과",
     "thresholdPlaceholder": "임계값",
-    "current": "현재"
+    "current": "현재",
+    "metricLabel": "지표 선택",
+    "conditionLabel": "조건 선택",
+    "triggeredCount": "{{count}}개 알림 발생",
+    "removeRule": "{{metric}} 알림 삭제",
+    "metrics": {
+      "conversion": "전환율",
+      "users": "고유 사용자",
+      "events": "이벤트 수",
+      "retention": "7일 리텐션",
+      "churn": "이탈률"
+    }
   },
   "quickShare": {
     "button": "공유",

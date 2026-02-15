@@ -18,13 +18,15 @@ export function getAlertRules(): AlertRule[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
+    const VALID_CONDITIONS = new Set(['above', 'below']);
     return parsed.filter(
       (item): item is AlertRule =>
         item &&
         typeof item.id === 'string' &&
         typeof item.metric === 'string' &&
-        typeof item.condition === 'string' &&
+        VALID_CONDITIONS.has(item.condition) &&
         typeof item.threshold === 'number' &&
+        typeof item.triggered === 'boolean' &&
         typeof item.createdAt === 'string',
     );
   } catch {

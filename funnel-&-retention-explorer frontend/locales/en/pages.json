@@ -1107,7 +1107,19 @@
     "save": "Save",
     "empty": "No goals set yet",
     "targetPlaceholder": "Target",
-    "currentPlaceholder": "Current"
+    "currentPlaceholder": "Current",
+    "metricLabel": "Select metric",
+    "onTrack": "On Track",
+    "atRisk": "At Risk",
+    "behind": "Behind",
+    "removeGoal": "Remove {{metric}} goal",
+    "metrics": {
+      "conversion": "Conversion Rate",
+      "users": "Users",
+      "events": "Events",
+      "retention": "D7 Retention",
+      "revenue": "Revenue"
+    }
   },
   "alerts": {
     "title": "Alert Watchlist",
@@ -1118,7 +1130,18 @@
     "below": "Below",
     "above": "Above",
     "thresholdPlaceholder": "Threshold",
-    "current": "Current"
+    "current": "Current",
+    "metricLabel": "Select metric",
+    "conditionLabel": "Select condition",
+    "triggeredCount": "{{count}} alerts triggered",
+    "removeRule": "Remove {{metric}} alert",
+    "metrics": {
+      "conversion": "Conversion Rate",
+      "users": "Unique Users",
+      "events": "Events",
+      "retention": "D7 Retention",
+      "churn": "Churn Rate"
+    }
   },
   "quickShare": {
     "button": "Share",

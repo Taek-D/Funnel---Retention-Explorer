@@ -23,7 +23,7 @@ const DeltaIndicator: React.FC<DeltaProps> = ({ label, current, delta, format })
       <div className="text-[10px] text-slate-500 mb-1 truncate">{label}</div>
       <div className="text-lg font-bold font-mono text-white">{displayValue}</div>
       <div className={`flex items-center gap-1 mt-0.5 ${isPositive ? 'text-accent' : 'text-coral'}`}>
-        {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+        {isPositive ? <TrendingUp size={12} aria-hidden="true" /> : <TrendingDown size={12} aria-hidden="true" />}
         <span className="text-xs font-bold font-mono">{isPositive ? '+' : ''}{delta.toFixed(1)}%</span>
       </div>
     </div>
@@ -34,9 +34,9 @@ export const PeriodComparisonCard: React.FC<PeriodComparisonCardProps> = ({ comp
   const { t } = useTranslation('pages');
 
   return (
-    <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
+    <section aria-labelledby="period-comparison-heading" className="bg-surface border border-white/[0.06] rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-bold text-white">{t('periodComp.title')}</h4>
+        <h4 id="period-comparison-heading" className="text-xs font-bold text-white">{t('periodComp.title')}</h4>
         <div className="flex items-center gap-2 text-[10px] text-slate-500">
           <span className="px-1.5 py-0.5 bg-accent/10 text-accent rounded">{comparison.currentLabel}</span>
           <span>vs</span>
@@ -61,6 +61,6 @@ export const PeriodComparisonCard: React.FC<PeriodComparisonCardProps> = ({ comp
           format={(n) => n.toFixed(1)}
         />
       </div>
-    </div>
+    </section>
   );
 };

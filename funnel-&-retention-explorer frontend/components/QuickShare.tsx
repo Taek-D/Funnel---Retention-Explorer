@@ -57,7 +57,7 @@ export const QuickShare: React.FC<QuickShareProps> = ({
       className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all"
       title={t('quickShare.tooltip')}
     >
-      <Copy size={16} />
+      <Copy size={16} aria-hidden="true" />
       {t('quickShare.button')}
     </button>
   );

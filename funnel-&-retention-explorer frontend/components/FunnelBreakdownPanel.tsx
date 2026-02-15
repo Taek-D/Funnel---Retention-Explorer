@@ -44,14 +44,15 @@ export const FunnelBreakdownPanel: React.FC<FunnelBreakdownPanelProps> = ({ data
   }, [result, steps]);
 
   return (
-    <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">
+    <section aria-labelledby="breakdown-heading" className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Filter size={16} className="text-accent" />
-          <span className="text-sm font-bold text-white">{t('breakdown.title')}</span>
+          <Filter size={16} className="text-accent" aria-hidden="true" />
+          <span id="breakdown-heading" className="text-sm font-bold text-white">{t('breakdown.title')}</span>
           <span className="text-xs text-slate-500">{t('breakdown.subtitle')}</span>
         </div>
         {open ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
@@ -61,7 +62,7 @@ export const FunnelBreakdownPanel: React.FC<FunnelBreakdownPanelProps> = ({ data
         <div className="px-4 pb-4 space-y-4 border-t border-white/[0.06]">
           <div className="flex items-center gap-3 pt-3">
             <span className="text-xs text-slate-400">{t('breakdown.property')}:</span>
-            <div className="flex rounded-md overflow-hidden border border-white/[0.06]">
+            <div className="flex rounded-md overflow-hidden border border-white/[0.06]" role="group" aria-label={t('breakdown.property')}>
               {(['platform', 'channel'] as BreakdownProperty[]).map(p => (
                 <button
                   key={p}
@@ -132,6 +133,6 @@ export const FunnelBreakdownPanel: React.FC<FunnelBreakdownPanelProps> = ({ data
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 };
