@@ -4,8 +4,12 @@ import { Activity } from '../components/Icons';
 import { useAppContext } from '../context/AppContext';
 import { calculateStickiness } from '../lib/stickinessEngine';
 import { CHART_COLORS } from '../lib/constants';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { ChartDownloadButton } from '../components/ChartDownloadButton';
+import { AnnotationPanel } from '../components/ChartAnnotations';
+import { AnomalyBadge, SensitivitySelect, AnomalyList } from '../components/AnomalyAlert';
+import { useAnnotations } from '../hooks/useAnnotations';
+import { useAnomalyDetection } from '../hooks/useAnomalyDetection';
 
 export const StickinessPage: React.FC = () => {
   const { t } = useTranslation('pages');
@@ -13,11 +17,19 @@ export const StickinessPage: React.FC = () => {
   const { processedData } = state;
   const hasData = processedData.length > 0;
   const chartRef = useRef<HTMLDivElement>(null);
+  const { annotations, add, remove } = useAnnotations('stickiness');
 
   const result = useMemo(() => {
     if (!hasData) return null;
     return calculateStickiness(processedData);
   }, [processedData, hasData]);
+
+  const timeSeries = useMemo(() => {
+    if (!result) return [];
+    return result.daily.map(d => ({ date: d.date, value: d.ratio }));
+  }, [result]);
+
+  const { anomalies, sensitivity, setSensitivity } = useAnomalyDetection(timeSeries);
 
   if (!hasData) {
     return (
@@ -37,9 +49,12 @@ export const StickinessPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-white">{t('stickiness.title')}</h1>
-        <p className="text-sm text-slate-400 mt-1">{t('stickiness.desc')}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-white">{t('stickiness.title')}</h1>
+          <p className="text-sm text-slate-400 mt-1">{t('stickiness.desc')}</p>
+        </div>
+        <AnomalyBadge count={anomalies.length} />
       </div>
 
       {/* KPI Cards */}
@@ -63,7 +78,10 @@ export const StickinessPage: React.FC = () => {
       <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-white">{t('stickiness.trendTitle')}</h3>
-          <ChartDownloadButton targetRef={chartRef} filename="stickiness-trend" />
+          <div className="flex items-center gap-2">
+            <SensitivitySelect value={sensitivity} onChange={setSensitivity} />
+            <ChartDownloadButton targetRef={chartRef} filename="stickiness-trend" />
+          </div>
         </div>
         <div ref={chartRef}>
           <ResponsiveContainer width="100%" height={300}>
@@ -79,6 +97,24 @@ export const StickinessPage: React.FC = () => {
                   return [v.toLocaleString(), String(name).toUpperCase()];
                 }}
               />
+              {annotations.map(a => (
+                <ReferenceLine
+                  key={a.id}
+                  x={a.date}
+                  stroke={a.color}
+                  strokeDasharray="4 3"
+                  label={{ value: a.label, position: 'top', fill: a.color, fontSize: 10 }}
+                />
+              ))}
+              {anomalies.map((a, i) => (
+                <ReferenceLine
+                  key={`anomaly-${i}`}
+                  x={a.date}
+                  stroke={a.type === 'spike' ? '#22c55e' : '#ef4444'}
+                  strokeDasharray="2 2"
+                  strokeOpacity={0.5}
+                />
+              ))}
               <Area
                 type="monotone"
                 dataKey="ratio"
@@ -90,7 +126,20 @@ export const StickinessPage: React.FC = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Annotations panel */}
+        <div className="mt-3 pt-3 border-t border-white/[0.04]">
+          <AnnotationPanel annotations={annotations} onAdd={add} onRemove={remove} />
+        </div>
       </div>
+
+      {/* Anomaly Detection */}
+      {anomalies.length > 0 && (
+        <div className="bg-surface border border-white/[0.06] rounded-lg p-4">
+          <h3 className="text-sm font-medium text-white mb-3">{t('anomaly.title')}</h3>
+          <AnomalyList anomalies={anomalies} />
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-surface border border-white/[0.06] rounded-lg overflow-hidden">

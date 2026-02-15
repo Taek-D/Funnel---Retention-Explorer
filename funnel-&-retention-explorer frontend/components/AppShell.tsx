@@ -11,6 +11,7 @@ import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
 import { PastDueBanner } from './PastDueBanner';
 import { OfflineBanner } from './OfflineBanner';
+import { SavedViewsDropdown } from './SavedViewsDropdown';
 import { trackPageView } from '../lib/analytics';
 import { useToast } from './Toast';
 import { useNotifications } from '../context/NotificationContext';
@@ -129,6 +130,7 @@ export const AppShell: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1.5">
+            <SavedViewsDropdown />
             <button
               onClick={() => setSearchOpen(true)}
               className="flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-white hover:bg-white/5 transition-colors"

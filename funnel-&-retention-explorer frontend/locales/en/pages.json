@@ -1030,5 +1030,58 @@
     "noDataDesc": "Upload a CSV to analyze user journeys",
     "emptyHint": "Adjust settings and run analysis",
     "noResults": "No flows match criteria. Try lowering the min flow %"
+  },
+  "annotations": {
+    "title": "Annotations",
+    "addTitle": "Add Annotation",
+    "labelPlaceholder": "Enter annotation text",
+    "cat_release": "Release",
+    "cat_campaign": "Campaign",
+    "cat_incident": "Incident",
+    "cat_custom": "Custom",
+    "add": "Add",
+    "noAnnotations": "No annotations"
+  },
+  "anomaly": {
+    "title": "Anomaly Detection",
+    "detected": "{{count}} anomalies detected",
+    "noAnomalies": "No anomalies",
+    "expected": "Expected",
+    "sensitivity": "Sensitivity",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "nlQuery": {
+    "placeholder": "Ask anything (e.g., 'What's the funnel conversion?')",
+    "examples": "Example queries",
+    "ex1": "Which funnel step has the lowest conversion?",
+    "ex2": "Show DAU/MAU trend for the last 7 days",
+    "ex3": "Where are the main drop-off points?",
+    "navigating": "Navigate to page"
+  },
+  "savedViews": {
+    "title": "Saved Views",
+    "save": "Save Current View",
+    "namePlaceholder": "View name",
+    "saved": "View saved",
+    "loaded": "View loaded",
+    "empty": "No saved views",
+    "quickAccess": "Quick Access"
+  },
+  "blend": {
+    "title": "Data Blending",
+    "desc": "Combine multiple CSV files for analysis",
+    "addFile": "Add File",
+    "mergeBy": "Merge Strategy",
+    "union": "Union",
+    "join": "Join",
+    "userid": "User ID",
+    "date": "Date",
+    "preview": "Preview",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "filesLoaded": "{{count}} files loaded",
+    "totalRows": "{{count}} total rows"
   }
 }

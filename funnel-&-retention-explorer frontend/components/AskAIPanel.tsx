@@ -1,7 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Zap, ArrowRight, RefreshCw, X } from './Icons';
+import { useNavigate } from 'react-router-dom';
+import { Zap, ArrowRight, RefreshCw, X, Search } from './Icons';
 import { useAIInsights } from '../hooks/useAIInsights';
+
+const NL_PATTERNS: { pattern: RegExp; path: string }[] = [
+  { pattern: /퍼널|funnel|전환율|conversion/i, path: '/app/funnels' },
+  { pattern: /리텐션|retention|잔존율|코호트|cohort/i, path: '/app/retention' },
+  { pattern: /세그먼트|segment|비교/i, path: '/app/segments' },
+  { pattern: /스티키니스|stickiness|DAU.*MAU/i, path: '/app/stickiness' },
+  { pattern: /여정|journey|flow|흐름/i, path: '/app/journey' },
+  { pattern: /대시보드|dashboard|요약|overview/i, path: '/app/dashboard' },
+  { pattern: /인사이트|insight|분석/i, path: '/app/insights' },
+];
+
+function detectNavIntent(question: string): string | null {
+  for (const { pattern, path } of NL_PATTERNS) {
+    if (pattern.test(question)) return path;
+  }
+  return null;
+}
 
 interface AskAIPanelProps {
   isOpen: boolean;
@@ -10,22 +28,38 @@ interface AskAIPanelProps {
 
 export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { chatMessages, askQuestion, clearChat, hasData } = useAIInsights();
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [navHint, setNavHint] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
+  useEffect(() => {
+    if (input.trim().length > 3) {
+      setNavHint(detectNavIntent(input));
+    } else {
+      setNavHint(null);
+    }
+  }, [input]);
+
   const handleSend = async () => {
     if (!input.trim() || sending) return;
     const question = input.trim();
     setInput('');
+    setNavHint(null);
     setSending(true);
     await askQuestion(question);
     setSending(false);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    onClose();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -34,6 +68,13 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
       handleSend();
     }
   };
+
+  const quickQueries = [
+    t('ai.suggestion1'),
+    t('ai.suggestion2'),
+    t('ai.suggestion3'),
+    t('ai.suggestion4'),
+  ];
 
   if (!isOpen) return null;
 
@@ -80,12 +121,7 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
             <div className="text-center py-8 space-y-4">
               <p className="text-slate-400 text-sm">{t('ai.emptyChat')}</p>
               <div className="flex flex-wrap justify-center gap-2">
-                {[
-                  t('ai.suggestion1'),
-                  t('ai.suggestion2'),
-                  t('ai.suggestion3'),
-                  t('ai.suggestion4'),
-                ].map((suggestion, i) => (
+                {quickQueries.map((suggestion, i) => (
                   <button
                     key={i}
                     onClick={() => { setInput(suggestion); }}
@@ -94,6 +130,32 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
                     {suggestion}
                   </button>
                 ))}
+              </div>
+
+              {/* NL Quick Navigation */}
+              <div className="mt-4 pt-4 border-t border-white/[0.04]">
+                <p className="text-[11px] text-slate-500 mb-2 flex items-center justify-center gap-1">
+                  <Search size={11} />
+                  {t('nlQuery.examples', '예시 질문')}
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {[
+                    { text: t('nlQuery.ex1', '퍼널 전환율이 가장 낮은 단계는?'), path: '/app/funnels' },
+                    { text: t('nlQuery.ex2', '지난 7일간 DAU/MAU 추이를 보여줘'), path: '/app/stickiness' },
+                    { text: t('nlQuery.ex3', '주요 이탈 구간은 어디야?'), path: '/app/retention' },
+                  ].map((q, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setInput(q.text);
+                        handleNavigate(q.path);
+                      }}
+                      className="px-3 py-1.5 text-[11px] text-accent/70 bg-accent/5 hover:bg-accent/10 rounded-full border border-accent/10 transition-colors"
+                    >
+                      {q.text}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -130,6 +192,19 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Nav hint */}
+        {navHint && (
+          <div className="px-6 py-2 border-t border-white/[0.03] bg-accent/5">
+            <button
+              onClick={() => handleNavigate(navHint)}
+              className="flex items-center gap-2 text-xs text-accent hover:text-accent/80 transition-colors"
+            >
+              <ArrowRight size={12} />
+              {t('nlQuery.navigating', '페이지로 이동')} → {navHint.replace('/app/', '')}
+            </button>
+          </div>
+        )}
+
         {/* Input */}
         <div className="px-6 py-4 border-t border-white/5">
           <div className="flex gap-2">
@@ -138,7 +213,7 @@ export const AskAIPanel: React.FC<AskAIPanelProps> = ({ isOpen, onClose }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={hasData ? t('ai.placeholder') : t('ai.placeholderNoData')}
+              placeholder={hasData ? t('nlQuery.placeholder', t('ai.placeholder')) : t('ai.placeholderNoData')}
               disabled={!hasData || sending}
               className="flex-1 bg-background border border-white/[0.06] rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all disabled:opacity-50"
             />

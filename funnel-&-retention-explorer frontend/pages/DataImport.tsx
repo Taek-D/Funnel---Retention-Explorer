@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles, Braces, Table, BarChart2, Activity, TrendingUp, Link } from '../components/Icons';
+import { UploadCloud, CheckCircle, FileText, ChevronDown, Zap, ArrowRight, X, ShoppingBag, Briefcase, Sparkles, Braces, Table, BarChart2, Activity, TrendingUp, Link, Layers } from '../components/Icons';
 import { useCSVUpload } from '../hooks/useCSVUpload';
 import { useColumnMapping } from '../hooks/useColumnMapping';
 import { useAppContext } from '../context/AppContext';
 import { loadRecentFiles, removeRecentFile } from '../lib/recentFiles';
 import { formatDateTime } from '../lib/formatters';
-import type { ColumnMapping, ConnectorType } from '../types';
+import { DataBlendModal } from '../components/DataBlendModal';
+import type { ColumnMapping, ConnectorType, RawRow } from '../types';
 import type { SampleDataType } from '../lib/sampleData';
 
 const CONNECTOR_ICONS: Record<string, React.ElementType> = {
@@ -39,6 +40,7 @@ export const DataImport: React.FC = () => {
   const sampleLoadedRef = useRef(false);
   const [selectedConnector, setSelectedConnector] = useState<ConnectorType>('csv');
   const [sheetsUrl, setSheetsUrl] = useState('');
+  const [blendOpen, setBlendOpen] = useState(false);
 
   useEffect(() => {
     setRecentFiles(loadRecentFiles());
@@ -85,7 +87,22 @@ export const DataImport: React.FC = () => {
           <h1 className="text-white text-3xl font-bold tracking-tight mb-2">{t('dataImport.title')}</h1>
           <p className="text-slate-400 text-sm">{t('dataImport.desc')}</p>
         </div>
+        <button
+          onClick={() => setBlendOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] rounded-md transition-colors"
+        >
+          <Layers size={14} />
+          {t('blend.title', '데이터 블렌딩')}
+        </button>
       </div>
+
+      <DataBlendModal
+        isOpen={blendOpen}
+        onClose={() => setBlendOpen(false)}
+        onApply={(data: RawRow[], headers: string[]) => {
+          dispatch({ type: 'SET_RAW_DATA', payload: { rawData: data, headers, fileName: 'blended-data.csv' } });
+        }}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Upload Area */}

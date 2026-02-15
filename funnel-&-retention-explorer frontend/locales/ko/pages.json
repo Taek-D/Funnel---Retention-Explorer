@@ -1030,5 +1030,58 @@
     "noDataDesc": "CSV를 업로드하면 사용자 여정을 분석할 수 있습니다",
     "emptyHint": "설정을 조정하고 분석을 실행하세요",
     "noResults": "조건에 맞는 흐름이 없습니다. 최소 흐름 비율을 낮춰 보세요"
+  },
+  "annotations": {
+    "title": "주석",
+    "addTitle": "주석 추가",
+    "labelPlaceholder": "주석 내용을 입력하세요",
+    "cat_release": "릴리스",
+    "cat_campaign": "캠페인",
+    "cat_incident": "장애",
+    "cat_custom": "커스텀",
+    "add": "추가",
+    "noAnnotations": "주석이 없습니다"
+  },
+  "anomaly": {
+    "title": "이상 탐지",
+    "detected": "이상 {{count}}건 감지",
+    "noAnomalies": "이상 없음",
+    "expected": "예상",
+    "sensitivity": "민감도",
+    "high": "높음",
+    "medium": "보통",
+    "low": "낮음"
+  },
+  "nlQuery": {
+    "placeholder": "무엇이든 물어보세요 (예: '퍼널 전환율은?')",
+    "examples": "예시 질문",
+    "ex1": "퍼널 전환율이 가장 낮은 단계는?",
+    "ex2": "지난 7일간 DAU/MAU 추이를 보여줘",
+    "ex3": "주요 이탈 구간은 어디야?",
+    "navigating": "페이지로 이동"
+  },
+  "savedViews": {
+    "title": "저장된 뷰",
+    "save": "현재 뷰 저장",
+    "namePlaceholder": "뷰 이름",
+    "saved": "뷰가 저장되었습니다",
+    "loaded": "뷰가 로드되었습니다",
+    "empty": "저장된 뷰가 없습니다",
+    "quickAccess": "빠른 접근"
+  },
+  "blend": {
+    "title": "데이터 블렌딩",
+    "desc": "여러 CSV 파일을 결합하여 분석합니다",
+    "addFile": "파일 추가",
+    "mergeBy": "결합 방식",
+    "union": "통합 (Union)",
+    "join": "결합 (Join)",
+    "userid": "사용자 ID",
+    "date": "날짜",
+    "preview": "미리보기",
+    "apply": "적용",
+    "cancel": "취소",
+    "filesLoaded": "{{count}}개 파일 로드됨",
+    "totalRows": "총 {{count}}행"
   }
 }
