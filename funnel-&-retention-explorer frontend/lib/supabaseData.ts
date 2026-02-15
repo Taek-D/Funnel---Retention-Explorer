@@ -45,10 +45,14 @@ export async function createProject(name: string, description?: string, teamId?:
 
 export async function deleteProject(projectId: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_projects')
     .delete()
-    .eq('id', projectId);
+    .eq('id', projectId)
+    .eq('user_id', user.id);
 
   if (error) throw new Error(error.message);
 }
@@ -157,6 +161,10 @@ export async function listAllSnapshots(): Promise<(FRESnapshot & { dataset_name?
 
 export async function deleteSnapshot(snapshotId: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
+  // Snapshot ownership is enforced via RLS + joined dataset ownership
   const { error } = await client
     .from('fre_analysis_snapshots')
     .delete()
@@ -289,10 +297,14 @@ export async function markAllNotificationsRead(): Promise<void> {
 
 export async function deleteNotificationDb(id: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_notifications')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
 
   if (error) throw new Error(error.message);
 }
@@ -392,13 +404,19 @@ export async function updateCustomEvent(
   if (updates.conditions !== undefined) definition.conditions = updates.conditions;
   if (Object.keys(definition).length > 0) row.definition = definition;
 
-  const { error } = await db.from('fre_custom_events').update(row).eq('id', id);
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
+  const { error } = await db.from('fre_custom_events').update(row).eq('id', id).eq('user_id', user.id);
   if (error) console.error('updateCustomEvent error:', error);
 }
 
 export async function deleteCustomEvent(id: string): Promise<void> {
   const db = getSupabase();
-  const { error } = await db.from('fre_custom_events').delete().eq('id', id);
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
+  const { error } = await db.from('fre_custom_events').delete().eq('id', id).eq('user_id', user.id);
   if (error) console.error('deleteCustomEvent error:', error);
 }
 
@@ -432,19 +450,27 @@ export async function updateSavedFunnel(id: string, params: {
   name?: string; steps?: string[];
 }): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_saved_funnels')
     .update({ ...params, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteSavedFunnel(id: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_saved_funnels')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
@@ -483,19 +509,27 @@ export async function updateWebhook(id: string, params: Partial<{
   name: string; url: string; events: WebhookEventType[]; format: WebhookFormat; active: boolean;
 }>): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_webhooks')
     .update({ ...params, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteWebhook(id: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_webhooks')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
@@ -549,19 +583,27 @@ export async function updateScheduledReport(
   params: Partial<Pick<ScheduledReport, 'name' | 'frequency' | 'day_of_week' | 'day_of_month' | 'hour_utc' | 'webhook_ids' | 'active'>>
 ): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_scheduled_reports')
     .update({ ...params, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteScheduledReport(id: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_scheduled_reports')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
@@ -734,6 +776,9 @@ export async function updateConnector(
   }>
 ): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const update: Record<string, unknown> = {};
   if (params.name !== undefined) update.name = params.name;
   if (params.config !== undefined) update.config = params.config;
@@ -743,16 +788,21 @@ export async function updateConnector(
   const { error } = await client
     .from('fre_connectors')
     .update(update)
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteConnector(id: string): Promise<void> {
   const client = getSupabase();
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('인증되지 않았습니다');
+
   const { error } = await client
     .from('fre_connectors')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   if (error) throw new Error(error.message);
 }
 

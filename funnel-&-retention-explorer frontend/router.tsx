@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { LandingPage } from './pages/LandingPage';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRoute, AuthRequiredRoute } from './components/ProtectedRoute';
 import { AdminRoute } from './components/AdminRoute';
 import { AppShell } from './components/AppShell';
 import { PageLoader } from './components/PageLoader';
@@ -80,19 +80,25 @@ export const router = createBrowserRouter([
           { path: 'retention', element: <Suspense fallback={<PageLoader />}><RetentionAnalysis /></Suspense> },
           { path: 'segments', element: <Suspense fallback={<PageLoader />}><SegmentComparison /></Suspense> },
           { path: 'insights', element: <Suspense fallback={<PageLoader />}><Insights /></Suspense> },
-          { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
-          { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
-          { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
-          { path: 'webhooks', element: <Suspense fallback={<PageLoader />}><WebhookSettings /></Suspense> },
-          { path: 'scheduled-reports', element: <Suspense fallback={<PageLoader />}><ScheduledReports /></Suspense> },
-          { path: 'notifications', element: <Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense> },
           { path: 'events', element: <Suspense fallback={<PageLoader />}><CustomEventsPage /></Suspense> },
           { path: 'ab-test', element: <Suspense fallback={<PageLoader />}><ABTestPage /></Suspense> },
           { path: 'journey', element: <Suspense fallback={<PageLoader />}><UserJourneyFlow /></Suspense> },
           { path: 'funnel-compare', element: <Suspense fallback={<PageLoader />}><FunnelComparison /></Suspense> },
           { path: 'retention-compare', element: <Suspense fallback={<PageLoader />}><RetentionComparison /></Suspense> },
           { path: 'stickiness', element: <Suspense fallback={<PageLoader />}><StickinessPage /></Suspense> },
-          { path: 'connectors', element: <Suspense fallback={<PageLoader />}><ConnectorsPage /></Suspense> },
+          // Auth-required routes: team, billing, subscription, webhooks, connectors, scheduled reports
+          {
+            element: <AuthRequiredRoute />,
+            children: [
+              { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
+              { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
+              { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
+              { path: 'webhooks', element: <Suspense fallback={<PageLoader />}><WebhookSettings /></Suspense> },
+              { path: 'scheduled-reports', element: <Suspense fallback={<PageLoader />}><ScheduledReports /></Suspense> },
+              { path: 'notifications', element: <Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense> },
+              { path: 'connectors', element: <Suspense fallback={<PageLoader />}><ConnectorsPage /></Suspense> },
+            ],
+          },
           {
             path: 'admin',
             element: <AdminRoute />,

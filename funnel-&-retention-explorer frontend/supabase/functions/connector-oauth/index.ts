@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -18,6 +18,22 @@ function redirectResponse(url: string) {
     status: 302,
     headers: { ...corsHeaders, Location: url },
   });
+}
+
+// ===== HMAC State Signing =====
+async function signState(data: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return btoa(String.fromCharCode(...new Uint8Array(mac)));
+}
+
+async function verifyState(data: string, signature: string, secret: string): Promise<boolean> {
+  const expected = await signState(data, secret);
+  return expected === signature;
 }
 
 serve(async (req) => {
@@ -52,8 +68,11 @@ serve(async (req) => {
       return jsonResponse({ error: 'Google OAuth not configured' }, 500);
     }
 
-    // Generate state token with user ID for callback verification
-    const state = btoa(JSON.stringify({ userId: user.id, ts: Date.now() }));
+    // Generate HMAC-signed state token to prevent forgery
+    const stateSecret = Deno.env.get('OAUTH_STATE_SECRET') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const statePayload = JSON.stringify({ userId: user.id, ts: Date.now() });
+    const stateSignature = await signState(statePayload, stateSecret);
+    const state = btoa(JSON.stringify({ d: statePayload, s: stateSignature }));
 
     const scopes = [
       'https://www.googleapis.com/auth/analytics.readonly',
@@ -87,10 +106,20 @@ serve(async (req) => {
       return redirectResponse(`${frontendUrl}/app/connectors?oauth=error&message=missing_params`);
     }
 
-    // Decode state to get user ID
-    let stateData: { userId: string };
+    // Decode and verify HMAC-signed state to get user ID
+    let stateData: { userId: string; ts: number };
     try {
-      stateData = JSON.parse(atob(state));
+      const decoded = JSON.parse(atob(state));
+      const stateSecret = Deno.env.get('OAUTH_STATE_SECRET') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+      const isValid = await verifyState(decoded.d, decoded.s, stateSecret);
+      if (!isValid) {
+        return redirectResponse(`${frontendUrl}/app/connectors?oauth=error&message=invalid_state_signature`);
+      }
+      stateData = JSON.parse(decoded.d);
+      // Reject state tokens older than 10 minutes
+      if (Date.now() - stateData.ts > 10 * 60 * 1000) {
+        return redirectResponse(`${frontendUrl}/app/connectors?oauth=error&message=state_expired`);
+      }
     } catch {
       return redirectResponse(`${frontendUrl}/app/connectors?oauth=error&message=invalid_state`);
     }

@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -71,7 +71,40 @@ serve(async (req) => {
     }
   }
 
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(JSON.stringify({ error: '잘못된 요청 형식입니다.' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // ===== Request Body Validation =====
+  if (!body.contents || !Array.isArray(body.contents)) {
+    return new Response(JSON.stringify({ error: 'contents 배열이 필요합니다.' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Build sanitized request: only allow known fields
+  const sanitizedBody: Record<string, unknown> = {
+    contents: body.contents,
+  };
+
+  // Allow systemInstruction if present
+  if (body.systemInstruction && typeof body.systemInstruction === 'object') {
+    sanitizedBody.systemInstruction = body.systemInstruction;
+  }
+
+  // Enforce server-side generationConfig limits (ignore client safetySettings)
+  const clientConfig = (body.generationConfig as Record<string, unknown>) ?? {};
+  sanitizedBody.generationConfig = {
+    temperature: Math.min(Math.max(Number(clientConfig.temperature ?? 0.7), 0), 1.5),
+    maxOutputTokens: Math.min(Number(clientConfig.maxOutputTokens ?? 2048), 4096),
+  };
 
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
   if (!GEMINI_API_KEY) {
@@ -87,7 +120,7 @@ serve(async (req) => {
   const geminiResponse = await fetch(geminiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(sanitizedBody),
   });
 
   const geminiData = await geminiResponse.json();
