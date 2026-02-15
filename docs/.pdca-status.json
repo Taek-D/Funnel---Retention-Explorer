@@ -256,6 +256,14 @@
         "lastUpdated": "2026-02-15T07:03:47.191Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\landing\\HeroSection.tsx"
+    },
+    "free-beta": {
+      "phase": "archived",
+      "matchRate": 97.8,
+      "iterationCount": 0,
+      "startedAt": "2026-02-15T06:50:00.000Z",
+      "archivedAt": "2026-02-15T07:30:00.000Z",
+      "archivedTo": "docs/archive/2026-02/free-beta/"
     }
   },
   "pipeline": {

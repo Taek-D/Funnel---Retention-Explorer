@@ -1093,3 +1093,52 @@ TypeScript strict mode 활성화: `@types/react` `@types/react-dom` 설치 (4,46
 ### Summary
 
 6 scope items completed (DCP-1 ~ DCP-6): DCP-1 OAuth API 커넥터 (GA4 Data API OAuth 2.0 + Mixpanel Export API, connector-proxy/connector-oauth Edge Functions), DCP-2 DB 커넥터 (PostgreSQL + MySQL, 자격증명 서버사이드 암호화), DCP-3 커넥터 설정 저장 (fre_connectors + fre_sync_logs 테이블, 7개 CRUD 함수, RLS), DCP-4 자동 동기화 (connector-sync Edge Function, hourly/daily/weekly 스케줄), DCP-5 커넥터 관리 UI (ConnectorsPage + ConnectorCard/Modal/Forms + SyncStatusBadge + Dashboard widget + Sidebar 메뉴, /app/connectors 라우트), DCP-6 i18n + 테스트 (64 keys/lang ko/en, 41개 신규 테스트). Plan gating: Free(0) → Pro(3/daily) → Team(unlimited/hourly). 17개 신규 파일 + 14개 수정 파일. 테스트 351/351 통과. 빌드 정상. 1 iteration (Dashboard 위젯 + useConnectors 테스트 추가).
+
+---
+
+## performance-optimization-v2
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Performance Optimization V2 (Engine Cache + Hook Memoization + Virtual Scrolling) |
+| **Match Rate** | 98.1% |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-14 |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `performance-optimization-v2/performance-optimization-v2.plan.md` |
+| Design | `performance-optimization-v2/performance-optimization-v2.design.md` |
+| Analysis | `performance-optimization-v2/performance-optimization-v2.analysis.md` |
+| Report | `performance-optimization-v2/performance-optimization-v2.report.md` |
+
+### Summary
+
+WeakMap 기반 엔진 캐시 (engineCache.ts), useFunnelAnalysis/useRetentionAnalysis/useAIInsights hook useMemo 래핑, useDebounce 제네릭 훅, @tanstack/react-virtual 가상 스크롤 (Insights 페이지 10+ items), FilterPanel React.memo. 테스트 362/362 통과. 빌드 정상. 0 iteration.
+
+---
+
+## free-beta
+
+| Item | Detail |
+|------|--------|
+| **Feature** | Free Beta Mode (Feature Flag + Feedback Widget + Landing Branding) |
+| **Match Rate** | 97.8% (66 PASS, 3 PARTIAL, 0 FAIL) |
+| **Iterations** | 0 |
+| **Completed** | 2026-02-15 |
+| **Commit** | `ab5ee4e feat: Add free beta mode with feature flag, feedback widget, and branding` |
+
+### Documents
+
+| Phase | File |
+|-------|------|
+| Plan | `free-beta/free-beta.plan.md` |
+| Design | `free-beta/free-beta.design.md` |
+| Analysis | `free-beta/free-beta.analysis.md` |
+| Report | `free-beta/free-beta.report.md` |
+
+### Summary
+
+12 implementation items completed: betaConfig.ts (VITE_BETA_MODE env flag + BETA_END_DATE 2026-04-30 + isBetaActive), planManager.ts getEffectivePlan/getEffectiveLimits (beta=pro override), usePlanGate beta-aware gating (isBeta 필드), analytics.ts 3 beta events (beta_signup/beta_feature_use/beta_feedback_submit), BetaBanner.tsx (dismissible localStorage, role="banner"), FeedbackWidget.tsx (floating button + star rating + category + textarea + Supabase fre_beta_feedback insert + localStorage fallback), AppShell 통합, PricingSection beta pricing (₩0 + 토글 숨김 + 베타 무료 CTA), HeroSection beta badge, SignupPage beta branding + trackEvent, i18n 18키 beta.* + landing.beta* ko/en. 3개 신규 파일 + 9개 수정 파일. 테스트 362/362 통과. 빌드 정상. 0 iteration. 외부 의존: Vercel VITE_BETA_MODE=true 설정, Supabase fre_beta_feedback 테이블 생성.

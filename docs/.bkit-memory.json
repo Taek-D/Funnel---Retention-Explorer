@@ -5,12 +5,12 @@
     "platform": "claude",
     "level": "Starter"
   },
-  "currentFeature": "free-beta",
+  "currentFeature": null,
   "pdca": {
-    "feature": "free-beta",
-    "phase": "completed",
-    "startedAt": "2026-02-15T06:50:00.000Z",
-    "matchRate": 97.8,
+    "feature": null,
+    "phase": null,
+    "startedAt": null,
+    "matchRate": null,
     "iterationCount": 0
   }
 }
