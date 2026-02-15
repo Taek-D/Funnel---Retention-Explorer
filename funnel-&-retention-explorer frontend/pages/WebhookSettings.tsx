@@ -159,9 +159,6 @@ export const WebhookSettings: React.FC = () => {
         },
         body: JSON.stringify({
           webhookId: webhook.id,
-          url: webhook.url,
-          format: webhook.format,
-          secret: webhook.secret,
           payload: {
             eventType: 'test',
             title: 'Test Webhook',
@@ -247,6 +244,7 @@ export const WebhookSettings: React.FC = () => {
                 value={form.name}
                 onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                 placeholder={t('pages:webhook.namePlaceholder')}
+                maxLength={100}
                 className="w-full px-3 py-2 text-sm bg-white/[0.04] border border-white/[0.08] rounded-md text-white placeholder:text-slate-600 focus:outline-none focus:border-accent/50"
               />
             </div>
@@ -257,6 +255,7 @@ export const WebhookSettings: React.FC = () => {
                 value={form.url}
                 onChange={e => handleUrlChange(e.target.value)}
                 placeholder={t('pages:webhook.urlPlaceholder')}
+                maxLength={2048}
                 className="w-full px-3 py-2 text-sm bg-white/[0.04] border border-white/[0.08] rounded-md text-white placeholder:text-slate-600 focus:outline-none focus:border-accent/50"
               />
             </div>

@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Cache-Control': 'no-store',
 };
 
 const RETRY_INTERVALS = [1, 3, 7];
@@ -146,7 +148,7 @@ serve(async (req) => {
         failedCount++;
       }
     } catch (err) {
-      console.error(`Billing failed for ${profile.id}:`, err);
+      console.error(`Billing failed for user ${profile.id}`);
       failedCount++;
     }
   }
@@ -170,7 +172,7 @@ serve(async (req) => {
           }
         );
       } catch (err) {
-        console.error(`BillingKey delete failed for ${profile.id}:`, err);
+        console.error(`BillingKey delete failed for user ${profile.id}`);
       }
     }
 
@@ -208,7 +210,7 @@ serve(async (req) => {
           }
         );
       } catch (err) {
-        console.error(`BillingKey delete failed for ${profile.id}:`, err);
+        console.error(`BillingKey delete failed for user ${profile.id}`);
       }
     }
 

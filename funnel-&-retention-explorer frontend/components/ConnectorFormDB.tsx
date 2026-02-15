@@ -37,6 +37,7 @@ export const ConnectorFormDB: React.FC<ConnectorFormDBProps> = ({ dbType, config
             value={config.host}
             onChange={e => update('host', e.target.value)}
             placeholder="db.example.com"
+            maxLength={253}
             className="w-full px-3 py-2 bg-elevated border border-white/[0.06] rounded-md text-sm text-white placeholder-slate-600 focus:border-accent/50 focus:outline-none"
           />
         </div>
@@ -58,6 +59,7 @@ export const ConnectorFormDB: React.FC<ConnectorFormDBProps> = ({ dbType, config
           value={config.database}
           onChange={e => update('database', e.target.value)}
           placeholder="analytics"
+          maxLength={100}
           className="w-full px-3 py-2 bg-elevated border border-white/[0.06] rounded-md text-sm text-white placeholder-slate-600 focus:border-accent/50 focus:outline-none"
         />
       </div>
@@ -70,6 +72,7 @@ export const ConnectorFormDB: React.FC<ConnectorFormDBProps> = ({ dbType, config
             value={config.username}
             onChange={e => update('username', e.target.value)}
             placeholder="readonly_user"
+            maxLength={100}
             className="w-full px-3 py-2 bg-elevated border border-white/[0.06] rounded-md text-sm text-white placeholder-slate-600 focus:border-accent/50 focus:outline-none"
           />
         </div>
@@ -81,6 +84,8 @@ export const ConnectorFormDB: React.FC<ConnectorFormDBProps> = ({ dbType, config
               value={config.password}
               onChange={e => update('password', e.target.value)}
               placeholder="••••••••"
+              maxLength={256}
+              autoComplete="off"
               className="w-full px-3 py-2 pr-10 bg-elevated border border-white/[0.06] rounded-md text-sm text-white placeholder-slate-600 focus:border-accent/50 focus:outline-none"
             />
             <button
@@ -112,6 +117,7 @@ export const ConnectorFormDB: React.FC<ConnectorFormDBProps> = ({ dbType, config
           value={config.query}
           onChange={e => update('query', e.target.value)}
           rows={4}
+          maxLength={10000}
           placeholder={`SELECT user_id, event_name, timestamp, platform\nFROM events\nWHERE timestamp > '2026-01-01'`}
           className="w-full px-3 py-2 bg-elevated border border-white/[0.06] rounded-md text-sm text-white placeholder-slate-600 focus:border-accent/50 focus:outline-none font-mono text-[12px]"
         />

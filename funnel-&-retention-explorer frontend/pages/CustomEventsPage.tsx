@@ -18,7 +18,8 @@ const FREE_LIMIT = 5;
 
 function loadLocalEvents(): CustomEventDefinition[] {
   try {
-    return JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+    const parsed = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
   } catch { return []; }
 }
 function saveLocalEvents(events: CustomEventDefinition[]) {

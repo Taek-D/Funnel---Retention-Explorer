@@ -380,7 +380,7 @@ export async function exportReportAsPNG(state: AppState, isPro = false): Promise
     if (useNewTab) {
       // Fallback: open in new tab
       const dataUrl = canvas.toDataURL('image/png');
-      const win = window.open('');
+      const win = window.open('', '_blank', 'noopener');
       if (win) {
         const img = win.document.createElement('img');
         img.src = dataUrl;

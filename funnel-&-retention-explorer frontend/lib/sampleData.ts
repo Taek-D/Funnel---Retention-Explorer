@@ -1,3 +1,5 @@
+// NOTE: Math.random() is used here for demo data generation only.
+// Do not use for tokens, keys, or any security-sensitive values.
 import type { RawRow, ColumnMapping } from '../types';
 
 type SampleDataType = 'ecommerce' | 'saas';

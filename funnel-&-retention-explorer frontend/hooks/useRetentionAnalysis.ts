@@ -23,7 +23,7 @@ export function useRetentionAnalysis() {
     if (user) {
       listCustomEvents(user.id).then(setCustomEvents);
     } else {
-      try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+      try { const p = JSON.parse(localStorage.getItem('fre_custom_events') || '[]'); setCustomEvents(Array.isArray(p) ? p : []); } catch { /* empty */ }
     }
   }, [user]);
 

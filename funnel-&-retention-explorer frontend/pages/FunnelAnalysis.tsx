@@ -52,7 +52,7 @@ export const FunnelAnalysis: React.FC = () => {
     if (user) {
       listCustomEvents(user.id).then(setCustomEvents);
     } else {
-      try { setCustomEvents(JSON.parse(localStorage.getItem('fre_custom_events') || '[]')); } catch { /* empty */ }
+      try { const p = JSON.parse(localStorage.getItem('fre_custom_events') || '[]'); setCustomEvents(Array.isArray(p) ? p : []); } catch { /* empty */ }
     }
   }, [user]);
 
@@ -62,8 +62,10 @@ export const FunnelAnalysis: React.FC = () => {
       listSavedFunnels(user.id).then(setSavedFunnels);
     } else {
       try {
-        const raw = JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]') as { name: string; steps: string[] }[];
-        setSavedFunnels(raw.map((tmpl, i) => ({
+        const raw = JSON.parse(localStorage.getItem('fre-funnel-templates') || '[]');
+        if (!Array.isArray(raw)) { setSavedFunnels([]); return; }
+        const typed = raw as { name: string; steps: string[] }[];
+        setSavedFunnels(typed.map((tmpl, i) => ({
           id: `local-${i}`, user_id: '', name: tmpl.name, steps: tmpl.steps,
           created_at: '', updated_at: ''
         })));

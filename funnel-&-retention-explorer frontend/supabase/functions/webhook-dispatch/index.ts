@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Cache-Control': 'no-store',
 };
 
 // ===== SSRF Prevention =====
@@ -117,8 +119,8 @@ serve(async (req) => {
   }
 
   let body: {
-    webhookId?: string;
-    url: string;
+    webhookId: string;
+    url?: string;
     format?: string;
     secret?: string;
     payload: WebhookPayload;
@@ -133,14 +135,44 @@ serve(async (req) => {
     });
   }
 
-  const { webhookId, url, format, secret, payload } = body;
+  const { webhookId, payload } = body;
 
-  if (!url || !payload) {
-    return new Response(JSON.stringify({ error: 'Missing url or payload' }), {
+  if (!webhookId || !payload) {
+    return new Response(JSON.stringify({ error: 'Missing webhookId or payload' }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
+  // Look up webhook config from DB (secret stays server-side)
+  const serviceClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+
+  const { data: webhook, error: lookupError } = await serviceClient
+    .from('fre_webhooks')
+    .select('url, format, secret, active')
+    .eq('id', webhookId)
+    .single();
+
+  if (lookupError || !webhook) {
+    return new Response(JSON.stringify({ error: 'Webhook not found' }), {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (!webhook.active) {
+    return new Response(JSON.stringify({ error: 'Webhook is inactive' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  const url = webhook.url as string;
+  const format = webhook.format as string;
+  const secret = webhook.secret as string | null;
 
   // ===== SSRF Prevention: validate webhook URL =====
   const urlValidation = validateWebhookUrl(url);
@@ -181,11 +213,6 @@ serve(async (req) => {
   // Log to fre_webhook_logs
   if (webhookId) {
     try {
-      const serviceClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
-
       await serviceClient.from('fre_webhook_logs').insert({
         webhook_id: webhookId,
         event_type: payload.eventType ?? 'unknown',

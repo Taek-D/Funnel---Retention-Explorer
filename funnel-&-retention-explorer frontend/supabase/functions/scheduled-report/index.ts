@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Cache-Control': 'no-store',
 };
 
 serve(async (req) => {
@@ -117,9 +119,6 @@ serve(async (req) => {
             },
             body: JSON.stringify({
               webhookId: webhook.id,
-              url: webhook.url,
-              format: webhook.format,
-              secret: webhook.secret,
               payload: {
                 eventType: 'export',
                 title,

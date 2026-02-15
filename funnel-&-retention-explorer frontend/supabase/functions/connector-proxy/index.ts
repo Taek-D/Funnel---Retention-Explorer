@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': Deno.env.get('FRONTEND_URL') ?? 'https://fre-analytics-castletaek9643-9522s-projects.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Cache-Control': 'no-store',
 };
 
 function jsonResponse(data: unknown, status = 200) {
@@ -190,7 +192,7 @@ async function handleGA4(
 
   if (!res.ok) {
     const errBody = await res.text();
-    return jsonResponse({ error: `GA4 API error: ${res.status}`, details: errBody }, res.status);
+    return jsonResponse({ error: `GA4 API error (${res.status})` }, res.status);
   }
 
   const report = await res.json();
@@ -247,7 +249,7 @@ async function handleMixpanel(
 
   if (!res.ok) {
     const errBody = await res.text();
-    return jsonResponse({ error: `Mixpanel API error: ${res.status}`, details: errBody }, res.status);
+    return jsonResponse({ error: `Mixpanel API error (${res.status})` }, res.status);
   }
 
   const text = await res.text();
