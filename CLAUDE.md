@@ -79,33 +79,31 @@ AuthProvider > AppProvider > ToastProvider > NotificationProvider > RouterProvid
 
 ### 코딩 컨벤션
 
-- 한국어 UI 텍스트 (사용자 대면 문자열)
-- 함수명/변수명은 영어 camelCase
-- `type` 선호 (`interface`는 types/index.ts에서만 사용)
-- Tailwind CSS 클래스 사용 (인라인 스타일 금지)
-- 테마 색상: `bg-background`, `bg-surface`, `text-accent` 등 (index.html의 tailwind.config 참조)
-- 새 아이콘 추가 시 components/Icons.tsx에서 re-export
-- 새 상태 추가 시 types/index.ts → context/reducer.ts → context/actions.ts 순서로 수정
-- 커밋 메시지는 영어 (conventional commits: feat, fix, refactor, docs)
+> 상세 규칙은 `.claude/rules/` 참조 (code-style, security, testing, file-handling)
+
+- 한국어 UI 텍스트 / 영어 camelCase 변수명 / 영어 conventional commits
+- `type` 선호, `any` 금지, Tailwind 클래스만 (인라인 스타일 금지)
+- 새 상태: types/index.ts → reducer.ts → actions.ts 순서
 
 ### 환경 변수
 
 - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — Supabase 연결
 - `VITE_GEMINI_API_KEY` — Gemini AI API
-
-### 금지 사항
-
-- `any` 타입 사용 금지
-- `var`, `eval()`, `document.write()` 사용 금지
-- 인라인 스타일 금지 (Tailwind 클래스 사용)
-- `console.log` 커밋 금지 (디버깅 후 제거)
-- `.env.local` 파일 커밋 금지
+- `VITE_BETA_MODE` — 베타 모드 플래그
 
 ### 주의사항
 
-- 디렉토리명에 `&`가 포함되어 bash에서 `cd`/`npx` 사용 시 작은따옴표 필요
-- 빌드 시 ~1MB 번들 크기 경고는 정상 (recharts + papaparse + supabase)
-- `pdf_font_noto_sans_kr.js`는 7.9MB 바이너리 → 읽기/수정 금지
+- 디렉토리명에 `&` → bash에서 작은따옴표 필요, `npx` 대신 `node node_modules/vite/bin/vite.js`
+- `pdf_font_noto_sans_kr.js`(7.9MB) 읽기/수정 금지
+- `.env.local` 커밋 금지
+
+### Compaction 규칙
+
+컨텍스트 압축 시 반드시 보존할 정보:
+- 수정된 파일 목록과 변경 이유
+- 현재 작업 중인 기능/버그 상태
+- Provider 계층: `AuthProvider > AppProvider > ToastProvider > NotificationProvider > RouterProvider`
+- 실행한 테스트 명령어와 결과 요약
 
 ---
 

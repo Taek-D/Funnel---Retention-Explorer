@@ -36,6 +36,17 @@
     "ask": []
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const s=require('fs').readFileSync(0,'utf8');if(/rm\\s+-rf|--force|reset\\s+--hard|push\\s+--force|clean\\s+-f/.test(s)){console.error('BLOCK: Destructive command detected');process.exit(1)}\""
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
