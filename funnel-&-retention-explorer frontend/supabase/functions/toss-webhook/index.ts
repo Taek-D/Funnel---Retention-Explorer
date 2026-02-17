@@ -8,14 +8,14 @@ const corsHeaders = {
   'Cache-Control': 'no-store',
 };
 
-// SS-7: Webhook Secret 검증 (HMAC-SHA256)
+// SS-7: Webhook Secret validation (HMAC-SHA256)
 async function verifyWebhookSignature(
   req: Request,
   bodyText: string
 ): Promise<boolean> {
   const secret = Deno.env.get('TOSS_WEBHOOK_SECRET');
   if (!secret) {
-    console.error('TOSS_WEBHOOK_SECRET not configured — rejecting webhook');
+    console.error('TOSS_WEBHOOK_SECRET not configured - rejecting webhook');
     return false;
   }
 
@@ -45,12 +45,12 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  // SS-7: Webhook 서명 검증
+  // SS-7: Webhook signature validation
   const bodyText = await req.text();
   const isValid = await verifyWebhookSignature(req, bodyText);
   if (!isValid) {
     return new Response(
-      JSON.stringify({ error: 'Webhook 서명이 유효하지 않습니다.' }),
+      JSON.stringify({ error: 'Invalid webhook signature.' }),
       {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -67,7 +67,7 @@ serve(async (req) => {
   try {
     body = JSON.parse(bodyText);
   } catch {
-    return new Response(JSON.stringify({ error: '잘못된 요청 형식입니다.' }), {
+    return new Response(JSON.stringify({ error: 'Invalid request body format.' }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

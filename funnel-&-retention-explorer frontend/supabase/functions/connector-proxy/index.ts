@@ -57,6 +57,14 @@ function validatePropertyId(propertyId: string): boolean {
   return /^\d{1,20}$/.test(propertyId);
 }
 
+const MAX_CONNECTOR_ROWS = 100_000;
+
+function clampLimit(rawLimit: unknown): number {
+  const parsed = Number(rawLimit);
+  if (!Number.isFinite(parsed)) return MAX_CONNECTOR_ROWS;
+  return Math.min(Math.max(Math.floor(parsed), 1), MAX_CONNECTOR_ROWS);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -67,54 +75,112 @@ serve(async (req) => {
     return jsonResponse({ error: 'Authentication required' }, 401);
   }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const token = authHeader.replace('Bearer ', '');
+  const isServiceRole = serviceRoleKey.length > 0 && token === serviceRoleKey;
+
+  const userClient = createClient(
+    supabaseUrl,
+    supabaseAnonKey,
     { global: { headers: { Authorization: authHeader } } }
   );
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) {
-    return jsonResponse({ error: 'Invalid authentication' }, 401);
+
+  let userId: string | null = null;
+  if (!isServiceRole) {
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) {
+      return jsonResponse({ error: 'Invalid authentication' }, 401);
+    }
+    userId = user.id;
   }
 
-  // Check user plan
-  const { data: profile } = await supabase
-    .from('fre_user_profiles')
-    .select('plan')
-    .eq('id', user.id)
-    .single();
-
-  const plan = profile?.plan ?? 'free';
+  const serviceClient = isServiceRole
+    ? createClient(supabaseUrl, serviceRoleKey)
+    : null;
 
   try {
-    const body = await req.json();
-    const { action, connectorId, type, config, dateRange, limit = 100_000 } = body;
+    const body = await req.json() as Record<string, unknown>;
+    const action = typeof body.action === 'string' ? body.action : '';
+    const connectorId = typeof body.connectorId === 'string' ? body.connectorId : '';
+    const type = typeof body.type === 'string' ? body.type : '';
+    const config = (body.config ?? null) as Record<string, unknown> | null;
+    const rawDateRange = (body.dateRange ?? null) as Record<string, unknown> | null;
+    const dateRange = rawDateRange
+      && typeof rawDateRange.from === 'string'
+      && typeof rawDateRange.to === 'string'
+      ? { from: rawDateRange.from, to: rawDateRange.to }
+      : undefined;
+    const limit = clampLimit(body.limit);
 
     if (!action || !['test', 'fetch'].includes(action)) {
       return jsonResponse({ error: 'Invalid action. Use "test" or "fetch".' }, 400);
     }
 
+    // Service-role calls are internal only and must reference a saved connector.
+    if (isServiceRole && !connectorId) {
+      return jsonResponse({ error: 'connectorId is required for internal calls' }, 400);
+    }
+
     // Resolve connector config: either from DB (connectorId) or inline (config)
     let connectorType = type;
     let connectorConfig = config;
+    let connectorOwnerId = userId;
 
     if (connectorId) {
-      const { data: connector, error: connErr } = await supabase
-        .from('fre_connectors')
-        .select('*')
-        .eq('id', connectorId)
-        .eq('user_id', user.id)
-        .single();
+      if (isServiceRole && serviceClient) {
+        const { data: connector, error: connErr } = await serviceClient
+          .from('fre_connectors')
+          .select('id, user_id, type, config')
+          .eq('id', connectorId)
+          .single();
 
-      if (connErr || !connector) {
-        return jsonResponse({ error: 'Connector not found' }, 404);
+        if (connErr || !connector) {
+          return jsonResponse({ error: 'Connector not found' }, 404);
+        }
+
+        connectorType = connector.type;
+        connectorConfig = connector.config as Record<string, unknown>;
+        connectorOwnerId = connector.user_id as string;
+      } else {
+        if (!userId) {
+          return jsonResponse({ error: 'Invalid authentication' }, 401);
+        }
+
+        const { data: connector, error: connErr } = await userClient
+          .from('fre_connectors')
+          .select('id, user_id, type, config')
+          .eq('id', connectorId)
+          .eq('user_id', userId)
+          .single();
+
+        if (connErr || !connector) {
+          return jsonResponse({ error: 'Connector not found' }, 404);
+        }
+
+        connectorType = connector.type;
+        connectorConfig = connector.config as Record<string, unknown>;
+        connectorOwnerId = connector.user_id as string;
       }
-      connectorType = connector.type;
-      connectorConfig = connector.config;
     }
 
     if (!connectorType) {
       return jsonResponse({ error: 'Connector type is required' }, 400);
+    }
+    if (!connectorConfig) {
+      return jsonResponse({ error: 'Connector config is required' }, 400);
+    }
+
+    let plan = 'free';
+    if (connectorOwnerId) {
+      const planClient = isServiceRole && serviceClient ? serviceClient : userClient;
+      const { data: profile } = await planClient
+        .from('fre_user_profiles')
+        .select('plan')
+        .eq('id', connectorOwnerId)
+        .single();
+      plan = profile?.plan ?? 'free';
     }
 
     // Plan gate check
@@ -131,13 +197,46 @@ serve(async (req) => {
     // Route to handler
     switch (connectorType) {
       case 'ga4-api':
-        return await handleGA4(action, connectorConfig, dateRange, limit);
+        return await handleGA4(
+          action,
+          connectorConfig as { propertyId?: string; accessToken?: string; refreshToken?: string },
+          dateRange,
+          limit
+        );
       case 'mixpanel-api':
-        return await handleMixpanel(action, connectorConfig, dateRange, limit);
+        return await handleMixpanel(
+          action,
+          connectorConfig as { projectId?: string; apiSecret?: string },
+          dateRange,
+          limit
+        );
       case 'postgresql':
-        return await handlePostgreSQL(action, connectorConfig, limit);
+        return await handlePostgreSQL(
+          action,
+          connectorConfig as {
+            host?: string;
+            port?: number;
+            database?: string;
+            username?: string;
+            password?: string;
+            ssl?: boolean;
+            query?: string;
+          },
+          limit
+        );
       case 'mysql':
-        return await handleMySQL(action, connectorConfig, limit);
+        return await handleMySQL(
+          action,
+          connectorConfig as {
+            host?: string;
+            port?: number;
+            database?: string;
+            username?: string;
+            password?: string;
+            query?: string;
+          },
+          limit
+        );
       default:
         return jsonResponse({ error: `Unsupported connector type: ${connectorType}` }, 400);
     }

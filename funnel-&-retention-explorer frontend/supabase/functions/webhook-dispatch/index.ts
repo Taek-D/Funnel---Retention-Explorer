@@ -101,6 +101,7 @@ serve(async (req) => {
   // Allow service role key (for server-side calls like scheduled-report)
   const token = authHeader.replace('Bearer ', '');
   const isServiceRole = token === serviceRoleKey;
+  let authenticatedUserId: string | null = null;
 
   if (!isServiceRole) {
     // Validate user JWT
@@ -116,6 +117,7 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    authenticatedUserId = user.id;
   }
 
   let body: {
@@ -150,11 +152,17 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   );
 
-  const { data: webhook, error: lookupError } = await serviceClient
+  let lookupQuery = serviceClient
     .from('fre_webhooks')
     .select('url, format, secret, active')
-    .eq('id', webhookId)
-    .single();
+    .eq('id', webhookId);
+
+  // Prevent IDOR: users can dispatch only their own webhook.
+  if (!isServiceRole && authenticatedUserId) {
+    lookupQuery = lookupQuery.eq('user_id', authenticatedUserId);
+  }
+
+  const { data: webhook, error: lookupError } = await lookupQuery.single();
 
   if (lookupError || !webhook) {
     return new Response(JSON.stringify({ error: 'Webhook not found' }), {
