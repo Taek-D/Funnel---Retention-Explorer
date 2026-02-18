@@ -1,3 +1,28 @@
+// ===== Onboarding Tour =====
+
+export type TourPlacement = 'top' | 'bottom' | 'left' | 'right';
+
+export interface TourStep {
+  id: string;
+  target: string;
+  titleKey: string;
+  descriptionKey: string;
+  placement: TourPlacement;
+  icon?: string;
+}
+
+export interface OnboardingTourAPI {
+  isActive: boolean;
+  currentStep: number;
+  totalSteps: number;
+  steps: TourStep[];
+  startTour: () => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  skipTour: () => void;
+  isCompleted: boolean;
+}
+
 // ===== Data Connectors =====
 
 export type ConnectorType =

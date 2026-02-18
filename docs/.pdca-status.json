@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-15T07:03:58.224Z",
+  "lastUpdated": "2026-02-18T17:00:56.741Z",
   "activeFeatures": [
     "__tests__",
     "funnel-&-retention-explorer frontend",
@@ -45,9 +45,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-15T03:05:27.744Z",
-        "lastUpdated": "2026-02-15T07:03:58.224Z"
+        "lastUpdated": "2026-02-18T17:00:56.741Z"
       },
-      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\pages\\SignupPage.tsx"
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\OnboardingTour.tsx"
     },
     "connectors": {
       "phase": "do",
@@ -253,9 +253,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-15T05:28:53.554Z",
-        "lastUpdated": "2026-02-15T07:03:47.191Z"
+        "lastUpdated": "2026-02-17T14:23:52.713Z"
       },
-      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\landing\\HeroSection.tsx"
+      "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\landing\\FooterSection.tsx"
     },
     "free-beta": {
       "phase": "archived",
@@ -274,7 +274,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-15T07:03:58.224Z"
+    "lastActivity": "2026-02-18T17:00:56.741Z"
   },
   "history": [
     {
@@ -1467,6 +1467,168 @@
     },
     {
       "timestamp": "2026-02-15T07:03:58.224Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:22:57.931Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:22:59.400Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:01.370Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:04.059Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:07.391Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:09.717Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:12.243Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:22.910Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:25.059Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:27.414Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:29.308Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:31.740Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:33.750Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:35.780Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:41.613Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:44.100Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:46.554Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:48.858Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:50.898Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-17T14:23:52.713Z",
+      "feature": "landing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:58:38.674Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:58:57.924Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:59:08.476Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:59:12.496Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:59:16.499Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T16:59:20.566Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T17:00:56.741Z",
       "feature": "funnel-&-retention-explorer frontend",
       "phase": "do",
       "action": "updated"

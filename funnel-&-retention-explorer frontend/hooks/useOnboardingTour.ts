@@ -1,66 +1,80 @@
 import { useState, useEffect, useCallback } from 'react';
-import i18n from '../lib/i18n';
+import type { TourStep, OnboardingTourAPI } from '../types/index';
 
 const STORAGE_KEY = 'fre_onboarding_completed';
 
-interface TourStep {
-  target: string;
-  title: string;
-  description: string;
-  placement: 'top' | 'bottom' | 'left' | 'right';
-}
-
-function getTourSteps(): TourStep[] {
-  return [
-    {
-      target: '[data-tour="upload"]',
-      title: i18n.t('onboarding.step1Title'),
-      description: i18n.t('onboarding.step1Desc'),
-      placement: 'bottom',
-    },
-    {
-      target: '[data-tour="analysis"]',
-      title: i18n.t('onboarding.step2Title'),
-      description: i18n.t('onboarding.step2Desc'),
-      placement: 'right',
-    },
-    {
-      target: '[data-tour="retention"]',
-      title: i18n.t('onboarding.step3Title'),
-      description: i18n.t('onboarding.step3Desc'),
-      placement: 'right',
-    },
-    {
-      target: '[data-tour="insights"]',
-      title: i18n.t('onboarding.step4Title'),
-      description: i18n.t('onboarding.step4Desc'),
-      placement: 'right',
-    },
-    {
-      target: '[data-tour="dashboard"]',
-      title: i18n.t('onboarding.step5Title'),
-      description: i18n.t('onboarding.step5Desc'),
-      placement: 'right',
-    },
-  ];
-}
-
-export interface OnboardingTourAPI {
-  isActive: boolean;
-  currentStep: number;
-  steps: TourStep[];
-  startTour: () => void;
-  nextStep: () => void;
-  skipTour: () => void;
-  isCompleted: boolean;
-}
+const TOUR_STEPS: TourStep[] = [
+  {
+    id: 'dashboard',
+    target: '[data-tour="dashboard"]',
+    titleKey: 'onboarding.step1Title',
+    descriptionKey: 'onboarding.step1Desc',
+    placement: 'right',
+    icon: 'LayoutDashboard',
+  },
+  {
+    id: 'upload',
+    target: '[data-tour="upload"]',
+    titleKey: 'onboarding.step2Title',
+    descriptionKey: 'onboarding.step2Desc',
+    placement: 'right',
+    icon: 'UploadCloud',
+  },
+  {
+    id: 'analysis',
+    target: '[data-tour="analysis"]',
+    titleKey: 'onboarding.step3Title',
+    descriptionKey: 'onboarding.step3Desc',
+    placement: 'right',
+    icon: 'Filter',
+  },
+  {
+    id: 'retention',
+    target: '[data-tour="retention"]',
+    titleKey: 'onboarding.step4Title',
+    descriptionKey: 'onboarding.step4Desc',
+    placement: 'right',
+    icon: 'Users',
+  },
+  {
+    id: 'insights',
+    target: '[data-tour="insights"]',
+    titleKey: 'onboarding.step5Title',
+    descriptionKey: 'onboarding.step5Desc',
+    placement: 'right',
+    icon: 'BarChart2',
+  },
+  {
+    id: 'advanced',
+    target: '[data-tour="advanced"]',
+    titleKey: 'onboarding.step6Title',
+    descriptionKey: 'onboarding.step6Desc',
+    placement: 'right',
+    icon: 'Plug',
+  },
+  {
+    id: 'comparison',
+    target: '[data-tour="comparison"]',
+    titleKey: 'onboarding.step7Title',
+    descriptionKey: 'onboarding.step7Desc',
+    placement: 'right',
+    icon: 'GitCompareArrows',
+  },
+  {
+    id: 'team',
+    target: '[data-tour="team"]',
+    titleKey: 'onboarding.step8Title',
+    descriptionKey: 'onboarding.step8Desc',
+    placement: 'right',
+    icon: 'Shield',
+  },
+];
 
 export function useOnboardingTour(hasData: boolean): OnboardingTourAPI {
   const [isCompleted, setIsCompleted] = useState(() => localStorage.getItem(STORAGE_KEY) === 'true');
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Auto-start on first visit (no data, not completed)
   useEffect(() => {
     if (!isCompleted && !hasData) {
       const timer = setTimeout(() => setIsActive(true), 500);
@@ -81,12 +95,18 @@ export function useOnboardingTour(hasData: boolean): OnboardingTourAPI {
   }, []);
 
   const nextStep = useCallback(() => {
-    if (currentStep >= getTourSteps().length - 1) {
+    if (currentStep >= TOUR_STEPS.length - 1) {
       completeTour();
     } else {
       setCurrentStep(prev => prev + 1);
     }
   }, [currentStep, completeTour]);
+
+  const prevStep = useCallback(() => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+    }
+  }, [currentStep]);
 
   const skipTour = useCallback(() => {
     completeTour();
@@ -95,9 +115,11 @@ export function useOnboardingTour(hasData: boolean): OnboardingTourAPI {
   return {
     isActive,
     currentStep,
-    steps: getTourSteps(),
+    totalSteps: TOUR_STEPS.length,
+    steps: TOUR_STEPS,
     startTour,
     nextStep,
+    prevStep,
     skipTour,
     isCompleted,
   };

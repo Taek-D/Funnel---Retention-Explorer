@@ -30,8 +30,8 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
 
   const menuItems: MenuItem[] = [
     { path: '/app/dashboard', icon: LayoutDashboard, labelKey: 'nav.dashboard', dataTour: 'dashboard' },
-    { path: '/app/upload', icon: UploadCloud, labelKey: 'nav.dataImport' },
-    { path: '/app/connectors', icon: Plug, labelKey: 'nav.connectors' },
+    { path: '/app/upload', icon: UploadCloud, labelKey: 'nav.dataImport', dataTour: 'upload' },
+    { path: '/app/connectors', icon: Plug, labelKey: 'nav.connectors', dataTour: 'advanced' },
     { path: '/app/funnels', icon: Filter, labelKey: 'nav.funnel', dataTour: 'analysis' },
     { path: '/app/retention', icon: Users, labelKey: 'nav.retention', dataTour: 'retention' },
     { path: '/app/segments', icon: PieChart, labelKey: 'nav.segments' },
@@ -39,11 +39,11 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
     { path: '/app/events', icon: Tag, labelKey: 'nav.events' },
     { path: '/app/ab-test', icon: FlaskConical, labelKey: 'nav.abTest' },
     { path: '/app/journey', icon: ArrowRightLeft, labelKey: 'nav.journey' },
-    { path: '/app/funnel-compare', icon: GitCompareArrows, labelKey: 'nav.funnelCompare' },
+    { path: '/app/funnel-compare', icon: GitCompareArrows, labelKey: 'nav.funnelCompare', dataTour: 'comparison' },
     { path: '/app/retention-compare', icon: Diff, labelKey: 'nav.retentionCompare' },
     { path: '/app/stickiness', icon: Activity, labelKey: 'nav.stickiness' },
     { path: '/app/notifications', icon: Bell, labelKey: 'nav.notifications' },
-    { path: '/app/team', icon: Shield, labelKey: 'nav.team' },
+    { path: '/app/team', icon: Shield, labelKey: 'nav.team', dataTour: 'team' },
     { path: '/app/webhooks', icon: Webhook, labelKey: 'nav.webhooks' },
     { path: '/app/scheduled-reports', icon: Clock, labelKey: 'nav.scheduledReports' },
     { path: '/app/subscription', icon: CreditCard, labelKey: 'nav.subscription' },
@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
       </nav>
 
       <div className="mt-auto flex flex-col gap-3 items-center">
-        {!hasData && onStartTour && (
+        {onStartTour && (
           <button
             onClick={onStartTour}
             className="w-10 h-10 flex items-center justify-center rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors"

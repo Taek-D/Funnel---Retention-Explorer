@@ -48,6 +48,7 @@
 | 40 | cohort-grouping | 02-13 | 100% | 22/22 |
 | 41 | performance-optimization-v2 | 02-15 | 98.1% | 53/54 P, 1 PARTIAL |
 | 42 | free-beta | 02-15 | 97.8% | 66/69 P, 3 PARTIAL |
+| 43 | onboarding-upgrade | 02-19 | 100% | 48/48 (inline spec, no formal design doc) |
 
 ### Key Project Patterns
 
