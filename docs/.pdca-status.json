@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-18T17:00:56.741Z",
+  "lastUpdated": "2026-02-18T17:19:33.335Z",
   "activeFeatures": [
     "__tests__",
     "funnel-&-retention-explorer frontend",
@@ -45,7 +45,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-15T03:05:27.744Z",
-        "lastUpdated": "2026-02-18T17:00:56.741Z"
+        "lastUpdated": "2026-02-18T17:19:33.335Z"
       },
       "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\funnel-&-retention-explorer frontend\\components\\OnboardingTour.tsx"
     },
@@ -274,7 +274,7 @@
   "session": {
     "startedAt": "2026-02-11T03:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-18T17:00:56.741Z"
+    "lastActivity": "2026-02-18T17:19:33.335Z"
   },
   "history": [
     {
@@ -1629,6 +1629,24 @@
     },
     {
       "timestamp": "2026-02-18T17:00:56.741Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T17:19:03.668Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T17:19:24.395Z",
+      "feature": "funnel-&-retention-explorer frontend",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T17:19:33.335Z",
       "feature": "funnel-&-retention-explorer frontend",
       "phase": "do",
       "action": "updated"

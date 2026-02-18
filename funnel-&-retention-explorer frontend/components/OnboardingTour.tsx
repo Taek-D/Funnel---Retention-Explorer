@@ -2,8 +2,9 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { OnboardingTourAPI, TourPlacement } from '../types/index';
 import {
-  LayoutDashboard, UploadCloud, Filter, Users, BarChart2,
-  Plug, GitCompareArrows, Shield,
+  LayoutDashboard, UploadCloud, Plug, Filter, Users, PieChart, BarChart2,
+  Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff, Activity,
+  Bell, Shield, Webhook, Clock, CreditCard,
 } from './Icons';
 
 type IconComponent = React.FC<{ size?: number }>;
@@ -11,12 +12,22 @@ type IconComponent = React.FC<{ size?: number }>;
 const TOUR_ICON_MAP: Record<string, IconComponent> = {
   LayoutDashboard,
   UploadCloud,
+  Plug,
   Filter,
   Users,
+  PieChart,
   BarChart2,
-  Plug,
+  Tag,
+  FlaskConical,
+  ArrowRightLeft,
   GitCompareArrows,
+  Diff,
+  Activity,
+  Bell,
   Shield,
+  Webhook,
+  Clock,
+  CreditCard,
 };
 
 interface TargetRect {
