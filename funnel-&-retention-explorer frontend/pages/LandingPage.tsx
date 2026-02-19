@@ -7,7 +7,6 @@ import { FeaturesGrid } from '../components/landing/FeaturesGrid';
 import { HowItWorks } from '../components/landing/HowItWorks';
 import { MetricsBanner } from '../components/landing/MetricsBanner';
 import { TestimonialsSection } from '../components/landing/TestimonialsSection';
-import { PricingSection } from '../components/landing/PricingSection';
 import { FAQSection } from '../components/landing/FAQSection';
 import { CTABanner } from '../components/landing/CTABanner';
 import { FooterSection } from '../components/landing/FooterSection';
@@ -25,7 +24,6 @@ export const LandingPage: React.FC = () => {
         <HowItWorks />
         <MetricsBanner />
         <TestimonialsSection />
-        <PricingSection />
         <FAQSection />
         <CTABanner />
       </main>

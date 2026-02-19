@@ -1,10 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, CreditCard, HelpCircle, Shield, Settings, Webhook, Download, Clock, Bell, Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff, Plug } from './Icons';
+import { LayoutDashboard, Filter, Users, UploadCloud, LogOut, BarChart2, PieChart, Activity, HelpCircle, Shield, Settings, Webhook, Download, Clock, Bell, Tag, FlaskConical, ArrowRightLeft, GitCompareArrows, Diff, Plug } from './Icons';
 import { useAuth } from '../context/AuthContext';
-import { PlanBadge } from './PlanBadge';
-import { UsageIndicator } from './UsageIndicator';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
@@ -46,7 +44,6 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
     { path: '/app/team', icon: Shield, labelKey: 'nav.team', dataTour: 'team' },
     { path: '/app/webhooks', icon: Webhook, labelKey: 'nav.webhooks', dataTour: 'webhooks' },
     { path: '/app/scheduled-reports', icon: Clock, labelKey: 'nav.scheduledReports', dataTour: 'scheduled-reports' },
-    { path: '/app/subscription', icon: CreditCard, labelKey: 'nav.subscription', dataTour: 'subscription' },
   ];
 
   const adminItems: MenuItem[] = userProfile?.role === 'admin' ? [
@@ -136,8 +133,6 @@ export const Sidebar: React.FC<SidebarProps> = React.memo(({ mobileOpen, onClose
             <Download size={18} />
           </button>
         )}
-        <PlanBadge />
-        <UsageIndicator />
         <LanguageSwitcher />
         <button
           className="w-10 h-10 flex items-center justify-center rounded-md text-slate-600 hover:text-coral hover:bg-coral/5 transition-colors"

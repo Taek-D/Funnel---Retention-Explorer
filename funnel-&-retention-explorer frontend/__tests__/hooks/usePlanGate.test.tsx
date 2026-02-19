@@ -1,162 +1,42 @@
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { renderHook } from '@testing-library/react';
 import { usePlanGate } from '../../hooks/usePlanGate';
-import type { UserProfile } from '../../lib/planManager';
 
-function createProfile(overrides: Partial<UserProfile> = {}): UserProfile {
-  return {
-    id: 'user-1',
-    role: 'user' as const,
-    plan: 'free',
-    plan_started_at: null,
-    trial_end: null,
-    toss_customer_key: null,
-    toss_billing_key: null,
-    subscription_status: 'none',
-    next_billing_date: null,
-    ai_calls_today: 0,
-    ai_calls_reset_at: '2025-01-01',
-    csv_row_limit: 10_000,
-    billing_cycle: 'monthly',
-    retry_count: 0,
-    grace_period_end: null,
-    cancelled_at: null,
-    created_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-01-01T00:00:00Z',
-    ...overrides,
-  };
-}
-
-const mockUseAuth = vi.fn();
-vi.mock('../../context/AuthContext', () => ({
-  useAuth: () => mockUseAuth(),
-}));
-
-vi.mock('../../lib/supabase', () => ({
-  supabase: null,
-}));
-
-describe('usePlanGate', () => {
-  it('returns isPro: false when no userProfile', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.isPro).toBe(false);
-  });
-
-  it('returns isPro: true for pro user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
+describe('usePlanGate (all features unlocked)', () => {
+  it('returns isPro: true', () => {
     const { result } = renderHook(() => usePlanGate());
     expect(result.current.isPro).toBe(true);
   });
 
-  it('canUseAI reflects planManager result', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ ai_calls_today: 0, ai_calls_reset_at: '2025-01-01' }) });
+  it('returns canUseAI: true', () => {
     const { result } = renderHook(() => usePlanGate());
     expect(result.current.canUseAI).toBe(true);
   });
 
-  it('csvRowLimit returns free limit (10,000) for free user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
+  it('returns unlimited csvRowLimit', () => {
     const { result } = renderHook(() => usePlanGate());
-    expect(result.current.csvRowLimit).toBe(10_000);
+    expect(result.current.csvRowLimit).toBe(1_000_000);
   });
 
-  it('csvRowLimit returns pro limit (500,000) for pro user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
+  it('returns unlimited connectorLimit', () => {
     const { result } = renderHook(() => usePlanGate());
-    expect(result.current.csvRowLimit).toBe(500_000);
+    expect(result.current.connectorLimit).toBe(999);
   });
 
-  it('openUpgradeModal sets showUpgradeModal and reason', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
-    const { result } = renderHook(() => usePlanGate());
-
-    act(() => {
-      result.current.openUpgradeModal('CSV row limit exceeded');
-    });
-
-    expect(result.current.showUpgradeModal).toBe(true);
-    expect(result.current.upgradeReason).toBe('CSV row limit exceeded');
-  });
-
-  it('closeUpgradeModal resets showUpgradeModal and reason', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
-    const { result } = renderHook(() => usePlanGate());
-
-    act(() => {
-      result.current.openUpgradeModal('test');
-    });
-    act(() => {
-      result.current.closeUpgradeModal();
-    });
-
-    expect(result.current.showUpgradeModal).toBe(false);
-    expect(result.current.upgradeReason).toBe('');
-  });
-
-  it('connectorLimit returns 0 for free user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.connectorLimit).toBe(0);
-  });
-
-  it('connectorLimit returns 3 for pro user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.connectorLimit).toBe(3);
-  });
-
-  it('connectorLimit returns -1 (unlimited) for team user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'team' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.connectorLimit).toBe(-1);
-  });
-
-  it('maxSyncSchedule returns null for free user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.maxSyncSchedule).toBeNull();
-  });
-
-  it('maxSyncSchedule returns daily for pro user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.maxSyncSchedule).toBe('daily');
-  });
-
-  it('maxSyncSchedule returns hourly for team user', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'team' }) });
+  it('returns hourly maxSyncSchedule', () => {
     const { result } = renderHook(() => usePlanGate());
     expect(result.current.maxSyncSchedule).toBe('hourly');
   });
 
-  it('canUseConnector returns true for csv (free connector)', () => {
-    mockUseAuth.mockReturnValue({ userProfile: null });
+  it('canUseConnector always returns true', () => {
     const { result } = renderHook(() => usePlanGate());
+    expect(result.current.canUseConnector('ga4-api')).toBe(true);
+    expect(result.current.canUseConnector('postgresql')).toBe(true);
     expect(result.current.canUseConnector('csv')).toBe(true);
   });
 
-  it('canUseConnector returns false for ga4-api on free plan', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'free' }) });
+  it('showUpgradeModal is always false', () => {
     const { result } = renderHook(() => usePlanGate());
-    expect(result.current.canUseConnector('ga4-api')).toBe(false);
-  });
-
-  it('canUseConnector returns true for ga4-api on pro plan', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.canUseConnector('ga4-api')).toBe(true);
-  });
-
-  it('canUseConnector returns false for postgresql on pro plan', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'pro' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.canUseConnector('postgresql')).toBe(false);
-  });
-
-  it('canUseConnector returns true for postgresql on team plan', () => {
-    mockUseAuth.mockReturnValue({ userProfile: createProfile({ plan: 'team' }) });
-    const { result } = renderHook(() => usePlanGate());
-    expect(result.current.canUseConnector('postgresql')).toBe(true);
+    expect(result.current.showUpgradeModal).toBe(false);
   });
 });

@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { fetchUserProfile, upsertUserProfile } from '../lib/planManager';
+import { fetchUserProfile, upsertUserProfile } from '../lib/supabaseData';
 import { trackEvent } from '../lib/analytics';
-import type { UserProfile } from '../lib/planManager';
+import type { UserProfile } from '../lib/supabaseData';
 
 interface AuthContextValue {
   user: User | null;

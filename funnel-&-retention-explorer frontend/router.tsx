@@ -17,9 +17,6 @@ const SegmentComparison = lazy(() => import('./pages/SegmentComparison').then(m 
 const Insights = lazy(() => import('./pages/Insights').then(m => ({ default: m.Insights })));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
 const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
-const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
-const BillingSuccessPage = lazy(() => import('./pages/BillingSuccessPage').then(m => ({ default: m.BillingSuccessPage })));
-const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage').then(m => ({ default: m.SubscriptionPage })));
 const TeamPage = lazy(() => import('./pages/TeamPage').then(m => ({ default: m.TeamPage })));
 const SharedReport = lazy(() => import('./pages/SharedReport').then(m => ({ default: m.SharedReport })));
 const WebhookSettings = lazy(() => import('./pages/WebhookSettings').then(m => ({ default: m.WebhookSettings })));
@@ -35,7 +32,6 @@ const ConnectorsPage = lazy(() => import('./pages/ConnectorsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminUsers = lazy(() => import('./pages/AdminUsers').then(m => ({ default: m.AdminUsers })));
-const AdminBilling = lazy(() => import('./pages/AdminBilling').then(m => ({ default: m.AdminBilling })));
 
 export const router = createBrowserRouter([
   {
@@ -49,10 +45,6 @@ export const router = createBrowserRouter([
   {
     path: '/terms',
     element: <Suspense fallback={<PageLoader />}><TermsPage /></Suspense>,
-  },
-  {
-    path: '/pricing',
-    element: <Suspense fallback={<PageLoader />}><PricingPage /></Suspense>,
   },
   {
     path: '/shared/:token',
@@ -86,13 +78,11 @@ export const router = createBrowserRouter([
           { path: 'funnel-compare', element: <Suspense fallback={<PageLoader />}><FunnelComparison /></Suspense> },
           { path: 'retention-compare', element: <Suspense fallback={<PageLoader />}><RetentionComparison /></Suspense> },
           { path: 'stickiness', element: <Suspense fallback={<PageLoader />}><StickinessPage /></Suspense> },
-          // Auth-required routes: team, billing, subscription, webhooks, connectors, scheduled reports
+          // Auth-required routes
           {
             element: <AuthRequiredRoute />,
             children: [
               { path: 'team', element: <Suspense fallback={<PageLoader />}><TeamPage /></Suspense> },
-              { path: 'billing/success', element: <Suspense fallback={<PageLoader />}><BillingSuccessPage /></Suspense> },
-              { path: 'subscription', element: <Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense> },
               { path: 'webhooks', element: <Suspense fallback={<PageLoader />}><WebhookSettings /></Suspense> },
               { path: 'scheduled-reports', element: <Suspense fallback={<PageLoader />}><ScheduledReports /></Suspense> },
               { path: 'notifications', element: <Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense> },
@@ -105,7 +95,6 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense> },
               { path: 'users', element: <Suspense fallback={<PageLoader />}><AdminUsers /></Suspense> },
-              { path: 'billing', element: <Suspense fallback={<PageLoader />}><AdminBilling /></Suspense> },
             ],
           },
         ],

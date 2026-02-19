@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { LandingHeader } from '../components/LandingHeader';
 import { useAuth } from '../context/AuthContext';
 import { CheckCircle, Eye, EyeOff } from '../components/Icons';
-import { isBetaActive } from '../lib/betaConfig';
 import { trackEvent } from '../lib/analytics';
 
 export const SignupPage: React.FC = () => {
@@ -57,7 +56,7 @@ export const SignupPage: React.FC = () => {
         setError(t('signup.genericError'));
       } else {
         setSuccess(t('signup.success'));
-        if (isBetaActive()) trackEvent('beta_signup');
+        trackEvent('signup_success');
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t('signup.failed'));
@@ -105,12 +104,6 @@ export const SignupPage: React.FC = () => {
         {/* Right: Form */}
         <div className="flex-1 flex items-center justify-center px-6 pt-16 lg:border-l lg:border-white/[0.06]">
           <div className="w-full max-w-sm animate-fade-up">
-            {isBetaActive() && (
-              <div className="mb-4 px-3 py-2 bg-accent/5 border border-accent/20 rounded-md">
-                <span className="text-accent text-xs font-mono font-semibold">BETA</span>
-                <span className="text-slate-400 text-xs ml-2">{t('beta.signupNote')}</span>
-              </div>
-            )}
             <h1 className="text-2xl font-extrabold text-white tracking-tightest mb-1">{t('signup.title')}</h1>
             <p className="text-slate-500 text-sm mb-8">{t('signup.subtitle')}</p>
 

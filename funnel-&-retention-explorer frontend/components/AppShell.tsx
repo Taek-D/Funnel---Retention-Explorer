@@ -9,10 +9,7 @@ import { NotificationPreferencesModal } from './NotificationPreferencesModal';
 import { SearchModal } from './SearchModal';
 import { OnboardingTour } from './OnboardingTour';
 import { Search, Bell, Menu, Mail, Settings } from './Icons';
-import { PastDueBanner } from './PastDueBanner';
 import { OfflineBanner } from './OfflineBanner';
-import { BetaBanner } from './BetaBanner';
-import { FeedbackWidget } from './FeedbackWidget';
 import { SavedViewsDropdown } from './SavedViewsDropdown';
 import { trackPageView } from '../lib/analytics';
 import { useToast } from './Toast';
@@ -21,7 +18,6 @@ import { useEmailSettings } from '../hooks/useEmailSettings';
 import { useOnboardingTour } from '../hooks/useOnboardingTour';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
-import { isTrialing, getTrialDaysRemaining } from '../lib/planManager';
 
 export const AppShell: React.FC = () => {
   const { t } = useTranslation();
@@ -42,23 +38,6 @@ export const AppShell: React.FC = () => {
 
   const currentSegment = location.pathname.split('/').pop() || 'dashboard';
   const pageTitle = currentSegment.replace(/-/g, ' ');
-
-  // Trial expiration alert
-  useEffect(() => {
-    if (!userProfile) return;
-    const trialing = isTrialing(userProfile);
-    const days = getTrialDaysRemaining(userProfile);
-    const key = `fre_trial_alert_${userProfile.id}`;
-    const shown = sessionStorage.getItem(key);
-
-    if (trialing && days <= 3 && days > 0 && shown !== 'expiring') {
-      toast('warning', t('trial.expiresIn', { days }));
-      sessionStorage.setItem(key, 'expiring');
-    } else if (!trialing && userProfile.trial_end && new Date(userProfile.trial_end) < new Date() && shown !== 'expired') {
-      toast('info', t('trial.expiredMessage'));
-      sessionStorage.setItem(key, 'expired');
-    }
-  }, [userProfile, toast, t]);
 
   // GA4 page tracking
   useEffect(() => {
@@ -152,14 +131,8 @@ export const AppShell: React.FC = () => {
           </div>
         </header>
 
-        {/* Beta Banner */}
-        <BetaBanner />
-
         {/* Offline Banner */}
         <OfflineBanner />
-
-        {/* Past Due Banner */}
-        <PastDueBanner />
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
@@ -168,9 +141,6 @@ export const AppShell: React.FC = () => {
           </div>
         </div>
       </main>
-
-      {/* Feedback Widget */}
-      <FeedbackWidget />
 
       {/* Search Modal */}
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />

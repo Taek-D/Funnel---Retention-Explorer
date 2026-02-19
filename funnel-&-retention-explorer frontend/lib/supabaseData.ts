@@ -6,6 +6,38 @@ function getSupabase() {
   return supabase;
 }
 
+// ===== User Profiles =====
+
+export interface UserProfile {
+  id: string;
+  role: 'user' | 'admin';
+  plan: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('fre_user_profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  if (error || !data) return null;
+  return data as UserProfile;
+}
+
+export async function upsertUserProfile(userId: string): Promise<UserProfile | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('fre_user_profiles')
+    .upsert({ id: userId }, { onConflict: 'id' })
+    .select('*')
+    .single();
+  if (error || !data) return null;
+  return data as UserProfile;
+}
+
 // ===== Projects =====
 
 export interface FREProject {

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Download, TrendingUp, TrendingDown, Users, MoreHorizontal } from '../components/Icons';
-import { UpgradeBanner } from '../components/UpgradeBanner';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRetentionAnalysis } from '../hooks/useRetentionAnalysis';
 import { useDataExport } from '../hooks/useDataExport';
@@ -363,12 +362,6 @@ export const RetentionAnalysis: React.FC = () => {
         </>
       )}
 
-      {/* Upgrade Banner */}
-      <UpgradeBanner
-        messageKey="upgradeBanner.retention"
-        page="retention"
-        onUpgrade={() => navigate('/app/subscription')}
-      />
     </div>
   );
 };
