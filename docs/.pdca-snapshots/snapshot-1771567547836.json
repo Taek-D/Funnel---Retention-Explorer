@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-20T04:46:08.437Z",
+  "timestamp": "2026-02-20T06:05:47.835Z",
   "reason": "compaction",
   "status": {
     "version": "2.0",
-    "lastUpdated": "2026-02-19T12:58:16.481Z",
+    "lastUpdated": "2026-02-20T05:43:55.536Z",
     "activeFeatures": [
       "__tests__",
       "funnel-&-retention-explorer frontend",
@@ -24,7 +24,8 @@
       "toss-webhook",
       "landing",
       "context",
-      "sql-analysis"
+      "sql-analysis",
+      "ml-analysis"
     ],
     "primaryFeature": "__tests__",
     "features": {
@@ -295,6 +296,19 @@
           "lastUpdated": "2026-02-19T12:58:16.481Z"
         },
         "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\sql-analysis\\generate_charts.py"
+      },
+      "ml-analysis": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-20T05:43:55.536Z",
+          "lastUpdated": "2026-02-20T05:43:55.536Z"
+        },
+        "lastFile": "E:\\프로젝트\\데이터분석\\Funnel---Retention-Explorer\\ml-analysis\\generate_charts.py"
       }
     },
     "pipeline": {
@@ -305,7 +319,7 @@
     "session": {
       "startedAt": "2026-02-11T03:00:00.000Z",
       "onboardingCompleted": true,
-      "lastActivity": "2026-02-19T12:58:16.481Z"
+      "lastActivity": "2026-02-20T05:43:55.536Z"
     },
     "history": [
       {
@@ -1871,6 +1885,12 @@
       {
         "timestamp": "2026-02-19T12:58:16.481Z",
         "feature": "sql-analysis",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-20T05:43:55.536Z",
+        "feature": "ml-analysis",
         "phase": "do",
         "action": "updated"
       }
