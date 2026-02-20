@@ -242,12 +242,24 @@ npm test       # 364 tests
 | **데이터 처리** | CSV 파싱, 자동 스키마 감지, 데이터 품질 리포트, WeakMap 캐싱 | 데이터 파이프라인 설계 사고 |
 | **엔지니어링** | Auth + RLS + Edge Functions + 364개 테스트 + TypeScript strict | 분석 로직 정확성 보장 |
 
-### 한계 및 개선 방향
+### 포트폴리오 3개 축
 
-- **한계점**: 브라우저 메모리 기반으로 대용량(10만+ 행) 처리에 한계. 실무에서는 SQL/BigQuery 파이프라인이 필수적
-- **완료**: [SQL 기반 실데이터 분석 프로젝트](./sql-analysis/) — BigQuery GA4 공개 데이터셋(Google Merchandise Store)으로 퍼널/리텐션/세그먼트 분석을 SQL로 직접 수행. 카이제곱 검정, Z-test, 코호트 히트맵 등 통계 검정 포함.
+이 프로젝트는 3개의 상호 보완적인 분석 프로젝트로 구성됩니다:
 
-> FRE가 **"지표 설계 역량"**을 보여준다면, [SQL 분석 프로젝트](./sql-analysis/)는 **"실제 데이터로 인사이트를 도출하는 분석 역량"**을 보여줍니다.
+| 프로젝트 | 역할 | 핵심 역량 | 데이터 |
+|----------|------|----------|--------|
+| **[FRE SaaS](./funnel-&-retention-explorer%20frontend/)** | 분석 프레임워크 제품화 | TypeScript 엔진 설계, React SaaS, 364개 테스트 | CSV 업로드 |
+| **[SQL Analysis](./sql-analysis/)** | 실데이터 인사이트 도출 | BigQuery SQL, 퍼널/리텐션/세그먼트, 통계 검정 | GA4 공개 데이터셋 |
+| **[ML Analysis](./ml-analysis/)** | 예측 모델링 + 비즈니스 임팩트 | scikit-learn, XGBoost, SHAP, RFM 클러스터링 | UCI Retail + Telco Churn |
+
+#### ML Analysis 주요 결과
+
+- **RFM 세그멘테이션**: K-Means(k=4) → Champions/Loyal/At-Risk/Lost, Silhouette Score 검증, ANOVA 유의성 확인
+- **이탈 예측 모델**: XGBoost ROC-AUC 0.87, Recall 80% (이탈자 80% 사전 감지)
+- **비즈니스 임팩트**: 리텐션 캠페인 ROI ~491%, 연간 $219K 순이익 추정
+- **통계 검정 13가지**: t-test, chi-square, ANOVA, Cohen's d, Cramer's V, SHAP, Cross-Validation 등
+
+> **"분석 지표를 설계하고(FRE), 실데이터에서 인사이트를 도출하고(SQL), ML로 비즈니스 임팩트를 정량화할 수 있습니다."**
 
 ---
 
