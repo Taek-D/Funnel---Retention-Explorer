@@ -157,7 +157,7 @@ CSV Upload
 **핵심 설계 원칙:**
 - **엔진 분리**: 모든 분석 엔진은 `lib/` 디렉토리의 순수 TypeScript 모듈입니다. React 의존성이 없어 독립적으로 테스트 가능하며, 다른 프레임워크에서도 재사용할 수 있습니다.
 - **WeakMap 기반 캐싱**: 동일 데이터에 대한 반복 계산을 방지합니다. 데이터 참조가 변경될 때만 자동으로 캐시가 무효화됩니다.
-- **375개 자동화 테스트**: 362개 단위/통합 테스트(Vitest) + 13개 E2E 테스트(Playwright)로 엔진의 계산 정확성을 검증합니다.
+- **364개 자동화 테스트**: 351개 단위/통합 테스트(Vitest) + 13개 E2E 테스트(Playwright)로 엔진의 계산 정확성을 검증합니다.
 
 ---
 
@@ -189,11 +189,11 @@ CSV Upload
 |---|---|
 | 분석 엔진 | 8개 (퍼널, 리텐션, 세그먼트, A/B, 스티키니스, 여정, 인사이트, 구독) |
 | 페이지 | 18개 (대시보드, 분석 6종, 비교 3종, 설정 5종, 랜딩/인증) |
-| 자동화 테스트 | 375개 (Vitest 362 + Playwright 13) |
+| 자동화 테스트 | 364개 (Vitest 351 + Playwright 13) |
 | i18n 번역 키 | 840+ (한국어/영어) |
 | 번들 최적화 | 20 chunks, 최대 367KB (React.lazy + code splitting) |
 | TypeScript | strict mode, 0 any |
-| Edge Functions | 12개 (결제, AI, 커넥터, 웹훅, 리포트) |
+| Edge Functions | 6개 (AI, 커넥터, 웹훅, 리포트) |
 | 개발 규모 | 1인 풀스택, PDCA 사이클 기반 개발 |
 
 ---
@@ -209,7 +209,7 @@ CSV Upload
 | Auth & DB | Supabase | 인증 + PostgreSQL + Row Level Security |
 | AI | Gemini 2.0 Flash | 자연어 데이터 분석 질의응답 |
 | i18n | react-i18next | 한국어/영어 840+ 번역 키 |
-| Testing | Vitest + Playwright | 362 단위/통합 + 13 E2E |
+| Testing | Vitest + Playwright | 351 단위/통합 + 13 E2E |
 | Deploy | Vercel | main 브랜치 push 자동 배포 |
 | Styling | Tailwind CSS | 다크 테마 SaaS 대시보드 UI |
 
@@ -222,7 +222,7 @@ git clone https://github.com/Taek-D/Funnel---Retention-Explorer.git
 cd "funnel-&-retention-explorer frontend"
 npm install
 npm run dev    # http://localhost:3000
-npm test       # 375 tests
+npm test       # 364 tests
 ```
 
 환경 변수 없이도 게스트 모드로 CSV 업로드 및 전체 분석 기능을 사용할 수 있습니다.
@@ -240,7 +240,7 @@ npm test       # 375 tests
 | **인사이트 자동화** | 13가지 규칙 기반 진단 + 임계값 설계 + 액션 아이템 도출 | 패턴 인식의 체계화 |
 | **데이터 시각화** | Recharts 인터랙티브 차트, 코호트 히트맵, Sankey 다이어그램 | 지표별 최적 시각화 형태 판단 |
 | **데이터 처리** | CSV 파싱, 자동 스키마 감지, 데이터 품질 리포트, WeakMap 캐싱 | 데이터 파이프라인 설계 사고 |
-| **엔지니어링** | Auth + RLS + Edge Functions + 375개 테스트 + TypeScript strict | 분석 로직 정확성 보장 |
+| **엔지니어링** | Auth + RLS + Edge Functions + 364개 테스트 + TypeScript strict | 분석 로직 정확성 보장 |
 
 ### 한계 및 개선 방향
 
